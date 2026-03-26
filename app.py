@@ -622,7 +622,7 @@ if data_loaded:
     # İZMİR RİSK HARİTASI
     # ════════════════════════════════
     elif sayfa == "🗺️ İzmir Risk Haritası":
-        try:
+try:
     geojson_data = load_geojson()
     isimler = [f.get("properties", {}) for f in geojson_data["features"][:5]]
     st.write(isimler)
