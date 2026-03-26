@@ -623,10 +623,11 @@ if data_loaded:
     # ════════════════════════════════
 elif sayfa == "🗺️ İzmir Risk Haritası":
         st.title("🗺️ İzmir İlçe Risk Haritası")
+        st.write("Test - sayfa açıldı")
         try:
             geojson_data = load_geojson()
-            isimler = [f.get("properties", {}) for f in geojson_data["features"][:5]]
-            st.write(isimler)
+            st.write("GeoJSON yüklendi")
+            st.write(geojson_data["features"][0]["properties"])
         except Exception as e:
             st.error(str(e))
         st.title("🗺️ İzmir İlçe Risk Haritası")
