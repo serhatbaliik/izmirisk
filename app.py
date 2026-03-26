@@ -633,9 +633,10 @@ if data_loaded:
         with open("izmir.geojson", "r", encoding="utf-8") as f:
             geojson_data = json.load(f)
 
-        @st.cache_data
-            r = requests.get(GEOJSON_URL, timeout=30)
-            return r.json()
+@st.cache_data
+def load_geojson():
+    with open("izmir.geojson", "r", encoding="utf-8") as f:
+        return json.load(f)
 
         col1, col2, col3 = st.columns(3)
         with col1:
