@@ -623,9 +623,11 @@ if data_loaded:
 
     elif sayfa == "Izmir Risk Haritasi":
         st.title("İzmir İlçe Risk Haritası")
+        st.markdown("İlçe üzerine gel — risk skoru, sınıf ve yıl bilgisi görünür.")
         st.divider()
 
-        import json
+        import folium
+        from streamlit_folium import st_folium
 
         col1, col2 = st.columns(2)
         with col1:
@@ -634,29 +636,71 @@ if data_loaded:
             harita_senaryo = st.radio("Senaryo:", ["Baz","İyimser","Kötümser"],
                                       horizontal=True, key="harita_senaryo")
 
+        ILCE_KOORD = {
+            "BALÇOVA":    (38.3850, 27.0500),
+            "BAYRAKLI":   (38.4600, 27.1700),
+            "BORNOVA":    (38.4700, 27.2200),
+            "BUCA":       (38.3800, 27.1800),
+            "ÇİĞLİ":     (38.5000, 27.0400),
+            "GAZİEMİR":   (38.3200, 27.1300),
+            "GÜZELBAHÇE": (38.3900, 26.9000),
+            "KARABAĞLAR": (38.3900, 27.1000),
+            "KARŞIYAKA":  (38.4600, 27.1100),
+            "KONAK":      (38.4100, 27.1400),
+            "NARLIDERE":  (38.4000, 26.9800),
+        }
+
         def get_risk_score(ilce, yil, senaryo):
             if yil <= 2023:
                 row = risk_df[(risk_df["İlçe"]==ilce) & (risk_df["Yıl"]==yil)]
-                return float(row["Risk_Skor"].values[0]) if len(row) > 0 else None
+                return float(row["Risk_Skor"].values[0]) if len(row) > 0 else 0
             else:
                 row = tahmin_df[(tahmin_df["İlçe"]==ilce) & (tahmin_df["Yıl"]==yil)]
-                return float(row[senaryo].values[0]) if len(row) > 0 else None
+                return float(row[senaryo].values[0]) if len(row) > 0 else 0
 
-        ILCE_ESLESME = {
-            "Balçova": "BALÇOVA", "Bayraklı": "BAYRAKLI",
-            "Bornova": "BORNOVA", "Buca": "BUCA", "Çiğli": "ÇİĞLİ",
-            "Gaziemir": "GAZİEMİR", "Güzelbahçe": "GÜZELBAHÇE",
-            "Karabağlar": "KARABAĞLAR", "Karşıyaka": "KARŞIYAKA",
-            "Konak": "KONAK", "Narlıdere": "NARLIDERE",
-        }
+        def risk_rengi(skor):
+            if skor < 40: return "#2ca02c"
+            if skor < 70: return "#ff7f0e"
+            return "#d62728"
 
-        try:
-            with open("izmir.geojson.json", "r", encoding="utf-8") as f:
-                geojson_data = json.load(f)
+        def risk_sinifi(skor):
+            if skor < 40: return "Düşük Risk"
+            if skor < 70: return "Orta Risk"
+            return "Yüksek Risk"
 
-            st.success("GeoJSON yüklendi!")
-            st.write("İlk ilçe özellikleri:")
-            st.write(geojson_data["features"][0]["properties"])
+        m = folium.Map(location=[38.42, 27.14], zoom_start=11, tiles="CartoDB positron")
 
-        except Exception as e:
-            st.error(f"Hata: {e}")
+        for ilce, (lat, lon) in ILCE_KOORD.items():
+            skor = get_risk_score(ilce, harita_yil, harita_senaryo)
+            renk = risk_rengi(skor)
+            sinif = risk_sinifi(skor)
+            tooltip_html = f"""
+            <div style='font-family:Arial;font-size:13px;padding:6px'>
+                <b>{ilce}</b><br>
+                Risk Skoru: <b>{skor:.1f}</b><br>
+                Sınıf: <b style='color:{renk}'>{sinif}</b><br>
+                Yıl: {harita_yil}
+            </div>"""
+            folium.CircleMarker(
+                location=[lat, lon], radius=30,
+                color=renk, fill=True, fill_color=renk, fill_opacity=0.7,
+                tooltip=folium.Tooltip(tooltip_html),
+                popup=folium.Popup(tooltip_html, max_width=200)
+            ).add_to(m)
+            folium.Marker(
+                location=[lat, lon],
+                icon=folium.DivIcon(
+                    html=f'<div style="font-size:9px;font-weight:bold;color:white;text-align:center;margin-top:-8px">{ilce[:6]}</div>',
+                    icon_size=(60,20), icon_anchor=(30,10)
+                )
+            ).add_to(m)
+
+        st_folium(m, width=800, height=500)
+
+        st.subheader(f"{harita_yil} Yılı Risk Sıralaması")
+        tablo_data = []
+        for ilce in ILCE_KOORD.keys():
+            skor = get_risk_score(ilce, harita_yil, harita_senaryo)
+            tablo_data.append({"İlçe": ilce, "Risk Skoru": round(skor,1), "Sınıf": risk_sinifi(skor)})
+        tablo_df = pd.DataFrame(tablo_data).sort_values("Risk Skoru", ascending=False)
+        st.dataframe(tablo_df, use_container_width=True, hide_index=True)
