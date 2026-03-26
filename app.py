@@ -191,7 +191,7 @@ if data_loaded:
             "📊 EDA Analizi",
             "📈 Risk Endeksi",
             "🔮 2040 Tahmin",
-            "🗺️ İzmir Risk Haritası",
+            "🗺️ Izmir Risk Haritasi",
             "🗺️ Mekânsal Analiz",
             "💡 Öneriler"
         ])
@@ -621,7 +621,7 @@ if data_loaded:
 # ════════════════════════════════
     # İZMİR RİSK HARİTASI
     # ════════════════════════════════
-elif sayfa == "🗺️ İzmir Risk Haritası":
+elif sayfa == "🗺️ Izmir Risk Haritasi":
         st.title("🗺️ İzmir İlçe Risk Haritası")
         st.write("Test - sayfa açıldı")
         try:
