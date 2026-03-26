@@ -621,30 +621,19 @@ if data_loaded:
 # ════════════════════════════════
     # İZMİR RİSK HARİTASI
     # ════════════════════════════════
-elif sayfa == "🗺️ Izmir Risk Haritasi":
-        st.title("🗺️ İzmir İlçe Risk Haritası")
-        st.write("Test - sayfa açıldı")
-        try:
-            geojson_data = load_geojson()
-            st.write("GeoJSON yüklendi")
-            st.write(geojson_data["features"][0]["properties"])
-        except Exception as e:
-            st.error(str(e))
-        st.title("🗺️ İzmir İlçe Risk Haritası")
-        st.markdown("Gerçek ilçe sınırları üzerinde risk skorları — yıl ve senaryo seçilebilir.")
+    elif sayfa == "Izmir Risk Haritasi":
+        st.title("İzmir İlçe Risk Haritası")
         st.divider()
 
         import json
-        import requests
 
-# GeoJSON URL — Türkiye ilçe sınırları
-        with open("izmir.geojson.json", "r", encoding="utf-8") as f:
-            geojson_data = json.load(f)
-
-@st.cache_data
-def load_geojson():
-    with open("izmir.geojson", "r", encoding="utf-8") as f:
-        return json.load(f)
+        try:
+            with open("izmir.geojson.json", "r", encoding="utf-8") as f:
+                geojson_data = json.load(f)
+            st.write("GeoJSON yüklendi — ilk özellikler:")
+            st.write(geojson_data["features"][0]["properties"])
+        except Exception as e:
+            st.error(f"Hata: {e}")
 
         col1, col2, col3 = st.columns(3)
         with col1:
