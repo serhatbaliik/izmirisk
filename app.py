@@ -629,9 +629,9 @@ if data_loaded:
         import json
         import requests
 
-        # GeoJSON URL — Türkiye ilçe sınırları
+# GeoJSON URL — Türkiye ilçe sınırları
         with open("izmir.geojson", "r", encoding="utf-8") as f:
-    geojson_data = json.load(f)
+            geojson_data = json.load(f)
 
         @st.cache_data
             r = requests.get(GEOJSON_URL, timeout=30)
