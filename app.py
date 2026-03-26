@@ -14,22 +14,109 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    .main { background-color: #f8fafc; }
-    .block-container { padding-top: 1.5rem; padding-bottom: 2rem; }
-    h1 { color: #1B4F72; font-size: 1.8rem; }
-    h2 { color: #1B4F72; font-size: 1.3rem; }
-    h3 { color: #2874A6; font-size: 1.1rem; }
-    .metric-card {
-        background: white;
-        border-radius: 10px;
-        padding: 1rem 1.2rem;
-        border: 1px solid #e2e8f0;
-        text-align: center;
+    /* Ana arka plan */
+    .stApp {
+        background: linear-gradient(135deg, #0a1628 0%, #0d2847 40%, #0a3060 100%);
     }
+    .main {
+        background: transparent;
+    }
+    .block-container {
+        padding-top: 1.5rem;
+        padding-bottom: 2rem;
+    }
+
+    /* Başlıklar */
+    h1 { color: #7ecef4 !important; font-size: 2rem !important; font-weight: 700 !important; }
+    h2 { color: #a8d8f0 !important; font-size: 1.3rem !important; }
+    h3 { color: #c5e8f7 !important; font-size: 1.1rem !important; }
+
+    /* Normal metin */
+    p, li, label { color: #d0e8f5 !important; }
+
+    /* Metric kartları */
+    [data-testid="metric-container"] {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(126,206,244,0.3);
+        border-radius: 12px;
+        padding: 1rem;
+        backdrop-filter: blur(10px);
+    }
+    [data-testid="metric-container"] label {
+        color: #7ecef4 !important;
+        font-size: 0.85rem !important;
+    }
+    [data-testid="metric-container"] [data-testid="stMetricValue"] {
+        color: #ffffff !important;
+        font-size: 1.6rem !important;
+    }
+    [data-testid="metric-container"] [data-testid="stMetricDelta"] {
+        color: #7ecef4 !important;
+    }
+
+    /* Sidebar */
+    [data-testid="stSidebar"] {
+        background: rgba(5, 20, 50, 0.95) !important;
+        border-right: 1px solid rgba(126,206,244,0.2);
+    }
+    [data-testid="stSidebar"] * { color: #c5e8f7 !important; }
+
+    /* Butonlar ve radio */
+    .stRadio label { color: #c5e8f7 !important; }
+    .stSlider label { color: #c5e8f7 !important; }
+
+    /* Tab */
+    .stTabs [data-baseweb="tab"] {
+        color: #7ecef4 !important;
+        background: rgba(255,255,255,0.05);
+        border-radius: 8px 8px 0 0;
+    }
+    .stTabs [aria-selected="true"] {
+        background: rgba(126,206,244,0.15) !important;
+        border-bottom: 2px solid #7ecef4 !important;
+    }
+
+    /* Divider */
+    hr { border-color: rgba(126,206,244,0.2) !important; }
+
+    /* Info/Success kutuları */
+    .stAlert {
+        background: rgba(126,206,244,0.1) !important;
+        border: 1px solid rgba(126,206,244,0.3) !important;
+        border-radius: 10px !important;
+        color: #d0e8f5 !important;
+    }
+
+    /* Dataframe */
+    [data-testid="stDataFrame"] {
+        background: rgba(255,255,255,0.05) !important;
+    }
+
+    /* Dalga animasyonu */
+    @keyframes wave {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    .wave-container {
+        position: relative;
+        width: 100%;
+        height: 6px;
+        overflow: hidden;
+        margin: 0.5rem 0;
+    }
+    .wave {
+        position: absolute;
+        width: 200%;
+        height: 100%;
+        background: linear-gradient(90deg,
+            transparent 0%, #7ecef4 20%, #4db8f0 40%,
+            transparent 50%, #7ecef4 70%, #4db8f0 90%, transparent 100%);
+        animation: wave 3s linear infinite;
+    }
+
     .risk-low { color: #2ca02c; font-weight: 600; }
     .risk-med { color: #ff7f0e; font-weight: 600; }
     .risk-high { color: #d62728; font-weight: 600; }
-    .stAlert { border-radius: 10px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -205,8 +292,23 @@ if data_loaded:
     # ANA SAYFA
     # ════════════════════════════════
     if sayfa == "🏠 Ana Sayfa":
-        st.title("💧 İzmir Su Güvenliği Risk Endeksi")
-        st.markdown("**2020–2023 verilerine dayanan entropy ağırlıklı bileşik risk analizi — 11 merkez ilçe**")
+        st.markdown("""
+        <div class="wave-container"><div class="wave"></div></div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style="text-align:center; padding: 2rem 0 1rem 0;">
+            <div style="font-size:3.5rem; margin-bottom:0.5rem;">💧</div>
+            <h1 style="color:#7ecef4; font-size:2.2rem; font-weight:700; margin:0;">
+                İzmir Su Güvenliği Risk Endeksi
+            </h1>
+            <p style="color:#a8d8f0; font-size:1rem; margin-top:0.5rem;">
+                Entropy Ağırlıklı Bileşik Risk Analizi &nbsp;·&nbsp; 11 Merkez İlçe &nbsp;·&nbsp; 2020–2040
+            </p>
+        </div>
+        <div class="wave-container"><div class="wave"></div></div>
+        """, unsafe_allow_html=True)
+
         st.divider()
 
         # KPI kartları
