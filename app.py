@@ -621,13 +621,14 @@ if data_loaded:
 # ════════════════════════════════
     # İZMİR RİSK HARİTASI
     # ════════════════════════════════
-    elif sayfa == "🗺️ İzmir Risk Haritası":
-try:
-    geojson_data = load_geojson()
-    isimler = [f.get("properties", {}) for f in geojson_data["features"][:5]]
-    st.write(isimler)
-except Exception as e:
-    st.error(str(e))
+elif sayfa == "🗺️ İzmir Risk Haritası":
+        st.title("🗺️ İzmir İlçe Risk Haritası")
+        try:
+            geojson_data = load_geojson()
+            isimler = [f.get("properties", {}) for f in geojson_data["features"][:5]]
+            st.write(isimler)
+        except Exception as e:
+            st.error(str(e))
         st.title("🗺️ İzmir İlçe Risk Haritası")
         st.markdown("Gerçek ilçe sınırları üzerinde risk skorları — yıl ve senaryo seçilebilir.")
         st.divider()
