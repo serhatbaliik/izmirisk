@@ -630,10 +630,10 @@ if data_loaded:
         import requests
 
         # GeoJSON URL — Türkiye ilçe sınırları
-        GEOJSON_URL = "https://raw.githubusercontent.com/alpers/Turkey-Maps-GeoJSON/master/tr-cities-utf8.json"
+        with open("izmir.geojson", "r", encoding="utf-8") as f:
+    geojson_data = json.load(f)
 
         @st.cache_data
-        def load_geojson():
             r = requests.get(GEOJSON_URL, timeout=30)
             return r.json()
 
@@ -674,7 +674,6 @@ if data_loaded:
         }
 
         try:
-            geojson_data = load_geojson()
 
             # İzmir ilçelerini filtrele
             izmir_features = []
