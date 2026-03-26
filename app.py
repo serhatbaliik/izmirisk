@@ -180,27 +180,25 @@ except Exception as e:
     st.error(f"Veri yüklenemedi: {e}")
 
 if data_loaded:
-
-    # ── Sidebar
     with st.sidebar:
         st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Izmir_seal.svg/200px-Izmir_seal.svg.png", width=80)
         st.title("💧 AquaRisk İzmir")
         st.caption("Su Güvenliği Risk Endeksi")
         st.divider()
 
-sayfa = st.radio("Sayfa seç:", [
-    "🏠 Ana Sayfa",
-    "📊 EDA Analizi",
-    "📈 Risk Endeksi",
-    "🔮 2040 Tahmin",
-    "🗺️ İzmir Risk Haritası",
-    "🗺️ Mekânsal Analiz",
-    "💡 Öneriler"
-])
+        sayfa = st.radio("Sayfa seç:", [
+            "🏠 Ana Sayfa",
+            "📊 EDA Analizi",
+            "📈 Risk Endeksi",
+            "🔮 2040 Tahmin",
+            "🗺️ İzmir Risk Haritası",
+            "🗺️ Mekânsal Analiz",
+            "💡 Öneriler"
+        ])
+
         st.divider()
         st.caption("Veri: İZSU (2020–2023)")
         st.caption("Yöntem: Entropy-WSRI, Mann-Kendall, LISA")
-
     # ════════════════════════════════
     # ANA SAYFA
     # ════════════════════════════════
