@@ -188,14 +188,15 @@ if data_loaded:
         st.caption("Su Güvenliği Risk Endeksi")
         st.divider()
 
-        sayfa = st.radio("Sayfa seç:", [
-            "🏠 Ana Sayfa",
-            "📊 EDA Analizi",
-            "📈 Risk Endeksi",
-            "🔮 2040 Tahmin",
-            "🗺️ Mekânsal Analiz",
-            "💡 Öneriler"
-        ])
+sayfa = st.radio("Sayfa seç:", [
+    "🏠 Ana Sayfa",
+    "📊 EDA Analizi",
+    "📈 Risk Endeksi",
+    "🔮 2040 Tahmin",
+    "🗺️ İzmir Risk Haritası",
+    "🗺️ Mekânsal Analiz",
+    "💡 Öneriler"
+])
         st.divider()
         st.caption("Veri: İZSU (2020–2023)")
         st.caption("Yöntem: Entropy-WSRI, Mann-Kendall, LISA")
