@@ -14,9 +14,14 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    /* Ana arka plan */
+    /* Ana arka plan — baraj/göl fotoğrafı */
     .stApp {
-        background: linear-gradient(135deg, #0a1628 0%, #0d2847 40%, #0a3060 100%);
+        background-image:
+            linear-gradient(rgba(5,20,50,0.72), rgba(5,20,50,0.72)),
+            url("https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
     }
     .main {
         background: transparent;
@@ -342,9 +347,9 @@ if data_loaded:
             fig.add_vline(x=40, line_dash="dot", line_color="orange", line_width=1.5)
             fig.add_vline(x=70, line_dash="dot", line_color="red", line_width=1.5)
             fig.update_layout(
-                plot_bgcolor="white", paper_bgcolor="white",
+                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                 height=380, margin=dict(t=20,b=20,l=10,r=60),
-                xaxis=dict(range=[0,80], gridcolor="#eee"),
+                xaxis=dict(range=[0,80], gridcolor="rgba(255,255,255,0.15)"),
                 yaxis=dict(autorange="reversed")
             )
             st.plotly_chart(fig, use_container_width=True)
@@ -360,7 +365,7 @@ if data_loaded:
                 hovertemplate="%{label}: %{value:.4f}<extra></extra>"
             ))
             fig2.update_layout(
-                plot_bgcolor="white", paper_bgcolor="white",
+                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                 height=280, margin=dict(t=20,b=20,l=10,r=10),
                 showlegend=True,
                 legend=dict(font=dict(size=10))
@@ -396,9 +401,9 @@ if data_loaded:
                 ))
             fig.add_hline(y=esik, line_dash="dash", line_color="orange",
                           annotation_text=f"Kritik eşik Q1: {esik:.1f}%")
-            fig.update_layout(plot_bgcolor="white",paper_bgcolor="white",
-                              height=380,xaxis=dict(tickvals=[2020,2021,2022,2023],gridcolor="#eee"),
-                              yaxis=dict(title="Doluluk (%)",gridcolor="#eee",range=[0,65]),
+            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                              height=380,xaxis=dict(tickvals=[2020,2021,2022,2023],gridcolor="rgba(255,255,255,0.15)"),
+                              yaxis=dict(title="Doluluk (%)",gridcolor="rgba(255,255,255,0.15)",range=[0,65]),
                               hovermode="x unified")
             st.plotly_chart(fig, use_container_width=True)
             st.caption(f"Kritik eşik veri temelli belirlendi: tüm doluluk değerlerinin alt çeyreği Q1 = %{esik:.1f}")
@@ -414,7 +419,7 @@ if data_loaded:
                 hovertemplate="İlçe: %{y}<br>Yıl: %{x}<br>%{z:.1f} m³/abone<extra></extra>",
                 colorbar=dict(title="m³/abone")
             ))
-            fig.update_layout(plot_bgcolor="white",paper_bgcolor="white",
+            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                               height=420,margin=dict(l=120))
             st.plotly_chart(fig, use_container_width=True)
 
@@ -427,9 +432,9 @@ if data_loaded:
             fig.add_trace(go.Bar(x=[2020,2021,2022,2023],
                 y=tablo2["Toplam_Üretim_m3"]/1e6, name="Toplam Üretim",
                 marker_color="#2ca02c", opacity=0.85))
-            fig.update_layout(plot_bgcolor="white",paper_bgcolor="white",
+            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                               barmode="group",height=380,
-                              yaxis=dict(title="Milyon m³",gridcolor="#eee"),
+                              yaxis=dict(title="Milyon m³",gridcolor="rgba(255,255,255,0.15)"),
                               hovermode="x unified")
             st.plotly_chart(fig, use_container_width=True)
 
@@ -459,9 +464,9 @@ if data_loaded:
                           annotation_text="Düşük/Orta sınırı")
             fig.add_hline(y=70,line_dash="dot",line_color="red",
                           annotation_text="Orta/Yüksek sınırı")
-            fig.update_layout(plot_bgcolor="white",paper_bgcolor="white",
+            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                               height=380,xaxis=dict(tickangle=30),
-                              yaxis=dict(range=[0,85],gridcolor="#eee"))
+                              yaxis=dict(range=[0,85],gridcolor="rgba(255,255,255,0.15)"))
             st.plotly_chart(fig, use_container_width=True)
 
         with col2:
@@ -475,7 +480,7 @@ if data_loaded:
                 hovertemplate="İlçe: %{y}<br>Yıl: %{x}<br>Risk: %{z:.1f}<extra></extra>",
                 colorbar=dict(title="Risk Skoru")
             ))
-            fig.update_layout(plot_bgcolor="white",paper_bgcolor="white",
+            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                               height=380,margin=dict(l=120))
             st.plotly_chart(fig, use_container_width=True)
 
@@ -516,9 +521,9 @@ if data_loaded:
             ))
             fig.add_hline(y=40,line_dash="dot",line_color="orange")
             fig.add_hline(y=70,line_dash="dot",line_color="red")
-            fig.update_layout(plot_bgcolor="white",paper_bgcolor="white",
+            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                               height=380,xaxis=dict(tickangle=30),
-                              yaxis=dict(range=[0,100],gridcolor="#eee"))
+                              yaxis=dict(range=[0,100],gridcolor="rgba(255,255,255,0.15)"))
             st.plotly_chart(fig, use_container_width=True)
 
         with col2:
@@ -551,9 +556,9 @@ if data_loaded:
             fig.add_vline(x=2023.5,line_dash="dash",line_color="gray",
                           annotation_text="Tahmin →")
             fig.update_layout(
-                plot_bgcolor="white",paper_bgcolor="white",height=380,
-                xaxis=dict(gridcolor="#eee",tickvals=list(range(2020,2041,5))),
-                yaxis=dict(title="Risk Skoru",gridcolor="#eee",range=[0,100]),
+                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",height=380,
+                xaxis=dict(gridcolor="rgba(255,255,255,0.15)",tickvals=list(range(2020,2041,5))),
+                yaxis=dict(title="Risk Skoru",gridcolor="rgba(255,255,255,0.15)",range=[0,100]),
                 hovermode="x unified"
             )
             st.plotly_chart(fig, use_container_width=True)
@@ -639,9 +644,9 @@ if data_loaded:
                 name=f"I={I_glob}",hoverinfo="skip"))
             fig.add_hline(y=0,line_color="gray",line_width=1)
             fig.add_vline(x=0,line_color="gray",line_width=1)
-            fig.update_layout(plot_bgcolor="white",paper_bgcolor="white",height=380,
-                xaxis=dict(title="Standardize Risk (z)",gridcolor="#eee"),
-                yaxis=dict(title="Mekânsal Lag (Wz)",gridcolor="#eee"))
+            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",height=380,
+                xaxis=dict(title="Standardize Risk (z)",gridcolor="rgba(255,255,255,0.15)"),
+                yaxis=dict(title="Mekânsal Lag (Wz)",gridcolor="rgba(255,255,255,0.15)"))
             st.plotly_chart(fig, use_container_width=True)
 
         with col2:
@@ -712,9 +717,9 @@ if data_loaded:
             fig.add_hline(y=40,line_dash="dot",line_color="orange")
             fig.add_hline(y=70,line_dash="dot",line_color="red")
             fig.add_vline(x=2023.5,line_dash="dash",line_color="gray")
-            fig.update_layout(plot_bgcolor="white",paper_bgcolor="white",height=280,
-                xaxis=dict(gridcolor="#eee"),
-                yaxis=dict(title="Risk Skoru",gridcolor="#eee",range=[0,100]),
+            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",height=280,
+                xaxis=dict(gridcolor="rgba(255,255,255,0.15)"),
+                yaxis=dict(title="Risk Skoru",gridcolor="rgba(255,255,255,0.15)",range=[0,100]),
                 hovermode="x unified",margin=dict(t=10))
             st.plotly_chart(fig, use_container_width=True)
 
