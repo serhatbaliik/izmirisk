@@ -620,3 +620,158 @@ sayfa = st.radio("Sayfa seç:", [
             recs = get_recommendation(ilce_sec, skor, sinif)
             for rec in recs:
                 st.markdown(f"• {rec}")
+# ════════════════════════════════
+    # İZMİR RİSK HARİTASI
+    # ════════════════════════════════
+    elif sayfa == "🗺️ İzmir Risk Haritası":
+        st.title("🗺️ İzmir İlçe Risk Haritası")
+        st.markdown("Gerçek ilçe sınırları üzerinde risk skorları — yıl ve senaryo seçilebilir.")
+        st.divider()
+
+        import json
+        import requests
+
+        # GeoJSON URL — Türkiye ilçe sınırları
+        GEOJSON_URL = "https://raw.githubusercontent.com/izzetkalic/geojsons-of-turkey/master/geojsons/turkey-admin-level-6.geojson"
+
+        @st.cache_data
+        def load_geojson():
+            r = requests.get(GEOJSON_URL, timeout=30)
+            return r.json()
+
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            harita_yil = st.slider("Yıl:", 2020, 2040, 2023, key="harita_yil")
+        with col2:
+            harita_senaryo = st.radio("Senaryo:", ["Baz","İyimser","Kötümser"],
+                                       horizontal=True, key="harita_senaryo")
+        with col3:
+            st.metric("Seçili Yıl", harita_yil)
+
+        # Risk skorlarını hesapla
+        def get_risk_score(ilce, yil, senaryo):
+            if yil <= 2023:
+                row = risk_df[(risk_df["İlçe"]==ilce) & (risk_df["Yıl"]==yil)]
+                if len(row) > 0:
+                    return float(row["Risk_Skor"].values[0])
+                return None
+            else:
+                row = tahmin_df[(tahmin_df["İlçe"]==ilce) & (tahmin_df["Yıl"]==yil)]
+                if len(row) > 0:
+                    return float(row[senaryo].values[0])
+                return None
+
+        ILCE_ESLESME = {
+            "Balçova": "BALÇOVA",
+            "Bayraklı": "BAYRAKLI",
+            "Bornova": "BORNOVA",
+            "Buca": "BUCA",
+            "Çiğli": "ÇİĞLİ",
+            "Gaziemir": "GAZİEMİR",
+            "Güzelbahçe": "GÜZELBAHÇE",
+            "Karabağlar": "KARABAĞLAR",
+            "Karşıyaka": "KARŞIYAKA",
+            "Konak": "KONAK",
+            "Narlıdere": "NARLIDERE",
+        }
+
+        try:
+            geojson_data = load_geojson()
+
+            # İzmir ilçelerini filtrele
+            izmir_features = []
+            for feature in geojson_data["features"]:
+                props = feature.get("properties", {})
+                name = props.get("name", "") or props.get("NAME_2", "") or props.get("ilce", "")
+                if name in ILCE_ESLESME:
+                    ilce_kodu = ILCE_ESLESME[name]
+                    skor = get_risk_score(ilce_kodu, harita_yil, harita_senaryo)
+                    feature["properties"]["risk_skor"] = skor if skor else 0
+                    feature["properties"]["ilce_adi"] = ilce_kodu
+                    feature["properties"]["risk_sinif"] = get_risk_label(skor) if skor else "Bilinmiyor"
+                    izmir_features.append(feature)
+
+            izmir_geojson = {"type": "FeatureCollection", "features": izmir_features}
+
+            # Skor tablosu
+            skor_listesi = []
+            for geo_isim, kod in ILCE_ESLESME.items():
+                skor = get_risk_score(kod, harita_yil, harita_senaryo)
+                if skor:
+                    skor_listesi.append({
+                        "İlçe": kod,
+                        "Risk Skoru": round(skor, 1),
+                        "Sınıf": get_risk_label(skor)
+                    })
+
+            skor_df = pd.DataFrame(skor_listesi).sort_values("Risk Skoru", ascending=False)
+
+            # Plotly choropleth haritası
+            fig_harita = go.Figure(go.Choropleth(
+                geojson=izmir_geojson,
+                locations=[f["properties"]["ilce_adi"] for f in izmir_features],
+                z=[f["properties"]["risk_skor"] for f in izmir_features],
+                featureidkey="properties.ilce_adi",
+                colorscale=[
+                    [0.0, "#2ca02c"],
+                    [0.4, "#2ca02c"],
+                    [0.4, "#ff7f0e"],
+                    [0.7, "#ff7f0e"],
+                    [0.7, "#d62728"],
+                    [1.0, "#d62728"],
+                ],
+                zmin=0, zmax=100,
+                colorbar=dict(
+                    title="Risk Skoru",
+                    tickvals=[20, 40, 55, 70, 85],
+                    ticktext=["20", "40 (Düşük/Orta)", "55", "70 (Orta/Yüksek)", "85"]
+                ),
+                hovertemplate="<b>%{location}</b><br>Risk Skoru: %{z:.1f}<extra></extra>"
+            ))
+
+            fig_harita.update_geos(
+                fitbounds="locations",
+                visible=False,
+                bgcolor="lightblue"
+            )
+            fig_harita.update_layout(
+                title=f"İzmir İlçe Risk Haritası — {harita_yil} ({harita_senaryo} Senaryo)",
+                height=550,
+                margin=dict(t=50, b=0, l=0, r=0),
+                paper_bgcolor="white",
+                geo=dict(
+                    showland=True,
+                    landcolor="#e8f4f8",
+                    showocean=True,
+                    oceancolor="#cce5f0",
+                    showcoastlines=True,
+                    coastlinecolor="white",
+                )
+            )
+            st.plotly_chart(fig_harita, use_container_width=True)
+
+            # Risk tablosu
+            col1, col2 = st.columns([2,1])
+            with col1:
+                st.subheader("İlçe Risk Sıralaması")
+                st.dataframe(skor_df, use_container_width=True, hide_index=True)
+            with col2:
+                st.subheader("Renk Açıklaması")
+                st.markdown("""
+                🟢 **Düşük Risk** (0–40)
+                Risk henüz kritik seviyede değil.
+
+                🟡 **Orta Risk** (40–70)
+                Dikkat ve önlem gerekiyor.
+
+                🔴 **Yüksek Risk** (70–100)
+                Acil müdahale gerekli.
+                """)
+                if harita_yil > 2023:
+                    st.info(f"📊 {harita_yil} yılı tahmini — {harita_senaryo} senaryo")
+                else:
+                    st.success(f"📊 {harita_yil} yılı gerçek veri")
+
+        except Exception as e:
+            st.error(f"Harita yüklenemedi: {e}")
+            st.info("GeoJSON verisi yüklenirken hata oluştu. Lütfen internet bağlantısını kontrol edin.")
