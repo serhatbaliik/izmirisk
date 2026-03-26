@@ -630,7 +630,7 @@ if data_loaded:
         import requests
 
         # GeoJSON URL — Türkiye ilçe sınırları
-        GEOJSON_URL = "https://raw.githubusercontent.com/izzetkalic/geojsons-of-turkey/master/geojsons/turkey-admin-level-6.geojson"
+        GEOJSON_URL = "https://raw.githubusercontent.com/alpers/Turkey-Maps-GeoJSON/master/tr-cities-utf8.json"
 
         @st.cache_data
         def load_geojson():
