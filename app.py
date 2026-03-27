@@ -1666,9 +1666,9 @@ if data_loaded:
             <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(56,209,227,0.2);
                         border-radius:10px;padding:1rem 1.2rem;margin:0.5rem 0;">
                 <div style="color:#a8d8f0;font-size:0.82rem;margin-bottom:0.5rem;">{aciklama}</div>
-                <div style="background:rgba(0,0,0,0.3);border-radius:6px;padding:0.6rem 1rem;
-                            font-family:monospace;color:#38d1e3;font-size:0.95rem;
-                            letter-spacing:0.5px;margin-bottom:0.5rem;">{formul}</div>
+                <div style="background:rgba(0,0,0,0.3);border-radius:6px;padding:0.8rem 1.2rem;
+                            font-family:'Times New Roman', serif;color:#38d1e3;font-size:1.05rem;
+                            letter-spacing:0.3px;margin-bottom:0.5rem;text-align:center;">{formul}</div>
                 <div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;">{yorum}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -1712,18 +1712,18 @@ if data_loaded:
         with col1:
             formul_kutusu(
                 "Adım 1 — Min-Max Normalizasyon: Farklı birimlerdeki göstergeler 0–1 arasına çekilir.",
-                "Z(x) = (x − x_min) / (x_max − x_min)",
+                "Z(x) = (x − x<sub>min</sub>) / (x<sub>max</sub> − x<sub>min</sub>)",
                 "Her gösterge için yüksek değer = yüksek risk yönünde normalize edildi."
             )
             formul_kutusu(
                 "Adım 2 — Entropy Ağırlıklandırma: Ağırlıklar araştırmacı tarafından değil, verinin kendi dağılımından hesaplanır.",
-                "E_j = −(1/ln n) × Σ p_ij × ln(p_ij)  →  w_j = (1−E_j) / Σ(1−E_j)",
+                "E<sub>j</sub> = −(1/ln n) × Σ<sub>i</sub> p<sub>ij</sub> · ln(p<sub>ij</sub>) &nbsp;→&nbsp; w<sub>j</sub> = (1 − E<sub>j</sub>) / Σ<sub>j</sub>(1 − E<sub>j</sub>)",
                 "İlçeler arası en fazla değişen gösterge en yüksek ağırlığı alır."
             )
         with col2:
             formul_kutusu(
                 "Adım 3 — Bileşik Risk Skoru (WSRI): Normalize göstergeler entropy ağırlıklarıyla toplanır.",
-                "Risk(i,t) = Σ w_j × Z_j(i,t)  × 100",
+                "Risk(i,t) = Σ<sub>j</sub> w<sub>j</sub> × Z<sub>j</sub>(i,t) × 100",
                 "Sonuç 0–100 arasında. 0–40 Düşük · 40–70 Orta · 70–100 Yüksek."
             )
             st.markdown("""
@@ -1746,13 +1746,13 @@ if data_loaded:
         with col1:
             formul_kutusu(
                 "Mann-Kendall: Serinin monoton trend içerip içermediğini test eder. Parametrik olmayan — normal dağılım gerektirmez.",
-                "S = Σ sgn(x_j − x_i)  →  τ = S / [n(n−1)/2]",
+                "S = Σ<sub>j>i</sub> sgn(x<sub>j</sub> − x<sub>i</sub>) &nbsp;→&nbsp; τ = S / [n(n−1)/2]",
                 "τ > 0 artan trend · τ < 0 azalan trend · p < 0.05 istatistiksel anlamlılık"
             )
         with col2:
             formul_kutusu(
                 "Sen's Slope: Trendin yıllık değişim büyüklüğünü hesaplar. Aykırı değerlerden etkilenmez.",
-                "β = median[(x_j − x_i) / (j − i)]",
+                "β = median [ (x<sub>j</sub> − x<sub>i</sub>) / (j − i) ] &nbsp;&nbsp; j > i",
                 "β = −7.2 → Tahtalı Barajı her yıl 7.2 puan doluluk kaybediyor."
             )
 
@@ -1762,13 +1762,13 @@ if data_loaded:
         with col1:
             formul_kutusu(
                 "Global Moran's I: Tüm sistem için mekânsal kümelenme skoru.",
-                "I = (n/S₀) × [Σᵢ Σⱼ wᵢⱼ(xᵢ−x̄)(xⱼ−x̄)] / Σᵢ(xᵢ−x̄)²",
+                "I = (n / S<sub>0</sub>) × [ Σ<sub>i</sub> Σ<sub>j</sub> w<sub>ij</sub>(x<sub>i</sub>−x̄)(x<sub>j</sub>−x̄) ] / Σ<sub>i</sub>(x<sub>i</sub>−x̄)<sup>2</sup>",
                 "I > 0 kümelenme var · I < 0 dağınık · Satır-normalize ağırlık matrisi kullanıldı."
             )
         with col2:
             formul_kutusu(
                 "Local Moran's I (LISA): Her ilçe için ayrı mekânsal skor.",
-                "Iᵢ = zᵢ × Σⱼ wᵢⱼ × zⱼ",
+                "I<sub>i</sub> = z<sub>i</sub> × Σ<sub>j</sub> w<sub>ij</sub> × z<sub>j</sub>",
                 "HH/LL = küme · HL/LH = mekânsal aykırı değer · 999 permütasyon testi uygulandı."
             )
 
@@ -1776,7 +1776,7 @@ if data_loaded:
         bolum("05", "PROJECTION MODEL", "2040 Projeksiyon Modeli")
         formul_kutusu(
             "Her ilçenin 2020–2023 abone büyüme oranı (CAGR) hesaplanır ve risk skoruna uygulanır.",
-            "Risk(i,t) = Risk(i,2023) × (1 + CAGR_i × k)^(t−2023)  →  k: 0.5 / 1.0 / 1.5",
+            "Risk(i,t) = Risk(i,2023) × (1 + CAGR<sub>i</sub> × k)<sup>t−2023</sup> &nbsp;→&nbsp; k ∈ {0.5, 1.0, 1.5}",
             "k=0.5 İyimser · k=1.0 Baz · k=1.5 Kötümser senaryo. Sonuç 0–100 arasında sınırlandırıldı."
         )
 
