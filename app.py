@@ -607,7 +607,6 @@ if data_loaded:
             font=dict(color="white", family="Arial"),
             xaxis=dict(tickvals=yillar, gridcolor="rgba(255,255,255,0.1)",
                        tickfont=dict(color="white")),
-            yaxis=dict(gridcolor="rgba(255,255,255,0.1)", tickfont=dict(color="white")),
             legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)"),
             hovermode="x unified",
             margin=dict(t=30,b=30,l=60,r=30)
@@ -640,7 +639,7 @@ if data_loaded:
                         line=dict(color=renk,width=2.5),
                         marker=dict(size=10, symbol=sembol),
                         fill="tozeroy",
-                        fillcolor="rgba(0,0,0,0)",
+                        fillcolor=renk.replace("#","rgba(").replace(")",",0.05)") if "#" in renk else renk,
                         hovertemplate=f"<b>{isim}</b>: %{{y:.1f}}%<extra></extra>"
                     ))
                 fig.add_hline(y=esik, line_dash="dash", line_color="#ff7f0e", line_width=1.5,
