@@ -172,6 +172,8 @@ def load_data():
         "Gördes_Üretim_m3":  gr(baraj_raw,"Gördes Barajı Üretimi"),
         "Toplam_Üretim_m3":  gr(baraj_raw,"Toplam Üretim"),
         "Sisteme_Giren_m3":  gr(baraj_raw,"Sisteme Giren"),
+        "Fiziki_Kayıp_%":    gr(baraj_raw,"Fiziki Kayıp"),
+        "İdari_Kayıp_%":     gr(baraj_raw,"İdari Kayıp"),
     })
     tablo2["Arz_Kısıtı"] = (1 - tablo2["Toplam_Üretim_m3"]/tablo2["Sisteme_Giren_m3"]).round(4)
 
