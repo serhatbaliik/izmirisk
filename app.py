@@ -381,6 +381,31 @@ if data_loaded:
             </style>""", unsafe_allow_html=True)
 
     sayfa = st.session_state.secili_sayfa
+
+    # Tema toggle
+    if "acik_tema" not in st.session_state:
+        st.session_state.acik_tema = False
+
+    _, tema_col = st.columns([10,1])
+    with tema_col:
+        if st.button("🌙" if not st.session_state.acik_tema else "☀️", key="tema_btn"):
+            st.session_state.acik_tema = not st.session_state.acik_tema
+            st.rerun()
+
+    if st.session_state.acik_tema:
+        st.markdown("""
+        <style>
+        .stApp {
+            background-image: linear-gradient(rgba(240,248,255,0.92),rgba(235,245,255,0.92)),
+                url("https://images.unsplash.com/photo-1527489377706-5bf97e608852?w=1600&q=80") !important;
+            background-size: cover; background-position: center top; background-attachment: fixed;
+        }
+        h1,h2,h3 { color: #0a3060 !important; }
+        p, li, label, div { color: #1a3a5c !important; }
+        [data-testid="stSidebar"] { background: rgba(220,240,255,0.95) !important; }
+        </style>
+        """, unsafe_allow_html=True)
+
     st.markdown("<hr style='border-color:rgba(56,209,227,0.15);margin:0.5rem 0 1rem 0;'>", unsafe_allow_html=True)
 
     # ════════════════════════════════
@@ -701,6 +726,74 @@ if data_loaded:
             </div>
             """, unsafe_allow_html=True)
 
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+
+        # ── Küresel Bağlam Kartı
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
+            <div>
+                <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;">03 · KÜRESEL BAĞLAM</div>
+                <div style="color:#ffffff;font-size:1.1rem;font-weight:600;">İzmir Dünya Genelinde Nerede?</div>
+            </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem;">
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(214,39,40,0.3);
+                        border-radius:10px;padding:0.9rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">
+                    Su Stresi Altındaki Nüfus</div>
+                <div style="color:#d62728;font-size:1.6rem;font-weight:700;">%40</div>
+                <div style="color:#a8d8f0;font-size:0.72rem;">Dünya geneli · WRI 2023</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,127,14,0.3);
+                        border-radius:10px;padding:0.9rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">
+                    2050 Su Talebi Artışı</div>
+                <div style="color:#ff7f0e;font-size:1.6rem;font-weight:700;">+25%</div>
+                <div style="color:#a8d8f0;font-size:0.72rem;">Küresel projeksiyon</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(56,209,227,0.3);
+                        border-radius:10px;padding:0.9rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">
+                    İzmir WSRI Ortalaması</div>
+                <div style="color:#38d1e3;font-size:1.6rem;font-weight:700;">43.5</div>
+                <div style="color:#a8d8f0;font-size:0.72rem;">11 ilçe · 2023 · Orta Risk</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(44,160,44,0.3);
+                        border-radius:10px;padding:0.9rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">
+                    Kayıp Oranı İyileşmesi</div>
+                <div style="color:#2ca02c;font-size:1.6rem;font-weight:700;">▼1.3%</div>
+                <div style="color:#a8d8f0;font-size:0.72rem;">2020→2023 · Olumlu trend</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # ── Paylaş Butonu
+        st.markdown("""
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-bottom:0.5rem;">
+            <button onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.textContent='Kopyalandı!';setTimeout(()=>{this.textContent='Linki Kopyala'},2000)})"
+                style="background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);
+                       color:#38d1e3;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:0.8rem;">
+                Linki Kopyala
+            </button>
+            <a href="https://twitter.com/intent/tweet?text=İzmir%20Su%20Güvenliği%20Risk%20Endeksi%20%7C%20Entropy%20ağırlıklı%20bileşik%20analiz%20%7C%202020-2040%20projeksiyonu&url=https://izmirisk.streamlit.app"
+               target="_blank"
+               style="background:rgba(29,161,242,0.1);border:1px solid rgba(29,161,242,0.3);
+                      color:#1da1f2;padding:6px 16px;border-radius:20px;cursor:pointer;
+                      font-size:0.8rem;text-decoration:none;">
+                Twitter/X'te Paylaş
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://izmirisk.streamlit.app"
+               target="_blank"
+               style="background:rgba(0,119,181,0.1);border:1px solid rgba(0,119,181,0.3);
+                      color:#0077b5;padding:6px 16px;border-radius:20px;cursor:pointer;
+                      font-size:0.8rem;text-decoration:none;">
+                LinkedIn'de Paylaş
+            </a>
+        </div>
+        """, unsafe_allow_html=True)
+
     # ════════════════════════════════
     # EDA ANALİZİ
     # ════════════════════════════════
@@ -989,6 +1082,56 @@ if data_loaded:
                 "#2ca02c"
             )
 
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
+            <div>
+                <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;">05 · VAKA ANALİZİ</div>
+                <div style="color:#ffffff;font-size:1.1rem;font-weight:600;">Öne Çıkan Olaylar & Dönüm Noktaları</div>
+            </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+            <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);
+                        border-radius:10px;padding:1rem;">
+                <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:6px;">
+                    2022 · GÖRDES ÇÖKÜŞÜ</div>
+                <div style="color:#ffffff;font-size:0.9rem;font-weight:600;margin-bottom:6px;">
+                    Baraj üretimi dramatik düştü</div>
+                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
+                    Gördes Barajı 2022 yılında kritik düşüş yaşadı. Toplam sistem üretimi
+                    bir önceki yıla göre belirgin şekilde geriledi. Arz kısıtı göstergesi
+                    bu yıl en yüksek değerine ulaştı.
+                </div>
+            </div>
+            <div style="background:rgba(255,127,14,0.07);border:1px solid rgba(255,127,14,0.25);
+                        border-radius:10px;padding:1rem;">
+                <div style="color:#ff7f0e;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:6px;">
+                    2020–2023 · KAYIP AZALMASI</div>
+                <div style="color:#ffffff;font-size:0.9rem;font-weight:600;margin-bottom:6px;">
+                    Su kayıpları istikrarlı düştü</div>
+                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
+                    4 yıl boyunca su kayıp oranı sürekli azaldı. Mann-Kendall testi
+                    tau=−1.00 ile mükemmel azalan trend belirledi. Bu İZSU altyapı
+                    yatırımlarının somut bir sonucu olarak yorumlanabilir.
+                </div>
+            </div>
+            <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.25);
+                        border-radius:10px;padding:1rem;">
+                <div style="color:#38d1e3;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:6px;">
+                    2023 · GAZİEMİR AYRIŞMASI</div>
+                <div style="color:#ffffff;font-size:0.9rem;font-weight:600;margin-bottom:6px;">
+                    İzole yüksek risk: HL küme</div>
+                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
+                    Gaziemir yüksek risk skoru ile komşularından belirgin biçimde ayrıştı.
+                    LISA analizi HL (yüksek-düşük) sınıflandırdı: Local I=−1.74.
+                    Hızlı nüfus artışı ve yüksek abone tüketimi temel etkenler.
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
     # ════════════════════════════════
     # RİSK ENDEKSİ
     # ════════════════════════════════
@@ -1015,8 +1158,15 @@ if data_loaded:
         """, unsafe_allow_html=True)
 
         # Yıl seçici
-        yil_sec = st.slider("Yıl seç:", 2020, 2023, 2023)
+        col_f1, col_f2 = st.columns([3,1])
+        with col_f1:
+            yil_sec = st.slider("Yıl seç:", 2020, 2023, 2023)
+        with col_f2:
+            arama = st.text_input("İlçe ara:", placeholder="örn. GAZİEMİR")
+
         df_yil = risk_df[risk_df["Yıl"]==yil_sec].sort_values("Risk_Skor", ascending=False)
+        if arama:
+            df_yil = df_yil[df_yil["İlçe"].str.contains(arama.upper(), na=False)]
 
         # Bölüm 1 — Risk skorları ve ısı haritası
         st.markdown("""
@@ -2144,3 +2294,26 @@ if data_loaded:
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+        bolum("07", "FAQ", "Sıkça Sorulan Sorular")
+
+        sss_listesi = [
+            ("Risk skoru 58 ne anlama geliyor?",
+             "0–100 arasındaki bu skor, 4 farklı su güvenliği göstergesinin entropy ağırlıklı ortalamasıdır. 40–70 arası <b>Orta Risk</b> anlamına gelir — dikkat gerekiyor ama acil müdahale düzeyinde değil."),
+            ("Neden 4 gösterge seçildi?",
+             "Talep, arz kısıtı, tüketim artışı ve kayıp oranı — bu 4 gösterge İZSU açık verisinde yıllık olarak mevcut ve su güvenliğini doğrudan etkileyen değişkenlerdir. Eksik veri nedeniyle su kalitesi ve iklim verileri modele dahil edilemedi."),
+            ("Entropy ağırlıklandırma neden tercih edildi?",
+             "Araştırmacının ağırlıkları öznel biçimde belirlemesini önler. Her göstergenin ağırlığını veri kendi dağılımıyla belirler. İlçeler arasında en fazla değişen gösterge en yüksek ağırlığı alır. Bu yöntem literatürde yaygın kabul görmüş nesnel bir yaklaşımdır."),
+            ("2040 projeksiyonu neden 3 senaryoya ayrıldı?",
+             "Tek bir projeksiyon belirsizliği gizler. İyimser (CAGR×0.5) tasarruf politikalarını, Baz (CAGR×1.0) mevcut trendi, Kötümser (CAGR×1.5) hızlı kentleşme ve kuraklık senaryolarını temsil eder."),
+            ("Mann-Kendall p>0.05 çıktı, sonuçlar geçersiz mi?",
+             "Hayır. n=4 yıllık veri ile istatistiksel anlamlılık eşiğine ulaşmak matematiksel olarak güçtür. Tau ve Sen's Slope değerleri yine de trend <b>yönü ve büyüklüğü</b> için gösterge niteliğindedir. Bu sınırlılık metodoloji bölümünde açıkça belirtilmiştir."),
+            ("Komşuluk matrisi nasıl belirlendi?",
+             "İzmir 11 merkez ilçesinin coğrafi sınırları CBS kaynaklarından kontrol edilerek her ilçenin fiziksel olarak hangi ilçelerle sınır paylaştığı manuel olarak tanımlandı. Matrisin simetrisi doğrulandı."),
+        ]
+
+        for soru, cevap in sss_listesi:
+            with st.expander(f"❓ {soru}"):
+                st.markdown(f"<div style='color:#d0e8f5;font-size:0.88rem;line-height:1.7;'>{cevap}</div>",
+                            unsafe_allow_html=True)
