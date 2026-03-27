@@ -6,7 +6,7 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 
 st.set_page_config(
-    page_title="İzmiRisk",
+    page_title="AquaRisk İzmir",
     page_icon="💧",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -302,7 +302,25 @@ try:
     data_loaded = True
 except Exception as e:
     data_loaded = False
-    st.error(f"Veri yüklenemedi: {e}")
+    st.markdown(f"""
+    <div style="text-align:center;padding:4rem 2rem;">
+        <div style="font-size:4rem;margin-bottom:1rem;">💧</div>
+        <div style="color:#38d1e3;font-size:1.4rem;font-weight:700;margin-bottom:0.5rem;">
+            Veri Yüklenemedi
+        </div>
+        <div style="color:#a8d8f0;font-size:0.9rem;margin-bottom:1.5rem;max-width:400px;
+                    display:inline-block;line-height:1.6;">
+            Veri dosyaları bulunamadı veya okunamadı.<br>
+            ilce.xlsx ve baraj.xlsx dosyalarının repoda olduğundan emin olun.
+        </div>
+        <div style="background:rgba(214,39,40,0.1);border:1px solid rgba(214,39,40,0.3);
+                    border-radius:10px;padding:0.8rem 1.2rem;display:inline-block;">
+            <span style="color:#d62728;font-size:0.82rem;font-family:monospace;">
+                Hata: {e}
+            </span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 if data_loaded:
 
@@ -311,7 +329,7 @@ if data_loaded:
     <div style="display:flex;align-items:center;gap:16px;padding:12px 0 8px 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1rem;">
         <span style="font-size:1.8rem;">💧</span>
         <div>
-            <div style="color:#38d1e3;font-size:1.1rem;font-weight:700;">İzmiRisk</div>
+            <div style="color:#38d1e3;font-size:1.1rem;font-weight:700;">AquaRisk İzmir</div>
             <div style="color:#a8d8f0;font-size:0.75rem;">Su Güvenliği Risk Endeksi · İZSU 2020–2023</div>
         </div>
     </div>
@@ -395,13 +413,87 @@ if data_loaded:
         </div>
         """, unsafe_allow_html=True)
 
-        # ── KPI Kartları — özel HTML
+        # ── Veri hesapla
         df23 = risk_df[risk_df["Yıl"]==2023].sort_values("Risk_Skor", ascending=False)
         en_riskli = df23.iloc[0]
         en_az = df23.iloc[-1]
         orta_sayi = len(df23[df23["Risk_Sınıf"]=="Orta Risk"])
         dusuk_sayi = len(df23[df23["Risk_Sınıf"]=="Düşük Risk"])
         tahtali = tablo2[tablo2["Yıl"]==2023]["Tahtalı_Doluluk_%"].values[0]
+        toplam_tuketim = int(tablo1[tablo1["Yıl"]==2023]["Tüketim_m3"].sum() / 1e6)
+        kayip_oran = float(tablo2[tablo2["Yıl"]==2023]["Su_Kayıp_Oranı_%"].values[0])
+        en_riskli_skor = float(en_riskli["Risk_Skor"])
+
+        # ── Animasyonlu Sayaçlar
+        st.markdown(f"""
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;">
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(56,209,227,0.2);
+                        border-radius:12px;padding:1.2rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;
+                            text-transform:uppercase;margin-bottom:8px;">Toplam Tüketim 2023</div>
+                <div style="color:#38d1e3;font-size:2.4rem;font-weight:700;
+                            font-variant-numeric:tabular-nums;" id="cnt1">0</div>
+                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">milyon m³</div>
+                <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
+                    <div id="bar1" style="height:100%;width:0%;background:#38d1e3;border-radius:2px;
+                                          transition:width 2s ease;"></div>
+                </div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(214,39,40,0.3);
+                        border-radius:12px;padding:1.2rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;
+                            text-transform:uppercase;margin-bottom:8px;">En Yüksek Risk Skoru</div>
+                <div style="color:#d62728;font-size:2.4rem;font-weight:700;
+                            font-variant-numeric:tabular-nums;" id="cnt2">0</div>
+                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">{en_riskli["İlçe"]} · Orta Risk</div>
+                <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
+                    <div id="bar2" style="height:100%;width:0%;background:#d62728;border-radius:2px;
+                                          transition:width 2s ease;"></div>
+                </div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,127,14,0.3);
+                        border-radius:12px;padding:1.2rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;
+                            text-transform:uppercase;margin-bottom:8px;">Su Kayıp Oranı 2023</div>
+                <div style="color:#ff7f0e;font-size:2.4rem;font-weight:700;
+                            font-variant-numeric:tabular-nums;" id="cnt3">0</div>
+                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">% · sistem geneli</div>
+                <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
+                    <div id="bar3" style="height:100%;width:0%;background:#ff7f0e;border-radius:2px;
+                                          transition:width 2s ease;"></div>
+                </div>
+            </div>
+        </div>
+        <script>
+        (function() {{
+            function animCount(id, target, decimals, duration) {{
+                var el = document.getElementById(id);
+                if (!el) return;
+                var start = 0, step = target / (duration / 16);
+                var timer = setInterval(function() {{
+                    start += step;
+                    if (start >= target) {{ start = target; clearInterval(timer); }}
+                    el.textContent = decimals > 0 ? start.toFixed(decimals) : Math.round(start).toLocaleString('tr-TR');
+                }}, 16);
+            }}
+            setTimeout(function() {{
+                animCount('cnt1', {toplam_tuketim}, 0, 1800);
+                animCount('cnt2', {en_riskli_skor:.1f}, 1, 1800);
+                animCount('cnt3', {kayip_oran:.2f}, 2, 1800);
+                setTimeout(function() {{
+                    var b1 = document.getElementById('bar1');
+                    var b2 = document.getElementById('bar2');
+                    var b3 = document.getElementById('bar3');
+                    if(b1) b1.style.width = '{min(toplam_tuketim/300*100, 100):.0f}%';
+                    if(b2) b2.style.width = '{en_riskli_skor:.0f}%';
+                    if(b3) b3.style.width = '{kayip_oran*3:.0f}%';
+                }}, 100);
+            }}, 400);
+        }})();
+        </script>
+        """, unsafe_allow_html=True)
+
+        # ── KPI Kartları — özel HTML
 
         k1,k2,k3,k4,k5 = st.columns(5)
         kartlar = [
@@ -534,6 +626,49 @@ if data_loaded:
             st.plotly_chart(fig, use_container_width=True)
 
         with col2:
+            # Gradient progress bar — risk sıralaması
+            st.markdown("""
+            <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;
+                        text-transform:uppercase;margin-bottom:0.8rem;">
+                RISK SIRASI · GRADIENT BAR</div>
+            """, unsafe_allow_html=True)
+
+            progress_html = ""
+            for _, row in df23.iterrows():
+                s = row["Risk_Skor"]
+                ilce = row["İlçe"]
+                sinif = str(row["Risk_Sınıf"])
+                if s < 40:
+                    bar_color = "#2ca02c"
+                    badge_bg = "rgba(44,160,44,0.2)"
+                    badge_color = "#2ca02c"
+                elif s < 70:
+                    bar_color = "linear-gradient(90deg,#2ca02c,#ff7f0e)"
+                    badge_bg = "rgba(255,127,14,0.2)"
+                    badge_color = "#ff7f0e"
+                else:
+                    bar_color = "linear-gradient(90deg,#ff7f0e,#d62728)"
+                    badge_bg = "rgba(214,39,40,0.2)"
+                    badge_color = "#d62728"
+
+                progress_html += f"""
+                <div style="margin-bottom:10px;">
+                    <div style="display:flex;justify-content:space-between;
+                                align-items:center;margin-bottom:3px;">
+                        <span style="color:white;font-size:0.82rem;font-weight:600;">{ilce}</span>
+                        <span style="background:{badge_bg};color:{badge_color};
+                                     font-size:0.7rem;padding:2px 8px;border-radius:20px;">
+                            {s:.1f}</span>
+                    </div>
+                    <div style="height:5px;background:rgba(255,255,255,0.1);border-radius:3px;">
+                        <div style="height:100%;width:{s}%;background:{bar_color};
+                                    border-radius:3px;"></div>
+                    </div>
+                </div>"""
+
+            st.markdown(progress_html, unsafe_allow_html=True)
+
+            st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
             labels = ["Kayıp Oranı","Talep","Arz Kısıtı","Artış"]
             fig2 = go.Figure(go.Pie(
                 labels=labels, values=W.round(4), hole=0.5,
