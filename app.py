@@ -17,7 +17,7 @@ st.markdown("""
     /* Ana arka plan — Tahtalı Barajı havadan görünüm */
     .stApp {
         background-image:
-            linear-gradient(rgba(3,12,35,0.65), rgba(4,18,50,0.68)),
+            linear-gradient(rgba(3,12,35,0.82), rgba(4,18,50,0.85)),
             url("https://images.unsplash.com/photo-1527489377706-5bf97e608852?w=1600&q=80");
         background-size: cover;
         background-position: center top;
