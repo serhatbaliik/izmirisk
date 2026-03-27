@@ -981,69 +981,165 @@ if data_loaded:
     # ════════════════════════════════
     elif sayfa == "🔮 2040 Tahmin":
 
-        st.title("🔮 2040 Yılı Risk Projeksiyonu")
-        st.divider()
+        st.markdown("""
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(126,206,244,0.2);
+                    margin-bottom:1.5rem;">
+            <div style="display:inline-block;background:rgba(126,206,244,0.1);
+                        border:1px solid rgba(126,206,244,0.3);border-radius:50px;
+                        padding:4px 16px;margin-bottom:0.8rem;">
+                <span style="color:#7ecef4;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
+                    SCENARIO PROJECTION · 2024–2040
+                </span>
+            </div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
+                2040 Yılı Risk Projeksiyonu
+            </div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">
+                Abone büyüme oranı (CAGR) bazlı 3 senaryo · İyimser · Baz · Kötümser
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-        senaryo = st.radio("Senaryo:", ["Baz","İyimser","Kötümser"], horizontal=True)
-        hedef_yil = st.slider("Hedef yıl:", 2024, 2040, 2030)
+        c1, c2, c3 = st.columns([2,2,1])
+        with c1:
+            hedef_yil = st.slider("Hedef yıl:", 2024, 2040, 2030)
+        with c2:
+            senaryo = st.radio("Senaryo:", ["Baz","İyimser","Kötümser"], horizontal=True)
+        with c3:
+            st.markdown(f"""
+            <div style="background:rgba(126,206,244,0.1);border-radius:8px;
+                        padding:0.6rem;text-align:center;margin-top:0.3rem;">
+                <div style="color:#7ecef4;font-size:0.7rem;">Hedef</div>
+                <div style="color:white;font-size:1.4rem;font-weight:700;">{hedef_yil}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-        df_hedef = tahmin_df[tahmin_df["Yıl"]==hedef_yil].sort_values(senaryo,ascending=False)
-        colors = [get_risk_color(s) for s in df_hedef[senaryo]]
+        df_hedef = tahmin_df[tahmin_df["Yıl"]==hedef_yil].sort_values(senaryo, ascending=False)
 
-        col1, col2 = st.columns(2)
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin:1rem 0 0.8rem 0;">
+            <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+                        border-radius:2px;"></div>
+            <div>
+                <div style="color:#7ecef4;font-size:0.68rem;letter-spacing:2px;">01 · PROJECTED SCORES</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
+                    İlçe Risk Skorları & Projeksiyon Trendi</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
+        col1, col2 = st.columns([3,2])
         with col1:
-            st.subheader(f"{hedef_yil} Yılı — {senaryo} Senaryo")
+            colors = [get_risk_color(s) for s in df_hedef[senaryo]]
             fig = go.Figure(go.Bar(
                 x=df_hedef["İlçe"], y=df_hedef[senaryo],
-                marker_color=colors, opacity=0.85,
-                text=df_hedef[senaryo].round(1),
+                marker=dict(color=colors, opacity=0.85,
+                            line=dict(color="rgba(255,255,255,0.1)", width=0.5)),
+                text=[f"{s:.1f}" for s in df_hedef[senaryo]],
                 textposition="outside",
-                hovertemplate="%{x}: %{y:.1f}<extra></extra>"
+                textfont=dict(color="white", size=11),
+                hovertemplate="<b>%{x}</b><br>%{y:.1f}<extra></extra>"
             ))
-            fig.add_hline(y=40,line_dash="dot",line_color="orange")
-            fig.add_hline(y=70,line_dash="dot",line_color="red")
-            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                              height=380,xaxis=dict(tickangle=30),
-                              yaxis=dict(range=[0,100],gridcolor="rgba(255,255,255,0.15)"))
+            fig.add_hline(y=40, line_dash="dot", line_color="#ff7f0e", line_width=1.5,
+                          annotation_text="Orta Risk", annotation_font_color="#ff7f0e",
+                          annotation_font_size=10)
+            fig.add_hline(y=70, line_dash="dot", line_color="#d62728", line_width=1.5,
+                          annotation_text="Yüksek Risk", annotation_font_color="#d62728",
+                          annotation_font_size=10)
+            fig.update_layout(
+                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                height=380, font=dict(color="white"),
+                xaxis=dict(tickangle=30, gridcolor="rgba(255,255,255,0.08)",
+                           tickfont=dict(color="white")),
+                yaxis=dict(range=[0,100], gridcolor="rgba(255,255,255,0.08)",
+                           tickfont=dict(color="white")),
+                margin=dict(t=30,b=60,l=40,r=60)
+            )
             st.plotly_chart(fig, use_container_width=True)
 
         with col2:
-            st.subheader("Projeksiyon Trendi")
             ilce_sec = st.selectbox("İlçe seç:", sorted(tahmin_df["İlçe"].unique()))
-
             hist = risk_df[risk_df["İlçe"]==ilce_sec].sort_values("Yıl")
             pred = tahmin_df[tahmin_df["İlçe"]==ilce_sec].sort_values("Yıl")
+            renk_ilce = get_risk_color(pred[pred["Yıl"]==hedef_yil][senaryo].values[0])
 
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(
+            fig2 = go.Figure()
+            fig2.add_trace(go.Scatter(
                 x=hist["Yıl"], y=hist["Risk_Skor"],
                 mode="lines+markers", name="Gerçek veri",
-                line=dict(color="#1B4F72",width=2.5), marker=dict(size=8)
+                line=dict(color="#7ecef4", width=2.5),
+                marker=dict(size=8, color="#7ecef4")
             ))
-            fig.add_trace(go.Scatter(
+            fig2.add_trace(go.Scatter(
                 x=pred["Yıl"], y=pred[senaryo],
                 mode="lines", name=f"{senaryo} senaryo",
-                line=dict(color="#d62728",width=2,dash="dash")
+                line=dict(color=renk_ilce, width=2, dash="dash")
             ))
-            fig.add_trace(go.Scatter(
+            fig2.add_trace(go.Scatter(
                 x=list(pred["Yıl"])+list(pred["Yıl"])[::-1],
                 y=list(pred["Kötümser"])+list(pred["İyimser"])[::-1],
-                fill="toself", fillcolor="rgba(214,39,40,0.1)",
+                fill="toself", fillcolor="rgba(214,39,40,0.08)",
                 line=dict(color="rgba(0,0,0,0)"),
                 name="Senaryo bandı", hoverinfo="skip"
             ))
-            fig.add_hline(y=40,line_dash="dot",line_color="orange")
-            fig.add_hline(y=70,line_dash="dot",line_color="red")
-            fig.add_vline(x=2023.5,line_dash="dash",line_color="gray",
-                          annotation_text="Tahmin →")
-            fig.update_layout(
-                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",height=380,
-                xaxis=dict(gridcolor="rgba(255,255,255,0.15)",tickvals=list(range(2020,2041,5))),
-                yaxis=dict(title="Risk Skoru",gridcolor="rgba(255,255,255,0.15)",range=[0,100]),
-                hovermode="x unified"
+            fig2.add_hline(y=40, line_dash="dot", line_color="#ff7f0e", line_width=1)
+            fig2.add_hline(y=70, line_dash="dot", line_color="#d62728", line_width=1)
+            fig2.add_vline(x=2023.5, line_dash="dash", line_color="rgba(255,255,255,0.3)",
+                           annotation_text="Tahmin →",
+                           annotation_font_color="rgba(255,255,255,0.5)",
+                           annotation_font_size=10)
+            fig2.update_layout(
+                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                height=380, font=dict(color="white"),
+                xaxis=dict(gridcolor="rgba(255,255,255,0.08)",
+                           tickvals=list(range(2020,2041,5)),
+                           tickfont=dict(color="white")),
+                yaxis=dict(title="Risk Skoru", range=[0,100],
+                           gridcolor="rgba(255,255,255,0.08)",
+                           tickfont=dict(color="white")),
+                legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)"),
+                hovermode="x unified",
+                margin=dict(t=10,b=30,l=50,r=20)
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig2, use_container_width=True)
+
+        # 2040 özet tablosu
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
+            <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+                        border-radius:2px;"></div>
+            <div>
+                <div style="color:#7ecef4;font-size:0.68rem;letter-spacing:2px;">02 · SCENARIO SUMMARY</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
+                    3 Senaryo Karşılaştırması — {}</div>
+            </div>
+        </div>
+        """.format(hedef_yil), unsafe_allow_html=True)
+
+        df2040 = tahmin_df[tahmin_df["Yıl"]==hedef_yil].sort_values("Baz", ascending=False)
+        fig3 = go.Figure()
+        for s_isim, s_renk, s_op in [("Kötümser","#d62728",0.7),
+                                       ("Baz","#ff7f0e",0.85),
+                                       ("İyimser","#2ca02c",0.7)]:
+            fig3.add_trace(go.Bar(
+                x=df2040["İlçe"], y=df2040[s_isim],
+                name=s_isim, marker=dict(color=s_renk, opacity=s_op),
+                hovertemplate=f"{s_isim}: %{{y:.1f}}<extra></extra>"
+            ))
+        fig3.add_hline(y=40, line_dash="dot", line_color="#ff7f0e", line_width=1.5)
+        fig3.add_hline(y=70, line_dash="dot", line_color="#d62728", line_width=1.5)
+        fig3.update_layout(
+            plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+            barmode="group", height=360, font=dict(color="white"),
+            xaxis=dict(tickangle=30, gridcolor="rgba(255,255,255,0.08)",
+                       tickfont=dict(color="white")),
+            yaxis=dict(range=[0,100], gridcolor="rgba(255,255,255,0.08)",
+                       tickfont=dict(color="white"), title="Risk Skoru"),
+            legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)",
+                        orientation="h", y=1.08),
+            margin=dict(t=40,b=60,l=50,r=30)
+        )
+        st.plotly_chart(fig3, use_container_width=True)
 
     # ════════════════════════════════
     # MEKÂNSAL ANALİZ
@@ -1246,19 +1342,43 @@ if data_loaded:
             """, unsafe_allow_html=True)
 
     elif sayfa == "Izmir Risk Haritasi":
-        st.title("İzmir İlçe Risk Haritası")
-        st.markdown("İlçe üzerine gel — risk skoru, sınıf ve yıl bilgisi görünür.")
-        st.divider()
+
+        st.markdown("""
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(126,206,244,0.2);
+                    margin-bottom:1.5rem;">
+            <div style="display:inline-block;background:rgba(126,206,244,0.1);
+                        border:1px solid rgba(126,206,244,0.3);border-radius:50px;
+                        padding:4px 16px;margin-bottom:0.8rem;">
+                <span style="color:#7ecef4;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
+                    INTERACTIVE RISK MAP · İZMİR
+                </span>
+            </div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
+                İzmir İlçe Risk Haritası
+            </div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">
+                İlçe üzerine gel → risk skoru, sınıf ve yıl bilgisi · Yıl ve senaryo seçilebilir
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
         import folium
         from streamlit_folium import st_folium
 
-        col1, col2 = st.columns(2)
-        with col1:
+        c1, c2, c3 = st.columns([3,2,1])
+        with c1:
             harita_yil = st.slider("Yıl:", 2020, 2040, 2023, key="harita_yil")
-        with col2:
+        with c2:
             harita_senaryo = st.radio("Senaryo:", ["Baz","İyimser","Kötümser"],
                                       horizontal=True, key="harita_senaryo")
+        with c3:
+            st.markdown(f"""
+            <div style="background:rgba(126,206,244,0.1);border-radius:8px;
+                        padding:0.6rem;text-align:center;margin-top:0.3rem;">
+                <div style="color:#7ecef4;font-size:0.7rem;">Seçili Yıl</div>
+                <div style="color:white;font-size:1.4rem;font-weight:700;">{harita_yil}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
         ILCE_KOORD = {
             "BALÇOVA":    (38.3850, 27.0500),
