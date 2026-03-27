@@ -311,7 +311,7 @@ if data_loaded:
     <div style="display:flex;align-items:center;gap:16px;padding:12px 0 8px 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1rem;">
         <span style="font-size:1.8rem;">💧</span>
         <div>
-            <div style="color:#38d1e3;font-size:1.1rem;font-weight:700;">AquaRisk İzmir</div>
+            <div style="color:#38d1e3;font-size:1.1rem;font-weight:700;">İzmiRisk</div>
             <div style="color:#a8d8f0;font-size:0.75rem;">Su Güvenliği Risk Endeksi · İZSU 2020–2023</div>
         </div>
     </div>
