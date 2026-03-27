@@ -1123,6 +1123,193 @@ if data_loaded:
                 </div>
                 """, unsafe_allow_html=True)
 
+        # ── Bölüm 3: Radar + Karşılaştırma
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
+            <div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">03 · RADAR & COMPARISON</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">İlçe Radar Profili & Karşılaştırma</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        col_r, col_k = st.columns(2)
+
+        with col_r:
+            st.caption("Radar — Risk Bileşen Profili")
+            df_r = risk_df[risk_df["İlçe"]==ilce_sec].sort_values("Yıl")
+            df_r23 = risk_df[risk_df["Yıl"]==2023]
+            row = risk_df[(risk_df["İlçe"]==ilce_sec)&(risk_df["Yıl"]==2023)].iloc[0]
+            def minmax_col(col): mn,mx = df_r23[col].min(),df_r23[col].max(); return 0 if mx==mn else (row[col]-mn)/(mx-mn)
+            vals = [minmax_col("AbbTuketim"), minmax_col("Artis"), minmax_col("Arz_Kısıtı"), minmax_col("Su_Kayıp_Oranı_%")]
+            cats = ["Talep","Artış","Arz","Kayıp"]
+                        fig_r = go.Figure(go.Scatterpolar(
+                r=vals+[vals[0]], theta=cats+[cats[0]],
+                fill="toself", fillcolor=f"rgba(56,209,227,0.15)",
+                line=dict(color="#38d1e3", width=2),
+                marker=dict(size=6, color="#38d1e3"),
+                hovertemplate="%{theta}: %{r:.2f}<extra></extra>"
+            ))
+            fig_r.update_layout(
+                polar=dict(
+                    bgcolor="rgba(0,0,0,0)",
+                    radialaxis=dict(range=[0,1], showticklabels=False, gridcolor="rgba(255,255,255,0.15)"),
+                    angularaxis=dict(tickfont=dict(color="white", size=11), gridcolor="rgba(255,255,255,0.15)")
+                ),
+                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                height=300, margin=dict(t=20,b=20,l=40,r=40),
+                showlegend=False
+            )
+            st.plotly_chart(fig_r, use_container_width=True)
+
+        with col_k:
+            st.caption("Karşılaştırma — İki İlçe")
+            ilce_list = sorted(risk_df["İlçe"].unique().tolist())
+            diger = [i for i in ilce_list if i != ilce_sec]
+            karsi_ilce = st.selectbox("Karşılaştır:", diger, key="karsi")
+            row1 = risk_df[(risk_df["İlçe"]==ilce_sec)&(risk_df["Yıl"]==2023)].iloc[0]
+            row2 = risk_df[(risk_df["İlçe"]==karsi_ilce)&(risk_df["Yıl"]==2023)].iloc[0]
+            gostergeler = [("Abone Başına Tüketim","AbbTuketim","m³"),("Tüketim Artışı","Artis","%"),("Arz Kısıtı","Arz_Kısıtı",""),("Su Kayıp Oranı","Su_Kayıp_Oranı_%","%"),("Risk Skoru","Risk_Skor","")]
+            for gad, gcol, gbirim in gostergeler:
+                v1,v2 = float(row1[gcol]),float(row2[gcol])
+                r1,r2 = get_risk_color(row1["Risk_Skor"]),get_risk_color(row2["Risk_Skor"])
+                fark = v1-v2
+                st.markdown(f"""
+                <div style="display:grid;grid-template-columns:1fr 80px 1fr;gap:4px;align-items:center;
+                            padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <div style="text-align:right;color:white;font-size:0.85rem;font-weight:600;">{v1:.2f}<span style="color:{r1};font-size:0.7rem;"> {gbirim}</span></div>
+                    <div style="text-align:center;color:#a8d8f0;font-size:0.72rem;">{gad}</div>
+                    <div style="color:white;font-size:0.85rem;font-weight:600;">{v2:.2f}<span style="color:{r2};font-size:0.7rem;"> {gbirim}</span></div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        # ── Bölüm 4: Risk Simülatörü
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
+            <div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">04 · SIMULATOR</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Risk Simülatörü — Anlık Duyarlılık</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.caption("Gösterge değerlerini değiştir — risk skoru anlık güncellenir")
+        s1,s2,s3,s4 = st.columns(4)
+        with s1: sim_talep = st.slider("Abone Tüketim (m³)", 80, 320, int(row1["AbbTuketim"]), key="sim1")
+        with s2: sim_artis = st.slider("Tüketim Artışı (%)", -10, 20, int(row1["Artis"]*100), key="sim2")
+        with s3: sim_arz = st.slider("Arz Kısıtı (%)", 0, 40, int(row1["Arz_Kısıtı"]*100), key="sim3")
+        with s4: sim_kayip = st.slider("Kayıp Oranı (%)", 15, 45, int(row1["Su_Kayıp_Oranı_%"]), key="sim4")
+
+        df_sim = risk_df[risk_df["Yıl"]==2023].copy()
+        def norm(v,mn,mx): return max(0,min(1,(v-mn)/(mx-mn))) if mx>mn else 0
+        W_sim = [0.291,0.092,0.287,0.329]
+        z1 = norm(sim_talep, df_sim["AbbTuketim"].min(), df_sim["AbbTuketim"].max())
+        z2 = norm(sim_artis/100, df_sim["Artis"].min(), df_sim["Artis"].max())
+        z3 = norm(sim_arz/100, df_sim["Arz_Kısıtı"].min(), df_sim["Arz_Kısıtı"].max())
+        z4 = norm(sim_kayip, df_sim["Su_Kayıp_Oranı_%"].min(), df_sim["Su_Kayıp_Oranı_%"].max())
+        sim_skor = (z1*W_sim[0]+z2*W_sim[1]+z3*W_sim[2]+z4*W_sim[3])*100
+        sim_sinif = "Düşük Risk" if sim_skor<40 else "Orta Risk" if sim_skor<70 else "Yüksek Risk"
+        sim_renk = get_risk_color(sim_skor)
+        gercek_skor = float(row1["Risk_Skor"])
+        delta = sim_skor - gercek_skor
+
+        sc1,sc2,sc3 = st.columns(3)
+        sc1.metric("Simüle Edilen Skor", f"{sim_skor:.1f}", f"{delta:+.1f} gerçekten")
+        sc2.metric("Risk Sınıfı", sim_sinif)
+        sc3.metric("Gerçek 2023 Skoru", f"{gercek_skor:.1f}")
+
+        # ── Bölüm 5: Animasyonlu Zaman Serisi
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
+            <div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">05 · TIME SERIES</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Animasyonlu Risk Değişimi — 2020–2023</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        fig_anim = go.Figure()
+        for yil in [2020,2021,2022,2023]:
+            df_y = risk_df[risk_df["Yıl"]==yil].sort_values("Risk_Skor",ascending=False)
+            colors_y = [get_risk_color(s) for s in df_y["Risk_Skor"]]
+            fig_anim.add_trace(go.Bar(
+                x=df_y["İlçe"], y=df_y["Risk_Skor"],
+                name=str(yil), visible=(yil==2020),
+                marker=dict(color=colors_y, opacity=0.85),
+                text=[f"{s:.1f}" for s in df_y["Risk_Skor"]],
+                textposition="outside", textfont=dict(color="white",size=10),
+                hovertemplate="<b>%{x}</b> · " + str(yil) + "<br>Risk: %{y:.1f}<extra></extra>"
+            ))
+
+        steps = []
+        for i, yil in enumerate([2020,2021,2022,2023]):
+            step = dict(method="update", label=str(yil),
+                        args=[{"visible":[j==i for j in range(4)]},
+                              {"title.text":f"Risk Skorları — {yil}"}])
+            steps.append(step)
+
+        fig_anim.update_layout(
+            sliders=[dict(active=0, steps=steps, x=0.1, len=0.8,
+                          currentvalue=dict(prefix="Yıl: ", font=dict(color="white")),
+                          font=dict(color="white"))],
+            updatemenus=[dict(
+                type="buttons", showactive=False, y=1.15, x=0,
+                buttons=[
+                    dict(label="▶ Oynat", method="animate",
+                         args=[None, {"frame":{"duration":800}, "fromcurrent":True}]),
+                    dict(label="⏸ Durdur", method="animate",
+                         args=[[None], {"frame":{"duration":0}, "mode":"immediate"}])
+                ],
+                font=dict(color="white"), bgcolor="rgba(56,209,227,0.2)",
+                bordercolor="rgba(56,209,227,0.4)"
+            )],
+            plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+            height=400, font=dict(color="white"),
+            xaxis=dict(tickangle=30, gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="white")),
+            yaxis=dict(range=[0,80], gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="white")),
+            margin=dict(t=80,b=80,l=40,r=40)
+        )
+
+        frames = []
+        for i, yil in enumerate([2020,2021,2022,2023]):
+            df_y = risk_df[risk_df["Yıl"]==yil].sort_values("Risk_Skor",ascending=False)
+            frames.append(go.Frame(
+                data=[go.Bar(x=df_y["İlçe"], y=df_y["Risk_Skor"],
+                             marker=dict(color=[get_risk_color(s) for s in df_y["Risk_Skor"]], opacity=0.85),
+                             text=[f"{s:.1f}" for s in df_y["Risk_Skor"]], textposition="outside",
+                             textfont=dict(color="white",size=10))],
+                name=str(yil)
+            ))
+        fig_anim.frames = frames
+        st.plotly_chart(fig_anim, use_container_width=True)
+
+        # ── Bölüm 6: CSV İndir
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
+            <div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">06 · DATA EXPORT</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Veri İndir — CSV</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        dl1,dl2,dl3 = st.columns([2,2,1])
+        with dl1:
+            dl_ilce = st.selectbox("İlçe:", ["Tüm ilçeler"]+sorted(risk_df["İlçe"].unique().tolist()), key="dl_ilce")
+        with dl2:
+            dl_yil = st.selectbox("Yıl:", ["Tüm yıllar",2020,2021,2022,2023], key="dl_yil")
+        with dl3:
+            st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+            dl_df = risk_df.copy()
+            if dl_ilce != "Tüm ilçeler": dl_df = dl_df[dl_df["İlçe"]==dl_ilce]
+            if dl_yil != "Tüm yıllar": dl_df = dl_df[dl_df["Yıl"]==dl_yil]
+            csv = dl_df.to_csv(index=False).encode("utf-8")
+            st.download_button("⬇ CSV İndir", csv, "izmirisk_data.csv", "text/csv", use_container_width=True)
+
     # ════════════════════════════════
     # TAHMİN
     # ════════════════════════════════
