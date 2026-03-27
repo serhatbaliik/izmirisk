@@ -355,13 +355,7 @@ if data_loaded:
     # ANA SAYFA
     # ════════════════════════════════
     if sayfa == "🏠 Ana Sayfa":
-        with st.expander("ℹ️ Bu sayfa hakkında"):
-            st.markdown("""
-            Bu sayfa İzmir'in 11 merkez ilçesi için hesaplanan **Su Güvenliği Risk Endeksi (WSRI)**'nin özetini gösterir.
-            - **Risk skoru 0–100** arasında — düşük sayı iyi, yüksek sayı riskli demek
-            - **Entropy ağırlıklandırma** — ağırlıklar araştırmacı tarafından değil, verinin kendi dağılımından otomatik hesaplanır
-            - **Gauge grafikleri** — en riskli 3 ilçenin anlık risk ibresini gösterir
-            """)
+
         st.markdown("""
         <div class="wave-container"><div class="wave"></div></div>
         """, unsafe_allow_html=True)
@@ -495,14 +489,7 @@ if data_loaded:
     # EDA ANALİZİ
     # ════════════════════════════════
     elif sayfa == "📊 EDA Analizi":
-        with st.expander("ℹ️ Bu sayfa hakkında"):
-            st.markdown("""
-            **Keşifsel Veri Analizi** — Ham verilerin görselleştirilmesi.
-            - **Baraj doluluk trendi** — Tahtalı, Balçova, Gördes barajlarının yıllara göre su seviyesi
-            - **Isı haritası** — Her ilçede yıllara göre abone başına tüketim (m³/abone)
-            - **Arz-Talep dengesi** — Sisteme giren su ile üretilen su arasındaki fark, yani kayıp
-            - **Kritik eşik** — Tüm verilerin alt %25'lik dilimi (Q1) baz alınarak belirlendi
-            """)
+
         st.title("📊 Keşifsel Veri Analizi")
         st.divider()
 
@@ -567,20 +554,7 @@ if data_loaded:
     # RİSK ENDEKSİ
     # ════════════════════════════════
     elif sayfa == "📈 Risk Endeksi":
-        with st.expander("ℹ️ Bu sayfa hakkında"):
-            st.markdown("""
-            **WSRI — Water Security Risk Index** — Her ilçe için 0–100 arası bileşik risk puanı.
 
-            Risk 4 göstergeden oluşur:
-            - 🔵 **Talep** — Abone başına tüketim (m³/kişi)
-            - 🟠 **Artış** — Tüketimin yıllık ne kadar büyüdüğü
-            - 🟢 **Arz kısıtı** — Üretimin sisteme girene oranı
-            - 🔴 **Kayıp oranı** — Sistemden kaçan su yüzdesi
-
-            Ağırlıklar **Entropy yöntemi** ile otomatik hesaplandı — en çok değişen gösterge en yüksek ağırlığı aldı.
-
-            🟢 0–40 Düşük Risk &nbsp; | &nbsp; 🟡 40–70 Orta Risk &nbsp; | &nbsp; 🔴 70–100 Yüksek Risk
-            """)
         st.title("📈 Su Güvenliği Risk Endeksi (WSRI)")
         st.divider()
 
@@ -638,17 +612,7 @@ if data_loaded:
     # TAHMİN
     # ════════════════════════════════
     elif sayfa == "🔮 2040 Tahmin":
-        with st.expander("ℹ️ Bu sayfa hakkında"):
-            st.markdown("""
-            **2040 Yılına Projeksiyon** — Mevcut abone büyüme hızı devam ederse risk skorları nasıl değişir?
 
-            - **Baz senaryo** — Mevcut büyüme hızı aynen devam eder
-            - **İyimser senaryo** — Büyüme hızı yarıya iner (tasarruf politikaları, verimlilik)
-            - **Kötümser senaryo** — Büyüme hızı 1.5 kat artar (kuraklık, göç, artan talep)
-
-            Her ilçenin büyüme hızı **CAGR** (Bileşik Yıllık Büyüme Oranı) olarak 2020–2023 verisinden hesaplandı.
-            Sonuçlar gösterge niteliğindedir — uzun vadeli tahminler belirsizlik içerir.
-            """)
         st.title("🔮 2040 Yılı Risk Projeksiyonu")
         st.divider()
 
