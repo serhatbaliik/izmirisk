@@ -8,3 +8,4 @@ scipy
 requests
 streamlit-folium
 folium
+streamlit-option-menu
