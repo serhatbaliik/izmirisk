@@ -356,134 +356,201 @@ if data_loaded:
     # ════════════════════════════════
     if sayfa == "🏠 Ana Sayfa":
 
+        # ── Hero başlık
         st.markdown("""
-        <div class="wave-container"><div class="wave"></div></div>
-        """, unsafe_allow_html=True)
-
-        st.markdown("""
-        <div style="text-align:center; padding: 2rem 0 1rem 0;">
-            <div style="font-size:3.5rem; margin-bottom:0.5rem;">💧</div>
-            <h1 style="color:#7ecef4; font-size:2.2rem; font-weight:700; margin:0;">
-                İzmir Su Güvenliği Risk Endeksi
+        <div style="text-align:center;padding:2.5rem 0 1.5rem 0;">
+            <div style="display:inline-block;background:rgba(126,206,244,0.1);
+                        border:1px solid rgba(126,206,244,0.3);border-radius:50px;
+                        padding:6px 20px;margin-bottom:1rem;">
+                <span style="color:#7ecef4;font-size:0.8rem;letter-spacing:3px;font-weight:600;">
+                    WATER SECURITY ANALYSIS · İZMİR 2020–2040
+                </span>
+            </div>
+            <div class="wave-container"><div class="wave"></div></div>
+            <h1 style="color:#ffffff;font-size:2.6rem;font-weight:800;margin:0.8rem 0 0.4rem 0;
+                       letter-spacing:-0.5px;line-height:1.2;">
+                İzmir Su Güvenliği<br>
+                <span style="color:#7ecef4;">Risk Endeksi</span>
             </h1>
-            <p style="color:#a8d8f0; font-size:1rem; margin-top:0.5rem;">
-                Entropy Ağırlıklı Bileşik Risk Analizi &nbsp;·&nbsp; 11 Merkez İlçe &nbsp;·&nbsp; 2020–2040
+            <p style="color:#a8d8f0;font-size:1rem;margin:0.6rem 0 0 0;max-width:600px;
+                      display:inline-block;line-height:1.6;">
+                Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe · Mann-Kendall trend testi ·
+                LISA mekânsal analizi · 2040 projeksiyonu
             </p>
+            <div class="wave-container" style="margin-top:1.2rem;"><div class="wave"></div></div>
         </div>
-        <div class="wave-container"><div class="wave"></div></div>
         """, unsafe_allow_html=True)
 
-        st.divider()
-
-        # KPI kartları
+        # ── KPI Kartları — özel HTML
         df23 = risk_df[risk_df["Yıl"]==2023].sort_values("Risk_Skor", ascending=False)
         en_riskli = df23.iloc[0]
         en_az = df23.iloc[-1]
         orta_sayi = len(df23[df23["Risk_Sınıf"]=="Orta Risk"])
+        dusuk_sayi = len(df23[df23["Risk_Sınıf"]=="Düşük Risk"])
+        tahtali = tablo2[tablo2["Yıl"]==2023]["Tahtalı_Doluluk_%"].values[0]
 
-        c1,c2,c3,c4 = st.columns(4)
-        c1.metric("En Riskli İlçe", en_riskli["İlçe"], f"Skor: {en_riskli['Risk_Skor']:.1f}")
-        c2.metric("En Az Riskli", en_az["İlçe"], f"Skor: {en_az['Risk_Skor']:.1f}")
-        c3.metric("Orta Risk İlçe", f"{orta_sayi} ilçe", "2023 yılı")
-        c4.metric("Tahtalı Doluluk", f"%{tablo2[tablo2['Yıl']==2023]['Tahtalı_Doluluk_%'].values[0]:.1f}", "2023 yılı")
+        k1,k2,k3,k4,k5 = st.columns(5)
+        kartlar = [
+            (k1, "🔴", "En Riskli İlçe", en_riskli["İlçe"], f"Skor: {en_riskli['Risk_Skor']:.1f}", "#d62728"),
+            (k2, "🟡", "Orta Risk", f"{orta_sayi} İlçe", "2023 yılı", "#ff7f0e"),
+            (k3, "🟢", "Düşük Risk", f"{dusuk_sayi} İlçe", "2023 yılı", "#2ca02c"),
+            (k4, "💧", "Tahtalı Doluluk", f"%{tahtali:.1f}", "2023 yılı", "#7ecef4"),
+            (k5, "✅", "En Az Riskli", en_az["İlçe"], f"Skor: {en_az['Risk_Skor']:.1f}", "#2ca02c"),
+        ]
+        for col, ikon, baslik, deger, alt, renk in kartlar:
+            with col:
+                st.markdown(f"""
+                <div style="background:rgba(255,255,255,0.06);
+                            border:1px solid {renk}44;
+                            border-top:3px solid {renk};
+                            border-radius:10px;padding:1rem;
+                            text-align:center;transition:all 0.2s;">
+                    <div style="font-size:1.6rem;margin-bottom:4px;">{ikon}</div>
+                    <div style="color:#a8d8f0;font-size:0.72rem;letter-spacing:1px;
+                                text-transform:uppercase;margin-bottom:6px;">{baslik}</div>
+                    <div style="color:#ffffff;font-size:1.3rem;font-weight:700;
+                                margin-bottom:4px;">{deger}</div>
+                    <div style="color:{renk};font-size:0.78rem;">{alt}</div>
+                </div>
+                """, unsafe_allow_html=True)
 
-        st.divider()
+        st.markdown("<div style='height:2rem'></div>", unsafe_allow_html=True)
 
-        # Animasyonlu Gauge — En riskli ilçe
-        st.subheader("Risk Göstergesi — En Riskli İlçe (2023)")
+        # ── Bölüm başlığı — Risk Göstergesi
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+            <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+                        border-radius:2px;"></div>
+            <div>
+                <div style="color:#7ecef4;font-size:0.7rem;letter-spacing:2px;
+                            text-transform:uppercase;">01 · Risk Göstergesi</div>
+                <div style="color:#ffffff;font-size:1.1rem;font-weight:600;">
+                    En Riskli 3 İlçe — 2023 Risk İbresi
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
         gauge_col1, gauge_col2, gauge_col3 = st.columns(3)
-
         for col, ilce_idx in zip([gauge_col1, gauge_col2, gauge_col3], [0, 1, 2]):
             ilce_row = df23.iloc[ilce_idx]
             skor = ilce_row["Risk_Skor"]
             ilce_adi = ilce_row["İlçe"]
             sinif = ilce_row["Risk_Sınıf"]
             renk = get_risk_color(skor)
-
             fig_gauge = go.Figure(go.Indicator(
                 mode="gauge+number+delta",
                 value=skor,
                 delta={"reference": 40, "valueformat": ".1f",
                        "increasing": {"color": "#d62728"},
                        "decreasing": {"color": "#2ca02c"}},
-                number={"font": {"size": 28, "color": "white"}, "valueformat": ".1f"},
-                title={"text": f"<b>{ilce_adi}</b><br><span style='font-size:0.8em;color:{renk}'>{sinif}</span>",
+                number={"font": {"size": 32, "color": "white"}, "valueformat": ".1f"},
+                title={"text": f"<b style='font-size:15px'>{ilce_adi}</b><br>"
+                               f"<span style='font-size:11px;color:{renk}'>{sinif}</span>",
                        "font": {"size": 14, "color": "white"}},
                 gauge={
                     "axis": {"range": [0, 100], "tickwidth": 1,
-                             "tickcolor": "rgba(255,255,255,0.4)",
-                             "tickfont": {"color": "rgba(255,255,255,0.6)", "size": 10}},
-                    "bar": {"color": renk, "thickness": 0.25},
-                    "bgcolor": "rgba(255,255,255,0.05)",
+                             "tickcolor": "rgba(255,255,255,0.3)",
+                             "tickfont": {"color": "rgba(255,255,255,0.5)", "size": 9}},
+                    "bar": {"color": renk, "thickness": 0.3},
+                    "bgcolor": "rgba(255,255,255,0.03)",
                     "borderwidth": 1,
-                    "bordercolor": "rgba(255,255,255,0.2)",
+                    "bordercolor": "rgba(255,255,255,0.15)",
                     "steps": [
-                        {"range": [0, 40],  "color": "rgba(44,160,44,0.2)"},
-                        {"range": [40, 70], "color": "rgba(255,127,14,0.2)"},
-                        {"range": [70, 100],"color": "rgba(214,39,40,0.2)"},
+                        {"range": [0, 40],  "color": "rgba(44,160,44,0.15)"},
+                        {"range": [40, 70], "color": "rgba(255,127,14,0.15)"},
+                        {"range": [70, 100],"color": "rgba(214,39,40,0.15)"},
                     ],
-                    "threshold": {
-                        "line": {"color": "white", "width": 2},
-                        "thickness": 0.75,
-                        "value": skor
-                    }
+                    "threshold": {"line": {"color": "white", "width": 2},
+                                  "thickness": 0.75, "value": skor}
                 }
             ))
             fig_gauge.update_layout(
-                paper_bgcolor="rgba(0,0,0,0)",
-                plot_bgcolor="rgba(0,0,0,0)",
-                height=220,
-                margin=dict(t=60, b=10, l=20, r=20),
+                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                height=240, margin=dict(t=70, b=10, l=20, r=20),
                 font=dict(color="white")
             )
             with col:
                 st.plotly_chart(fig_gauge, use_container_width=True)
 
-        st.divider()
+        st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
 
-        # Risk sıralaması
-        col1, col2 = st.columns([2,1])
+        # ── Bölüm başlığı — Risk Sıralaması
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+            <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+                        border-radius:2px;"></div>
+            <div>
+                <div style="color:#7ecef4;font-size:0.7rem;letter-spacing:2px;
+                            text-transform:uppercase;">02 · Risk Analizi</div>
+                <div style="color:#ffffff;font-size:1.1rem;font-weight:600;">
+                    2023 Yılı İlçe Risk Sıralaması & Ağırlık Dağılımı
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        col1, col2 = st.columns([3,2])
         with col1:
-            st.subheader("2023 Yılı Risk Sıralaması")
             fig = go.Figure()
             colors = [get_risk_color(s) for s in df23["Risk_Skor"]]
             fig.add_trace(go.Bar(
                 x=df23["Risk_Skor"], y=df23["İlçe"],
-                orientation='h',
-                marker_color=colors,
-                text=df23["Risk_Skor"].round(1),
-                textposition='outside',
-                hovertemplate="%{y}<br>Risk: %{x:.1f}<extra></extra>"
+                orientation="h",
+                marker=dict(color=colors, line=dict(color="rgba(255,255,255,0.1)", width=0.5)),
+                text=[f"{s:.1f}" for s in df23["Risk_Skor"]],
+                textposition="outside",
+                textfont=dict(color="white", size=11),
+                hovertemplate="<b>%{y}</b><br>Risk Skoru: %{x:.1f}<extra></extra>"
             ))
-            fig.add_vline(x=40, line_dash="dot", line_color="orange", line_width=1.5)
-            fig.add_vline(x=70, line_dash="dot", line_color="red", line_width=1.5)
+            fig.add_vline(x=40, line_dash="dot", line_color="#ff7f0e",
+                          line_width=1.5, annotation_text="Orta Risk Eşiği",
+                          annotation_font_color="#ff7f0e", annotation_font_size=10)
+            fig.add_vline(x=70, line_dash="dot", line_color="#d62728",
+                          line_width=1.5, annotation_text="Yüksek Risk Eşiği",
+                          annotation_font_color="#d62728", annotation_font_size=10)
             fig.update_layout(
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                height=380, margin=dict(t=20,b=20,l=10,r=60),
-                xaxis=dict(range=[0,80], gridcolor="rgba(255,255,255,0.15)"),
-                yaxis=dict(autorange="reversed")
+                height=400, margin=dict(t=10,b=10,l=10,r=70),
+                xaxis=dict(range=[0,85], gridcolor="rgba(255,255,255,0.08)",
+                           tickfont=dict(color="white"), title="Risk Skoru (0–100)",
+                           title_font=dict(color="#a8d8f0")),
+                yaxis=dict(autorange="reversed", tickfont=dict(color="white", size=11))
             )
             st.plotly_chart(fig, use_container_width=True)
 
         with col2:
-            st.subheader("Entropy Ağırlıkları")
-            labels = ["Kayıp Oranı","Talep","Arz Kısıtı","Tüketim Artışı"]
+            labels = ["Kayıp Oranı","Talep","Arz Kısıtı","Artış"]
             fig2 = go.Figure(go.Pie(
-                labels=labels, values=W.round(4),
-                hole=0.4,
-                marker=dict(colors=["#d62728","#1f77b4","#2ca02c","#ff7f0e"]),
-                textinfo="percent",
-                hovertemplate="%{label}: %{value:.4f}<extra></extra>"
+                labels=labels, values=W.round(4), hole=0.5,
+                marker=dict(colors=["#d62728","#7ecef4","#2ca02c","#ff7f0e"],
+                            line=dict(color="rgba(0,0,0,0.3)", width=1)),
+                textinfo="percent+label",
+                textfont=dict(color="white", size=11),
+                hovertemplate="<b>%{label}</b><br>Ağırlık: %{value:.4f}<br>Pay: %{percent}<extra></extra>"
             ))
             fig2.update_layout(
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                height=280, margin=dict(t=20,b=20,l=10,r=10),
-                showlegend=True,
-                legend=dict(font=dict(size=10))
+                height=280, margin=dict(t=10,b=10,l=10,r=10),
+                showlegend=False,
+                annotations=[dict(text="Entropy<br>Ağırlıkları", x=0.5, y=0.5,
+                                  font=dict(size=12, color="white"), showarrow=False)]
             )
             st.plotly_chart(fig2, use_container_width=True)
 
-            st.info("**Veri kaynağı:** İZSU Açık Veri Portalı\n\n**Kapsam:** 2020–2023, 11 merkez ilçe\n\n**Yöntem:** Min-Max + Entropy + WSRI")
+            st.markdown("""
+            <div style="background:rgba(126,206,244,0.08);border:1px solid rgba(126,206,244,0.2);
+                        border-radius:8px;padding:0.8rem 1rem;margin-top:0.5rem;">
+                <div style="color:#7ecef4;font-size:0.75rem;font-weight:600;
+                            letter-spacing:1px;margin-bottom:6px;">KAYNAK & YÖNTEM</div>
+                <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">
+                    📌 Veri: İZSU Açık Veri Portalı<br>
+                    📌 Kapsam: 2020–2023 · 11 İlçe<br>
+                    📌 Yöntem: Min-Max + Entropy + WSRI<br>
+                    📌 Analiz: Mann-Kendall · LISA · CAGR
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
     # ════════════════════════════════
     # EDA ANALİZİ
