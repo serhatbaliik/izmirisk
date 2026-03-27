@@ -688,8 +688,7 @@ if data_loaded:
                 texttemplate="%{text}",
                 textfont=dict(size=12, color="white"),
                 hovertemplate="<b>%{y}</b> · %{x}<br>%{z:.1f} m³/abone<extra></extra>",
-                colorbar=dict(title="m³/abone", tickfont=dict(color="white"),
-                              titlefont=dict(color="white"))
+                colorbar=dict(title="m³/abone", tickfont=dict(color="white"))
             ))
             fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                               height=440, margin=dict(t=10,b=10,l=130,r=30),
