@@ -557,65 +557,292 @@ if data_loaded:
     # ════════════════════════════════
     elif sayfa == "📊 EDA Analizi":
 
-        st.title("📊 Keşifsel Veri Analizi")
-        st.divider()
+        # Hero başlık
+        st.markdown("""
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(126,206,244,0.2);
+                    margin-bottom:1.5rem;">
+            <div style="display:inline-block;background:rgba(126,206,244,0.1);
+                        border:1px solid rgba(126,206,244,0.3);border-radius:50px;
+                        padding:4px 16px;margin-bottom:0.8rem;">
+                <span style="color:#7ecef4;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
+                    EXPLORATORY DATA ANALYSIS
+                </span>
+            </div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
+                Keşifsel Veri Analizi
+            </div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">
+                Ham verinin görselleştirilmesi — baraj dolulukları, ilçe tüketimi, arz-talep dengesi ve kayıp trendleri
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-        tab1, tab2, tab3 = st.tabs(["Baraj Doluluk", "İlçe Tüketim", "Arz-Talep"])
+        def bolum_baslik(no, en, tr):
+            st.markdown(f"""
+            <div style="display:flex;align-items:center;gap:12px;margin:1.2rem 0 0.8rem 0;">
+                <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+                            border-radius:2px;"></div>
+                <div>
+                    <div style="color:#7ecef4;font-size:0.68rem;letter-spacing:2px;
+                                text-transform:uppercase;">{no} · {en}</div>
+                    <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">{tr}</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        def insight_kutusu(metin, renk="#7ecef4"):
+            st.markdown(f"""
+            <div style="background:rgba(126,206,244,0.07);
+                        border-left:3px solid {renk};
+                        border-radius:0 8px 8px 0;
+                        padding:0.7rem 1rem;margin-top:0.5rem;">
+                <span style="color:{renk};font-size:0.78rem;font-weight:600;">💡 BULGULAR &nbsp;</span>
+                <span style="color:#c5e8f7;font-size:0.85rem;">{metin}</span>
+            </div>
+            """, unsafe_allow_html=True)
+
+        yillar = [2020,2021,2022,2023]
+        layout_base = dict(
+            plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+            font=dict(color="white", family="Arial"),
+            xaxis=dict(tickvals=yillar, gridcolor="rgba(255,255,255,0.1)",
+                       tickfont=dict(color="white")),
+            yaxis=dict(gridcolor="rgba(255,255,255,0.1)", tickfont=dict(color="white")),
+            legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)"),
+            hovermode="x unified",
+            margin=dict(t=30,b=30,l=60,r=30)
+        )
+
+        tab1, tab2, tab3, tab4 = st.tabs([
+            "💧 Baraj Doluluk",
+            "🌡️ Tüketim Haritası",
+            "⚖️ Arz-Talep",
+            "📉 Kayıp Oranı"
+        ])
 
         with tab1:
-            st.subheader("Baraj Doluluk Oranları (2020–2023)")
+            bolum_baslik("01", "RESERVOIR STORAGE", "Baraj Doluluk Oranları (2020–2023)")
             esik = float(pd.concat([tablo2["Tahtalı_Doluluk_%"],
                                      tablo2["Balçova_Doluluk_%"],
                                      tablo2["Gördes_Doluluk_%"]]).quantile(0.25))
-            fig = go.Figure()
-            for baraj, renk in [("Tahtalı_Doluluk_%","#1f77b4"),
-                                  ("Balçova_Doluluk_%","#2ca02c"),
-                                  ("Gördes_Doluluk_%","#d62728")]:
-                isim = baraj.replace("_Doluluk_%","")
-                fig.add_trace(go.Scatter(
-                    x=[2020,2021,2022,2023], y=tablo2[baraj],
-                    mode="lines+markers", name=isim,
-                    line=dict(color=renk,width=2.5), marker=dict(size=9),
-                    hovertemplate=f"{isim}: %{{y:.1f}}%<extra></extra>"
-                ))
-            fig.add_hline(y=esik, line_dash="dash", line_color="orange",
-                          annotation_text=f"Kritik eşik Q1: {esik:.1f}%")
-            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                              height=380,xaxis=dict(tickvals=[2020,2021,2022,2023],gridcolor="rgba(255,255,255,0.15)"),
-                              yaxis=dict(title="Doluluk (%)",gridcolor="rgba(255,255,255,0.15)",range=[0,65]),
-                              hovermode="x unified")
-            st.plotly_chart(fig, use_container_width=True)
-            st.caption(f"Kritik eşik veri temelli belirlendi: tüm doluluk değerlerinin alt çeyreği Q1 = %{esik:.1f}")
+            col1, col2 = st.columns([3,1])
+            with col1:
+                fig = go.Figure()
+                for baraj, renk, sembol in [
+                    ("Tahtalı_Doluluk_%","#7ecef4","circle"),
+                    ("Balçova_Doluluk_%","#2ca02c","square"),
+                    ("Gördes_Doluluk_%","#d62728","diamond")
+                ]:
+                    isim = baraj.replace("_Doluluk_%","")
+                    fig.add_trace(go.Scatter(
+                        x=yillar, y=tablo2[baraj],
+                        mode="lines+markers", name=isim,
+                        line=dict(color=renk,width=2.5),
+                        marker=dict(size=10, symbol=sembol),
+                        fill="tozeroy",
+                        fillcolor=renk.replace("#","rgba(").replace(")",",0.05)") if "#" in renk else renk,
+                        hovertemplate=f"<b>{isim}</b>: %{{y:.1f}}%<extra></extra>"
+                    ))
+                fig.add_hline(y=esik, line_dash="dash", line_color="#ff7f0e", line_width=1.5,
+                              annotation_text=f"Kritik Eşik (Q1): {esik:.1f}%",
+                              annotation_font_color="#ff7f0e", annotation_font_size=10)
+                fig.update_layout(**layout_base, height=400,
+                                  yaxis=dict(title="Doluluk (%)", range=[0,65],
+                                             gridcolor="rgba(255,255,255,0.1)",
+                                             tickfont=dict(color="white")))
+                st.plotly_chart(fig, use_container_width=True)
+            with col2:
+                for baraj, renk in [("Tahtalı_Doluluk_%","#7ecef4"),
+                                     ("Balçova_Doluluk_%","#2ca02c"),
+                                     ("Gördes_Doluluk_%","#d62728")]:
+                    isim = baraj.replace("_Doluluk_%","")
+                    son = tablo2[baraj].values[-1]
+                    ilk = tablo2[baraj].values[0]
+                    degisim = son - ilk
+                    ok = "▼" if degisim < 0 else "▲"
+                    ok_renk = "#d62728" if degisim < 0 else "#2ca02c"
+                    st.markdown(f"""
+                    <div style="background:rgba(255,255,255,0.05);border:1px solid {renk}44;
+                                border-left:3px solid {renk};border-radius:8px;
+                                padding:0.6rem 0.8rem;margin-bottom:0.5rem;">
+                        <div style="color:{renk};font-size:0.75rem;font-weight:600;">{isim}</div>
+                        <div style="color:white;font-size:1.1rem;font-weight:700;">%{son:.1f}</div>
+                        <div style="color:{ok_renk};font-size:0.78rem;">{ok} {abs(degisim):.1f} puan (2020'den)</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+            insight_kutusu(
+                f"Tahtalı Barajı 2020–2023 arasında %{tablo2['Tahtalı_Doluluk_%'].values[0]:.1f}'den "
+                f"%{tablo2['Tahtalı_Doluluk_%'].values[-1]:.1f}'e geriledi. "
+                f"Gördes 2022'de kritik çöküş yaşadı. Kritik eşik (Q1={esik:.1f}%) "
+                f"veri temelli belirlendi.",
+                "#ff7f0e"
+            )
 
         with tab2:
-            st.subheader("Abone Başına Tüketim Isı Haritası")
+            bolum_baslik("02", "DEMAND HEATMAP", "Abone Başına Tüketim Isı Haritası (m³/abone)")
             pivot = tablo1.pivot(index="İlçe",columns="Yıl",values="AbbTuketim")
             fig = go.Figure(go.Heatmap(
-                z=pivot.values, x=[str(y) for y in pivot.columns],
-                y=pivot.index.tolist(), colorscale="YlOrRd",
+                z=pivot.values,
+                x=[str(y) for y in pivot.columns],
+                y=pivot.index.tolist(),
+                colorscale=[[0,"#0a3060"],[0.5,"#ff7f0e"],[1,"#d62728"]],
                 text=pivot.values.round(0).astype(int),
                 texttemplate="%{text}",
-                hovertemplate="İlçe: %{y}<br>Yıl: %{x}<br>%{z:.1f} m³/abone<extra></extra>",
-                colorbar=dict(title="m³/abone")
+                textfont=dict(size=12, color="white"),
+                hovertemplate="<b>%{y}</b> · %{x}<br>%{z:.1f} m³/abone<extra></extra>",
+                colorbar=dict(title="m³/abone", tickfont=dict(color="white"),
+                              titlefont=dict(color="white"))
             ))
             fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                              height=420,margin=dict(l=120))
+                              height=440, margin=dict(t=10,b=10,l=130,r=30),
+                              xaxis=dict(tickfont=dict(color="white")),
+                              yaxis=dict(tickfont=dict(color="white")))
             st.plotly_chart(fig, use_container_width=True)
 
+            max_ilce = pivot.max(axis=1).idxmax()
+            min_ilce = pivot.min(axis=1).idxmin()
+            insight_kutusu(
+                f"{max_ilce} en yüksek abone başına tüketimle öne çıkıyor. "
+                f"{min_ilce} en düşük tüketimde. Isı haritası 4 yıl boyunca "
+                f"ilçelerin talep baskısını karşılaştırmalı gösteriyor.",
+                "#ff7f0e"
+            )
+
         with tab3:
-            st.subheader("Arz-Talep Dengesi")
-            fig = go.Figure()
-            fig.add_trace(go.Bar(x=[2020,2021,2022,2023],
-                y=tablo2["Sisteme_Giren_m3"]/1e6, name="Sisteme Giren Su",
-                marker_color="#1f77b4", opacity=0.85))
-            fig.add_trace(go.Bar(x=[2020,2021,2022,2023],
-                y=tablo2["Toplam_Üretim_m3"]/1e6, name="Toplam Üretim",
-                marker_color="#2ca02c", opacity=0.85))
-            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                              barmode="group",height=380,
-                              yaxis=dict(title="Milyon m³",gridcolor="rgba(255,255,255,0.15)"),
-                              hovermode="x unified")
-            st.plotly_chart(fig, use_container_width=True)
+            bolum_baslik("03", "SUPPLY–DEMAND BALANCE", "Arz-Talep Dengesi (2020–2023)")
+            col1, col2 = st.columns([2,1])
+            with col1:
+                fig = go.Figure()
+                fig.add_trace(go.Bar(
+                    x=yillar, y=tablo2["Sisteme_Giren_m3"]/1e6,
+                    name="Sisteme Giren Su",
+                    marker=dict(color="#7ecef4", opacity=0.8,
+                                line=dict(color="rgba(255,255,255,0.2)",width=1)),
+                    hovertemplate="Sisteme Giren: %{y:.1f}M m³<extra></extra>"
+                ))
+                fig.add_trace(go.Bar(
+                    x=yillar, y=tablo2["Toplam_Üretim_m3"]/1e6,
+                    name="Toplam Üretim",
+                    marker=dict(color="#2ca02c", opacity=0.8,
+                                line=dict(color="rgba(255,255,255,0.2)",width=1)),
+                    hovertemplate="Üretim: %{y:.1f}M m³<extra></extra>"
+                ))
+                for i, (sg, tu) in enumerate(zip(
+                    tablo2["Sisteme_Giren_m3"]/1e6,
+                    tablo2["Toplam_Üretim_m3"]/1e6
+                )):
+                    fig.add_annotation(x=yillar[i], y=(sg+tu)/2,
+                        text=f"Δ {sg-tu:.0f}M",
+                        font=dict(color="#d62728", size=11, family="Arial"),
+                        showarrow=False)
+                fig.update_layout(**layout_base, barmode="group", height=400,
+                                  yaxis=dict(title="Milyon m³",
+                                             gridcolor="rgba(255,255,255,0.1)",
+                                             tickfont=dict(color="white")))
+                st.plotly_chart(fig, use_container_width=True)
+            with col2:
+                st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+                for yil, sg, tu in zip(
+                    yillar,
+                    tablo2["Sisteme_Giren_m3"]/1e6,
+                    tablo2["Toplam_Üretim_m3"]/1e6
+                ):
+                    fark = sg - tu
+                    st.markdown(f"""
+                    <div style="background:rgba(255,255,255,0.05);border-radius:8px;
+                                padding:0.6rem 0.8rem;margin-bottom:0.5rem;
+                                border-left:3px solid #d62728;">
+                        <div style="color:#a8d8f0;font-size:0.72rem;">{yil}</div>
+                        <div style="color:#d62728;font-size:1rem;font-weight:700;">
+                            Δ {fark:.0f}M m³ kayıp
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+            insight_kutusu(
+                "Sisteme giren su ile üretilen su arasındaki fark su kayıplarına karşılık geliyor. "
+                "2022 yılında Gördes Barajı çöküşüyle üretim dramatik biçimde düştü.",
+                "#7ecef4"
+            )
+
+        with tab4:
+            bolum_baslik("04", "WATER LOSS TREND", "Yıllık Su Kayıp Oranı Trendi (2020–2023)")
+            col1, col2 = st.columns([3,1])
+            with col1:
+                fig = go.Figure()
+                fig.add_trace(go.Scatter(
+                    x=yillar, y=tablo2["Su_Kayıp_Oranı_%"],
+                    mode="lines+markers+text",
+                    fill="tozeroy",
+                    fillcolor="rgba(214,39,40,0.1)",
+                    line=dict(color="#d62728", width=3),
+                    marker=dict(size=12, color="#d62728",
+                                line=dict(color="white", width=2)),
+                    text=[f"%{v:.2f}" for v in tablo2["Su_Kayıp_Oranı_%"]],
+                    textposition="top center",
+                    textfont=dict(color="white", size=12),
+                    hovertemplate="<b>%{x}</b><br>Kayıp Oranı: %{y:.2f}%<extra></extra>"
+                ))
+                # Fiziki ve idari kayıp
+                fig.add_trace(go.Bar(
+                    x=yillar, y=tablo2["Fiziki_Kayıp_%"],
+                    name="Fiziki Kayıp", marker_color="rgba(214,39,40,0.4)",
+                    yaxis="y2",
+                    hovertemplate="Fiziki: %{y:.2f}%<extra></extra>"
+                ))
+                fig.add_trace(go.Bar(
+                    x=yillar, y=tablo2["İdari_Kayıp_%"],
+                    name="İdari Kayıp", marker_color="rgba(255,127,14,0.4)",
+                    yaxis="y2",
+                    hovertemplate="İdari: %{y:.2f}%<extra></extra>"
+                ))
+                fig.update_layout(
+                    plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                    height=400, hovermode="x unified",
+                    font=dict(color="white"),
+                    xaxis=dict(tickvals=yillar, gridcolor="rgba(255,255,255,0.1)",
+                               tickfont=dict(color="white")),
+                    yaxis=dict(title="Toplam Kayıp (%)", range=[26,30],
+                               gridcolor="rgba(255,255,255,0.1)",
+                               tickfont=dict(color="white")),
+                    yaxis2=dict(title="Bileşen (%)", overlaying="y", side="right",
+                                tickfont=dict(color="white"), range=[0,35]),
+                    legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)"),
+                    barmode="stack", margin=dict(t=30,b=30,l=60,r=60)
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            with col2:
+                ilk_kayip = tablo2["Su_Kayıp_Oranı_%"].values[0]
+                son_kayip = tablo2["Su_Kayıp_Oranı_%"].values[-1]
+                azalma = ilk_kayip - son_kayip
+                st.markdown(f"""
+                <div style="background:rgba(44,160,44,0.1);border:1px solid #2ca02c44;
+                            border-top:3px solid #2ca02c;border-radius:8px;
+                            padding:1rem;text-align:center;margin-bottom:1rem;">
+                    <div style="color:#2ca02c;font-size:0.75rem;letter-spacing:1px;">
+                        TOPLAM AZALMA
+                    </div>
+                    <div style="color:white;font-size:2rem;font-weight:700;">
+                        ▼ {azalma:.2f}%
+                    </div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;">2020 → 2023</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.05);border-radius:8px;
+                            padding:0.8rem;font-size:0.82rem;color:#a8d8f0;line-height:1.6;">
+                    🔵 <b style="color:white">Fiziki Kayıp</b><br>
+                    Boru sızıntıları, altyapı hasarı<br><br>
+                    🟠 <b style="color:white">İdari Kayıp</b><br>
+                    Kaçak kullanım, sayaç hataları
+                </div>
+                """, unsafe_allow_html=True)
+
+            insight_kutusu(
+                f"Su kayıp oranı 2020'deki %{ilk_kayip:.2f}'den 2023'te %{son_kayip:.2f}'ye geriledi. "
+                f"4 yılda {azalma:.2f} puanlık iyileşme sağlandı. "
+                f"Mann-Kendall analizi bu serinin tau=-1.00 ile en tutarlı azalan trend olduğunu gösteriyor.",
+                "#2ca02c"
+            )
 
     # ════════════════════════════════
     # RİSK ENDEKSİ
