@@ -14,13 +14,13 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    /* Ana arka plan — baraj/göl fotoğrafı */
+    /* Ana arka plan — Tahtalı Barajı havadan görünüm */
     .stApp {
         background-image:
-            linear-gradient(rgba(5,20,50,0.72), rgba(5,20,50,0.72)),
-            url("https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80");
+            linear-gradient(rgba(3,15,40,0.48), rgba(5,20,55,0.52)),
+            url("https://images.unsplash.com/photo-1527489377706-5bf97e608852?w=1600&q=80");
         background-size: cover;
-        background-position: center;
+        background-position: center top;
         background-attachment: fixed;
     }
     .main {
@@ -32,7 +32,7 @@ st.markdown("""
     }
 
     /* Başlıklar */
-    h1 { color: #7ecef4 !important; font-size: 2rem !important; font-weight: 700 !important; }
+    h1 { color: #38d1e3 !important; font-size: 2rem !important; font-weight: 700 !important; }
     h2 { color: #a8d8f0 !important; font-size: 1.3rem !important; }
     h3 { color: #c5e8f7 !important; font-size: 1.1rem !important; }
 
@@ -42,13 +42,13 @@ st.markdown("""
     /* Metric kartları */
     [data-testid="metric-container"] {
         background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(126,206,244,0.3);
+        border: 1px solid rgba(56,209,227,0.3);
         border-radius: 12px;
         padding: 1rem;
         backdrop-filter: blur(10px);
     }
     [data-testid="metric-container"] label {
-        color: #7ecef4 !important;
+        color: #38d1e3 !important;
         font-size: 0.85rem !important;
     }
     [data-testid="metric-container"] [data-testid="stMetricValue"] {
@@ -56,13 +56,13 @@ st.markdown("""
         font-size: 1.6rem !important;
     }
     [data-testid="metric-container"] [data-testid="stMetricDelta"] {
-        color: #7ecef4 !important;
+        color: #38d1e3 !important;
     }
 
     /* Sidebar */
     [data-testid="stSidebar"] {
         background: rgba(5, 20, 50, 0.95) !important;
-        border-right: 1px solid rgba(126,206,244,0.2);
+        border-right: 1px solid rgba(56,209,227,0.2);
     }
     [data-testid="stSidebar"] * { color: #c5e8f7 !important; }
 
@@ -72,22 +72,22 @@ st.markdown("""
 
     /* Tab */
     .stTabs [data-baseweb="tab"] {
-        color: #7ecef4 !important;
+        color: #38d1e3 !important;
         background: rgba(255,255,255,0.05);
         border-radius: 8px 8px 0 0;
     }
     .stTabs [aria-selected="true"] {
-        background: rgba(126,206,244,0.15) !important;
-        border-bottom: 2px solid #7ecef4 !important;
+        background: rgba(56,209,227,0.15) !important;
+        border-bottom: 2px solid #38d1e3 !important;
     }
 
     /* Divider */
-    hr { border-color: rgba(126,206,244,0.2) !important; }
+    hr { border-color: rgba(56,209,227,0.2) !important; }
 
     /* Info/Success kutuları */
     .stAlert {
-        background: rgba(126,206,244,0.1) !important;
-        border: 1px solid rgba(126,206,244,0.3) !important;
+        background: rgba(56,209,227,0.1) !important;
+        border: 1px solid rgba(56,209,227,0.3) !important;
         border-radius: 10px !important;
         color: #d0e8f5 !important;
     }
@@ -114,8 +114,8 @@ st.markdown("""
         width: 200%;
         height: 100%;
         background: linear-gradient(90deg,
-            transparent 0%, #7ecef4 20%, #4db8f0 40%,
-            transparent 50%, #7ecef4 70%, #4db8f0 90%, transparent 100%);
+            transparent 0%, #38d1e3 20%, #4db8f0 40%,
+            transparent 50%, #38d1e3 70%, #4db8f0 90%, transparent 100%);
         animation: wave 3s linear infinite;
     }
 
@@ -298,10 +298,10 @@ if data_loaded:
 
     # ── Üst navigasyon (sidebar kaldırıldı)
     st.markdown("""
-    <div style="display:flex;align-items:center;gap:16px;padding:12px 0 8px 0;border-bottom:1px solid rgba(126,206,244,0.2);margin-bottom:1rem;">
+    <div style="display:flex;align-items:center;gap:16px;padding:12px 0 8px 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1rem;">
         <span style="font-size:1.8rem;">💧</span>
         <div>
-            <div style="color:#7ecef4;font-size:1.1rem;font-weight:700;">AquaRisk İzmir</div>
+            <div style="color:#38d1e3;font-size:1.1rem;font-weight:700;">AquaRisk İzmir</div>
             <div style="color:#a8d8f0;font-size:0.75rem;">Su Güvenliği Risk Endeksi · İZSU 2020–2023</div>
         </div>
     </div>
@@ -332,8 +332,8 @@ if data_loaded:
 
     for col, (ikon, isim), key in zip(nav_cols, sayfalar, sayfa_keys):
         aktif = st.session_state.secili_sayfa == key
-        bg = "rgba(126,206,244,0.2)" if aktif else "rgba(255,255,255,0.05)"
-        border = "1px solid rgba(126,206,244,0.6)" if aktif else "1px solid rgba(255,255,255,0.1)"
+        bg = "rgba(56,209,227,0.2)" if aktif else "rgba(255,255,255,0.05)"
+        border = "1px solid rgba(56,209,227,0.6)" if aktif else "1px solid rgba(255,255,255,0.1)"
         with col:
             if st.button(f"{ikon}\n{isim}", key=f"nav_{key}",
                         use_container_width=True):
@@ -351,7 +351,7 @@ if data_loaded:
             </style>""", unsafe_allow_html=True)
 
     sayfa = st.session_state.secili_sayfa
-    st.markdown("<hr style='border-color:rgba(126,206,244,0.15);margin:0.5rem 0 1rem 0;'>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color:rgba(56,209,227,0.15);margin:0.5rem 0 1rem 0;'>", unsafe_allow_html=True)
 
     # ════════════════════════════════
     # ANA SAYFA
@@ -361,10 +361,10 @@ if data_loaded:
         # ── Hero başlık
         st.markdown("""
         <div style="text-align:center;padding:2.5rem 0 1.5rem 0;">
-            <div style="display:inline-block;background:rgba(126,206,244,0.1);
-                        border:1px solid rgba(126,206,244,0.3);border-radius:50px;
+            <div style="display:inline-block;background:rgba(56,209,227,0.1);
+                        border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:6px 20px;margin-bottom:1rem;">
-                <span style="color:#7ecef4;font-size:0.8rem;letter-spacing:3px;font-weight:600;">
+                <span style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;font-weight:600;">
                     WATER SECURITY ANALYSIS · İZMİR 2020–2040
                 </span>
             </div>
@@ -372,7 +372,7 @@ if data_loaded:
             <h1 style="color:#ffffff;font-size:2.6rem;font-weight:800;margin:0.8rem 0 0.4rem 0;
                        letter-spacing:-0.5px;line-height:1.2;">
                 İzmir Su Güvenliği<br>
-                <span style="color:#7ecef4;">Risk Endeksi</span>
+                <span style="color:#38d1e3;">Risk Endeksi</span>
             </h1>
             <p style="color:#a8d8f0;font-size:1rem;margin:0.6rem 0 0 0;max-width:600px;
                       display:inline-block;line-height:1.6;">
@@ -396,7 +396,7 @@ if data_loaded:
             (k1, "🔴", "En Riskli İlçe", en_riskli["İlçe"], f"Skor: {en_riskli['Risk_Skor']:.1f}", "#d62728"),
             (k2, "🟡", "Orta Risk", f"{orta_sayi} İlçe", "2023 yılı", "#ff7f0e"),
             (k3, "🟢", "Düşük Risk", f"{dusuk_sayi} İlçe", "2023 yılı", "#2ca02c"),
-            (k4, "💧", "Tahtalı Doluluk", f"%{tahtali:.1f}", "2023 yılı", "#7ecef4"),
+            (k4, "💧", "Tahtalı Doluluk", f"%{tahtali:.1f}", "2023 yılı", "#38d1e3"),
             (k5, "✅", "En Az Riskli", en_az["İlçe"], f"Skor: {en_az['Risk_Skor']:.1f}", "#2ca02c"),
         ]
         for col, ikon, baslik, deger, alt, renk in kartlar:
@@ -421,10 +421,10 @@ if data_loaded:
         # ── Bölüm başlığı — Risk Göstergesi
         st.markdown("""
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
-            <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
                         border-radius:2px;"></div>
             <div>
-                <div style="color:#7ecef4;font-size:0.7rem;letter-spacing:2px;
+                <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;
                             text-transform:uppercase;">01 · Risk Göstergesi</div>
                 <div style="color:#ffffff;font-size:1.1rem;font-weight:600;">
                     En Riskli 3 İlçe — 2023 Risk İbresi
@@ -480,10 +480,10 @@ if data_loaded:
         # ── Bölüm başlığı — Risk Sıralaması
         st.markdown("""
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
-            <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
                         border-radius:2px;"></div>
             <div>
-                <div style="color:#7ecef4;font-size:0.7rem;letter-spacing:2px;
+                <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;
                             text-transform:uppercase;">02 · Risk Analizi</div>
                 <div style="color:#ffffff;font-size:1.1rem;font-weight:600;">
                     2023 Yılı İlçe Risk Sıralaması & Ağırlık Dağılımı
@@ -525,7 +525,7 @@ if data_loaded:
             labels = ["Kayıp Oranı","Talep","Arz Kısıtı","Artış"]
             fig2 = go.Figure(go.Pie(
                 labels=labels, values=W.round(4), hole=0.5,
-                marker=dict(colors=["#d62728","#7ecef4","#2ca02c","#ff7f0e"],
+                marker=dict(colors=["#d62728","#38d1e3","#2ca02c","#ff7f0e"],
                             line=dict(color="rgba(0,0,0,0.3)", width=1)),
                 textinfo="percent+label",
                 textfont=dict(color="white", size=11),
@@ -541,9 +541,9 @@ if data_loaded:
             st.plotly_chart(fig2, use_container_width=True)
 
             st.markdown("""
-            <div style="background:rgba(126,206,244,0.08);border:1px solid rgba(126,206,244,0.2);
+            <div style="background:rgba(56,209,227,0.08);border:1px solid rgba(56,209,227,0.2);
                         border-radius:8px;padding:0.8rem 1rem;margin-top:0.5rem;">
-                <div style="color:#7ecef4;font-size:0.75rem;font-weight:600;
+                <div style="color:#38d1e3;font-size:0.75rem;font-weight:600;
                             letter-spacing:1px;margin-bottom:6px;">KAYNAK & YÖNTEM</div>
                 <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">
                     📌 Veri: İZSU Açık Veri Portalı<br>
@@ -561,12 +561,12 @@ if data_loaded:
 
         # Hero başlık
         st.markdown("""
-        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(126,206,244,0.2);
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);
                     margin-bottom:1.5rem;">
-            <div style="display:inline-block;background:rgba(126,206,244,0.1);
-                        border:1px solid rgba(126,206,244,0.3);border-radius:50px;
+            <div style="display:inline-block;background:rgba(56,209,227,0.1);
+                        border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
-                <span style="color:#7ecef4;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
                     EXPLORATORY DATA ANALYSIS
                 </span>
             </div>
@@ -582,19 +582,19 @@ if data_loaded:
         def bolum_baslik(no, en, tr):
             st.markdown(f"""
             <div style="display:flex;align-items:center;gap:12px;margin:1.2rem 0 0.8rem 0;">
-                <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+                <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
                             border-radius:2px;"></div>
                 <div>
-                    <div style="color:#7ecef4;font-size:0.68rem;letter-spacing:2px;
+                    <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;
                                 text-transform:uppercase;">{no} · {en}</div>
                     <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">{tr}</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
 
-        def insight_kutusu(metin, renk="#7ecef4"):
+        def insight_kutusu(metin, renk="#38d1e3"):
             st.markdown(f"""
-            <div style="background:rgba(126,206,244,0.07);
+            <div style="background:rgba(56,209,227,0.07);
                         border-left:3px solid {renk};
                         border-radius:0 8px 8px 0;
                         padding:0.7rem 1rem;margin-top:0.5rem;">
@@ -630,7 +630,7 @@ if data_loaded:
             with col1:
                 fig = go.Figure()
                 for baraj, renk, sembol in [
-                    ("Tahtalı_Doluluk_%","#7ecef4","circle"),
+                    ("Tahtalı_Doluluk_%","#38d1e3","circle"),
                     ("Balçova_Doluluk_%","#2ca02c","square"),
                     ("Gördes_Doluluk_%","#d62728","diamond")
                 ]:
@@ -651,7 +651,7 @@ if data_loaded:
                                              tickfont=dict(color="white")))
                 st.plotly_chart(fig, use_container_width=True)
             with col2:
-                for baraj, renk in [("Tahtalı_Doluluk_%","#7ecef4"),
+                for baraj, renk in [("Tahtalı_Doluluk_%","#38d1e3"),
                                      ("Balçova_Doluluk_%","#2ca02c"),
                                      ("Gördes_Doluluk_%","#d62728")]:
                     isim = baraj.replace("_Doluluk_%","")
@@ -715,7 +715,7 @@ if data_loaded:
                 fig.add_trace(go.Bar(
                     x=yillar, y=tablo2["Sisteme_Giren_m3"]/1e6,
                     name="Sisteme Giren Su",
-                    marker=dict(color="#7ecef4", opacity=0.8,
+                    marker=dict(color="#38d1e3", opacity=0.8,
                                 line=dict(color="rgba(255,255,255,0.2)",width=1)),
                     hovertemplate="Sisteme Giren: %{y:.1f}M m³<extra></extra>"
                 ))
@@ -761,7 +761,7 @@ if data_loaded:
             insight_kutusu(
                 "Sisteme giren su ile üretilen su arasındaki fark su kayıplarına karşılık geliyor. "
                 "2022 yılında Gördes Barajı çöküşüyle üretim dramatik biçimde düştü.",
-                "#7ecef4"
+                "#38d1e3"
             )
 
         with tab4:
@@ -849,12 +849,12 @@ if data_loaded:
 
         # Hero başlık
         st.markdown("""
-        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(126,206,244,0.2);
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);
                     margin-bottom:1.5rem;">
-            <div style="display:inline-block;background:rgba(126,206,244,0.1);
-                        border:1px solid rgba(126,206,244,0.3);border-radius:50px;
+            <div style="display:inline-block;background:rgba(56,209,227,0.1);
+                        border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
-                <span style="color:#7ecef4;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
                     WATER SECURITY RISK INDEX · WSRI
                 </span>
             </div>
@@ -874,10 +874,10 @@ if data_loaded:
         # Bölüm 1 — Risk skorları ve ısı haritası
         st.markdown("""
         <div style="display:flex;align-items:center;gap:12px;margin:1rem 0 0.8rem 0;">
-            <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
                         border-radius:2px;"></div>
             <div>
-                <div style="color:#7ecef4;font-size:0.68rem;letter-spacing:2px;">
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">
                     01 · DISTRICT SCORES</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
                     İlçe Risk Skorları & Yıllık Karşılaştırma</div>
@@ -939,10 +939,10 @@ if data_loaded:
         # Bölüm 2 — İlçe detayı
         st.markdown("""
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
-            <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
                         border-radius:2px;"></div>
             <div>
-                <div style="color:#7ecef4;font-size:0.68rem;letter-spacing:2px;">
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">
                     02 · DISTRICT DETAIL</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
                     İlçe Bazlı Detay — Risk Bileşenleri</div>
@@ -961,7 +961,7 @@ if data_loaded:
         for col, baslik, deger, alt, renk in [
             (k1, "2023 Risk Skoru", f"{skor_2023:.1f}", str(sinif_2023), renk_2023),
             (k2, "Risk Sınıfı", str(sinif_2023), "2023 yılı", renk_2023),
-            (k3, "Abone Büyüme Hızı", f"%{cagr_val:.2f}/yıl", "CAGR 2020–2023", "#7ecef4"),
+            (k3, "Abone Büyüme Hızı", f"%{cagr_val:.2f}/yıl", "CAGR 2020–2023", "#38d1e3"),
         ]:
             with col:
                 st.markdown(f"""
@@ -982,12 +982,12 @@ if data_loaded:
     elif sayfa == "🔮 2040 Tahmin":
 
         st.markdown("""
-        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(126,206,244,0.2);
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);
                     margin-bottom:1.5rem;">
-            <div style="display:inline-block;background:rgba(126,206,244,0.1);
-                        border:1px solid rgba(126,206,244,0.3);border-radius:50px;
+            <div style="display:inline-block;background:rgba(56,209,227,0.1);
+                        border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
-                <span style="color:#7ecef4;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
                     SCENARIO PROJECTION · 2024–2040
                 </span>
             </div>
@@ -1007,9 +1007,9 @@ if data_loaded:
             senaryo = st.radio("Senaryo:", ["Baz","İyimser","Kötümser"], horizontal=True)
         with c3:
             st.markdown(f"""
-            <div style="background:rgba(126,206,244,0.1);border-radius:8px;
+            <div style="background:rgba(56,209,227,0.1);border-radius:8px;
                         padding:0.6rem;text-align:center;margin-top:0.3rem;">
-                <div style="color:#7ecef4;font-size:0.7rem;">Hedef</div>
+                <div style="color:#38d1e3;font-size:0.7rem;">Hedef</div>
                 <div style="color:white;font-size:1.4rem;font-weight:700;">{hedef_yil}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -1018,10 +1018,10 @@ if data_loaded:
 
         st.markdown("""
         <div style="display:flex;align-items:center;gap:12px;margin:1rem 0 0.8rem 0;">
-            <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
                         border-radius:2px;"></div>
             <div>
-                <div style="color:#7ecef4;font-size:0.68rem;letter-spacing:2px;">01 · PROJECTED SCORES</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">01 · PROJECTED SCORES</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
                     İlçe Risk Skorları & Projeksiyon Trendi</div>
             </div>
@@ -1067,8 +1067,8 @@ if data_loaded:
             fig2.add_trace(go.Scatter(
                 x=hist["Yıl"], y=hist["Risk_Skor"],
                 mode="lines+markers", name="Gerçek veri",
-                line=dict(color="#7ecef4", width=2.5),
-                marker=dict(size=8, color="#7ecef4")
+                line=dict(color="#38d1e3", width=2.5),
+                marker=dict(size=8, color="#38d1e3")
             ))
             fig2.add_trace(go.Scatter(
                 x=pred["Yıl"], y=pred[senaryo],
@@ -1106,10 +1106,10 @@ if data_loaded:
         # 2040 özet tablosu
         st.markdown("""
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
-            <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
                         border-radius:2px;"></div>
             <div>
-                <div style="color:#7ecef4;font-size:0.68rem;letter-spacing:2px;">02 · SCENARIO SUMMARY</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">02 · SCENARIO SUMMARY</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
                     3 Senaryo Karşılaştırması — {}</div>
             </div>
@@ -1147,12 +1147,12 @@ if data_loaded:
     elif sayfa == "🗺️ Mekânsal Analiz":
 
         st.markdown("""
-        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(126,206,244,0.2);
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);
                     margin-bottom:1.5rem;">
-            <div style="display:inline-block;background:rgba(126,206,244,0.1);
-                        border:1px solid rgba(126,206,244,0.3);border-radius:50px;
+            <div style="display:inline-block;background:rgba(56,209,227,0.1);
+                        border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
-                <span style="color:#7ecef4;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
                     SPATIAL ANALYSIS · MORAN'S I + LISA
                 </span>
             </div>
@@ -1223,7 +1223,7 @@ if data_loaded:
         # KPI kartları
         k1,k2,k3,k4 = st.columns(4)
         for col, baslik, deger, alt, renk in [
-            (k1, "Global Moran's I", f"{I_glob}", "2023 risk skorları", "#7ecef4"),
+            (k1, "Global Moran's I", f"{I_glob}", "2023 risk skorları", "#38d1e3"),
             (k2, "p-değeri", f"{p_glob}", "999 permütasyon testi", "#a8d8f0"),
             (k3, "Yorum", "Negatif", "Komşular farklılaşıyor", "#ff7f0e"),
             (k4, "HH Küme", "0 ilçe", "Yüksek-yüksek küme yok", "#2ca02c"),
@@ -1245,10 +1245,10 @@ if data_loaded:
 
         st.markdown("""
         <div style="display:flex;align-items:center;gap:12px;margin:0.5rem 0 0.8rem 0;">
-            <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
                         border-radius:2px;"></div>
             <div>
-                <div style="color:#7ecef4;font-size:0.68rem;letter-spacing:2px;">01 · SPATIAL ANALYSIS</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">01 · SPATIAL ANALYSIS</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
                     Moran Scatter Plot & LISA Sınıflandırması</div>
             </div>
@@ -1290,7 +1290,7 @@ if data_loaded:
 
         with col2:
             st.markdown("""
-            <div style="color:#7ecef4;font-size:0.7rem;letter-spacing:2px;
+            <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;
                         margin-bottom:0.5rem;">LISA SINIFLANDIRMASI · 2023</div>
             """, unsafe_allow_html=True)
             lisa_df = pd.DataFrame({
@@ -1311,12 +1311,12 @@ if data_loaded:
     elif sayfa == "💡 Öneriler":
 
         st.markdown("""
-        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(126,206,244,0.2);
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);
                     margin-bottom:1.5rem;">
-            <div style="display:inline-block;background:rgba(126,206,244,0.1);
-                        border:1px solid rgba(126,206,244,0.3);border-radius:50px;
+            <div style="display:inline-block;background:rgba(56,209,227,0.1);
+                        border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
-                <span style="color:#7ecef4;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
                     DISTRICT RECOMMENDATIONS · 2023
                 </span>
             </div>
@@ -1343,7 +1343,7 @@ if data_loaded:
             (k1, "İlçe", ilce_sec, "Seçili ilçe", renk),
             (k2, "2023 Risk Skoru", f"{skor:.1f}", str(sinif), renk),
             (k3, "2040 Baz Tahmin", f"{pred_2040['Baz'].values[0]:.1f}", "Baz senaryo", "#ff7f0e"),
-            (k4, "Abone Büyüme", f"%{cagr_val:.2f}/yıl", "CAGR 2020–2023", "#7ecef4"),
+            (k4, "Abone Büyüme", f"%{cagr_val:.2f}/yıl", "CAGR 2020–2023", "#38d1e3"),
         ]:
             with col:
                 st.markdown(f"""
@@ -1364,7 +1364,7 @@ if data_loaded:
         with col1:
             # 2040 projeksiyon kartları
             st.markdown("""
-            <div style="color:#7ecef4;font-size:0.7rem;letter-spacing:2px;margin-bottom:0.5rem;">
+            <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;margin-bottom:0.5rem;">
                 2040 PROJEKSİYONU</div>
             """, unsafe_allow_html=True)
             for s_isim, s_renk in [("Kötümser","#d62728"),("Baz","#ff7f0e"),("İyimser","#2ca02c")]:
@@ -1383,7 +1383,7 @@ if data_loaded:
 
         with col2:
             st.markdown("""
-            <div style="color:#7ecef4;font-size:0.7rem;letter-spacing:2px;margin-bottom:0.5rem;">
+            <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;margin-bottom:0.5rem;">
                 01 · RISK TRENDİ & ÖNERİLER</div>
             """, unsafe_allow_html=True)
             hist = risk_df[risk_df["İlçe"]==ilce_sec].sort_values("Yıl")
@@ -1438,21 +1438,21 @@ if data_loaded:
                 """, unsafe_allow_html=True)
 
             st.markdown(f"""
-            <div style="background:rgba(126,206,244,0.08);border-radius:8px;
+            <div style="background:rgba(56,209,227,0.08);border-radius:8px;
                         padding:0.8rem 1rem;margin-top:0.8rem;">
-                <span style="color:#7ecef4;font-size:0.85rem;">🔮 {rec['gelecek']}</span>
+                <span style="color:#38d1e3;font-size:0.85rem;">🔮 {rec['gelecek']}</span>
             </div>
             """, unsafe_allow_html=True)
 
     elif sayfa == "Izmir Risk Haritasi":
 
         st.markdown("""
-        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(126,206,244,0.2);
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);
                     margin-bottom:1.5rem;">
-            <div style="display:inline-block;background:rgba(126,206,244,0.1);
-                        border:1px solid rgba(126,206,244,0.3);border-radius:50px;
+            <div style="display:inline-block;background:rgba(56,209,227,0.1);
+                        border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
-                <span style="color:#7ecef4;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
                     INTERACTIVE RISK MAP · İZMİR
                 </span>
             </div>
@@ -1476,9 +1476,9 @@ if data_loaded:
                                       horizontal=True, key="harita_senaryo")
         with c3:
             st.markdown(f"""
-            <div style="background:rgba(126,206,244,0.1);border-radius:8px;
+            <div style="background:rgba(56,209,227,0.1);border-radius:8px;
                         padding:0.6rem;text-align:center;margin-top:0.3rem;">
-                <div style="color:#7ecef4;font-size:0.7rem;">Seçili Yıl</div>
+                <div style="color:#38d1e3;font-size:0.7rem;">Seçili Yıl</div>
                 <div style="color:white;font-size:1.4rem;font-weight:700;">{harita_yil}</div>
             </div>
             """, unsafe_allow_html=True)
