@@ -238,27 +238,48 @@ def get_risk_label(score):
     return "Yüksek Risk"
 
 def get_recommendation(ilce, score, sinif):
-    recs = {
-        "Düşük Risk": [
-            "Mevcut su tasarrufu uygulamalarını sürdürün.",
-            "Abone başına tüketimi izlemeye devam edin.",
-            "Komşu ilçelerdeki risk artışlarını takip edin.",
-        ],
-        "Orta Risk": [
-            "Su tasarrufu kampanyaları başlatın.",
-            "Altyapı sızıntı tespiti ve onarımlarını hızlandırın.",
-            "Yüksek tüketen abonelere bilinçlendirme yapın.",
-            "Alternatif su kaynakları araştırın.",
-        ],
-        "Yüksek Risk": [
-            "ACİL: Su kısıtlama önlemleri alın.",
-            "Yüksek tüketen sektörleri denetleyin.",
-            "Yağmur suyu hasadı sistemleri kurun.",
-            "Geri dönüştürülmüş su kullanımını artırın.",
-            "İZSU ile acil eylem planı oluşturun.",
-        ]
-    }
-    return recs.get(str(sinif), recs["Orta Risk"])
+    sinif_str = str(sinif)
+    if sinif_str == "Düşük Risk":
+        return {
+            "durum": "✅ İyi durumdasınız — koruyucu önlemler alın",
+            "renk": "#2ca02c",
+            "mesaj": f"{ilce} ilçesi şu an düşük risk kategorisinde. Bu olumlu tabloyu korumak için:",
+            "oneri": [
+                "Mevcut su tasarrufu alışkanlıklarınızı sürdürün.",
+                "Abone başına tüketimi yıllık izleyin — ani artışları erkenden fark edin.",
+                "Komşu ilçelerdeki risk artışlarını takip edin, bölgesel etkiler olabilir.",
+                "Yeşil alan sulama ve endüstriyel tüketimi optimize edin.",
+            ],
+            "gelecek": "Mevcut gidişat devam ederse 2040'ta da düşük risk bekleniyor."
+        }
+    elif sinif_str == "Orta Risk":
+        return {
+            "durum": "⚠️ Dikkat gerektiriyor — somut adımlar atılmalı",
+            "renk": "#ff7f0e",
+            "mesaj": f"{ilce} ilçesi orta risk bandında. Önlem alınmazsa yüksek riske geçebilir:",
+            "oneri": [
+                "Hanelere ve işyerlerine yönelik su tasarrufu kampanyaları başlatın.",
+                "Altyapı sızıntı tespiti için akıllı sayaç sistemleri kurun.",
+                "Yüksek tüketen aboneleri belirleyip bilinçlendirme programları uygulayın.",
+                "Yağmur suyu toplama sistemlerini teşvik edin.",
+                "İZSU ile koordineli denetim programı başlatın.",
+            ],
+            "gelecek": "Kötümser senaryoda 2040'ta yüksek riske geçme ihtimali var."
+        }
+    else:
+        return {
+            "durum": "🚨 Yüksek risk — acil önlem gerekiyor",
+            "renk": "#d62728",
+            "mesaj": f"{ilce} ilçesi yüksek risk kategorisinde. Acil müdahale şart:",
+            "oneri": [
+                "İZSU ile acil eylem planı oluşturun — kısa vadeli kısıtlama önlemleri alın.",
+                "Yüksek tüketen sanayi ve ticari sektörleri denetleyin.",
+                "Geri dönüştürülmüş su kullanımını artırın, gri su sistemleri kurun.",
+                "Alternatif su kaynakları (yer altı suyu, yağmur hasadı) araştırın.",
+                "Halk bilgilendirme kampanyasıyla aciliyeti kamuoyuyla paylaşın.",
+            ],
+            "gelecek": "Önlem alınmazsa 2040'ta risk skoru kritik seviyelere ulaşabilir."
+        }
 
 
 # ── Veri yükle
@@ -273,30 +294,74 @@ except Exception as e:
 
 if data_loaded:
 
-    # ── Sidebar
-    with st.sidebar:
-        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Izmir_seal.svg/200px-Izmir_seal.svg.png", width=80)
-        st.title("💧 AquaRisk İzmir")
-        st.caption("Su Güvenliği Risk Endeksi")
-        st.divider()
+    # ── Üst navigasyon (sidebar kaldırıldı)
+    st.markdown("""
+    <div style="display:flex;align-items:center;gap:16px;padding:12px 0 8px 0;border-bottom:1px solid rgba(126,206,244,0.2);margin-bottom:1rem;">
+        <span style="font-size:1.8rem;">💧</span>
+        <div>
+            <div style="color:#7ecef4;font-size:1.1rem;font-weight:700;">AquaRisk İzmir</div>
+            <div style="color:#a8d8f0;font-size:0.75rem;">Su Güvenliği Risk Endeksi · İZSU 2020–2023</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-        sayfa = st.selectbox("📌 Sayfa seç:", [
-            "🏠 Ana Sayfa",
-            "📊 EDA Analizi",
-            "📈 Risk Endeksi",
-            "🔮 2040 Tahmin",
-            "Izmir Risk Haritasi",
-            "🗺️ Mekânsal Analiz",
-            "💡 Öneriler"
-        ])
-        st.divider()
-        st.caption("Veri: İZSU (2020–2023)")
-        st.caption("Yöntem: Entropy-WSRI, Mann-Kendall, LISA")
+    nav_cols = st.columns(7)
+    sayfalar = [
+        ("🏠", "Ana Sayfa"),
+        ("📊", "EDA"),
+        ("📈", "Risk Endeksi"),
+        ("🔮", "2040 Tahmin"),
+        ("🗺️", "Risk Haritası"),
+        ("📍", "Mekânsal"),
+        ("💡", "Öneriler"),
+    ]
+    sayfa_keys = [
+        "🏠 Ana Sayfa",
+        "📊 EDA Analizi",
+        "📈 Risk Endeksi",
+        "🔮 2040 Tahmin",
+        "Izmir Risk Haritasi",
+        "🗺️ Mekânsal Analiz",
+        "💡 Öneriler",
+    ]
+
+    if "secili_sayfa" not in st.session_state:
+        st.session_state.secili_sayfa = "🏠 Ana Sayfa"
+
+    for col, (ikon, isim), key in zip(nav_cols, sayfalar, sayfa_keys):
+        aktif = st.session_state.secili_sayfa == key
+        bg = "rgba(126,206,244,0.2)" if aktif else "rgba(255,255,255,0.05)"
+        border = "1px solid rgba(126,206,244,0.6)" if aktif else "1px solid rgba(255,255,255,0.1)"
+        with col:
+            if st.button(f"{ikon}\n{isim}", key=f"nav_{key}",
+                        use_container_width=True):
+                st.session_state.secili_sayfa = key
+                st.rerun()
+            st.markdown(f"""
+            <style>
+            div[data-testid="stButton"] button[kind="secondary"] {{
+                background: {bg};
+                border: {border};
+                border-radius: 8px;
+                color: white;
+                font-size: 0.75rem;
+            }}
+            </style>""", unsafe_allow_html=True)
+
+    sayfa = st.session_state.secili_sayfa
+    st.markdown("<hr style='border-color:rgba(126,206,244,0.15);margin:0.5rem 0 1rem 0;'>", unsafe_allow_html=True)
 
     # ════════════════════════════════
     # ANA SAYFA
     # ════════════════════════════════
     if sayfa == "🏠 Ana Sayfa":
+        with st.expander("ℹ️ Bu sayfa hakkında"):
+            st.markdown("""
+            Bu sayfa İzmir'in 11 merkez ilçesi için hesaplanan **Su Güvenliği Risk Endeksi (WSRI)**'nin özetini gösterir.
+            - **Risk skoru 0–100** arasında — düşük sayı iyi, yüksek sayı riskli demek
+            - **Entropy ağırlıklandırma** — ağırlıklar araştırmacı tarafından değil, verinin kendi dağılımından otomatik hesaplanır
+            - **Gauge grafikleri** — en riskli 3 ilçenin anlık risk ibresini gösterir
+            """)
         st.markdown("""
         <div class="wave-container"><div class="wave"></div></div>
         """, unsafe_allow_html=True)
@@ -430,6 +495,14 @@ if data_loaded:
     # EDA ANALİZİ
     # ════════════════════════════════
     elif sayfa == "📊 EDA Analizi":
+        with st.expander("ℹ️ Bu sayfa hakkında"):
+            st.markdown("""
+            **Keşifsel Veri Analizi** — Ham verilerin görselleştirilmesi.
+            - **Baraj doluluk trendi** — Tahtalı, Balçova, Gördes barajlarının yıllara göre su seviyesi
+            - **Isı haritası** — Her ilçede yıllara göre abone başına tüketim (m³/abone)
+            - **Arz-Talep dengesi** — Sisteme giren su ile üretilen su arasındaki fark, yani kayıp
+            - **Kritik eşik** — Tüm verilerin alt %25'lik dilimi (Q1) baz alınarak belirlendi
+            """)
         st.title("📊 Keşifsel Veri Analizi")
         st.divider()
 
@@ -494,6 +567,20 @@ if data_loaded:
     # RİSK ENDEKSİ
     # ════════════════════════════════
     elif sayfa == "📈 Risk Endeksi":
+        with st.expander("ℹ️ Bu sayfa hakkında"):
+            st.markdown("""
+            **WSRI — Water Security Risk Index** — Her ilçe için 0–100 arası bileşik risk puanı.
+
+            Risk 4 göstergeden oluşur:
+            - 🔵 **Talep** — Abone başına tüketim (m³/kişi)
+            - 🟠 **Artış** — Tüketimin yıllık ne kadar büyüdüğü
+            - 🟢 **Arz kısıtı** — Üretimin sisteme girene oranı
+            - 🔴 **Kayıp oranı** — Sistemden kaçan su yüzdesi
+
+            Ağırlıklar **Entropy yöntemi** ile otomatik hesaplandı — en çok değişen gösterge en yüksek ağırlığı aldı.
+
+            🟢 0–40 Düşük Risk &nbsp; | &nbsp; 🟡 40–70 Orta Risk &nbsp; | &nbsp; 🔴 70–100 Yüksek Risk
+            """)
         st.title("📈 Su Güvenliği Risk Endeksi (WSRI)")
         st.divider()
 
@@ -551,6 +638,17 @@ if data_loaded:
     # TAHMİN
     # ════════════════════════════════
     elif sayfa == "🔮 2040 Tahmin":
+        with st.expander("ℹ️ Bu sayfa hakkında"):
+            st.markdown("""
+            **2040 Yılına Projeksiyon** — Mevcut abone büyüme hızı devam ederse risk skorları nasıl değişir?
+
+            - **Baz senaryo** — Mevcut büyüme hızı aynen devam eder
+            - **İyimser senaryo** — Büyüme hızı yarıya iner (tasarruf politikaları, verimlilik)
+            - **Kötümser senaryo** — Büyüme hızı 1.5 kat artar (kuraklık, göç, artan talep)
+
+            Her ilçenin büyüme hızı **CAGR** (Bileşik Yıllık Büyüme Oranı) olarak 2020–2023 verisinden hesaplandı.
+            Sonuçlar gösterge niteliğindedir — uzun vadeli tahminler belirsizlik içerir.
+            """)
         st.title("🔮 2040 Yılı Risk Projeksiyonu")
         st.divider()
 
@@ -619,6 +717,17 @@ if data_loaded:
     # MEKÂNSAL ANALİZ
     # ════════════════════════════════
     elif sayfa == "🗺️ Mekânsal Analiz":
+        with st.expander("ℹ️ Bu sayfa hakkında"):
+            st.markdown("""
+            **Mekânsal Analiz** — Yüksek riskli ilçeler birbirine komşu mu, yoksa dağınık mı?
+
+            - **Global Moran's I** — Tüm sistemi tek bir sayıyla özetler. +1'e yakınsa riskli ilçeler kümeleniyor, -1'e yakınsa dağınık.
+            - **LISA** — Her ilçeye ayrı etiket verir:
+                - 🔴 **HH** (yüksek-yüksek) — Riskli ilçe, komşuları da riskli → sıcak nokta
+                - 🟢 **LL** (düşük-düşük) — Düşük riskli ilçe, komşuları da düşük → soğuk nokta
+                - 🟠 **HL** — Riskli ilçe ama komşuları düşük riskli → izole yüksek risk
+                - 🔵 **LH** — Düşük riskli ama komşuları yüksek riskli → dikkat gerektiriyor
+            """)
         st.title("🗺️ Mekânsal Analiz — Moran's I + LISA")
         st.divider()
 
@@ -775,10 +884,34 @@ if data_loaded:
                 hovermode="x unified",margin=dict(t=10))
             st.plotly_chart(fig, use_container_width=True)
 
-            st.subheader("Öneriler")
-            recs = get_recommendation(ilce_sec, skor, sinif)
-            for rec in recs:
-                st.markdown(f"• {rec}")
+            rec = get_recommendation(ilce_sec, skor, sinif)
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.06);border-left:4px solid {rec['renk']};
+                        border-radius:8px;padding:1rem 1.2rem;margin:0.5rem 0;">
+                <div style="color:{rec['renk']};font-size:1rem;font-weight:700;margin-bottom:0.4rem;">
+                    {rec['durum']}
+                </div>
+                <div style="color:#d0e8f5;font-size:0.9rem;margin-bottom:0.8rem;">
+                    {rec['mesaj']}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            for i, oneri in enumerate(rec["oneri"], 1):
+                st.markdown(f"""
+                <div style="display:flex;gap:10px;align-items:flex-start;
+                            padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:{rec['renk']};font-weight:700;min-width:20px;">{i}.</span>
+                    <span style="color:#d0e8f5;font-size:0.9rem;">{oneri}</span>
+                </div>
+                """, unsafe_allow_html=True)
+
+            st.markdown(f"""
+            <div style="background:rgba(126,206,244,0.08);border-radius:8px;
+                        padding:0.8rem 1rem;margin-top:0.8rem;">
+                <span style="color:#7ecef4;font-size:0.85rem;">🔮 {rec['gelecek']}</span>
+            </div>
+            """, unsafe_allow_html=True)
 
     elif sayfa == "Izmir Risk Haritasi":
         st.title("İzmir İlçe Risk Haritası")
