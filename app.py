@@ -1145,7 +1145,27 @@ if data_loaded:
     # MEKÂNSAL ANALİZ
     # ════════════════════════════════
     elif sayfa == "🗺️ Mekânsal Analiz":
-        with st.expander("ℹ️ Bu sayfa hakkında"):
+
+        st.markdown("""
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(126,206,244,0.2);
+                    margin-bottom:1.5rem;">
+            <div style="display:inline-block;background:rgba(126,206,244,0.1);
+                        border:1px solid rgba(126,206,244,0.3);border-radius:50px;
+                        padding:4px 16px;margin-bottom:0.8rem;">
+                <span style="color:#7ecef4;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
+                    SPATIAL ANALYSIS · MORAN'S I + LISA
+                </span>
+            </div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
+                Mekânsal Analiz
+            </div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">
+                Yüksek riskli ilçeler birbirine komşu mu? · Global Moran's I · LISA kümeleme · 2023
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        with st.expander("ℹ️ Moran's I ve LISA nedir?"):
             st.markdown("""
             **Mekânsal Analiz** — Yüksek riskli ilçeler birbirine komşu mu, yoksa dağınık mı?
 
@@ -1156,8 +1176,6 @@ if data_loaded:
                 - 🟠 **HL** — Riskli ilçe ama komşuları düşük riskli → izole yüksek risk
                 - 🔵 **LH** — Düşük riskli ama komşuları yüksek riskli → dikkat gerektiriyor
             """)
-        st.title("🗺️ Mekânsal Analiz — Moran's I + LISA")
-        st.divider()
 
         ilceler = ["BALÇOVA","BAYRAKLI","BORNOVA","BUCA","ÇİĞLİ",
                    "GAZİEMİR","GÜZELBAHÇE","KARABAĞLAR","KARŞIYAKA","KONAK","NARLIDERE"]
@@ -1202,16 +1220,43 @@ if data_loaded:
         I_glob = round(float((W_sp*np.outer(z,z)).sum()/((z**2).sum())),4)
         p_glob = round(float(np.mean(np.abs(perm_I)>=np.abs(I_glob))),4)
 
-        c1,c2,c3 = st.columns(3)
-        c1.metric("Global Moran's I", f"{I_glob}")
-        c2.metric("p-değeri", f"{p_glob}")
-        c3.metric("Yorum", "Negatif otokorelasyon")
+        # KPI kartları
+        k1,k2,k3,k4 = st.columns(4)
+        for col, baslik, deger, alt, renk in [
+            (k1, "Global Moran's I", f"{I_glob}", "2023 risk skorları", "#7ecef4"),
+            (k2, "p-değeri", f"{p_glob}", "999 permütasyon testi", "#a8d8f0"),
+            (k3, "Yorum", "Negatif", "Komşular farklılaşıyor", "#ff7f0e"),
+            (k4, "HH Küme", "0 ilçe", "Yüksek-yüksek küme yok", "#2ca02c"),
+        ]:
+            with col:
+                st.markdown(f"""
+                <div style="background:rgba(255,255,255,0.06);
+                            border:1px solid {renk}44;border-top:3px solid {renk};
+                            border-radius:10px;padding:0.8rem;text-align:center;">
+                    <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;
+                                text-transform:uppercase;margin-bottom:4px;">{baslik}</div>
+                    <div style="color:#ffffff;font-size:1.3rem;font-weight:700;
+                                margin-bottom:3px;">{deger}</div>
+                    <div style="color:{renk};font-size:0.75rem;">{alt}</div>
+                </div>
+                """, unsafe_allow_html=True)
 
-        st.divider()
+        st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin:0.5rem 0 0.8rem 0;">
+            <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+                        border-radius:2px;"></div>
+            <div>
+                <div style="color:#7ecef4;font-size:0.68rem;letter-spacing:2px;">01 · SPATIAL ANALYSIS</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
+                    Moran Scatter Plot & LISA Sınıflandırması</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
         with col1:
-            st.subheader("Moran Scatter Plot")
             renk_map={"HH":"#d62728","LL":"#2ca02c","HL":"#ff7f0e","LH":"#9467bd"}
             fig = go.Figure()
             for sinif, renk in renk_map.items():
@@ -1233,13 +1278,21 @@ if data_loaded:
                 name=f"I={I_glob}",hoverinfo="skip"))
             fig.add_hline(y=0,line_color="gray",line_width=1)
             fig.add_vline(x=0,line_color="gray",line_width=1)
-            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",height=380,
-                xaxis=dict(title="Standardize Risk (z)",gridcolor="rgba(255,255,255,0.15)"),
-                yaxis=dict(title="Mekânsal Lag (Wz)",gridcolor="rgba(255,255,255,0.15)"))
+            fig.update_layout(
+                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                height=400, font=dict(color="white"),
+                xaxis=dict(title="Standardize Risk (z)", gridcolor="rgba(255,255,255,0.08)",
+                           tickfont=dict(color="white"), title_font=dict(color="#a8d8f0")),
+                yaxis=dict(title="Mekânsal Lag (Wz)", gridcolor="rgba(255,255,255,0.08)",
+                           tickfont=dict(color="white"), title_font=dict(color="#a8d8f0")),
+                legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)"))
             st.plotly_chart(fig, use_container_width=True)
 
         with col2:
-            st.subheader("LISA Sınıflandırması")
+            st.markdown("""
+            <div style="color:#7ecef4;font-size:0.7rem;letter-spacing:2px;
+                        margin-bottom:0.5rem;">LISA SINIFLANDIRMASI · 2023</div>
+            """, unsafe_allow_html=True)
             lisa_df = pd.DataFrame({
                 "İlçe":ilceler,"Risk":r23.round(1),
                 "LISA":lisa_sinif,"Local_I":I_local.round(3)
@@ -1256,38 +1309,83 @@ if data_loaded:
     # ÖNERİLER
     # ════════════════════════════════
     elif sayfa == "💡 Öneriler":
-        st.title("💡 İlçe Bazlı Öneriler")
-        st.divider()
+
+        st.markdown("""
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(126,206,244,0.2);
+                    margin-bottom:1.5rem;">
+            <div style="display:inline-block;background:rgba(126,206,244,0.1);
+                        border:1px solid rgba(126,206,244,0.3);border-radius:50px;
+                        padding:4px 16px;margin-bottom:0.8rem;">
+                <span style="color:#7ecef4;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
+                    DISTRICT RECOMMENDATIONS · 2023
+                </span>
+            </div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
+                İlçe Bazlı Öneriler
+            </div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">
+                Risk sınıfına göre kişiselleştirilmiş öneri · Trend analizi · 2040 projeksiyonu
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
         ilce_sec = st.selectbox("İlçe seç:", sorted(risk_df["İlçe"].unique()))
         df_ilce = risk_df[risk_df["İlçe"]==ilce_sec]
         skor = df_ilce[df_ilce["Yıl"]==2023]["Risk_Skor"].values[0]
         sinif = df_ilce[df_ilce["Yıl"]==2023]["Risk_Sınıf"].values[0]
         renk = get_risk_color(skor)
+        pred_2040 = tahmin_df[(tahmin_df["İlçe"]==ilce_sec)&(tahmin_df["Yıl"]==2040)]
+        cagr_val = cagr_dict.get(ilce_sec, 0) * 100
+
+        # Üst özet kartları
+        k1,k2,k3,k4 = st.columns(4)
+        for col, baslik, deger, alt, r in [
+            (k1, "İlçe", ilce_sec, "Seçili ilçe", renk),
+            (k2, "2023 Risk Skoru", f"{skor:.1f}", str(sinif), renk),
+            (k3, "2040 Baz Tahmin", f"{pred_2040['Baz'].values[0]:.1f}", "Baz senaryo", "#ff7f0e"),
+            (k4, "Abone Büyüme", f"%{cagr_val:.2f}/yıl", "CAGR 2020–2023", "#7ecef4"),
+        ]:
+            with col:
+                st.markdown(f"""
+                <div style="background:rgba(255,255,255,0.06);
+                            border:1px solid {r}44;border-top:3px solid {r};
+                            border-radius:10px;padding:0.8rem;text-align:center;">
+                    <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;
+                                text-transform:uppercase;margin-bottom:4px;">{baslik}</div>
+                    <div style="color:#ffffff;font-size:1.2rem;font-weight:700;
+                                margin-bottom:3px;">{deger}</div>
+                    <div style="color:{r};font-size:0.75rem;">{alt}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
 
         col1, col2 = st.columns([1,2])
         with col1:
-            st.markdown(f"""
-            <div style='background:white;border-radius:12px;padding:20px;
-                        border:2px solid {renk};text-align:center;'>
-                <h2 style='color:#1B4F72;margin:0'>{ilce_sec}</h2>
-                <p style='font-size:2rem;font-weight:600;color:{renk};margin:10px 0'>
-                    {skor:.1f}
-                </p>
-                <p style='color:{renk};font-weight:600;font-size:1.1rem;margin:0'>
-                    {sinif}
-                </p>
-            </div>
+            # 2040 projeksiyon kartları
+            st.markdown("""
+            <div style="color:#7ecef4;font-size:0.7rem;letter-spacing:2px;margin-bottom:0.5rem;">
+                2040 PROJEKSİYONU</div>
             """, unsafe_allow_html=True)
-
-            st.divider()
-            pred_2040 = tahmin_df[(tahmin_df["İlçe"]==ilce_sec)&(tahmin_df["Yıl"]==2040)]
-            st.metric("2040 Baz Tahmin", f"{pred_2040['Baz'].values[0]:.1f}")
-            st.metric("2040 Kötümser", f"{pred_2040['Kötümser'].values[0]:.1f}")
-            st.metric("2040 İyimser", f"{pred_2040['İyimser'].values[0]:.1f}")
+            for s_isim, s_renk in [("Kötümser","#d62728"),("Baz","#ff7f0e"),("İyimser","#2ca02c")]:
+                val = pred_2040[s_isim].values[0]
+                sinif_40 = "Düşük" if val<40 else "Orta" if val<70 else "Yüksek"
+                st.markdown(f"""
+                <div style="background:rgba(255,255,255,0.05);border-left:3px solid {s_renk};
+                            border-radius:0 8px 8px 0;padding:0.6rem 0.8rem;margin-bottom:0.4rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <span style="color:#a8d8f0;font-size:0.8rem;">{s_isim}</span>
+                        <span style="color:white;font-weight:700;">{val:.1f}</span>
+                    </div>
+                    <div style="color:{s_renk};font-size:0.72rem;">{sinif_40} Risk</div>
+                </div>
+                """, unsafe_allow_html=True)
 
         with col2:
-            st.subheader("Risk Trendi")
+            st.markdown("""
+            <div style="color:#7ecef4;font-size:0.7rem;letter-spacing:2px;margin-bottom:0.5rem;">
+                01 · RISK TRENDİ & ÖNERİLER</div>
+            """, unsafe_allow_html=True)
             hist = risk_df[risk_df["İlçe"]==ilce_sec].sort_values("Yıl")
             pred = tahmin_df[tahmin_df["İlçe"]==ilce_sec].sort_values("Yıl")
             fig = go.Figure()
@@ -1306,10 +1404,15 @@ if data_loaded:
             fig.add_hline(y=40,line_dash="dot",line_color="orange")
             fig.add_hline(y=70,line_dash="dot",line_color="red")
             fig.add_vline(x=2023.5,line_dash="dash",line_color="gray")
-            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",height=280,
-                xaxis=dict(gridcolor="rgba(255,255,255,0.15)"),
-                yaxis=dict(title="Risk Skoru",gridcolor="rgba(255,255,255,0.15)",range=[0,100]),
-                hovermode="x unified",margin=dict(t=10))
+            fig.update_layout(
+                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                height=280, font=dict(color="white"),
+                xaxis=dict(gridcolor="rgba(255,255,255,0.08)",
+                           tickfont=dict(color="white")),
+                yaxis=dict(title="Risk Skoru", gridcolor="rgba(255,255,255,0.08)",
+                           range=[0,100], tickfont=dict(color="white")),
+                legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)"),
+                hovermode="x unified", margin=dict(t=10,b=20))
             st.plotly_chart(fig, use_container_width=True)
 
             rec = get_recommendation(ilce_sec, skor, sinif)
