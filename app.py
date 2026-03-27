@@ -122,6 +122,16 @@ st.markdown("""
     .risk-low { color: #2ca02c; font-weight: 600; }
     .risk-med { color: #ff7f0e; font-weight: 600; }
     .risk-high { color: #d62728; font-weight: 600; }
+
+    /* Streamlit üst menü çubuğunu gizle */
+    header[data-testid="stHeader"] {
+        background: rgba(3,12,35,0.85) !important;
+        border-bottom: 1px solid rgba(56,209,227,0.15) !important;
+    }
+    #MainMenu { visibility: hidden !important; }
+    [data-testid="stToolbar"] { visibility: hidden !important; }
+    footer { visibility: hidden !important; }
+    [data-testid="stDecoration"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
