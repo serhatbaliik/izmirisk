@@ -358,6 +358,8 @@ if data_loaded:
     </div>
     """, unsafe_allow_html=True)
 
+    from streamlit_option_menu import option_menu
+
     sayfa_listesi = [
         "🏠 Ana Sayfa",
         "📊 EDA Analizi",
@@ -370,31 +372,49 @@ if data_loaded:
         "🔬 Araçlar",
     ]
     etiketler = [
-        "🏠 Ana Sayfa",
-        "📊 EDA",
-        "📈 Risk",
-        "🔮 2040",
-        "🗺️ Harita",
-        "📍 Mekânsal",
-        "💡 Öneriler",
-        "📐 Metodoloji",
-        "🔬 Araçlar",
+        "Ana Sayfa", "EDA", "Risk", "2040",
+        "Harita", "Mekânsal", "Öneriler", "Metodoloji", "Araçlar"
+    ]
+    ikonlar = [
+        "house", "bar-chart", "graph-up", "clock",
+        "map", "pin-map", "lightbulb", "rulers", "tools"
     ]
 
     if "secili_sayfa" not in st.session_state:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
 
-    secili_etiket = st.pills(
-        label="",
+    aktif_idx = sayfa_listesi.index(st.session_state.secili_sayfa)         if st.session_state.secili_sayfa in sayfa_listesi else 0
+
+    secili = option_menu(
+        menu_title=None,
         options=etiketler,
-        default=etiketler[sayfa_listesi.index(st.session_state.secili_sayfa)]
-        if st.session_state.secili_sayfa in sayfa_listesi else etiketler[0],
-        key="nav_pills",
-        label_visibility="collapsed"
+        icons=ikonlar,
+        default_index=aktif_idx,
+        orientation="horizontal",
+        styles={
+            "container": {
+                "padding": "4px 0",
+                "background-color": "rgba(255,255,255,0.04)",
+                "border-radius": "10px",
+                "border": "1px solid rgba(56,209,227,0.15)",
+            },
+            "icon": {"color": "#38d1e3", "font-size": "13px"},
+            "nav-link": {
+                "font-size": "12px",
+                "color": "#a8d8f0",
+                "padding": "6px 10px",
+                "border-radius": "8px",
+            },
+            "nav-link-selected": {
+                "background-color": "rgba(56,209,227,0.2)",
+                "color": "#ffffff",
+                "font-weight": "600",
+            },
+        }
     )
 
-    if secili_etiket:
-        yeni_sayfa = sayfa_listesi[etiketler.index(secili_etiket)]
+    if secili:
+        yeni_sayfa = sayfa_listesi[etiketler.index(secili)]
         if yeni_sayfa != st.session_state.secili_sayfa:
             st.session_state.secili_sayfa = yeni_sayfa
             st.rerun()
