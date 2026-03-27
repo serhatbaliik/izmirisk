@@ -924,34 +924,95 @@ if data_loaded:
             if skor < 70: return "Orta Risk"
             return "Yüksek Risk"
 
-        m = folium.Map(location=[38.42, 27.14], zoom_start=11, tiles="CartoDB positron")
+        # Karanlık ama detaylı harita teması
+        m = folium.Map(
+            location=[38.42, 27.14],
+            zoom_start=12,
+            tiles="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+            attr="CartoDB Dark Matter",
+            prefer_canvas=True
+        )
 
         for ilce, (lat, lon) in ILCE_KOORD.items():
             skor = get_risk_score(ilce, harita_yil, harita_senaryo)
             renk = risk_rengi(skor)
             sinif = risk_sinifi(skor)
+
             tooltip_html = f"""
-            <div style='font-family:Arial;font-size:13px;padding:6px'>
-                <b>{ilce}</b><br>
-                Risk Skoru: <b>{skor:.1f}</b><br>
-                Sınıf: <b style='color:{renk}'>{sinif}</b><br>
-                Yıl: {harita_yil}
+            <div style='font-family:Arial;font-size:14px;padding:10px 14px;
+                        background:#1a1a2e;border-radius:8px;border:1px solid {renk};
+                        box-shadow:0 4px 12px rgba(0,0,0,0.4);min-width:160px;'>
+                <div style='color:{renk};font-weight:700;font-size:15px;margin-bottom:6px;'>
+                    {ilce}
+                </div>
+                <div style='color:#ffffff;margin-bottom:3px;'>
+                    Risk Skoru: <b style="color:{renk}">{skor:.1f}</b>
+                </div>
+                <div style='color:#aaaaaa;font-size:12px;margin-bottom:3px;'>
+                    Sınıf: {sinif}
+                </div>
+                <div style='color:#aaaaaa;font-size:12px;'>
+                    Yıl: {harita_yil}
+                </div>
             </div>"""
+
+            # Dış halka — glow efekti
             folium.CircleMarker(
-                location=[lat, lon], radius=30,
-                color=renk, fill=True, fill_color=renk, fill_opacity=0.7,
-                tooltip=folium.Tooltip(tooltip_html),
-                popup=folium.Popup(tooltip_html, max_width=200)
+                location=[lat, lon], radius=36,
+                color=renk, fill=True, fill_color=renk,
+                fill_opacity=0.15, weight=1, opacity=0.4,
             ).add_to(m)
+
+            # Ana daire
+            folium.CircleMarker(
+                location=[lat, lon], radius=26,
+                color=renk, fill=True, fill_color=renk,
+                fill_opacity=0.85, weight=2, opacity=1,
+                tooltip=folium.Tooltip(tooltip_html, sticky=True),
+                popup=folium.Popup(tooltip_html, max_width=220)
+            ).add_to(m)
+
+            # İlçe ismi etiketi
             folium.Marker(
                 location=[lat, lon],
                 icon=folium.DivIcon(
-                    html=f'<div style="font-size:9px;font-weight:bold;color:white;text-align:center;margin-top:-8px">{ilce[:6]}</div>',
-                    icon_size=(60,20), icon_anchor=(30,10)
+                    html=f"""<div style="
+                        font-family:Arial;font-size:10px;font-weight:700;
+                        color:white;text-align:center;
+                        text-shadow: 1px 1px 3px rgba(0,0,0,0.9),
+                                     -1px -1px 3px rgba(0,0,0,0.9);
+                        white-space:nowrap;
+                        transform:translateY(-4px);
+                    ">{ilce}</div>""",
+                    icon_size=(120, 20),
+                    icon_anchor=(60, 10)
                 )
             ).add_to(m)
 
-        st_folium(m, width=800, height=500)
+        # Risk skoru göstergesi sağ alt köşe
+        legend_html = f"""
+        <div style="position:fixed;bottom:20px;right:20px;z-index:1000;
+                    background:#1a1a2e;border:1px solid rgba(255,255,255,0.2);
+                    border-radius:10px;padding:12px 16px;font-family:Arial;">
+            <div style="color:white;font-weight:700;margin-bottom:8px;font-size:13px;">
+                Risk Sınıfları
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+                <div style="width:14px;height:14px;border-radius:50%;background:#2ca02c;"></div>
+                <span style="color:#ccc;font-size:12px;">Düşük Risk (0–40)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+                <div style="width:14px;height:14px;border-radius:50%;background:#ff7f0e;"></div>
+                <span style="color:#ccc;font-size:12px;">Orta Risk (40–70)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:14px;height:14px;border-radius:50%;background:#d62728;"></div>
+                <span style="color:#ccc;font-size:12px;">Yüksek Risk (70+)</span>
+            </div>
+        </div>"""
+        m.get_root().html.add_child(folium.Element(legend_html))
+
+        st_folium(m, use_container_width=True, height=560)
 
         st.subheader(f"{harita_yil} Yılı Risk Sıralaması")
         tablo_data = []
