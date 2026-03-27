@@ -317,7 +317,7 @@ if data_loaded:
     </div>
     """, unsafe_allow_html=True)
 
-    nav_cols = st.columns(7)
+    nav_cols = st.columns(8)
     sayfalar = [
         ("🏠", "Ana Sayfa"),
         ("📊", "EDA"),
@@ -326,6 +326,7 @@ if data_loaded:
         ("🗺️", "Risk Haritası"),
         ("📍", "Mekânsal"),
         ("💡", "Öneriler"),
+        ("📐", "Metodoloji"),
     ]
     sayfa_keys = [
         "🏠 Ana Sayfa",
@@ -335,6 +336,7 @@ if data_loaded:
         "Izmir Risk Haritasi",
         "🗺️ Mekânsal Analiz",
         "💡 Öneriler",
+        "📐 Metodoloji",
     ]
 
     if "secili_sayfa" not in st.session_state:
@@ -1622,3 +1624,201 @@ if data_loaded:
             tablo_data.append({"İlçe": ilce, "Risk Skoru": round(skor,1), "Sınıf": risk_sinifi(skor)})
         tablo_df = pd.DataFrame(tablo_data).sort_values("Risk Skoru", ascending=False)
         st.dataframe(tablo_df, use_container_width=True, hide_index=True)
+    # ════════════════════════════════
+    # METODOLOJİ
+    # ════════════════════════════════
+    elif sayfa == "📐 Metodoloji":
+
+        st.markdown("""
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);
+                    margin-bottom:1.5rem;">
+            <div style="display:inline-block;background:rgba(56,209,227,0.1);
+                        border:1px solid rgba(56,209,227,0.3);border-radius:50px;
+                        padding:4px 16px;margin-bottom:0.8rem;">
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
+                    METHODOLOGY · TRANSPARENCY
+                </span>
+            </div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
+                Metodoloji & Teknik Detaylar
+            </div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">
+                Veri kaynağı · İstatistiksel yöntemler · Formüller · Sınırlılıklar
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        def bolum(no, en, tr):
+            st.markdown(f"""
+            <div style="display:flex;align-items:center;gap:12px;margin:1.8rem 0 1rem 0;">
+                <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
+                            border-radius:2px;"></div>
+                <div>
+                    <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;
+                                text-transform:uppercase;">{no} · {en}</div>
+                    <div style="color:#ffffff;font-size:1.1rem;font-weight:600;">{tr}</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        def formul_kutusu(aciklama, formul, yorum):
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(56,209,227,0.2);
+                        border-radius:10px;padding:1rem 1.2rem;margin:0.5rem 0;">
+                <div style="color:#a8d8f0;font-size:0.82rem;margin-bottom:0.5rem;">{aciklama}</div>
+                <div style="background:rgba(0,0,0,0.3);border-radius:6px;padding:0.6rem 1rem;
+                            font-family:monospace;color:#38d1e3;font-size:0.95rem;
+                            letter-spacing:0.5px;margin-bottom:0.5rem;">{formul}</div>
+                <div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;">{yorum}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # ── 01 VERİ KAYNAĞI
+        bolum("01", "DATA SOURCE", "Veri Kaynağı")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("""
+            <div style="background:rgba(255,255,255,0.04);border-radius:10px;
+                        padding:1rem 1.2rem;border:1px solid rgba(56,209,227,0.15);">
+                <div style="color:#38d1e3;font-size:0.75rem;letter-spacing:1px;
+                            margin-bottom:0.6rem;">İLÇE BAZLI VERİ</div>
+                <div style="color:#d0e8f5;font-size:0.88rem;line-height:1.8;">
+                    📌 Kaynak: İZSU Açık Veri Portalı<br>
+                    📌 Kapsam: 11 merkez ilçe<br>
+                    📌 Dönem: 2020 – 2023<br>
+                    📌 Değişkenler: Yıllık tüketim (m³), abone sayısı
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        with col2:
+            st.markdown("""
+            <div style="background:rgba(255,255,255,0.04);border-radius:10px;
+                        padding:1rem 1.2rem;border:1px solid rgba(56,209,227,0.15);">
+                <div style="color:#38d1e3;font-size:0.75rem;letter-spacing:1px;
+                            margin-bottom:0.6rem;">SİSTEM GENELİ VERİ</div>
+                <div style="color:#d0e8f5;font-size:0.88rem;line-height:1.8;">
+                    📌 Kaynak: İZSU Açık Veri Portalı<br>
+                    📌 Kapsam: 3 baraj (Tahtalı, Balçova, Gördes)<br>
+                    📌 Dönem: 2020 – 2023<br>
+                    📌 Değişkenler: Doluluk, üretim, kayıp oranı
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # ── 02 RİSK ENDEKSİ
+        bolum("02", "RISK INDEX", "Water Security Risk Index (WSRI)")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            formul_kutusu(
+                "Adım 1 — Min-Max Normalizasyon: Farklı birimlerdeki göstergeler 0–1 arasına çekilir.",
+                "Z(x) = (x − x_min) / (x_max − x_min)",
+                "Her gösterge için yüksek değer = yüksek risk yönünde normalize edildi."
+            )
+            formul_kutusu(
+                "Adım 2 — Entropy Ağırlıklandırma: Ağırlıklar araştırmacı tarafından değil, verinin kendi dağılımından hesaplanır.",
+                "E_j = −(1/ln n) × Σ p_ij × ln(p_ij)  →  w_j = (1−E_j) / Σ(1−E_j)",
+                "İlçeler arası en fazla değişen gösterge en yüksek ağırlığı alır."
+            )
+        with col2:
+            formul_kutusu(
+                "Adım 3 — Bileşik Risk Skoru (WSRI): Normalize göstergeler entropy ağırlıklarıyla toplanır.",
+                "Risk(i,t) = Σ w_j × Z_j(i,t)  × 100",
+                "Sonuç 0–100 arasında. 0–40 Düşük · 40–70 Orta · 70–100 Yüksek."
+            )
+            st.markdown("""
+            <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.2);
+                        border-radius:10px;padding:1rem 1.2rem;margin:0.5rem 0;">
+                <div style="color:#38d1e3;font-size:0.75rem;letter-spacing:1px;margin-bottom:0.6rem;">
+                    HESAPLANAN AĞIRLIKLAR</div>
+                <div style="color:#d0e8f5;font-size:0.88rem;line-height:1.9;">
+                    🔴 Kayıp Oranı &nbsp;&nbsp;&nbsp; <b style="color:white">%32.9</b><br>
+                    🔵 Talep (Abone Başına) &nbsp; <b style="color:white">%29.1</b><br>
+                    🟢 Arz Kısıtı &nbsp;&nbsp;&nbsp;&nbsp; <b style="color:white">%28.7</b><br>
+                    🟠 Tüketim Artışı &nbsp;&nbsp; <b style="color:white">%9.2</b>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # ── 03 ZAMANSAL ANALİZ
+        bolum("03", "TEMPORAL ANALYSIS", "Mann-Kendall Trend Testi & Sen's Slope")
+        col1, col2 = st.columns(2)
+        with col1:
+            formul_kutusu(
+                "Mann-Kendall: Serinin monoton trend içerip içermediğini test eder. Parametrik olmayan — normal dağılım gerektirmez.",
+                "S = Σ sgn(x_j − x_i)  →  τ = S / [n(n−1)/2]",
+                "τ > 0 artan trend · τ < 0 azalan trend · p < 0.05 istatistiksel anlamlılık"
+            )
+        with col2:
+            formul_kutusu(
+                "Sen's Slope: Trendin yıllık değişim büyüklüğünü hesaplar. Aykırı değerlerden etkilenmez.",
+                "β = median[(x_j − x_i) / (j − i)]",
+                "β = −7.2 → Tahtalı Barajı her yıl 7.2 puan doluluk kaybediyor."
+            )
+
+        # ── 04 MEKÂNSAL ANALİZ
+        bolum("04", "SPATIAL ANALYSIS", "Moran's I & LISA")
+        col1, col2 = st.columns(2)
+        with col1:
+            formul_kutusu(
+                "Global Moran's I: Tüm sistem için mekânsal kümelenme skoru.",
+                "I = (n/S₀) × [Σᵢ Σⱼ wᵢⱼ(xᵢ−x̄)(xⱼ−x̄)] / Σᵢ(xᵢ−x̄)²",
+                "I > 0 kümelenme var · I < 0 dağınık · Satır-normalize ağırlık matrisi kullanıldı."
+            )
+        with col2:
+            formul_kutusu(
+                "Local Moran's I (LISA): Her ilçe için ayrı mekânsal skor.",
+                "Iᵢ = zᵢ × Σⱼ wᵢⱼ × zⱼ",
+                "HH/LL = küme · HL/LH = mekânsal aykırı değer · 999 permütasyon testi uygulandı."
+            )
+
+        # ── 05 TAHMİN
+        bolum("05", "PROJECTION MODEL", "2040 Projeksiyon Modeli")
+        formul_kutusu(
+            "Her ilçenin 2020–2023 abone büyüme oranı (CAGR) hesaplanır ve risk skoruna uygulanır.",
+            "Risk(i,t) = Risk(i,2023) × (1 + CAGR_i × k)^(t−2023)  →  k: 0.5 / 1.0 / 1.5",
+            "k=0.5 İyimser · k=1.0 Baz · k=1.5 Kötümser senaryo. Sonuç 0–100 arasında sınırlandırıldı."
+        )
+
+        # ── 06 SINIRLILIKLAR
+        bolum("06", "LIMITATIONS", "Sınırlılıklar & Şeffaflık")
+        st.markdown("""
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
+            <div style="background:rgba(255,127,14,0.08);border:1px solid rgba(255,127,14,0.25);
+                        border-radius:10px;padding:0.9rem 1rem;">
+                <div style="color:#ff7f0e;font-size:0.75rem;font-weight:600;margin-bottom:0.4rem;">
+                    ⚠️ VERİ KISITI</div>
+                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.7;">
+                    n=4 yıllık veri ile Mann-Kendall anlamlılık eşiğine ulaşılamadı (p>0.05).
+                    Sonuçlar gösterge niteliğindedir.
+                </div>
+            </div>
+            <div style="background:rgba(255,127,14,0.08);border:1px solid rgba(255,127,14,0.25);
+                        border-radius:10px;padding:0.9rem 1rem;">
+                <div style="color:#ff7f0e;font-size:0.75rem;font-weight:600;margin-bottom:0.4rem;">
+                    ⚠️ MEKÂNSAL KISIT</div>
+                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.7;">
+                    n=11 ilçe ile Moran's I istatistiksel güç açısından sınırlıdır.
+                    Komşuluk matrisi manuel tanımlandı.
+                </div>
+            </div>
+            <div style="background:rgba(255,127,14,0.08);border:1px solid rgba(255,127,14,0.25);
+                        border-radius:10px;padding:0.9rem 1rem;">
+                <div style="color:#ff7f0e;font-size:0.75rem;font-weight:600;margin-bottom:0.4rem;">
+                    ⚠️ TAHMİN KISITI</div>
+                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.7;">
+                    2040 projeksiyonu lineer büyüme varsayımına dayanır.
+                    İklim, politika ve göç etkileri modele dahil edilmemiştir.
+                </div>
+            </div>
+            <div style="background:rgba(44,160,44,0.08);border:1px solid rgba(44,160,44,0.25);
+                        border-radius:10px;padding:0.9rem 1rem;">
+                <div style="color:#2ca02c;font-size:0.75rem;font-weight:600;margin-bottom:0.4rem;">
+                    ✅ TEKRARLANABILIRLIK</div>
+                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.7;">
+                    Tüm analizler Python ile yapıldı. Kaynak kod GitHub'da açık erişimde.
+                    Veri: İZSU Açık Veri Portalı.
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
