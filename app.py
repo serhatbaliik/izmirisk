@@ -1294,7 +1294,7 @@ if data_loaded:
             def minmax_col(col): mn,mx = df_r23[col].min(),df_r23[col].max(); return 0 if mx==mn else (row[col]-mn)/(mx-mn)
             vals = [minmax_col("AbbTuketim"), minmax_col("Artis"), minmax_col("Arz_Kısıtı"), minmax_col("Su_Kayıp_Oranı_%")]
             cats = ["Talep","Artış","Arz","Kayıp"]
-                        fig_r = go.Figure(go.Scatterpolar(
+            fig_r = go.Figure(go.Scatterpolar(
                 r=vals+[vals[0]], theta=cats+[cats[0]],
                 fill="toself", fillcolor=f"rgba(56,209,227,0.15)",
                 line=dict(color="#38d1e3", width=2),
