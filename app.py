@@ -847,58 +847,134 @@ if data_loaded:
     # ════════════════════════════════
     elif sayfa == "📈 Risk Endeksi":
 
-        st.title("📈 Su Güvenliği Risk Endeksi (WSRI)")
-        st.divider()
+        # Hero başlık
+        st.markdown("""
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(126,206,244,0.2);
+                    margin-bottom:1.5rem;">
+            <div style="display:inline-block;background:rgba(126,206,244,0.1);
+                        border:1px solid rgba(126,206,244,0.3);border-radius:50px;
+                        padding:4px 16px;margin-bottom:0.8rem;">
+                <span style="color:#7ecef4;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
+                    WATER SECURITY RISK INDEX · WSRI
+                </span>
+            </div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
+                Su Güvenliği Risk Endeksi
+            </div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">
+                Entropy ağırlıklı bileşik skor · 4 gösterge · 0–100 ölçeği
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
+        # Yıl seçici
         yil_sec = st.slider("Yıl seç:", 2020, 2023, 2023)
-        df_yil = risk_df[risk_df["Yıl"]==yil_sec].sort_values("Risk_Skor",ascending=False)
+        df_yil = risk_df[risk_df["Yıl"]==yil_sec].sort_values("Risk_Skor", ascending=False)
 
-        col1, col2 = st.columns(2)
+        # Bölüm 1 — Risk skorları ve ısı haritası
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin:1rem 0 0.8rem 0;">
+            <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+                        border-radius:2px;"></div>
+            <div>
+                <div style="color:#7ecef4;font-size:0.68rem;letter-spacing:2px;">
+                    01 · DISTRICT SCORES</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
+                    İlçe Risk Skorları & Yıllık Karşılaştırma</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
+        col1, col2 = st.columns([3,2])
         with col1:
-            st.subheader(f"{yil_sec} Yılı Risk Skorları")
             colors = [get_risk_color(s) for s in df_yil["Risk_Skor"]]
             fig = go.Figure(go.Bar(
                 x=df_yil["İlçe"], y=df_yil["Risk_Skor"],
-                marker_color=colors, opacity=0.85,
-                text=df_yil["Risk_Skor"].round(1),
+                marker=dict(color=colors, opacity=0.85,
+                            line=dict(color="rgba(255,255,255,0.1)", width=0.5)),
+                text=[f"{s:.1f}" for s in df_yil["Risk_Skor"]],
                 textposition="outside",
-                hovertemplate="%{x}<br>Risk: %{y:.1f}<extra></extra>"
+                textfont=dict(color="white", size=11),
+                hovertemplate="<b>%{x}</b><br>Risk Skoru: %{y:.1f}<extra></extra>"
             ))
-            fig.add_hline(y=40,line_dash="dot",line_color="orange",
-                          annotation_text="Düşük/Orta sınırı")
-            fig.add_hline(y=70,line_dash="dot",line_color="red",
-                          annotation_text="Orta/Yüksek sınırı")
-            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                              height=380,xaxis=dict(tickangle=30),
-                              yaxis=dict(range=[0,85],gridcolor="rgba(255,255,255,0.15)"))
+            fig.add_hline(y=40, line_dash="dot", line_color="#ff7f0e", line_width=1.5,
+                          annotation_text="Orta Risk Eşiği",
+                          annotation_font_color="#ff7f0e", annotation_font_size=10)
+            fig.add_hline(y=70, line_dash="dot", line_color="#d62728", line_width=1.5,
+                          annotation_text="Yüksek Risk Eşiği",
+                          annotation_font_color="#d62728", annotation_font_size=10)
+            fig.update_layout(
+                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                height=380, font=dict(color="white"),
+                xaxis=dict(tickangle=30, gridcolor="rgba(255,255,255,0.08)",
+                           tickfont=dict(color="white")),
+                yaxis=dict(range=[0,85], gridcolor="rgba(255,255,255,0.08)",
+                           tickfont=dict(color="white")),
+                margin=dict(t=30,b=60,l=40,r=60)
+            )
             st.plotly_chart(fig, use_container_width=True)
 
         with col2:
-            st.subheader(f"{yil_sec} Risk Isı Haritası")
-            pivot = risk_df.pivot(index="İlçe",columns="Yıl",values="Risk_Skor")
-            fig = go.Figure(go.Heatmap(
-                z=pivot.values, x=[str(y) for y in pivot.columns],
-                y=pivot.index.tolist(), colorscale="RdYlGn_r",
+            pivot = risk_df.pivot(index="İlçe", columns="Yıl", values="Risk_Skor")
+            fig2 = go.Figure(go.Heatmap(
+                z=pivot.values,
+                x=[str(y) for y in pivot.columns],
+                y=pivot.index.tolist(),
+                colorscale=[[0,"#2ca02c"],[0.4,"#ff7f0e"],[0.7,"#d62728"],[1,"#8b0000"]],
                 text=pivot.values.round(1),
                 texttemplate="%{text}",
-                hovertemplate="İlçe: %{y}<br>Yıl: %{x}<br>Risk: %{z:.1f}<extra></extra>",
-                colorbar=dict(title="Risk Skoru")
+                textfont=dict(size=11, color="white"),
+                hovertemplate="<b>%{y}</b> · %{x}<br>Risk: %{z:.1f}<extra></extra>",
+                colorbar=dict(title="Risk", tickfont=dict(color="white"))
             ))
-            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                              height=380,margin=dict(l=120))
-            st.plotly_chart(fig, use_container_width=True)
+            fig2.update_layout(
+                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                height=380, font=dict(color="white"),
+                xaxis=dict(tickfont=dict(color="white")),
+                yaxis=dict(tickfont=dict(color="white")),
+                margin=dict(t=10,b=10,l=110,r=30)
+            )
+            st.plotly_chart(fig2, use_container_width=True)
 
-        st.subheader("İlçe Detayı")
+        # Bölüm 2 — İlçe detayı
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
+            <div style="width:4px;height:28px;background:linear-gradient(#7ecef4,#1B4F72);
+                        border-radius:2px;"></div>
+            <div>
+                <div style="color:#7ecef4;font-size:0.68rem;letter-spacing:2px;">
+                    02 · DISTRICT DETAIL</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
+                    İlçe Bazlı Detay — Risk Bileşenleri</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
         ilce_sec = st.selectbox("İlçe seç:", sorted(risk_df["İlçe"].unique()))
         df_ilce = risk_df[risk_df["İlçe"]==ilce_sec].sort_values("Yıl")
         skor_2023 = df_ilce[df_ilce["Yıl"]==2023]["Risk_Skor"].values[0]
         sinif_2023 = df_ilce[df_ilce["Yıl"]==2023]["Risk_Sınıf"].values[0]
+        renk_2023 = get_risk_color(skor_2023)
+        cagr_val = cagr_dict.get(ilce_sec, 0) * 100
 
-        c1,c2,c3 = st.columns(3)
-        c1.metric("2023 Risk Skoru", f"{skor_2023:.1f}")
-        c2.metric("Risk Sınıfı", str(sinif_2023))
-        c3.metric("CAGR (Abone)", f"%{cagr_dict.get(ilce_sec,0)*100:.2f}/yıl")
+        k1, k2, k3 = st.columns(3)
+        for col, baslik, deger, alt, renk in [
+            (k1, "2023 Risk Skoru", f"{skor_2023:.1f}", str(sinif_2023), renk_2023),
+            (k2, "Risk Sınıfı", str(sinif_2023), "2023 yılı", renk_2023),
+            (k3, "Abone Büyüme Hızı", f"%{cagr_val:.2f}/yıl", "CAGR 2020–2023", "#7ecef4"),
+        ]:
+            with col:
+                st.markdown(f"""
+                <div style="background:rgba(255,255,255,0.06);
+                            border:1px solid {renk}44;border-top:3px solid {renk};
+                            border-radius:10px;padding:1rem;text-align:center;">
+                    <div style="color:#a8d8f0;font-size:0.72rem;letter-spacing:1px;
+                                text-transform:uppercase;margin-bottom:6px;">{baslik}</div>
+                    <div style="color:#ffffff;font-size:1.4rem;font-weight:700;
+                                margin-bottom:4px;">{deger}</div>
+                    <div style="color:{renk};font-size:0.78rem;">{alt}</div>
+                </div>
+                """, unsafe_allow_html=True)
 
     # ════════════════════════════════
     # TAHMİN
