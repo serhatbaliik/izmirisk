@@ -636,10 +636,8 @@ if data_loaded:
                     fig.add_trace(go.Scatter(
                         x=yillar, y=tablo2[baraj],
                         mode="lines+markers", name=isim,
-                        line=dict(color=renk,width=2.5),
+                        line=dict(color=renk, width=2.5),
                         marker=dict(size=10, symbol=sembol),
-                        fill="tozeroy",
-                        fillcolor=renk.replace("#","rgba(").replace(")",",0.05)") if "#" in renk else renk,
                         hovertemplate=f"<b>{isim}</b>: %{{y:.1f}}%<extra></extra>"
                     ))
                 fig.add_hline(y=esik, line_dash="dash", line_color="#ff7f0e", line_width=1.5,
