@@ -123,6 +123,21 @@ st.markdown("""
     .risk-med { color: #ff7f0e; font-weight: 600; }
     .risk-high { color: #d62728; font-weight: 600; }
 
+    /* Navigasyon butonları */
+    div[data-testid="stButton"] > button {
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px solid rgba(56,209,227,0.2) !important;
+        color: #a8d8f0 !important;
+        border-radius: 8px !important;
+        font-size: 0.72rem !important;
+        font-weight: 500 !important;
+    }
+    div[data-testid="stButton"] > button:hover {
+        background: rgba(56,209,227,0.15) !important;
+        border-color: rgba(56,209,227,0.5) !important;
+        color: #ffffff !important;
+    }
+
     /* Streamlit üst menü çubuğunu gizle */
     header[data-testid="stHeader"] {
         background: rgba(3,12,35,0.85) !important;
@@ -326,11 +341,19 @@ if data_loaded:
 
     # ── Üst navigasyon (sidebar kaldırıldı)
     st.markdown("""
-    <div style="display:flex;align-items:center;gap:16px;padding:12px 0 8px 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1rem;">
-        <span style="font-size:1.8rem;">💧</span>
-        <div>
-            <div style="color:#38d1e3;font-size:1.1rem;font-weight:700;">İzmiRisk</div>
-            <div style="color:#a8d8f0;font-size:0.75rem;">Su Güvenliği Risk Endeksi · İZSU 2020–2023</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;
+                padding:16px 0 12px 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:0.8rem;">
+        <div style="display:flex;align-items:center;gap:14px;">
+            <span style="font-size:2.2rem;">💧</span>
+            <div>
+                <div style="color:#ffffff;font-size:1.8rem;font-weight:800;
+                            letter-spacing:-0.5px;line-height:1.1;">İzmiRisk</div>
+                <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;
+                            margin-top:2px;">Su Güvenliği Risk Endeksi · İzmir · 2020–2040</div>
+            </div>
+        </div>
+        <div style="color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.7;">
+            Veri: İZSU Açık Veri Portalı<br>11 Merkez İlçe · Entropy-WSRI
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -367,7 +390,7 @@ if data_loaded:
         bg = "rgba(56,209,227,0.2)" if aktif else "rgba(255,255,255,0.05)"
         border = "1px solid rgba(56,209,227,0.6)" if aktif else "1px solid rgba(255,255,255,0.1)"
         with col:
-            if st.button(f"{ikon}\n{isim}", key=f"nav_{key}",
+            if st.button(f"{ikon} {isim}", key=f"nav_{key}",
                         use_container_width=True):
                 st.session_state.secili_sayfa = key
                 st.rerun()
@@ -452,73 +475,38 @@ if data_loaded:
         en_riskli_skor = float(en_riskli["Risk_Skor"])
 
         # ── Animasyonlu Sayaçlar
-        st.markdown(f"""
+        cnt1_val = int(tablo1[tablo1["Yıl"]==2023]["Tüketim_m3"].sum() / 1e6)
+        cnt2_val = round(float(df23.iloc[0]["Risk_Skor"]), 1)
+        cnt3_val = round(float(tablo2[tablo2["Yıl"]==2023]["Su_Kayıp_Oranı_%"].values[0]), 2)
+        en_riskli_adi = str(df23.iloc[0]["İlçe"])
+        bar1 = min(cnt1_val/300*100, 100)
+        bar3 = min(cnt3_val*3, 100)
+
+        sayac_html = f"""
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;">
-            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(56,209,227,0.2);
-                        border-radius:12px;padding:1.2rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;
-                            text-transform:uppercase;margin-bottom:8px;">Toplam Tüketim 2023</div>
-                <div style="color:#38d1e3;font-size:2.4rem;font-weight:700;
-                            font-variant-numeric:tabular-nums;" id="cnt1">0</div>
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(56,209,227,0.2);border-radius:12px;padding:1.2rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Toplam Tüketim 2023</div>
+                <div style="color:#38d1e3;font-size:2.4rem;font-weight:700;" id="cnt1">{ cnt1_val }</div>
                 <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">milyon m³</div>
                 <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
-                    <div id="bar1" style="height:100%;width:0%;background:#38d1e3;border-radius:2px;
-                                          transition:width 2s ease;"></div>
-                </div>
+                    <div style="height:100%;width:{bar1:.0f}%;background:#38d1e3;border-radius:2px;"></div></div>
             </div>
-            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(214,39,40,0.3);
-                        border-radius:12px;padding:1.2rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;
-                            text-transform:uppercase;margin-bottom:8px;">En Yüksek Risk Skoru</div>
-                <div style="color:#d62728;font-size:2.4rem;font-weight:700;
-                            font-variant-numeric:tabular-nums;" id="cnt2">0</div>
-                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">{en_riskli["İlçe"]} · Orta Risk</div>
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(214,39,40,0.3);border-radius:12px;padding:1.2rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">En Yüksek Risk Skoru</div>
+                <div style="color:#d62728;font-size:2.4rem;font-weight:700;" id="cnt2">{ cnt2_val }</div>
+                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">{ en_riskli_adi } · Orta Risk</div>
                 <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
-                    <div id="bar2" style="height:100%;width:0%;background:#d62728;border-radius:2px;
-                                          transition:width 2s ease;"></div>
-                </div>
+                    <div style="height:100%;width:{cnt2_val:.0f}%;background:#d62728;border-radius:2px;"></div></div>
             </div>
-            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,127,14,0.3);
-                        border-radius:12px;padding:1.2rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;
-                            text-transform:uppercase;margin-bottom:8px;">Su Kayıp Oranı 2023</div>
-                <div style="color:#ff7f0e;font-size:2.4rem;font-weight:700;
-                            font-variant-numeric:tabular-nums;" id="cnt3">0</div>
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,127,14,0.3);border-radius:12px;padding:1.2rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Su Kayıp Oranı 2023</div>
+                <div style="color:#ff7f0e;font-size:2.4rem;font-weight:700;" id="cnt3">{ cnt3_val }</div>
                 <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">% · sistem geneli</div>
                 <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
-                    <div id="bar3" style="height:100%;width:0%;background:#ff7f0e;border-radius:2px;
-                                          transition:width 2s ease;"></div>
-                </div>
+                    <div style="height:100%;width:{bar3:.0f}%;background:#ff7f0e;border-radius:2px;"></div></div>
             </div>
-        </div>
-        <script>
-        (function() {{
-            function animCount(id, target, decimals, duration) {{
-                var el = document.getElementById(id);
-                if (!el) return;
-                var start = 0, step = target / (duration / 16);
-                var timer = setInterval(function() {{
-                    start += step;
-                    if (start >= target) {{ start = target; clearInterval(timer); }}
-                    el.textContent = decimals > 0 ? start.toFixed(decimals) : Math.round(start).toLocaleString('tr-TR');
-                }}, 16);
-            }}
-            setTimeout(function() {{
-                animCount('cnt1', {toplam_tuketim}, 0, 1800);
-                animCount('cnt2', {en_riskli_skor:.1f}, 1, 1800);
-                animCount('cnt3', {kayip_oran:.2f}, 2, 1800);
-                setTimeout(function() {{
-                    var b1 = document.getElementById('bar1');
-                    var b2 = document.getElementById('bar2');
-                    var b3 = document.getElementById('bar3');
-                    if(b1) b1.style.width = '{min(toplam_tuketim/300*100, 100):.0f}%';
-                    if(b2) b2.style.width = '{en_riskli_skor:.0f}%';
-                    if(b3) b3.style.width = '{kayip_oran*3:.0f}%';
-                }}, 100);
-            }}, 400);
-        }})();
-        </script>
-        """, unsafe_allow_html=True)
+        </div>"""
+        st.markdown(sayac_html, unsafe_allow_html=True)
 
         # ── KPI Kartları — özel HTML
 
