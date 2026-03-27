@@ -358,19 +358,7 @@ if data_loaded:
     </div>
     """, unsafe_allow_html=True)
 
-    nav_cols = st.columns(9)
-    sayfalar = [
-        ("🏠", "Ana Sayfa"),
-        ("📊", "EDA"),
-        ("📈", "Risk Endeksi"),
-        ("🔮", "2040 Tahmin"),
-        ("🗺️", "Risk Haritası"),
-        ("📍", "Mekânsal"),
-        ("💡", "Öneriler"),
-        ("📐", "Metodoloji"),
-        ("🔬", "Araçlar"),
-    ]
-    sayfa_keys = [
+    sayfa_listesi = [
         "🏠 Ana Sayfa",
         "📊 EDA Analizi",
         "📈 Risk Endeksi",
@@ -381,31 +369,37 @@ if data_loaded:
         "📐 Metodoloji",
         "🔬 Araçlar",
     ]
+    etiketler = [
+        "🏠 Ana Sayfa",
+        "📊 EDA",
+        "📈 Risk",
+        "🔮 2040",
+        "🗺️ Harita",
+        "📍 Mekânsal",
+        "💡 Öneriler",
+        "📐 Metodoloji",
+        "🔬 Araçlar",
+    ]
 
     if "secili_sayfa" not in st.session_state:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
 
-    for col, (ikon, isim), key in zip(nav_cols, sayfalar, sayfa_keys):
-        aktif = st.session_state.secili_sayfa == key
-        bg = "rgba(56,209,227,0.2)" if aktif else "rgba(255,255,255,0.05)"
-        border = "1px solid rgba(56,209,227,0.6)" if aktif else "1px solid rgba(255,255,255,0.1)"
-        with col:
-            if st.button(f"{ikon} {isim}", key=f"nav_{key}",
-                        use_container_width=True):
-                st.session_state.secili_sayfa = key
-                st.rerun()
-            st.markdown(f"""
-            <style>
-            div[data-testid="stButton"] button[kind="secondary"] {{
-                background: {bg};
-                border: {border};
-                border-radius: 8px;
-                color: white;
-                font-size: 0.75rem;
-            }}
-            </style>""", unsafe_allow_html=True)
+    secili_etiket = st.pills(
+        label="",
+        options=etiketler,
+        default=etiketler[sayfa_listesi.index(st.session_state.secili_sayfa)]
+        if st.session_state.secili_sayfa in sayfa_listesi else etiketler[0],
+        key="nav_pills",
+        label_visibility="collapsed"
+    )
 
-    sayfa = st.session_state.secili_sayfa
+    if secili_etiket:
+        yeni_sayfa = sayfa_listesi[etiketler.index(secili_etiket)]
+        if yeni_sayfa != st.session_state.secili_sayfa:
+            st.session_state.secili_sayfa = yeni_sayfa
+            st.rerun()
+
+        sayfa = st.session_state.secili_sayfa
 
     # Tema toggle
     if "acik_tema" not in st.session_state:
