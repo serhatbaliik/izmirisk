@@ -280,7 +280,7 @@ if data_loaded:
         st.caption("Su Güvenliği Risk Endeksi")
         st.divider()
 
-        sayfa = st.radio("Sayfa seç:", [
+        sayfa = st.selectbox("📌 Sayfa seç:", [
             "🏠 Ana Sayfa",
             "📊 EDA Analizi",
             "📈 Risk Endeksi",
@@ -327,6 +327,58 @@ if data_loaded:
         c2.metric("En Az Riskli", en_az["İlçe"], f"Skor: {en_az['Risk_Skor']:.1f}")
         c3.metric("Orta Risk İlçe", f"{orta_sayi} ilçe", "2023 yılı")
         c4.metric("Tahtalı Doluluk", f"%{tablo2[tablo2['Yıl']==2023]['Tahtalı_Doluluk_%'].values[0]:.1f}", "2023 yılı")
+
+        st.divider()
+
+        # Animasyonlu Gauge — En riskli ilçe
+        st.subheader("Risk Göstergesi — En Riskli İlçe (2023)")
+        gauge_col1, gauge_col2, gauge_col3 = st.columns(3)
+
+        for col, ilce_idx in zip([gauge_col1, gauge_col2, gauge_col3], [0, 1, 2]):
+            ilce_row = df23.iloc[ilce_idx]
+            skor = ilce_row["Risk_Skor"]
+            ilce_adi = ilce_row["İlçe"]
+            sinif = ilce_row["Risk_Sınıf"]
+            renk = get_risk_color(skor)
+
+            fig_gauge = go.Figure(go.Indicator(
+                mode="gauge+number+delta",
+                value=skor,
+                delta={"reference": 40, "valueformat": ".1f",
+                       "increasing": {"color": "#d62728"},
+                       "decreasing": {"color": "#2ca02c"}},
+                number={"font": {"size": 28, "color": "white"}, "valueformat": ".1f"},
+                title={"text": f"<b>{ilce_adi}</b><br><span style='font-size:0.8em;color:{renk}'>{sinif}</span>",
+                       "font": {"size": 14, "color": "white"}},
+                gauge={
+                    "axis": {"range": [0, 100], "tickwidth": 1,
+                             "tickcolor": "rgba(255,255,255,0.4)",
+                             "tickfont": {"color": "rgba(255,255,255,0.6)", "size": 10}},
+                    "bar": {"color": renk, "thickness": 0.25},
+                    "bgcolor": "rgba(255,255,255,0.05)",
+                    "borderwidth": 1,
+                    "bordercolor": "rgba(255,255,255,0.2)",
+                    "steps": [
+                        {"range": [0, 40],  "color": "rgba(44,160,44,0.2)"},
+                        {"range": [40, 70], "color": "rgba(255,127,14,0.2)"},
+                        {"range": [70, 100],"color": "rgba(214,39,40,0.2)"},
+                    ],
+                    "threshold": {
+                        "line": {"color": "white", "width": 2},
+                        "thickness": 0.75,
+                        "value": skor
+                    }
+                }
+            ))
+            fig_gauge.update_layout(
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                height=220,
+                margin=dict(t=60, b=10, l=20, r=20),
+                font=dict(color="white")
+            )
+            with col:
+                st.plotly_chart(fig_gauge, use_container_width=True)
 
         st.divider()
 
