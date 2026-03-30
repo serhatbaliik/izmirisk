@@ -362,87 +362,50 @@ if data_loaded:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
 
     SAYFALAR = [
-        ("🏠", "Ana Sayfa",   "🏠 Ana Sayfa"),
+        ("🏠", "Ana Sayfa",      "🏠 Ana Sayfa"),
         ("📊", "Keşifsel Analiz","📊 EDA Analizi"),
-        ("📈", "Risk",       "📈 Risk Endeksi"),
-        ("🔮", "2040 Senaryosu","🔮 2040 Tahmin"),
-        ("🗺️","Harita",     "Izmir Risk Haritasi"),
+        ("📈", "Risk Endeksi",   "📈 Risk Endeksi"),
+        ("🔮", "2040 Senaryosu", "🔮 2040 Tahmin"),
+        ("🗺️","Risk Haritası",  "Izmir Risk Haritasi"),
         ("📍", "Mekânsal Analiz","🗺️ Mekânsal Analiz"),
-        ("💡", "Öneriler",  "💡 Öneriler"),
-        ("📐", "Metodoloji","📐 Metodoloji"),
-        ("🔬", "Araçlar",   "🔬 Araçlar"),
+        ("💡", "Öneriler",       "💡 Öneriler"),
+        ("📐", "Metodoloji",     "📐 Metodoloji"),
+        ("🔬", "Araçlar",        "🔬 Araçlar"),
     ]
 
     aktif = st.session_state.secili_sayfa
 
-    st.markdown("""
-    <style>
-    .nav-bar {
-        display: flex;
-        gap: 6px;
-        padding: 8px 10px;
-        background: rgba(3,10,30,0.85);
-        border-radius: 14px;
-        border: 1px solid rgba(56,209,227,0.2);
-        margin-bottom: 8px;
-        flex-wrap: wrap;
-    }
-    .nav-btn {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 3px;
-        padding: 8px 6px;
-        border-radius: 10px;
-        background: linear-gradient(145deg, #0d1f40, #05112a);
-        border: 1px solid rgba(56,209,227,0.18);
-        box-shadow: 3px 3px 7px rgba(0,0,0,0.45), -1px -1px 3px rgba(56,209,227,0.06);
-        transition: all 0.15s ease;
-        user-select: none;
-        min-height: 52px;
-        justify-content: center;
-    }
-    .nav-btn:hover {
-        background: linear-gradient(145deg, #142e64, #0a1e46);
-        border-color: rgba(56,209,227,0.4);
-        box-shadow: 4px 4px 10px rgba(0,0,0,0.5), -1px -1px 4px rgba(56,209,227,0.1);
-        transform: translateY(-1px);
-    }
-    .nav-btn.nav-active {
-        background: linear-gradient(145deg, #1a3d7a, #0f2860);
-        border-color: rgba(56,209,227,0.6);
-        box-shadow: inset 2px 2px 5px rgba(0,0,0,0.35),
-                    inset -1px -1px 2px rgba(56,209,227,0.12),
-                    0 0 14px rgba(56,209,227,0.18);
-        transform: translateY(1px);
-    }
-    .nav-icon { font-size: 1.05rem; line-height: 1; }
-    .nav-label {
-        font-size: 0.62rem;
-        font-weight: 600;
-        letter-spacing: 0.3px;
-        color: #8ab8d4;
-        white-space: nowrap;
-    }
-    .nav-btn.nav-active .nav-label { color: #38d1e3; }
-    .nav-btn.nav-active .nav-icon { filter: brightness(1.3); }
-    </style>
+    # Tailwind CDN + profesyonel nav
+    nav_items = ""
+    for ikon, etiket, key in SAYFALAR:
+        is_active = key == aktif
+        if is_active:
+            btn_class = "flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-b from-cyan-500/30 to-blue-900/60 border border-cyan-400/60 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-400/40 cursor-pointer transition-all duration-150 min-w-fit"
+        else:
+            btn_class = "flex flex-col items-center gap-1 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 bg-slate-900/60 border border-slate-700/50 hover:border-cyan-500/40 hover:text-cyan-300 hover:bg-slate-800/80 cursor-pointer transition-all duration-150 min-w-fit"
+        nav_items += f'''<div class="{btn_class}" id="nav-{key.replace(" ","_").replace("/","").replace("🏠","").replace("📊","").replace("📈","").replace("🔮","").replace("🗺️","").replace("📍","").replace("💡","").replace("📐","").replace("🔬","")}">
+            <span style="font-size:1rem;line-height:1;">{ikon}</span>
+            <span style="white-space:nowrap;">{etiket}</span>
+        </div>'''
+
+    st.markdown(f"""
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <div class="flex gap-2 p-2 rounded-2xl mb-2"
+         style="background:rgba(3,8,25,0.85);border:1px solid rgba(56,209,227,0.18);flex-wrap:wrap;">
+        {nav_items}
+    </div>
     """, unsafe_allow_html=True)
 
+    # Gizli Streamlit butonlar — tıklamayı yakala
     cols = st.columns(len(SAYFALAR))
     for col, (ikon, etiket, key) in zip(cols, SAYFALAR):
         with col:
-            aktif_class = "nav-active" if key == aktif else ""
-            st.markdown(f"""<div style="position:relative;">
-            <div class="nav-btn {aktif_class}">
-                <span class="nav-icon">{ikon}</span>
-                <span class="nav-label">{etiket}</span>
-            </div></div>
-            """, unsafe_allow_html=True)
-            if st.button("​", key=f"nb_{key}", use_container_width=True,
-                        help=etiket):
+            st.markdown(f"""
+            <div style="height:0;overflow:hidden;margin-top:-4px;">""", unsafe_allow_html=True)
+            if st.button(f"{ikon}", key=f"nb_{key}", use_container_width=True):
                 st.session_state.secili_sayfa = key
                 st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
 
     sayfa = st.session_state.secili_sayfa
 
