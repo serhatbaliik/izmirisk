@@ -361,39 +361,88 @@ if data_loaded:
     if "secili_sayfa" not in st.session_state:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
 
-    SAYFALAR = {
-        "🏠 Ana Sayfa":       "🏠 Ana Sayfa",
-        "📊 EDA Analizi":     "📊 EDA Analizi",
-        "📈 Risk Endeksi":    "📈 Risk Endeksi",
-        "🔮 2040 Tahmin":     "🔮 2040 Tahmin",
-        "🗺️ Risk Haritası":  "Izmir Risk Haritasi",
-        "📍 Mekânsal Analiz": "🗺️ Mekânsal Analiz",
-        "💡 Öneriler":        "💡 Öneriler",
-        "📐 Metodoloji":      "📐 Metodoloji",
-        "🔬 Araçlar":         "🔬 Araçlar",
+    SAYFALAR = [
+        ("🏠", "Ana",        "🏠 Ana Sayfa"),
+        ("📊", "EDA",        "📊 EDA Analizi"),
+        ("📈", "Risk",       "📈 Risk Endeksi"),
+        ("🔮", "2040",       "🔮 2040 Tahmin"),
+        ("🗺️","Harita",     "Izmir Risk Haritasi"),
+        ("📍", "Mekânsal",  "🗺️ Mekânsal Analiz"),
+        ("💡", "Öneriler",  "💡 Öneriler"),
+        ("📐", "Metodoloji","📐 Metodoloji"),
+        ("🔬", "Araçlar",   "🔬 Araçlar"),
+    ]
+
+    aktif = st.session_state.secili_sayfa
+
+    st.markdown("""
+    <style>
+    .nav-bar {
+        display: flex;
+        gap: 6px;
+        padding: 8px 10px;
+        background: rgba(3,10,30,0.85);
+        border-radius: 14px;
+        border: 1px solid rgba(56,209,227,0.2);
+        margin-bottom: 8px;
+        flex-wrap: wrap;
     }
+    .nav-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        flex: 1;
+        min-width: 60px;
+        background: linear-gradient(145deg, rgba(13,31,64,0.9), rgba(5,15,40,0.9));
+        border: 1px solid rgba(56,209,227,0.15);
+        box-shadow: 3px 3px 6px rgba(0,0,0,0.4), -1px -1px 3px rgba(56,209,227,0.05);
+        transition: all 0.15s ease;
+        text-decoration: none;
+    }
+    .nav-btn:hover {
+        background: linear-gradient(145deg, rgba(20,50,100,0.9), rgba(10,30,70,0.9));
+        border-color: rgba(56,209,227,0.4);
+        box-shadow: 4px 4px 8px rgba(0,0,0,0.5), -1px -1px 4px rgba(56,209,227,0.1);
+        transform: translateY(-1px);
+    }
+    .nav-btn.nav-active {
+        background: linear-gradient(145deg, rgba(30,80,140,0.95), rgba(15,50,100,0.95));
+        border-color: rgba(56,209,227,0.6);
+        box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3),
+                    inset -1px -1px 2px rgba(56,209,227,0.1),
+                    0 0 12px rgba(56,209,227,0.15);
+        transform: translateY(1px);
+    }
+    .nav-icon { font-size: 1rem; line-height: 1; }
+    .nav-label {
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        color: #a8d8f0;
+        white-space: nowrap;
+    }
+    .nav-btn.nav-active .nav-label { color: #38d1e3; }
+    </style>
+    """, unsafe_allow_html=True)
 
-    aktif_etiket = next((e for e,k in SAYFALAR.items() if k == st.session_state.secili_sayfa),
-                        "🏠 Ana Sayfa")
-
-    col_nav, col_tema = st.columns([5,1])
-    with col_nav:
-        secim = st.selectbox(
-            "Sayfa",
-            options=list(SAYFALAR.keys()),
-            index=list(SAYFALAR.keys()).index(aktif_etiket),
-            key="nav_select",
-            label_visibility="collapsed"
-        )
-    with col_tema:
-        if st.button("🌙" if not st.session_state.get("acik_tema", False) else "☀️",
-                     key="tema_btn2", use_container_width=True):
-            st.session_state.acik_tema = not st.session_state.get("acik_tema", False)
-            st.rerun()
-
-    if SAYFALAR[secim] != st.session_state.secili_sayfa:
-        st.session_state.secili_sayfa = SAYFALAR[secim]
-        st.rerun()
+    cols = st.columns(len(SAYFALAR))
+    for col, (ikon, etiket, key) in zip(cols, SAYFALAR):
+        with col:
+            aktif_class = "nav-active" if key == aktif else ""
+            st.markdown(f"""<div style="position:relative;">
+            <div class="nav-btn {aktif_class}">
+                <span class="nav-icon">{ikon}</span>
+                <span class="nav-label">{etiket}</span>
+            </div></div>
+            """, unsafe_allow_html=True)
+            if st.button("​", key=f"nb_{key}", use_container_width=True,
+                        help=etiket):
+                st.session_state.secili_sayfa = key
+                st.rerun()
 
     sayfa = st.session_state.secili_sayfa
 
