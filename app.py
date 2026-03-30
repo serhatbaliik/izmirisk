@@ -2972,118 +2972,225 @@ SAYFALAR:
 Türkçe cevap ver. Hem site soruları hem genel su güvenliği soruları hem de istatistik metodoloji sorularına cevap ver.
 """
 
-    if "ai_acik" not in st.session_state:
-        st.session_state.ai_acik = False
-    if "ai_mesajlar" not in st.session_state:
-        st.session_state.ai_mesajlar = []
+    # ── AI Widget — tamamen HTML/JS, Streamlit bağımsız
+    try:
+        gemini_key = st.secrets.get("GEMINI_API_KEY", "")
+    except:
+        gemini_key = ""
 
-    # ── AI Asistan başlık + aç/kapat
-    st.markdown("<div style='height:2rem'></div>", unsafe_allow_html=True)
-    st.markdown("""
-    <div style="background:linear-gradient(135deg,rgba(13,53,117,0.6),rgba(3,10,30,0.8));
-                border:1px solid rgba(56,209,227,0.4);border-radius:16px;
-                padding:16px 20px;margin-bottom:1rem;">
-        <div style="display:flex;align-items:center;gap:12px;">
-            <div style="font-size:2rem;">🤖</div>
-            <div>
-                <div style="color:#ffffff;font-size:1.1rem;font-weight:700;">İzmiRisk AI Asistanı</div>
-                <div style="color:#38d1e3;font-size:0.75rem;">
-                    Site metodolojisi · Grafik açıklamaları · Su güvenliği · Genel sorular
-                </div>
+    st.markdown(f"""
+    <style>
+    .ai-bubble {{
+        position: fixed;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        gap: 0;
+    }}
+    .ai-tab-btn {{
+        writing-mode: vertical-rl;
+        background: linear-gradient(180deg, #0a2a6e 0%, #38d1e3 100%);
+        color: white;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        padding: 18px 7px;
+        border-radius: 12px 0 0 12px;
+        cursor: pointer;
+        border: 1px solid rgba(56,209,227,0.5);
+        border-right: none;
+        user-select: none;
+        opacity: 0.75;
+        transition: opacity 0.2s;
+        white-space: nowrap;
+    }}
+    .ai-tab-btn:hover {{ opacity: 1; }}
+    .ai-chat-panel {{
+        width: 0;
+        overflow: hidden;
+        transition: width 0.3s ease;
+        background: rgba(3,8,25,0.96);
+        border: 1px solid rgba(56,209,227,0.3);
+        border-left: none;
+        border-radius: 0 12px 12px 0;
+        display: flex;
+        flex-direction: column;
+        box-shadow: -6px 0 30px rgba(0,0,0,0.6);
+    }}
+    .ai-chat-panel.open {{ width: 300px; }}
+    .ai-chat-head {{
+        padding: 10px 14px;
+        background: rgba(10,42,110,0.7);
+        border-bottom: 1px solid rgba(56,209,227,0.2);
+        flex-shrink: 0;
+    }}
+    .ai-chat-msgs {{
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px 12px;
+        min-height: 200px;
+        max-height: 320px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }}
+    .ai-msg-user {{
+        align-self: flex-end;
+        background: rgba(56,209,227,0.18);
+        border: 1px solid rgba(56,209,227,0.3);
+        border-radius: 12px 12px 3px 12px;
+        padding: 7px 11px;
+        max-width: 85%;
+        font-size: 0.8rem;
+        color: #fff;
+        line-height: 1.4;
+    }}
+    .ai-msg-bot {{
+        align-self: flex-start;
+        background: rgba(13,28,64,0.95);
+        border: 1px solid rgba(56,209,227,0.12);
+        border-radius: 12px 12px 12px 3px;
+        padding: 7px 11px;
+        max-width: 85%;
+        font-size: 0.8rem;
+        color: #d0e8f5;
+        line-height: 1.5;
+    }}
+    .ai-input-row {{
+        display: flex;
+        gap: 6px;
+        padding: 10px 12px;
+        border-top: 1px solid rgba(56,209,227,0.15);
+        background: rgba(5,12,35,0.9);
+        flex-shrink: 0;
+    }}
+    .ai-input-row input {{
+        flex: 1;
+        background: rgba(13,28,64,0.9);
+        border: 1px solid rgba(56,209,227,0.3);
+        border-radius: 8px;
+        padding: 7px 10px;
+        color: #d0e8f5;
+        font-size: 0.8rem;
+        outline: none;
+    }}
+    .ai-input-row input::placeholder {{ color: #4a6a8a; }}
+    .ai-send {{
+        background: linear-gradient(135deg, #0a2a6e, #1a5ba8);
+        border: 1px solid rgba(56,209,227,0.4);
+        border-radius: 8px;
+        color: #38d1e3;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 7px 12px;
+        cursor: pointer;
+        white-space: nowrap;
+    }}
+    .ai-thinking {{
+        color: #38d1e3;
+        font-size: 0.75rem;
+        font-style: italic;
+        padding: 4px 0;
+    }}
+    </style>
+
+    <div class="ai-bubble" id="aiBubble">
+        <div class="ai-tab-btn" onclick="toggleAI()">🤖 AI</div>
+        <div class="ai-chat-panel" id="aiPanel">
+            <div class="ai-chat-head">
+                <div style="color:#fff;font-size:0.85rem;font-weight:700;">💧 İzmiRisk Asistanı</div>
+                <div style="color:#38d1e3;font-size:0.65rem;">Metodoloji · Grafikler · Su güvenliği</div>
+            </div>
+            <div class="ai-chat-msgs" id="aiMsgs">
+                <div class="ai-msg-bot">Merhaba! İzmiRisk hakkında soru sorabilirsiniz 👋</div>
+            </div>
+            <div class="ai-input-row">
+                <input type="text" id="aiInput" placeholder="Soru yaz, Enter'a bas..."
+                       onkeydown="if(event.key==='Enter') sendMsg()">
+                <button class="ai-send" onclick="sendMsg()">→</button>
             </div>
         </div>
     </div>
+
+    <script>
+    const GEMINI_KEY = "{gemini_key}";
+    const SITE_CTX = `Sen İzmiRisk adlı Streamlit web uygulamasının AI asistanısın.
+Bu uygulama İzmir 11 merkez ilçesi için Su Güvenliği Risk Endeksi (WSRI) analizi yapıyor.
+Yöntem: Min-Max normalizasyon + Entropy ağırlıklandırma + WSRI (0-100 arası risk skoru).
+Göstergeler: Abone başına tüketim, tüketim artışı, arz kısıtı, su kayıp oranı.
+Entropy ağırlıkları: Kayıp Oranı %32.9, Talep %29.1, Arz Kısıtı %28.7, Artış %9.2.
+2023 en riskli: Gaziemir (58.2), Çiğli (50.1), Güzelbahçe (49.6).
+Global Moran I = -0.281 (negatif otokorelasyon). LISA: Gaziemir HL sınıfı.
+Veri: İZSU Açık Veri Portalı 2020-2023. Türkçe kısa cevap ver.`;
+
+    let isOpen = false;
+    let chatHistory = [];
+
+    function toggleAI() {{
+        isOpen = !isOpen;
+        document.getElementById("aiPanel").classList.toggle("open", isOpen);
+    }}
+
+    async function sendMsg() {{
+        const input = document.getElementById("aiInput");
+        const q = input.value.trim();
+        if (!q || !GEMINI_KEY) {{
+            if (!GEMINI_KEY) addMsg("bot", "⚠️ API key ayarlanmamış.");
+            return;
+        }}
+        input.value = "";
+        addMsg("user", q);
+        chatHistory.push({{role:"user", parts:[{{text:q}}]}});
+
+        const thinking = document.createElement("div");
+        thinking.className = "ai-thinking";
+        thinking.textContent = "Yanıt hazırlanıyor...";
+        document.getElementById("aiMsgs").appendChild(thinking);
+        scrollBottom();
+
+        try {{
+            // İlk mesaja sistem bağlamını ekle
+            const msgs = chatHistory.map((m,i) => {{
+                if (i===0 && m.role==="user") {{
+                    return {{role:"user", parts:[{{text: SITE_CTX + "\n\nSoru: " + m.parts[0].text}}]}};
+                }}
+                return m;
+            }});
+
+            const res = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${{GEMINI_KEY}}`,
+                {{
+                    method: "POST",
+                    headers: {{"Content-Type": "application/json"}},
+                    body: JSON.stringify({{contents: msgs}})
+                }}
+            );
+            const data = await res.json();
+            const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Yanıt alınamadı.";
+            thinking.remove();
+            addMsg("bot", reply);
+            chatHistory.push({{role:"model", parts:[{{text:reply}}]}});
+            if (chatHistory.length > 12) chatHistory = chatHistory.slice(-12);
+        }} catch(e) {{
+            thinking.remove();
+            addMsg("bot", "Bağlantı hatası: " + e.message);
+        }}
+    }}
+
+    function addMsg(role, text) {{
+        const div = document.createElement("div");
+        div.className = role === "user" ? "ai-msg-user" : "ai-msg-bot";
+        div.textContent = text;
+        document.getElementById("aiMsgs").appendChild(div);
+        scrollBottom();
+    }}
+
+    function scrollBottom() {{
+        const m = document.getElementById("aiMsgs");
+        if(m) m.scrollTop = m.scrollHeight;
+    }}
+    </script>
     """, unsafe_allow_html=True)
-
-    btn_label = "💬 Asistanı Kapat" if st.session_state.ai_acik else "💬 Asistanı Aç"
-    if st.button(btn_label, key="ai_toggle", use_container_width=False):
-        st.session_state.ai_acik = not st.session_state.ai_acik
-        st.rerun()
-
-    if st.session_state.ai_acik:
-        # Sohbet geçmişi
-        if st.session_state.ai_mesajlar:
-            for msg in st.session_state.ai_mesajlar[-8:]:
-                if msg["role"] == "user":
-                    st.markdown(f"""
-                    <div style="display:flex;justify-content:flex-end;margin:8px 0;">
-                        <div style="background:rgba(56,209,227,0.15);border:1px solid rgba(56,209,227,0.35);
-                                    border-radius:16px 16px 4px 16px;padding:10px 14px;
-                                    max-width:80%;font-size:0.88rem;color:#ffffff;line-height:1.5;">
-                            {msg["content"]}
-                        </div>
-                    </div>""", unsafe_allow_html=True)
-                else:
-                    st.markdown(f"""
-                    <div style="display:flex;justify-content:flex-start;margin:8px 0;">
-                        <div style="background:rgba(13,31,64,0.9);border:1px solid rgba(56,209,227,0.15);
-                                    border-radius:16px 16px 16px 4px;padding:10px 14px;
-                                    max-width:80%;font-size:0.88rem;color:#d0e8f5;line-height:1.6;">
-                            {msg["content"]}
-                        </div>
-                    </div>""", unsafe_allow_html=True)
-        else:
-            st.markdown("""
-            <div style="background:rgba(56,209,227,0.05);border:1px solid rgba(56,209,227,0.15);
-                        border-radius:12px;padding:1rem;margin:0.5rem 0;text-align:center;">
-                <div style="color:#38d1e3;font-size:0.85rem;margin-bottom:4px;">Merhaba! 👋</div>
-                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
-                    İzmiRisk hakkında her şeyi sorabilirsiniz.<br>
-                    Metodoloji · Grafikler · Su güvenliği · İstatistik
-                </div>
-            </div>""", unsafe_allow_html=True)
-
-        # Soru girişi
-        with st.form("ai_form", clear_on_submit=True):
-            soru = st.text_input("",
-                placeholder="Soru sor... örn: 'Moran\'s I nasıl hesaplandı?'",
-                label_visibility="collapsed")
-            col_g1, col_g2 = st.columns([4,1])
-            with col_g1:
-                gonder = st.form_submit_button("Gönder →", use_container_width=True)
-            with col_g2:
-                temizle = st.form_submit_button("🗑️", use_container_width=True)
-        
-        if temizle:
-            st.session_state.ai_mesajlar = []
-            st.rerun()
-
-            if gonder and soru.strip():
-                st.session_state.ai_mesajlar.append({"role":"user","content":soru})
-
-                try:
-                    import requests as req_ai
-                    gemini_key = st.secrets.get("GEMINI_API_KEY", "")
-                    if not gemini_key:
-                        cevap = "API key bulunamadı. Streamlit Secrets'a GEMINI_API_KEY ekleyin."
-                    else:
-                        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
-                        
-                        # Sohbet geçmişini Gemini formatına çevir
-                        gecmis = []
-                        for m in st.session_state.ai_mesajlar[-6:]:
-                            rol = "user" if m["role"] == "user" else "model"
-                            gecmis.append({"role": rol, "parts": [{"text": m["content"]}]})
-                        
-                        # Sistem bilgisini ilk mesaja ekle
-                        if gecmis and gecmis[0]["role"] == "user":
-                            gecmis[0]["parts"][0]["text"] = SITE_BILGISI + "\n\nKullanıcı sorusu: " + gecmis[0]["parts"][0]["text"]
-                        
-                        resp = req_ai.post(
-                            gemini_url,
-                            json={"contents": gecmis},
-                            timeout=15
-                        )
-                        if resp.status_code == 200:
-                            cevap = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
-                        else:
-                            cevap = f"Hata: {resp.status_code} — {resp.text[:100]}"
-                except Exception as e:
-                    cevap = f"Bağlantı hatası: {str(e)[:80]}"
-
-                st.session_state.ai_mesajlar.append({"role":"assistant","content":cevap})
-                st.rerun()
-
-            if st.button("🗑️ Sohbeti Temizle", key="ai_clear"):
-                st.session_state.ai_mesajlar = []
-                st.rerun()
