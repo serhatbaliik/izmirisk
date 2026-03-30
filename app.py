@@ -393,22 +393,29 @@ if data_loaded:
         orientation="horizontal",
         styles={
             "container": {
-                "padding": "4px 0",
-                "background-color": "rgba(255,255,255,0.04)",
-                "border-radius": "10px",
-                "border": "1px solid rgba(56,209,227,0.15)",
+                "padding": "4px 8px",
+                "background-color": "rgba(5,20,50,0.85)",
+                "border-radius": "12px",
+                "border": "1px solid rgba(56,209,227,0.2)",
+                "margin": "0",
             },
-            "icon": {"color": "#38d1e3", "font-size": "13px"},
+            "icon": {
+                "color": "#38d1e3",
+                "font-size": "14px",
+            },
             "nav-link": {
                 "font-size": "12px",
                 "color": "#a8d8f0",
-                "padding": "6px 10px",
+                "padding": "7px 12px",
                 "border-radius": "8px",
+                "background-color": "transparent",
+                "--hover-color": "rgba(56,209,227,0.1)",
             },
             "nav-link-selected": {
-                "background-color": "rgba(56,209,227,0.2)",
+                "background-color": "rgba(56,209,227,0.18)",
                 "color": "#ffffff",
                 "font-weight": "600",
+                "border": "1px solid rgba(56,209,227,0.4)",
             },
         }
     )
@@ -434,14 +441,72 @@ if data_loaded:
     if st.session_state.acik_tema:
         st.markdown("""
         <style>
+        /* Gündüz modu — açık mavi arka plan + göl fotoğrafı */
         .stApp {
-            background-image: linear-gradient(rgba(240,248,255,0.92),rgba(235,245,255,0.92)),
-                url("https://images.unsplash.com/photo-1527489377706-5bf97e608852?w=1600&q=80") !important;
-            background-size: cover; background-position: center top; background-attachment: fixed;
+            background-image:
+                linear-gradient(rgba(225,240,255,0.88), rgba(210,235,255,0.88)),
+                url("https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80") !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-attachment: fixed !important;
         }
-        h1,h2,h3 { color: #0a3060 !important; }
-        p, li, label, div { color: #1a3a5c !important; }
-        [data-testid="stSidebar"] { background: rgba(220,240,255,0.95) !important; }
+
+        /* Başlıklar */
+        h1 { color: #0a2a5e !important; font-size: 2rem !important; }
+        h2 { color: #0d3575 !important; font-size: 1.3rem !important; }
+        h3 { color: #1a4a8a !important; font-size: 1.1rem !important; }
+
+        /* Genel metin */
+        p, li { color: #0d2d5e !important; }
+        label { color: #0d2d5e !important; }
+
+        /* Metric kartları */
+        [data-testid="metric-container"] {
+            background: rgba(255,255,255,0.75) !important;
+            border: 1px solid rgba(10,50,120,0.2) !important;
+        }
+        [data-testid="metric-container"] label { color: #1a4a8a !important; }
+        [data-testid="metric-container"] [data-testid="stMetricValue"] {
+            color: #0a2a5e !important;
+        }
+
+        /* Dataframe */
+        [data-testid="stDataFrame"] {
+            background: rgba(255,255,255,0.8) !important;
+        }
+
+        /* Tab */
+        .stTabs [data-baseweb="tab"] {
+            color: #1a4a8a !important;
+            background: rgba(255,255,255,0.5) !important;
+        }
+        .stTabs [aria-selected="true"] {
+            background: rgba(10,50,120,0.15) !important;
+            border-bottom: 2px solid #1a4a8a !important;
+        }
+
+        /* Expander */
+        .stAlert {
+            background: rgba(255,255,255,0.7) !important;
+            border: 1px solid rgba(10,50,120,0.2) !important;
+            color: #0d2d5e !important;
+        }
+
+        /* Option menu */
+        .nav-link { color: #0d2d5e !important; }
+        .nav-link-selected { color: #0a2a5e !important; }
+
+        /* Divider */
+        hr { border-color: rgba(10,50,120,0.2) !important; }
+
+        /* Slider */
+        .stSlider label { color: #0d2d5e !important; }
+        .stRadio label { color: #0d2d5e !important; }
+
+        /* Plotly grafik yazıları için ek */
+        [data-testid="stPlotlyChart"] {
+            background: rgba(255,255,255,0.1) !important;
+        }
         </style>
         """, unsafe_allow_html=True)
 
