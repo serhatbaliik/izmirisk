@@ -2977,113 +2977,82 @@ Türkçe cevap ver. Hem site soruları hem genel su güvenliği soruları hem de
     if "ai_mesajlar" not in st.session_state:
         st.session_state.ai_mesajlar = []
 
-    # Aç/kapat butonu
-    col_ai = st.container()
-    with col_ai:
-        st.markdown("""
-        <style>
-        .ai-toggle-btn {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 9999;
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #0d3575, #38d1e3);
-            border: 2px solid rgba(56,209,227,0.6);
-            box-shadow: 0 4px 16px rgba(56,209,227,0.3);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-        }
-        .ai-chat-box {
-            position: fixed;
-            bottom: 90px;
-            right: 24px;
-            width: 360px;
-            max-height: 520px;
-            background: rgba(3,10,30,0.97);
-            border: 1px solid rgba(56,209,227,0.3);
-            border-radius: 16px;
-            z-index: 9998;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            overflow: hidden;
-        }
-        .ai-chat-header {
-            padding: 12px 16px;
-            border-bottom: 1px solid rgba(56,209,227,0.15);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(13,53,117,0.5);
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
-        ai_col1, ai_col2 = st.columns([10, 1])
-        with ai_col2:
-            if st.button("🤖" if not st.session_state.ai_acik else "✕",
-                        key="ai_toggle", help="AI Asistan"):
-                st.session_state.ai_acik = not st.session_state.ai_acik
-                st.rerun()
-
-        if st.session_state.ai_acik:
-            st.markdown("""
-            <div style="position:fixed;bottom:90px;right:24px;width:360px;
-                        background:rgba(3,10,30,0.97);border:1px solid rgba(56,209,227,0.3);
-                        border-radius:16px;z-index:9998;
-                        box-shadow:0 8px 32px rgba(0,0,0,0.5);">
-                <div style="padding:12px 16px;border-bottom:1px solid rgba(56,209,227,0.15);
-                            background:rgba(13,53,117,0.4);border-radius:16px 16px 0 0;">
-                    <div style="color:#ffffff;font-weight:700;font-size:0.95rem;">💧 İzmiRisk AI Asistanı</div>
-                    <div style="color:#38d1e3;font-size:0.7rem;">Site & metodoloji soruları · Web araması</div>
+    # ── AI Asistan başlık + aç/kapat
+    st.markdown("<div style='height:2rem'></div>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="background:linear-gradient(135deg,rgba(13,53,117,0.6),rgba(3,10,30,0.8));
+                border:1px solid rgba(56,209,227,0.4);border-radius:16px;
+                padding:16px 20px;margin-bottom:1rem;">
+        <div style="display:flex;align-items:center;gap:12px;">
+            <div style="font-size:2rem;">🤖</div>
+            <div>
+                <div style="color:#ffffff;font-size:1.1rem;font-weight:700;">İzmiRisk AI Asistanı</div>
+                <div style="color:#38d1e3;font-size:0.75rem;">
+                    Site metodolojisi · Grafik açıklamaları · Su güvenliği · Genel sorular
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-            # Sohbet geçmişi
-            with st.container():
-                for msg in st.session_state.ai_mesajlar[-6:]:
-                    if msg["role"] == "user":
-                        st.markdown(f"""
-                        <div style="display:flex;justify-content:flex-end;margin:6px 0;">
-                            <div style="background:rgba(56,209,227,0.15);border:1px solid rgba(56,209,227,0.3);
-                                        border-radius:12px 12px 2px 12px;padding:8px 12px;
-                                        max-width:85%;font-size:0.85rem;color:#ffffff;">
-                                {msg["content"]}
-                            </div>
-                        </div>""", unsafe_allow_html=True)
-                    else:
-                        st.markdown(f"""
-                        <div style="display:flex;justify-content:flex-start;margin:6px 0;">
-                            <div style="background:rgba(13,31,64,0.9);border:1px solid rgba(56,209,227,0.15);
-                                        border-radius:12px 12px 12px 2px;padding:8px 12px;
-                                        max-width:85%;font-size:0.85rem;color:#d0e8f5;line-height:1.5;">
-                                {msg["content"]}
-                            </div>
-                        </div>""", unsafe_allow_html=True)
+    btn_label = "💬 Asistanı Kapat" if st.session_state.ai_acik else "💬 Asistanı Aç"
+    if st.button(btn_label, key="ai_toggle", use_container_width=False):
+        st.session_state.ai_acik = not st.session_state.ai_acik
+        st.rerun()
 
-            # Soru girişi
-            with st.form("ai_form", clear_on_submit=True):
-                soru = st.text_input("",
-                    placeholder="Soru sor... (metodoloji, grafik, su güvenliği...)",
-                    label_visibility="collapsed")
+    if st.session_state.ai_acik:
+        # Sohbet geçmişi
+        if st.session_state.ai_mesajlar:
+            for msg in st.session_state.ai_mesajlar[-8:]:
+                if msg["role"] == "user":
+                    st.markdown(f"""
+                    <div style="display:flex;justify-content:flex-end;margin:8px 0;">
+                        <div style="background:rgba(56,209,227,0.15);border:1px solid rgba(56,209,227,0.35);
+                                    border-radius:16px 16px 4px 16px;padding:10px 14px;
+                                    max-width:80%;font-size:0.88rem;color:#ffffff;line-height:1.5;">
+                            {msg["content"]}
+                        </div>
+                    </div>""", unsafe_allow_html=True)
+                else:
+                    st.markdown(f"""
+                    <div style="display:flex;justify-content:flex-start;margin:8px 0;">
+                        <div style="background:rgba(13,31,64,0.9);border:1px solid rgba(56,209,227,0.15);
+                                    border-radius:16px 16px 16px 4px;padding:10px 14px;
+                                    max-width:80%;font-size:0.88rem;color:#d0e8f5;line-height:1.6;">
+                            {msg["content"]}
+                        </div>
+                    </div>""", unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <div style="background:rgba(56,209,227,0.05);border:1px solid rgba(56,209,227,0.15);
+                        border-radius:12px;padding:1rem;margin:0.5rem 0;text-align:center;">
+                <div style="color:#38d1e3;font-size:0.85rem;margin-bottom:4px;">Merhaba! 👋</div>
+                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
+                    İzmiRisk hakkında her şeyi sorabilirsiniz.<br>
+                    Metodoloji · Grafikler · Su güvenliği · İstatistik
+                </div>
+            </div>""", unsafe_allow_html=True)
+
+        # Soru girişi
+        with st.form("ai_form", clear_on_submit=True):
+            soru = st.text_input("",
+                placeholder="Soru sor... örn: 'Moran\'s I nasıl hesaplandı?'",
+                label_visibility="collapsed")
+            col_g1, col_g2 = st.columns([4,1])
+            with col_g1:
                 gonder = st.form_submit_button("Gönder →", use_container_width=True)
+            with col_g2:
+                temizle = st.form_submit_button("🗑️", use_container_width=True)
+        
+        if temizle:
+            st.session_state.ai_mesajlar = []
+            st.rerun()
 
             if gonder and soru.strip():
                 st.session_state.ai_mesajlar.append({"role":"user","content":soru})
 
                 try:
                     import requests as req_ai
-                    mesajlar = [{"role":"system","content":SITE_BILGISI}]
-                    for m in st.session_state.ai_mesajlar[-6:]:
-                        mesajlar.append({"role":m["role"],"content":m["content"]})
-
                     gemini_key = st.secrets.get("GEMINI_API_KEY", "")
                     if not gemini_key:
                         cevap = "API key bulunamadı. Streamlit Secrets'a GEMINI_API_KEY ekleyin."
