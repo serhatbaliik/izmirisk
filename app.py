@@ -359,87 +359,27 @@ if data_loaded:
     </div>
     """, unsafe_allow_html=True)
 
-    SAYFA_LISTESI = [
-        ("🏠", "Ana Sayfa",   "🏠 Ana Sayfa"),
-        ("📊", "EDA",         "📊 EDA Analizi"),
-        ("📈", "Risk",        "📈 Risk Endeksi"),
-        ("🔮", "2040",        "🔮 2040 Tahmin"),
-        ("🗺️", "Harita",     "Izmir Risk Haritasi"),
-        ("📍", "Mekânsal",   "🗺️ Mekânsal Analiz"),
-        ("💡", "Öneriler",   "💡 Öneriler"),
-        ("📐", "Metodoloji", "📐 Metodoloji"),
-        ("🔬", "Araçlar",    "🔬 Araçlar"),
-    ]
-
     if "secili_sayfa" not in st.session_state:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
 
-    # Custom HTML nav — tam renk kontrolü
-    nav_html = """
-    <style>
-    .izmirisk-nav {
-        display: flex;
-        gap: 4px;
-        padding: 6px 8px;
-        background: rgba(3,10,30,0.9);
-        border-radius: 12px;
-        border: 1px solid rgba(56,209,227,0.2);
-        flex-wrap: wrap;
-        margin-bottom: 4px;
-    }
-    .izmirisk-nav-btn {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        padding: 6px 12px;
-        border-radius: 8px;
-        border: none;
-        background: transparent;
-        color: #7eb8d4;
-        font-size: 12px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.15s;
-        font-family: inherit;
-        white-space: nowrap;
-    }
-    .izmirisk-nav-btn:hover {
-        background: rgba(56,209,227,0.12);
-        color: #ffffff;
-    }
-    .izmirisk-nav-btn.active {
-        background: rgba(56,209,227,0.2);
-        color: #ffffff;
-        border: 1px solid rgba(56,209,227,0.45);
-    }
-    .izmirisk-nav-icon { font-size: 13px; }
-    </style>
-    <div class="izmirisk-nav">
-    """
+    sayfa_keys = [
+        "🏠 Ana Sayfa", "📊 EDA Analizi", "📈 Risk Endeksi",
+        "🔮 2040 Tahmin", "Izmir Risk Haritasi", "🗺️ Mekânsal Analiz",
+        "💡 Öneriler", "📐 Metodoloji", "🔬 Araçlar",
+    ]
+    sayfa_etiket = [
+        "🏠 Ana", "📊 EDA", "📈 Risk", "🔮 2040",
+        "🗺️ Harita", "📍 Mekânsal", "💡 Öneriler", "📐 Metodoloji", "🔬 Araçlar",
+    ]
 
-    for ikon, etiket, key in SAYFA_LISTESI:
-        aktif = "active" if st.session_state.secili_sayfa == key else ""
-        nav_html += f"""
-        <button class="izmirisk-nav-btn {aktif}"
-                onclick="window.parent.postMessage({{type:'streamlit:setComponentValue', value:'{key}'}}, '*')"
-                id="nav-{key.replace(' ','_').replace('/','')}">
-            <span class="izmirisk-nav-icon">{ikon}</span>
-            <span>{etiket}</span>
-        </button>"""
+    aktif_etiket = sayfa_etiket[sayfa_keys.index(st.session_state.secili_sayfa)]         if st.session_state.secili_sayfa in sayfa_keys else sayfa_etiket[0]
 
-    nav_html += "</div>"
+    secim = st.pills("", sayfa_etiket, default=aktif_etiket,
+                     key="nav_pills", label_visibility="collapsed")
 
-    # HTML nav göster (sadece görsel)
-    st.markdown(nav_html, unsafe_allow_html=True)
-
-    # Streamlit butonlarla gerçek navigasyon (gizli ama işlevsel)
-    nav_cols = st.columns(len(SAYFA_LISTESI))
-    for col, (ikon, etiket, key) in zip(nav_cols, SAYFA_LISTESI):
-        with col:
-            if st.button(f"{ikon}", key=f"navbtn_{key}", help=etiket,
-                        use_container_width=True):
-                st.session_state.secili_sayfa = key
-                st.rerun()
+    if secim and secim != aktif_etiket:
+        st.session_state.secili_sayfa = sayfa_keys[sayfa_etiket.index(secim)]
+        st.rerun()
 
     sayfa = st.session_state.secili_sayfa
 
