@@ -14,14 +14,25 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    /* Ana arka plan — Tahtalı Barajı havadan görünüm */
+    /* Ana arka plan — her cihazda koyu tema zorla */
+    html, body, [data-testid="stAppViewContainer"],
+    [data-testid="stAppViewContainer"] > .main,
     .stApp {
+        background-color: #030a1e !important;
         background-image:
             linear-gradient(rgba(3,12,35,0.82), rgba(4,18,50,0.85)),
-            url("https://images.unsplash.com/photo-1527489377706-5bf97e608852?w=1600&q=80");
-        background-size: cover;
-        background-position: center top;
-        background-attachment: fixed;
+            url("https://images.unsplash.com/photo-1527489377706-5bf97e608852?w=1600&q=80") !important;
+        background-size: cover !important;
+        background-position: center top !important;
+        background-attachment: fixed !important;
+        color: #d0e8f5 !important;
+    }
+    /* Streamlit varsayılan beyaz arka planı sıfırla */
+    .main .block-container {
+        background: transparent !important;
+    }
+    [data-testid="stHeader"] {
+        background: rgba(3,10,28,0.9) !important;
     }
     .main {
         background: transparent;
@@ -123,20 +134,20 @@ st.markdown("""
     .risk-med { color: #ff7f0e; font-weight: 600; }
     .risk-high { color: #d62728; font-weight: 600; }
 
-    /* Nav ikon butonları — küçük ve şeffaf */
+    /* Nav ikon butonları */
     div[data-testid="stButton"] > button {
-        background: rgba(3,10,30,0.7) !important;
+        background: rgba(3,10,30,0.6) !important;
         border: 1px solid rgba(56,209,227,0.15) !important;
         color: #38d1e3 !important;
-        border-radius: 6px !important;
-        font-size: 1rem !important;
-        padding: 2px 4px !important;
-        min-height: 28px !important;
-        line-height: 1 !important;
+        border-radius: 8px !important;
+        font-size: 1.1rem !important;
+        padding: 4px 2px !important;
+        min-height: 36px !important;
     }
     div[data-testid="stButton"] > button:hover {
-        background: rgba(56,209,227,0.15) !important;
+        background: rgba(56,209,227,0.18) !important;
         border-color: rgba(56,209,227,0.5) !important;
+        color: #ffffff !important;
     }
 
     /* Streamlit üst menü çubuğunu gizle */
@@ -362,149 +373,43 @@ if data_loaded:
     if "secili_sayfa" not in st.session_state:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
 
-    SAYFALAR = [
-        ("🏠", "Ana Sayfa",   "🏠 Ana Sayfa"),
-        ("📊", "EDA Analizi", "📊 EDA Analizi"),
-        ("📈", "Risk Endeksi","📈 Risk Endeksi"),
-        ("🔮", "2040 Tahmin", "🔮 2040 Tahmin"),
-        ("🗺️","Risk Haritası","Izmir Risk Haritasi"),
-        ("📍", "Mekânsal",    "🗺️ Mekânsal Analiz"),
-        ("💡", "Öneriler",    "💡 Öneriler"),
-        ("📐", "Metodoloji",  "📐 Metodoloji"),
-        ("🔬", "Araçlar",     "🔬 Araçlar"),
-    ]
+    SAYFALAR = {
+        "🏠 Ana Sayfa":       "🏠 Ana Sayfa",
+        "📊 EDA Analizi":     "📊 EDA Analizi",
+        "📈 Risk Endeksi":    "📈 Risk Endeksi",
+        "🔮 2040 Tahmin":     "🔮 2040 Tahmin",
+        "🗺️ Risk Haritası":  "Izmir Risk Haritasi",
+        "📍 Mekânsal Analiz": "🗺️ Mekânsal Analiz",
+        "💡 Öneriler":        "💡 Öneriler",
+        "📐 Metodoloji":      "📐 Metodoloji",
+        "🔬 Araçlar":         "🔬 Araçlar",
+    }
 
-    aktif = st.session_state.secili_sayfa
+    aktif_etiket = next((e for e,k in SAYFALAR.items() if k == st.session_state.secili_sayfa),
+                        "🏠 Ana Sayfa")
 
-    # Hamburger menü — HTML + JS
-    menu_items = ""
-    for ikon, etiket, key in SAYFALAR:
-        aktif_class = "nav-active" if key == aktif else ""
-        menu_items += f'''
-        <div class="nav-item {aktif_class}" onclick="selectPage(\'{key}\')">
-            <span class="nav-item-icon">{ikon}</span>
-            <span class="nav-item-text">{etiket}</span>
-        </div>'''
+    col_nav, col_tema = st.columns([5,1])
+    with col_nav:
+        secim = st.selectbox(
+            "Sayfa",
+            options=list(SAYFALAR.keys()),
+            index=list(SAYFALAR.keys()).index(aktif_etiket),
+            key="nav_select",
+            label_visibility="collapsed"
+        )
+    with col_tema:
+        if st.button("🌙" if not st.session_state.get("acik_tema", False) else "☀️",
+                     key="tema_btn2", use_container_width=True):
+            st.session_state.acik_tema = not st.session_state.get("acik_tema", False)
+            st.rerun()
 
-    st.markdown(f"""
-    <style>
-    #nav-overlay {{
-        display:none; position:fixed; top:0; left:0;
-        width:100vw; height:100vh; background:rgba(0,0,0,0.5);
-        z-index:9998;
-    }}
-    #nav-drawer {{
-        position:fixed; top:0; left:-280px; width:260px; height:100vh;
-        background:rgba(3,10,30,0.98); border-right:1px solid rgba(56,209,227,0.25);
-        z-index:9999; transition:left 0.25s ease; padding:0; overflow:hidden;
-        display:flex; flex-direction:column;
-    }}
-    #nav-drawer.open {{ left:0; }}
-    #nav-overlay.open {{ display:block; }}
-    .nav-header {{
-        padding:20px 20px 16px;
-        border-bottom:1px solid rgba(56,209,227,0.15);
-        display:flex; align-items:center; gap:12px;
-    }}
-    .nav-logo {{ font-size:1.6rem; font-weight:800; color:#ffffff; }}
-    .nav-logo-sub {{ font-size:0.65rem; color:#38d1e3; letter-spacing:2px; }}
-    .nav-close {{
-        margin-left:auto; cursor:pointer; color:#a8d8f0;
-        font-size:1.2rem; padding:4px 8px; border-radius:6px;
-    }}
-    .nav-close:hover {{ background:rgba(255,255,255,0.1); }}
-    .nav-items {{ padding:12px 10px; flex:1; overflow-y:auto; }}
-    .nav-item {{
-        display:flex; align-items:center; gap:12px;
-        padding:10px 14px; border-radius:8px; cursor:pointer;
-        color:#a8d8f0; font-size:0.9rem; font-weight:500;
-        transition:all 0.15s; margin-bottom:2px;
-    }}
-    .nav-item:hover {{ background:rgba(56,209,227,0.12); color:#ffffff; }}
-    .nav-item.nav-active {{
-        background:rgba(56,209,227,0.18);
-        color:#ffffff;
-        border-left:3px solid #38d1e3;
-    }}
-    .nav-item-icon {{ font-size:1.1rem; min-width:24px; }}
-    .nav-item-text {{ font-size:0.88rem; }}
-    .nav-footer {{
-        padding:14px 20px;
-        border-top:1px solid rgba(56,209,227,0.1);
-        color:#4a6a8a; font-size:0.72rem; letter-spacing:1px;
-    }}
-    #hamburger-btn {{
-        position:fixed; top:14px; right:16px; z-index:9997;
-        background:rgba(3,10,30,0.85); border:1px solid rgba(56,209,227,0.3);
-        border-radius:8px; padding:7px 10px; cursor:pointer;
-        color:#38d1e3; font-size:1.1rem; line-height:1;
-        transition:all 0.15s;
-    }}
-    #hamburger-btn:hover {{ background:rgba(56,209,227,0.15); }}
-    </style>
-
-    <div id="nav-overlay" onclick="closeNav()"></div>
-
-    <div id="nav-drawer">
-        <div class="nav-header">
-            <div>
-                <div class="nav-logo">💧 İzmiRisk</div>
-                <div class="nav-logo-sub">SU GÜVENLİĞİ RİSK ENDEKSİ</div>
-            </div>
-            <div class="nav-close" onclick="closeNav()">✕</div>
-        </div>
-        <div class="nav-items">
-            {menu_items}
-        </div>
-        <div class="nav-footer">
-            İZSU Açık Veri · 2020–2040 · 11 İlçe
-        </div>
-    </div>
-
-    <button id="hamburger-btn" onclick="openNav()">☰</button>
-
-    <script>
-    function openNav() {{
-        document.getElementById("nav-drawer").classList.add("open");
-        document.getElementById("nav-overlay").classList.add("open");
-    }}
-    function closeNav() {{
-        document.getElementById("nav-drawer").classList.remove("open");
-        document.getElementById("nav-overlay").classList.remove("open");
-    }}
-    function selectPage(key) {{
-        closeNav();
-        const btns = window.parent.document.querySelectorAll("button");
-        btns.forEach(btn => {{
-            if(btn.innerText.trim() === key || btn.getAttribute("data-key") === key) {{
-                btn.click();
-            }}
-        }});
-        // Streamlit session state için hidden input tetikle
-        window.parent.postMessage({{isStreamlitMessage: true, type: "streamlit:setComponentValue", key: "nav_select", value: key}}, "*");
-    }}
-    </script>
-    """, unsafe_allow_html=True)
-
-    # Gerçek navigasyon için gizli st.pills
-    secim = st.pills("", [s[2] for s in SAYFALAR],
-                     default=aktif, key="nav_pills",
-                     label_visibility="collapsed")
-    if secim and secim != aktif:
-        st.session_state.secili_sayfa = secim
+    if SAYFALAR[secim] != st.session_state.secili_sayfa:
+        st.session_state.secili_sayfa = SAYFALAR[secim]
         st.rerun()
 
     sayfa = st.session_state.secili_sayfa
 
-    # Tema toggle
-    if "acik_tema" not in st.session_state:
-        st.session_state.acik_tema = False
 
-    _, tema_col = st.columns([10,1])
-    with tema_col:
-        if st.button("🌙" if not st.session_state.acik_tema else "☀️", key="tema_btn"):
-            st.session_state.acik_tema = not st.session_state.acik_tema
-            st.rerun()
 
     if st.session_state.acik_tema:
         st.markdown("""
