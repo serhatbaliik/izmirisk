@@ -362,12 +362,12 @@ if data_loaded:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
 
     SAYFALAR = [
-        ("🏠", "Ana",        "🏠 Ana Sayfa"),
-        ("📊", "Keşifsel",   "📊 EDA Analizi"),
+        ("🏠", "Ana Sayfa",   "🏠 Ana Sayfa"),
+        ("📊", "Keşifsel Analiz","📊 EDA Analizi"),
         ("📈", "Risk",       "📈 Risk Endeksi"),
-        ("🔮", "2040",       "🔮 2040 Tahmin"),
+        ("🔮", "2040 Senaryosu","🔮 2040 Tahmin"),
         ("🗺️","Harita",     "Izmir Risk Haritasi"),
-        ("📍", "Mekânsal",  "🗺️ Mekânsal Analiz"),
+        ("📍", "Mekânsal Analiz","🗺️ Mekânsal Analiz"),
         ("💡", "Öneriler",  "💡 Öneriler"),
         ("📐", "Metodoloji","📐 Metodoloji"),
         ("🔬", "Araçlar",   "🔬 Araçlar"),
