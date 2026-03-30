@@ -361,27 +361,6 @@ if data_loaded:
     if "secili_sayfa" not in st.session_state:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
 
-    # Dil Google Translate URL yönlendirmesi
-    if st.session_state.get("dil") == "EN":
-        st.markdown("""
-        <style>
-        /* EN modunda Google Translate aktif */
-        </style>
-        <script>
-        (function() {
-            var url = window.location.href;
-            if (url.indexOf('translate.goog') === -1 && url.indexOf('_x_tr_sl') === -1) {
-                var translated = 'https://izmirisk-streamlit-app.translate.goog' + window.location.pathname +
-                    window.location.search + (window.location.search ? '&' : '?') +
-                    '_x_tr_sl=tr&_x_tr_tl=en&_x_tr_hl=en&_x_tr_pto=wapp';
-                window.open('https://translate.google.com/translate?sl=tr&tl=en&u=' + encodeURIComponent(window.location.href), '_blank');
-            }
-        })();
-        </script>
-        """, unsafe_allow_html=True)
-        st.info("🇬🇧 İngilizce çeviri yeni sekmede açılıyor... / English translation opening in new tab...")
-        st.session_state.dil = "TR"
-
     SAYFALAR = [
         ("🏠", "Ana Sayfa",      "🏠 Ana Sayfa"),
         ("📊", "Keşifsel Analiz","📊 EDA Analizi"),
