@@ -399,7 +399,7 @@ if data_loaded:
 
 
 
-    if st.session_state.acik_tema:
+    if st.session_state.get("acik_tema", False):
         st.markdown("""
         <style>
         /* Gündüz modu — açık mavi arka plan + göl fotoğrafı */
