@@ -363,7 +363,7 @@ if data_loaded:
 
     SAYFALAR = [
         ("🏠", "Ana",        "🏠 Ana Sayfa"),
-        ("📊", "EDA",        "📊 EDA Analizi"),
+        ("📊", "Keşifsel",   "📊 EDA Analizi"),
         ("📈", "Risk",       "📈 Risk Endeksi"),
         ("🔮", "2040",       "🔮 2040 Tahmin"),
         ("🗺️","Harita",     "Izmir Risk Haritasi"),
@@ -387,45 +387,6 @@ if data_loaded:
         margin-bottom: 8px;
         flex-wrap: wrap;
     }
-    .nav-btn {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 2px;
-        padding: 8px 10px;
-        border-radius: 10px;
-        cursor: pointer;
-        flex: 1;
-        min-width: 60px;
-        background: linear-gradient(145deg, rgba(13,31,64,0.9), rgba(5,15,40,0.9));
-        border: 1px solid rgba(56,209,227,0.15);
-        box-shadow: 3px 3px 6px rgba(0,0,0,0.4), -1px -1px 3px rgba(56,209,227,0.05);
-        transition: all 0.15s ease;
-        text-decoration: none;
-    }
-    .nav-btn:hover {
-        background: linear-gradient(145deg, rgba(20,50,100,0.9), rgba(10,30,70,0.9));
-        border-color: rgba(56,209,227,0.4);
-        box-shadow: 4px 4px 8px rgba(0,0,0,0.5), -1px -1px 4px rgba(56,209,227,0.1);
-        transform: translateY(-1px);
-    }
-    .nav-btn.nav-active {
-        background: linear-gradient(145deg, rgba(30,80,140,0.95), rgba(15,50,100,0.95));
-        border-color: rgba(56,209,227,0.6);
-        box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3),
-                    inset -1px -1px 2px rgba(56,209,227,0.1),
-                    0 0 12px rgba(56,209,227,0.15);
-        transform: translateY(1px);
-    }
-    .nav-icon { font-size: 1rem; line-height: 1; }
-    .nav-label {
-        font-size: 0.65rem;
-        font-weight: 600;
-        letter-spacing: 0.3px;
-        color: #a8d8f0;
-        white-space: nowrap;
-    }
-    .nav-btn.nav-active .nav-label { color: #38d1e3; }
     </style>
     """, unsafe_allow_html=True)
 
