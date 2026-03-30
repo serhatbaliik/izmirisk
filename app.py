@@ -2935,3 +2935,186 @@ if data_loaded:
             with st.expander(f"❓ {soru}"):
                 st.markdown(f"<div style='color:#d0e8f5;font-size:0.88rem;line-height:1.7;'>{cevap}</div>",
                             unsafe_allow_html=True)
+
+
+# ════════════════════════════════
+# AI ASİSTAN — köşede sabit
+# ════════════════════════════════
+if data_loaded:
+    SITE_BILGISI = """
+Sen İzmiRisk adlı bir Streamlit web uygulamasının AI asistanısın.
+Bu uygulama İzmir'in 11 merkez ilçesi için Su Güvenliği Risk Endeksi (WSRI) analizi yapıyor.
+
+UYGULAMA HAKKINDA BİLGİLER:
+- Veri: İZSU Açık Veri Portalı, 2020-2023, 11 merkez ilçe
+- Göstergeler: Abone başına tüketim, tüketim artışı, arz kısıtı, su kayıp oranı
+- Yöntem: Min-Max normalizasyon → Entropy ağırlıklandırma → WSRI (0-100)
+- Entropy ağırlıkları: Kayıp Oranı %32.9, Talep %29.1, Arz Kısıtı %28.7, Tüketim Artışı %9.2
+- Risk sınıfları: 0-40 Düşük, 40-70 Orta, 70-100 Yüksek
+- 2023 en riskli: Gaziemir (58.2), Çiğli (50.1), Güzelbahçe (49.6)
+- Mann-Kendall trend testi: Su kayıp oranı tau=-1.00 (en tutarlı azalan trend)
+- Global Moran's I: -0.281 (negatif mekânsal otokorelasyon, 2023)
+- LISA: Gaziemir HL sınıfı (izole yüksek risk)
+- 2040 projeksiyonu: CAGR bazlı 3 senaryo (iyimser/baz/kötümser)
+- Barajlar: Tahtalı, Balçova, Gördes — 2022'de Gördes kritik düşüş yaşadı
+
+SAYFALAR:
+- Ana Sayfa: KPI kartları, gauge grafikleri, risk sıralaması
+- Keşifsel Analiz: Baraj doluluk, tüketim ısı haritası, arz-talep, kayıp trendi
+- Risk Endeksi: WSRI skorları, ısı haritası, ilçe detayı, radar profil
+- 2040 Senaryosu: CAGR projeksiyonu, 3 senaryo karşılaştırması
+- Risk Haritası: Folium koyu harita, ilçe sınırları, risk renklendirmesi
+- Mekânsal Analiz: Moran's I, LISA scatter plot ve sınıflandırma
+- Öneriler: İlçe bazlı risk sınıfına göre kişiselleştirilmiş öneriler
+- Metodoloji: Formüller, veri kaynağı, sınırlılıklar, SSS
+- Araçlar: Radar profil, karşılaştırma, simülatör, animasyon, CSV indirme
+
+Türkçe cevap ver. Hem site soruları hem genel su güvenliği soruları hem de istatistik metodoloji sorularına cevap ver.
+"""
+
+    if "ai_acik" not in st.session_state:
+        st.session_state.ai_acik = False
+    if "ai_mesajlar" not in st.session_state:
+        st.session_state.ai_mesajlar = []
+
+    # Aç/kapat butonu
+    col_ai = st.container()
+    with col_ai:
+        st.markdown("""
+        <style>
+        .ai-toggle-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0d3575, #38d1e3);
+            border: 2px solid rgba(56,209,227,0.6);
+            box-shadow: 0 4px 16px rgba(56,209,227,0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+        .ai-chat-box {
+            position: fixed;
+            bottom: 90px;
+            right: 24px;
+            width: 360px;
+            max-height: 520px;
+            background: rgba(3,10,30,0.97);
+            border: 1px solid rgba(56,209,227,0.3);
+            border-radius: 16px;
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+        .ai-chat-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(56,209,227,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(13,53,117,0.5);
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        ai_col1, ai_col2 = st.columns([10, 1])
+        with ai_col2:
+            if st.button("🤖" if not st.session_state.ai_acik else "✕",
+                        key="ai_toggle", help="AI Asistan"):
+                st.session_state.ai_acik = not st.session_state.ai_acik
+                st.rerun()
+
+        if st.session_state.ai_acik:
+            st.markdown("""
+            <div style="position:fixed;bottom:90px;right:24px;width:360px;
+                        background:rgba(3,10,30,0.97);border:1px solid rgba(56,209,227,0.3);
+                        border-radius:16px;z-index:9998;
+                        box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+                <div style="padding:12px 16px;border-bottom:1px solid rgba(56,209,227,0.15);
+                            background:rgba(13,53,117,0.4);border-radius:16px 16px 0 0;">
+                    <div style="color:#ffffff;font-weight:700;font-size:0.95rem;">💧 İzmiRisk AI Asistanı</div>
+                    <div style="color:#38d1e3;font-size:0.7rem;">Site & metodoloji soruları · Web araması</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Sohbet geçmişi
+            with st.container():
+                for msg in st.session_state.ai_mesajlar[-6:]:
+                    if msg["role"] == "user":
+                        st.markdown(f"""
+                        <div style="display:flex;justify-content:flex-end;margin:6px 0;">
+                            <div style="background:rgba(56,209,227,0.15);border:1px solid rgba(56,209,227,0.3);
+                                        border-radius:12px 12px 2px 12px;padding:8px 12px;
+                                        max-width:85%;font-size:0.85rem;color:#ffffff;">
+                                {msg["content"]}
+                            </div>
+                        </div>""", unsafe_allow_html=True)
+                    else:
+                        st.markdown(f"""
+                        <div style="display:flex;justify-content:flex-start;margin:6px 0;">
+                            <div style="background:rgba(13,31,64,0.9);border:1px solid rgba(56,209,227,0.15);
+                                        border-radius:12px 12px 12px 2px;padding:8px 12px;
+                                        max-width:85%;font-size:0.85rem;color:#d0e8f5;line-height:1.5;">
+                                {msg["content"]}
+                            </div>
+                        </div>""", unsafe_allow_html=True)
+
+            # Soru girişi
+            with st.form("ai_form", clear_on_submit=True):
+                soru = st.text_input("",
+                    placeholder="Soru sor... (metodoloji, grafik, su güvenliği...)",
+                    label_visibility="collapsed")
+                gonder = st.form_submit_button("Gönder →", use_container_width=True)
+
+            if gonder and soru.strip():
+                st.session_state.ai_mesajlar.append({"role":"user","content":soru})
+
+                try:
+                    import requests as req_ai
+                    mesajlar = [{"role":"system","content":SITE_BILGISI}]
+                    for m in st.session_state.ai_mesajlar[-6:]:
+                        mesajlar.append({"role":m["role"],"content":m["content"]})
+
+                    gemini_key = st.secrets.get("GEMINI_API_KEY", "")
+                    if not gemini_key:
+                        cevap = "API key bulunamadı. Streamlit Secrets'a GEMINI_API_KEY ekleyin."
+                    else:
+                        gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
+                        
+                        # Sohbet geçmişini Gemini formatına çevir
+                        gecmis = []
+                        for m in st.session_state.ai_mesajlar[-6:]:
+                            rol = "user" if m["role"] == "user" else "model"
+                            gecmis.append({"role": rol, "parts": [{"text": m["content"]}]})
+                        
+                        # Sistem bilgisini ilk mesaja ekle
+                        if gecmis and gecmis[0]["role"] == "user":
+                            gecmis[0]["parts"][0]["text"] = SITE_BILGISI + "\n\nKullanıcı sorusu: " + gecmis[0]["parts"][0]["text"]
+                        
+                        resp = req_ai.post(
+                            gemini_url,
+                            json={"contents": gecmis},
+                            timeout=15
+                        )
+                        if resp.status_code == 200:
+                            cevap = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+                        else:
+                            cevap = f"Hata: {resp.status_code} — {resp.text[:100]}"
+                except Exception as e:
+                    cevap = f"Bağlantı hatası: {str(e)[:80]}"
+
+                st.session_state.ai_mesajlar.append({"role":"assistant","content":cevap})
+                st.rerun()
+
+            if st.button("🗑️ Sohbeti Temizle", key="ai_clear"):
+                st.session_state.ai_mesajlar = []
+                st.rerun()
