@@ -14,29 +14,17 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    /* Ana arka plan — her cihazda koyu tema zorla */
-    html, body, [data-testid="stAppViewContainer"],
-    [data-testid="stAppViewContainer"] > .main,
+    /* Arka plan */
     .stApp {
-        background-color: #030a1e !important;
+        background-color: #030a1e;
         background-image:
             linear-gradient(rgba(3,12,35,0.82), rgba(4,18,50,0.85)),
-            url("https://images.unsplash.com/photo-1527489377706-5bf97e608852?w=1600&q=80") !important;
-        background-size: cover !important;
-        background-position: center top !important;
-        background-attachment: fixed !important;
-        color: #d0e8f5 !important;
+            url("https://images.unsplash.com/photo-1527489377706-5bf97e608852?w=1600&q=80");
+        background-size: cover;
+        background-position: center top;
+        background-attachment: fixed;
     }
-    /* Streamlit varsayılan beyaz arka planı sıfırla */
-    .main .block-container {
-        background: transparent !important;
-    }
-    [data-testid="stHeader"] {
-        background: rgba(3,10,28,0.9) !important;
-    }
-    .main {
-        background: transparent;
-    }
+    .main { background: transparent; }
     .block-container {
         padding-top: 1.5rem;
         padding-bottom: 2rem;
