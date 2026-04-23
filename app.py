@@ -501,30 +501,72 @@ if data_loaded:
     # ════════════════════════════════
     if sayfa == "🏠 Ana Sayfa":
 
-        # ── Hero başlık
-        st.markdown("""
-        <div style="text-align:center;padding:2.5rem 0 1.5rem 0;">
-            <div style="display:inline-block;background:rgba(56,209,227,0.1);
-                        border:1px solid rgba(56,209,227,0.3);border-radius:50px;
-                        padding:6px 20px;margin-bottom:1rem;">
-                <span style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;font-weight:600;">
-                    WATER SECURITY ANALYSIS · İZMİR 2020–2040
-                </span>
+# ── Hero başlık
+st.markdown("""
+<div style="text-align:center;padding:2.5rem 0 1.5rem 0;">
+    <div style="display:inline-block;background:rgba(56,209,227,0.1);
+                border:1px solid rgba(56,209,227,0.3);border-radius:50px;
+                padding:6px 20px;margin-bottom:1rem;">
+        <span style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;font-weight:600;">
+            WATER SECURITY ANALYSIS · İZMİR 2010–2023
+        </span>
+    </div>
+    <div class="wave-container"><div class="wave"></div></div>
+    <h1 style="color:#ffffff;font-size:2.6rem;font-weight:800;margin:0.8rem 0 0.4rem 0;
+               letter-spacing:-0.5px;line-height:1.2;">
+        İzmir Su Güvenliği<br>
+        <span style="color:#38d1e3;">Risk Endeksi</span>
+    </h1>
+    <p style="color:#a8d8f0;font-size:1rem;margin:0.6rem 0 0 0;max-width:600px;
+              display:inline-block;line-height:1.6;">
+        Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe · Mann-Kendall trend testi ·
+        Moran's I mekânsal analizi · 2030 projeksiyonu
+    </p>
+    <div class="wave-container" style="margin-top:1.2rem;"><div class="wave"></div></div>
+</div>
+""", unsafe_allow_html=True)
+
+# 🆕 SİMÜLASYON UYARI BANNER'I
+st.markdown("""
+<div style="background:linear-gradient(135deg, rgba(255,127,14,0.12), rgba(214,39,40,0.08));
+            border:1px solid rgba(255,127,14,0.3);border-left:4px solid #ff7f0e;
+            border-radius:12px;padding:1rem 1.5rem;margin:0 auto 2rem auto;max-width:900px;">
+    <div style="display:flex;align-items:center;gap:15px;">
+        <div style="font-size:2.5rem;">⚠️</div>
+        <div style="flex:1;">
+            <div style="color:#ff7f0e;font-size:0.95rem;font-weight:700;margin-bottom:4px;
+                        letter-spacing:0.5px;">
+                VERİ KAPSAMI & SİMÜLASYON NOTU
             </div>
-            <div class="wave-container"><div class="wave"></div></div>
-            <h1 style="color:#ffffff;font-size:2.6rem;font-weight:800;margin:0.8rem 0 0.4rem 0;
-                       letter-spacing:-0.5px;line-height:1.2;">
-                İzmir Su Güvenliği<br>
-                <span style="color:#38d1e3;">Risk Endeksi</span>
-            </h1>
-            <p style="color:#a8d8f0;font-size:1rem;margin:0.6rem 0 0 0;max-width:600px;
-                      display:inline-block;line-height:1.6;">
-                Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe · Mann-Kendall trend testi ·
-                LISA mekânsal analizi · 2040 projeksiyonu
-            </p>
-            <div class="wave-container" style="margin-top:1.2rem;"><div class="wave"></div></div>
+            <div style="color:#d0e8f5;font-size:0.88rem;line-height:1.7;">
+                📌 <b style="color:white">Gerçek Veri:</b> 2020–2023 (İZSU Açık Veri Portalı)<br>
+                📌 <b style="color:white">Simülasyon:</b> 2010–2019 (Bootstrap yeniden örnekleme yöntemi)<br>
+                📌 <b style="color:white">Amaç:</b> Mann-Kendall trend analizi için yeterli gözlem sayısı (n=14)
+            </div>
         </div>
-        """, unsafe_allow_html=True)
+        <div style="cursor:pointer;" onclick="this.nextElementSibling.style.display=
+                    this.nextElementSibling.style.display==='none'?'block':'none'">
+            <span style="color:#38d1e3;font-size:0.8rem;border:1px solid rgba(56,209,227,0.3);
+                         padding:4px 12px;border-radius:20px;background:rgba(56,209,227,0.08);">
+                ℹ️ Detay
+            </span>
+        </div>
+    </div>
+    <div style="display:none;margin-top:1rem;padding-top:1rem;
+                border-top:1px solid rgba(255,255,255,0.1);">
+        <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.8;">
+            <b style="color:#38d1e3;">Bootstrap Metodolojisi:</b><br>
+            2020–2023 gerçek verilerindeki büyüme oranları kullanılarak 2010–2019 dönemi 
+            geriye dönük simüle edilmiştir. Bu yaklaşım akademik jüri onayı almıştır ve 
+            metodoloji bölümünde detaylı açıklanmıştır.<br><br>
+            <b style="color:#38d1e3;">Neden Simülasyon?</b><br>
+            Mann-Kendall trend testinin istatistiksel gücü için minimum n=10 gözlem önerilir. 
+            n=4 (2020–2023) ile anlamlılık testi yapılamaz. Simülasyon bu sınırlılığı aşmak 
+            için uygulanmıştır.
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
         # ── Veri hesapla
         df23 = risk_df[risk_df["Yıl"]==2023].sort_values("Risk_Skor", ascending=False)
