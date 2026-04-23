@@ -11,12 +11,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-if sayfa == "🏠 Ana Sayfa":
 
-    # ── Hero başlık
-    st.markdown("""
-    <div style="text-align:center;padding:2.5rem 0 1.5rem 0;">
-        <div style="display:inline-block;background:rgba(56,209,227,0.1);
 st.markdown("""
 <style>
     /* Arka plan */
@@ -154,7 +149,6 @@ st.markdown("""
     [data-testid="stDecoration"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
-
 
 # ── Veri yükleme
 @st.cache_data
