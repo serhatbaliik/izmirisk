@@ -339,6 +339,7 @@ except Exception as e:
 if data_loaded:
 
    # ── Üst navigasyon (sidebar kaldırıldı)
+# ── Üst navigasyon
 st.markdown("""
 <div style="display:flex;align-items:center;justify-content:center;
             padding:20px 0 16px 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:0.8rem;">
@@ -356,23 +357,67 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-    if "secili_sayfa" not in st.session_state:
-        st.session_state.secili_sayfa = "🏠 Ana Sayfa"
+if "secili_sayfa" not in st.session_state:
+    st.session_state.secili_sayfa = "🏠 Ana Sayfa"
 
-    SAYFALAR = [
-        ("🏠", "Ana Sayfa",      "🏠 Ana Sayfa"),
-        ("📊", "Keşifsel Analiz","📊 EDA Analizi"),
-        ("📈", "Risk Endeksi",   "📈 Risk Endeksi"),
-        ("🔮", "2040 Senaryosu", "🔮 2040 Tahmin"),
-        ("🗺️","Risk Haritası",  "Izmir Risk Haritasi"),
-        ("📍", "Mekânsal Analiz","🗺️ Mekânsal Analiz"),
-        ("💡", "Öneriler",       "💡 Öneriler"),
-        ("📐", "Metodoloji",     "📐 Metodoloji"),
-        ("🔬", "Araçlar",        "🔬 Araçlar"),
-    ]
+SAYFALAR = [
+    ("🏠", "Ana Sayfa",      "🏠 Ana Sayfa"),
+    ("📊", "Keşifsel Analiz","📊 EDA Analizi"),
+    ("📈", "Risk Endeksi",   "📈 Risk Endeksi"),
+    ("🔮", "2040 Senaryosu", "🔮 2040 Tahmin"),
+    ("🗺️","Risk Haritası",  "Izmir Risk Haritasi"),
+    ("📍", "Mekânsal Analiz","🗺️ Mekânsal Analiz"),
+    ("💡", "Öneriler",       "💡 Öneriler"),
+    ("📐", "Metodoloji",     "📐 Metodoloji"),
+    ("🔬", "Araçlar",        "🔬 Araçlar"),
+]
 
-    aktif = st.session_state.secili_sayfa
+aktif = st.session_state.secili_sayfa
 
+# CSS — profesyonel nav butonları
+st.markdown("""
+<style>
+div[data-testid="stButton"] > button {
+    background: rgba(8,18,50,0.85) !important;
+    border: 1px solid rgba(56,209,227,0.18) !important;
+    border-radius: 10px !important;
+    color: #6a9ab5 !important;
+    font-size: 0.65rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.8px !important;
+    text-transform: uppercase !important;
+    padding: 8px 2px !important;
+    min-height: 54px !important;
+    line-height: 1.8 !important;
+    white-space: pre-wrap !important;
+    transition: all 0.2s !important;
+}
+div[data-testid="stButton"] > button:hover {
+    background: rgba(18,45,110,0.95) !important;
+    border-color: rgba(56,209,227,0.45) !important;
+    color: #d0e8f5 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(56,209,227,0.12) !important;
+}
+div[data-testid="stButton"] > button:focus:not(:active) {
+    background: rgba(20,55,130,0.95) !important;
+    border-color: rgba(56,209,227,0.65) !important;
+    color: #38d1e3 !important;
+    box-shadow: 0 0 0 2px rgba(56,209,227,0.2),
+                0 4px 16px rgba(56,209,227,0.15) !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+cols = st.columns(len(SAYFALAR))
+for col, (ikon, etiket, key) in zip(cols, SAYFALAR):
+    with col:
+        label = f"{ikon}\n{etiket}"
+        if st.button(label, key=f"nb_{key}", use_container_width=True):
+            st.session_state.secili_sayfa = key
+            st.rerun()
+
+sayfa = st.session_state.secili_sayfa
     # CSS — profesyonel nav butonları
     st.markdown("""
     <style>
