@@ -11,7 +11,12 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+if sayfa == "🏠 Ana Sayfa":
 
+    # ── Hero başlık
+    st.markdown("""
+    <div style="text-align:center;padding:2.5rem 0 1.5rem 0;">
+        <div style="display:inline-block;background:rgba(56,209,227,0.1);
 st.markdown("""
 <style>
     /* Arka plan */
@@ -541,7 +546,6 @@ if data_loaded:
                     <div style="color:#d0e8f5;font-size:0.88rem;line-height:1.7;">
                         📌 <b style="color:white">Gerçek Veri:</b> 2020–2023 (İZSU Açık Veri Portalı)<br>
                         📌 <b style="color:white">Simülasyon:</b> 2010–2019 (Bootstrap yeniden örnekleme yöntemi)<br>
-                        📌 <b style="color:white">Amaç:</b> Mann-Kendall trend analizi için yeterli gözlem sayısı (n=14)
                     </div>
                 </div>
                 <div style="cursor:pointer;" onclick="this.nextElementSibling.style.display=
