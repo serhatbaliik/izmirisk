@@ -339,29 +339,30 @@ except Exception as e:
 
 if data_loaded:
 
-   # ── Üst navigasyon - ORTALANMIŞ VE BÜYÜTÜLMÜŞ
-st.markdown("""
-<div style="padding:20px 0 16px 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:0.8rem;">
-    <div style="text-align:center;">
-        <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:8px;">
-            <span style="font-size:3rem;">💧</span>
-            <div style="color:#ffffff;font-size:2.4rem;font-weight:800;
-                        letter-spacing:-0.8px;line-height:1.1;">İzmiRisk</div>
-        </div>
-        <div style="color:#38d1e3;font-size:0.85rem;letter-spacing:2.5px;text-transform:uppercase;
-                    font-weight:600;margin-bottom:0.5rem;">
-            Su Güvenliği Risk Endeksi · İzmir · 2010–2030
-        </div>
-        <div style="color:#a8d8f0;font-size:0.72rem;">
-            Veri: İZSU Açık Veri Portalı · 11 Merkez İlçe · Entropy-WSRI
+   if data_loaded:
+
+    # ── Üst navigasyon - ORTALANMIŞ VE BÜYÜTÜLMÜŞ
+    st.markdown("""
+    <div style="padding:20px 0 16px 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:0.8rem;">
+        <div style="text-align:center;">
+            <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:8px;">
+                <span style="font-size:3rem;">💧</span>
+                <div style="color:#ffffff;font-size:2.4rem;font-weight:800;
+                            letter-spacing:-0.8px;line-height:1.1;">İzmiRisk</div>
+            </div>
+            <div style="color:#38d1e3;font-size:0.85rem;letter-spacing:2.5px;text-transform:uppercase;
+                        font-weight:600;margin-bottom:0.5rem;">
+                Su Güvenliği Risk Endeksi · İzmir · 2010–2030
+            </div>
+            <div style="color:#a8d8f0;font-size:0.72rem;">
+                Veri: İZSU Açık Veri Portalı · 11 Merkez İlçe · Entropy-WSRI
+            </div>
         </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
     if "secili_sayfa" not in st.session_state:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
-
     SAYFALAR = [
         ("🏠", "Ana Sayfa",      "🏠 Ana Sayfa"),
         ("📊", "Keşifsel Analiz","📊 EDA Analizi"),
