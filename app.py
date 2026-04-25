@@ -340,36 +340,27 @@ except Exception as e:
 if data_loaded:
 
     # ── Üst navigasyon - ORTALANMIŞ VE BÜYÜTÜLMÜŞ
-st.markdown("""
-<div style="display:flex;align-items:center;justify-content:space-between;
-            padding:20px 0 16px 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:0.8rem;">
-    
-    <!-- BOŞ ALAN SOL -->
-    <div style="flex:1;"></div>
-    
-    <!-- ORTADA BAŞLIK -->
-    <div style="text-align:center;flex:2;">
-        <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:8px;">
-            <span style="font-size:3rem;">💧</span>
-            <div style="color:#ffffff;font-size:2.4rem;font-weight:800;
-                        letter-spacing:-0.8px;line-height:1.1;">İzmiRisk</div>
+    st.markdown("""
+    <div style="padding:20px 0 16px 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:0.8rem;">
+        
+        <!-- ORTADA BAŞLIK -->
+        <div style="text-align:center;">
+            <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:8px;">
+                <span style="font-size:3rem;">💧</span>
+                <div style="color:#ffffff;font-size:2.4rem;font-weight:800;
+                            letter-spacing:-0.8px;line-height:1.1;">İzmiRisk</div>
+            </div>
+            <div style="color:#38d1e3;font-size:0.85rem;letter-spacing:2.5px;text-transform:uppercase;
+                        font-weight:600;margin-bottom:0.5rem;">
+                Su Güvenliği Risk Endeksi · İzmir · 2010–2030
+            </div>
+            <div style="color:#a8d8f0;font-size:0.72rem;">
+                Veri: İZSU Açık Veri Portalı · 11 Merkez İlçe · Entropy-WSRI
+            </div>
         </div>
-        <div style="color:#38d1e3;font-size:0.85rem;letter-spacing:2.5px;text-transform:uppercase;
-                    font-weight:600;">
-            Su Güvenliği Risk Endeksi · İzmir · 2010–2030
-        </div>
+        
     </div>
-    
-    <!-- SAĞDA VERİ KAYNAĞI -->
-    <div style="flex:1;text-align:right;">
-        <div style="color:#a8d8f0;font-size:0.72rem;line-height:1.7;">
-            Veri: İZSU Açık Veri Portalı<br>
-            11 Merkez İlçe · Entropy-WSRI
-        </div>
-    </div>
-    
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
     if "secili_sayfa" not in st.session_state:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
@@ -387,3 +378,65 @@ st.markdown("""
     ]
 
     aktif = st.session_state.secili_sayfa
+
+    # CSS — profesyonel nav butonları
+    st.markdown("""
+    <style>
+    div[data-testid="stButton"] > button {
+        background: rgba(8,18,50,0.85) !important;
+        border: 1px solid rgba(56,209,227,0.18) !important;
+        border-radius: 10px !important;
+        color: #6a9ab5 !important;
+        font-size: 0.65rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.8px !important;
+        text-transform: uppercase !important;
+        padding: 8px 2px !important;
+        min-height: 54px !important;
+        line-height: 1.8 !important;
+        white-space: pre-wrap !important;
+        transition: all 0.2s !important;
+    }
+    div[data-testid="stButton"] > button:hover {
+        background: rgba(18,45,110,0.95) !important;
+        border-color: rgba(56,209,227,0.45) !important;
+        color: #d0e8f5 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(56,209,227,0.12) !important;
+    }
+    div[data-testid="stButton"] > button:focus:not(:active) {
+        background: rgba(20,55,130,0.95) !important;
+        border-color: rgba(56,209,227,0.65) !important;
+        color: #38d1e3 !important;
+        box-shadow: 0 0 0 2px rgba(56,209,227,0.2),
+                    0 4px 16px rgba(56,209,227,0.15) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    cols = st.columns(len(SAYFALAR))
+    for col, (ikon, etiket, key) in zip(cols, SAYFALAR):
+        with col:
+            label = f"{ikon}\n{etiket}"
+            if st.button(label, key=f"nb_{key}", use_container_width=True):
+                st.session_state.secili_sayfa = key
+                st.rerun()
+
+    sayfa = st.session_state.secili_sayfa
+
+    st.markdown("<hr style='border-color:rgba(56,209,227,0.15);margin:0.5rem 0 1rem 0;'>", unsafe_allow_html=True)
+
+    # ════════════════════════════════
+    # ANA SAYFA
+    # ════════════════════════════════
+    if sayfa == "🏠 Ana Sayfa":
+        
+        st.markdown("## 🏠 Ana Sayfa İçeriği Buraya Gelecek")
+        st.info("Ana sayfa içeriğini ekleyin...")
+
+    # ════════════════════════════════
+    # DİĞER SAYFALAR
+    # ════════════════════════════════
+    else:
+        st.markdown(f"## {sayfa}")
+        st.info(f"{sayfa} içeriği henüz eklenmedi...")
