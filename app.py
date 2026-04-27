@@ -163,7 +163,7 @@ def load_data():
         abone_df: Abone sayıları pivot tablosu
     """
     # Bootstrap veri dosyasını yükle
-    df = pd.read_excel("bootstrap_data_2010_2023.xlsx")
+    df = pd.read_excel("bootstrap_data.xlsx")
     
     # İlçe isimleri standardizasyonu
     df["İlçe"] = df["İlçe"].str.strip().str.upper()
