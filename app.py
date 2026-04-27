@@ -154,55 +154,52 @@ st.markdown("""
 # ── Veri yükleme
 @st.cache_data
 def load_data():
-    ilce_raw = pd.read_excel("ilce.xlsx", header=None)
-
-    tuketim = ilce_raw.iloc[3:14, [0,1,2,3,4]].copy()
-    tuketim.columns = ["İlçe","T2020","T2021","T2022","T2023"]
-    tuketim = tuketim[tuketim["İlçe"] != "TOPLAM"].reset_index(drop=True)
-    tuketim["İlçe"] = tuketim["İlçe"].str.strip().str.upper()
-    for c in tuketim.columns[1:]:
-        tuketim[c] = pd.to_numeric(tuketim[c], errors="coerce")
-
-    abone = ilce_raw.iloc[3:14, [0,5,6,7,8]].copy()
-    abone.columns = ["İlçe","A2020","A2021","A2022","A2023"]
-    abone = abone[abone["İlçe"] != "TOPLAM"].reset_index(drop=True)
-    abone["İlçe"] = abone["İlçe"].str.strip().str.upper()
-    for c in abone.columns[1:]:
-        abone[c] = pd.to_numeric(abone[c], errors="coerce")
-
-    rows = []
-    for ilce in tuketim["İlçe"]:
-        for yil in [2020,2021,2022,2023]:
-            t = tuketim[tuketim["İlçe"]==ilce][f"T{yil}"].values[0]
-            a = abone[abone["İlçe"]==ilce][f"A{yil}"].values[0]
-            rows.append({"İlçe":ilce,"Yıl":yil,"Tüketim_m3":t,
-                         "Abone":int(a),"AbbTuketim":round(t/a,2)})
-    tablo1 = pd.DataFrame(rows).sort_values(["İlçe","Yıl"]).reset_index(drop=True)
+    """
+    Bootstrap simülasyonu ile genişletilmiş 2010-2023 verisetini yükler.
+    
+    Returns:
+        tablo1: İlçe bazlı tüketim verileri (2010-2023)
+        tablo2: Sistem geneli baraj ve kayıp verileri (2010-2023)
+        abone_df: Abone sayıları pivot tablosu
+    """
+    # Bootstrap veri dosyasını yükle
+    df = pd.read_excel("bootstrap_data_2010_2023.xlsx")
+    
+    # İlçe isimleri standardizasyonu
+    df["İlçe"] = df["İlçe"].str.strip().str.upper()
+    
+    # === TABLO 1: İlçe Bazlı Veri ===
+    tablo1 = df[["İlçe", "Yıl", "Tüketim_m3", "Abone", "AbbTuketim"]].copy()
+    tablo1 = tablo1.sort_values(["İlçe", "Yıl"]).reset_index(drop=True)
+    
+    # Yıllık artış oranı hesapla
     tablo1["Artis"] = tablo1.groupby("İlçe")["AbbTuketim"].pct_change().fillna(0)
-
-    baraj_raw = pd.read_excel("baraj.xlsx", header=None)
-    cols = [1,2,3,4]
-    def gr(df,kw):
-        mask = df[0].astype(str).str.contains(kw, na=False)
-        return df[mask].iloc[0,cols].values.astype(float) if mask.any() else [None]*4
-
-    tablo2 = pd.DataFrame({
-        "Yıl": [2020,2021,2022,2023],
-        "Tahtalı_Doluluk_%": gr(baraj_raw,"Tahtalı — Doluluk"),
-        "Balçova_Doluluk_%": gr(baraj_raw,"Balçova — Doluluk"),
-        "Gördes_Doluluk_%":  gr(baraj_raw,"Gördes — Doluluk"),
-        "Su_Kayıp_Oranı_%":  gr(baraj_raw,"Su Kayıp Oranı"),
-        "Tahtalı_Üretim_m3": gr(baraj_raw,"Tahtalı Barajı Üretimi"),
-        "Balçova_Üretim_m3": gr(baraj_raw,"Balçova Barajı Üretimi"),
-        "Gördes_Üretim_m3":  gr(baraj_raw,"Gördes Barajı Üretimi"),
-        "Toplam_Üretim_m3":  gr(baraj_raw,"Toplam Üretim"),
-        "Sisteme_Giren_m3":  gr(baraj_raw,"Sisteme Giren"),
-        "Fiziki_Kayıp_%":    gr(baraj_raw,"Fiziki Kayıp"),
-        "İdari_Kayıp_%":     gr(baraj_raw,"İdari Kayıp"),
-    })
-    tablo2["Arz_Kısıtı"] = (1 - tablo2["Toplam_Üretim_m3"]/tablo2["Sisteme_Giren_m3"]).round(4)
-
-    return tablo1, tablo2, abone
+    
+    # === TABLO 2: Sistem Geneli Veri ===
+    sistem_cols = [
+        "Yıl", "Tahtalı_Doluluk_%", "Balçova_Doluluk_%", "Gördes_Doluluk_%",
+        "Su_Kayıp_Oranı_%", "Tahtalı_Üretim_m3", "Balçova_Üretim_m3", 
+        "Gördes_Üretim_m3", "Toplam_Üretim_m3", "Sisteme_Giren_m3",
+        "Fiziki_Kayıp_%", "İdari_Kayıp_%"
+    ]
+    
+    tablo2 = df[sistem_cols].drop_duplicates(subset=["Yıl"]).sort_values("Yıl").reset_index(drop=True)
+    
+    # Arz kısıtı hesapla
+    tablo2["Arz_Kısıtı"] = (1 - tablo2["Toplam_Üretim_m3"] / tablo2["Sisteme_Giren_m3"]).round(4)
+    
+    # === ABONE PIVOT TABLO ===
+    abone_pivot = df.pivot_table(
+        index="İlçe", 
+        columns="Yıl", 
+        values="Abone", 
+        aggfunc="mean"
+    ).reset_index()
+    
+    # Sütun isimlerini A2010, A2011, ... formatına çevir
+    abone_pivot.columns = ["İlçe"] + [f"A{int(y)}" for y in abone_pivot.columns[1:]]
+    
+    return tablo1, tablo2, abone_pivot
 
 @st.cache_data
 def compute_risk(tablo1, tablo2):
@@ -230,15 +227,13 @@ def compute_risk(tablo1, tablo2):
         labels=["Düşük Risk","Orta Risk","Yüksek Risk"]
     )
     return risk_df, W
-
 @st.cache_data
 def compute_forecast(risk_df, abone_df):
     cagr_dict = {}
     for ilce in abone_df["İlçe"].unique():
-        a0 = abone_df[abone_df["İlçe"]==ilce]["A2020"].values[0]
-        a3 = abone_df[abone_df["İlçe"]==ilce]["A2023"].values[0]
-        cagr_dict[ilce] = (a3/a0)**(1/3) - 1
-
+        a_2010 = abone_df[abone_df["İlçe"]==ilce]["A2010"].values[0]
+        a_2023 = abone_df[abone_df["İlçe"]==ilce]["A2023"].values[0]
+        cagr_dict[ilce] = (a_2023 / a_2010)**(1/13) - 1  # 13 yıllık CAGR
     yillar_pred = list(range(2024,2041))
     rows = []
     for ilce in sorted(risk_df["İlçe"].unique()):
