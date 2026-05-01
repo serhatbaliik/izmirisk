@@ -485,43 +485,22 @@ if data_loaded:
 
         # ── Hero başlık
         st.markdown("""
-<style>
-.badge-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 20px;
-    margin-bottom: 25px;
-}
-
-.badge {
-    padding: 10px 18px;
-    border-radius: 20px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    background: rgba(56, 209, 227, 0.12);
-    border: 1px solid rgba(56, 209, 227, 0.35);
+<div style="
+    text-align: center;
+    font-size: 1.05rem;
+    line-height: 1.9;
     color: #d8f4ff;
-    backdrop-filter: blur(6px);
-    transition: all 0.2s ease;
-}
+    margin-top: 10px;
+    margin-bottom: 25px;
+">
 
-.badge:hover {
-    transform: translateY(-3px);
-    background: rgba(56, 209, 227, 0.25);
-    border-color: rgba(56, 209, 227, 0.8);
-    color: white;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-}
-</style>
+Entropy ağırlıklı bileşik risk analizi<br>
+11 merkez ilçe verisi<br>
+Mann-Kendall trend testi<br>
+LISA mekânsal analizi<br>
+2040 projeksiyonu<br>
+Bootstrap simülasyonu ile oluşturulmuştur
 
-<div class="badge-container">
-    <div class="badge">📊 Entropy Ağırlıklı Bileşik Risk Analizi</div>
-    <div class="badge">📈 Mann-Kendall Trend Testi</div>
-    <div class="badge">📍 LISA Mekânsal Analizi</div>
-    <div class="badge">🔮 2040 Projeksiyonu</div>
-    <div class="badge">⚙️ Bootstrap Simülasyonu</div>
 </div>
 """, unsafe_allow_html=True)
 
