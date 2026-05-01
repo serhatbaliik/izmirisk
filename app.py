@@ -391,24 +391,24 @@ except Exception as e:
 if data_loaded:
 
     # ── Üst navigasyon (sidebar kaldırıldı)
-st.markdown("""
-<div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
-            padding:22px 0 18px 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:0.8rem;">
-    <div></div>
-    <div style="display:flex;align-items:center;justify-content:center;gap:16px;text-align:center;">
-        <span style="font-size:2.9rem;line-height:1;filter:drop-shadow(0 0 10px rgba(56,209,227,0.45));">💧</span>
-        <div style="text-align:center;">
-            <div style="color:#ffffff;font-size:2.45rem;font-weight:900;
-                        letter-spacing:-0.8px;line-height:1.05;text-shadow:0 0 18px rgba(56,209,227,0.18);">İzmiRisk</div>
-            <div style="color:#38d1e3;font-size:0.82rem;letter-spacing:3px;text-transform:uppercase;
-                        margin-top:8px;font-weight:600;">Su Güvenliği Risk Endeksi · İzmir · 2010–2040</div>
+    st.markdown("""
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+                padding:22px 0 18px 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:0.8rem;">
+        <div></div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:16px;text-align:center;">
+            <span style="font-size:2.9rem;line-height:1;filter:drop-shadow(0 0 10px rgba(56,209,227,0.45));">💧</span>
+            <div style="text-align:center;">
+                <div style="color:#ffffff;font-size:2.45rem;font-weight:900;
+                            letter-spacing:-0.8px;line-height:1.05;text-shadow:0 0 18px rgba(56,209,227,0.18);">İzmiRisk</div>
+                <div style="color:#38d1e3;font-size:0.82rem;letter-spacing:3px;text-transform:uppercase;
+                            margin-top:8px;font-weight:600;">Su Güvenliği Risk Endeksi · İzmir · 2010–2040</div>
+            </div>
+        </div>
+        <div style="justify-self:end;color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.7;">
+            Veri: İZSU Açık Veri Portalı<br>11 Merkez İlçe · Entropy-WSRI<br><span style="color:#38d1e3;">Bootstrap simülasyonu ile oluşturulmuştur.</span>
         </div>
     </div>
-    <div style="justify-self:end;color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.7;">
-        Veri: İZSU Açık Veri Portalı<br>11 Merkez İlçe · Entropy-WSRI<br><span style="color:#38d1e3;">Bootstrap simülasyonu ile oluşturulmuştur.</span>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
     sayfa_listesi = [
         "🏠 Ana Sayfa",
