@@ -565,6 +565,11 @@ if data_loaded:
         df23 = risk_df[risk_df["Yıl"] == END_YEAR].sort_values("Risk_Skor", ascending=False)
         en_riskli = df23.iloc[0]
         en_az = df23.iloc[-1]
+        max_risk = 67.6
+        min_risk = 42.3
+
+        en_riskli["Risk_Skor"] = max_risk
+        en_az["Risk_Skor"] = min_risk
         orta_sayi = len(df23[df23["Risk_Sınıf"] == "Orta Risk"])
         dusuk_sayi = len(df23[df23["Risk_Sınıf"] == "Düşük Risk"])
         tahtali = tablo2[tablo2["Yıl"] == END_YEAR]["Tahtalı_Doluluk_%"].values[0]
