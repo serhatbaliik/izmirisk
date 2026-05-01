@@ -419,91 +419,70 @@ if data_loaded:
     """, unsafe_allow_html=True)
 
     # ── Premium Floating Glass Pill Menü CSS — büyük pill boyutu
+        # ── Büyük Butonlu Menü Stili
     st.markdown("""
     <style>
-        div[data-testid="stPills"] {
-            display: flex !important;
-            justify-content: center !important;
-            width: 100% !important;
-        }
-        div[data-testid="stPills"] [role="radiogroup"] {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            gap: 10px !important;
-            padding: 14px 20px !important;
-            border-radius: 999px !important;
-            background: linear-gradient(135deg, rgba(8,25,58,0.76), rgba(2,10,28,0.62)) !important;
-            border: 1px solid rgba(56,209,227,0.28) !important;
-            box-shadow:
-                0 16px 38px rgba(0,0,0,0.30),
-                inset 0 1px 0 rgba(255,255,255,0.10),
-                0 0 26px rgba(56,209,227,0.10) !important;
-            backdrop-filter: blur(18px) saturate(145%) !important;
-            -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
-            max-width: max-content !important;
-            margin: 8px auto 18px auto !important;
-        }
-        div[data-testid="stPills"] label {
-            min-height: 72px !important;
-            padding: 0 28px !important;
-            border-radius: 999px !important;
-            background: rgba(0,0,0,0.28) !important;
-            border: 1px solid rgba(255,255,255,0.10) !important;
-            color: #cdeeff !important;
-            font-size: 1.15rem !important;
-            font-weight: 700 !important;
-            letter-spacing: 0.2px !important;
-            transition: all 180ms ease !important;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05) !important;
-            cursor: pointer !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }
-        /* Streamlit pills inner span/p */
-        div[data-testid="stPills"] label p,
-        div[data-testid="stPills"] label span {
-            font-size: 1.15rem !important;
-            font-weight: 700 !important;
-            color: inherit !important;
-        }
-        div[data-testid="stPills"] label:hover {
-            transform: translateY(-2px) !important;
-            background: rgba(56,209,227,0.13) !important;
-            border-color: rgba(56,209,227,0.50) !important;
-            color: #ffffff !important;
-            box-shadow:
-                0 8px 20px rgba(0,0,0,0.26),
-                0 0 18px rgba(56,209,227,0.14) !important;
-        }
-        div[data-testid="stPills"] label:has(input:checked),
-        div[data-testid="stPills"] label[aria-checked="true"],
-        div[data-testid="stPills"] [aria-checked="true"],
-        div[data-testid="stPills"] button[aria-pressed="true"] {
-            background: linear-gradient(135deg, rgba(56,209,227,0.32), rgba(255,92,92,0.20)) !important;
-            border-color: rgba(56,209,227,0.88) !important;
-            color: #ffffff !important;
-            box-shadow:
-                0 0 0 1px rgba(56,209,227,0.18),
-                0 0 22px rgba(56,209,227,0.30),
-                inset 0 1px 0 rgba(255,255,255,0.18) !important;
-        }
-        div[data-testid="stPills"] input { display: none !important; }
-        @media (max-width: 1100px) {
-            div[data-testid="stPills"] [role="radiogroup"] {
-                max-width: 100% !important;
-                overflow-x: auto !important;
-                justify-content: flex-start !important;
-                border-radius: 16px !important;
-            }
-            div[data-testid="stPills"] label {
-                white-space: nowrap !important;
-                min-height: 56px !important;
-                font-size: 0.95rem !important;
-                padding: 0 18px !important;
-            }
-        }
+    div[data-testid="stPills"] {
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
+        margin-top: 18px !important;
+        margin-bottom: 22px !important;
+    }
+
+    div[data-testid="stPills"] [role="radiogroup"] {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 14px !important;
+        padding: 14px 18px !important;
+        border-radius: 24px !important;
+        background: rgba(6, 22, 52, 0.82) !important;
+        border: 1px solid rgba(56, 209, 227, 0.35) !important;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.35) !important;
+        backdrop-filter: blur(14px) !important;
+        flex-wrap: wrap !important;
+    }
+
+    div[data-testid="stPills"] label {
+        min-height: 58px !important;
+        padding: 0 26px !important;
+        border-radius: 18px !important;
+        background: rgba(255,255,255,0.07) !important;
+        border: 1px solid rgba(56,209,227,0.25) !important;
+        color: #d8f4ff !important;
+        font-size: 1.02rem !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.2px !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08) !important;
+        transition: all 0.2s ease !important;
+    }
+
+    div[data-testid="stPills"] label:hover {
+        transform: translateY(-3px) scale(1.03) !important;
+        background: rgba(56,209,227,0.18) !important;
+        border-color: rgba(56,209,227,0.75) !important;
+        color: #ffffff !important;
+        box-shadow:
+            0 10px 24px rgba(0,0,0,0.35),
+            0 0 22px rgba(56,209,227,0.22) !important;
+    }
+
+    div[data-testid="stPills"] label:has(input:checked),
+    div[data-testid="stPills"] label[aria-checked="true"],
+    div[data-testid="stPills"] [aria-checked="true"] {
+        background: linear-gradient(135deg, rgba(56,209,227,0.42), rgba(255,92,92,0.28)) !important;
+        border-color: rgba(56,209,227,1) !important;
+        color: #ffffff !important;
+        box-shadow:
+            0 0 0 1px rgba(56,209,227,0.28),
+            0 0 28px rgba(56,209,227,0.35),
+            inset 0 1px 0 rgba(255,255,255,0.22) !important;
+    }
+
+    div[data-testid="stPills"] input {
+        display: none !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
