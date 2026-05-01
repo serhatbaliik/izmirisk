@@ -485,69 +485,36 @@ if data_loaded:
 
         # ── Hero başlık
         st.markdown("""
-<div style="
-    text-align: center;
-    font-size: 1.05rem;
-    line-height: 1.9;
-    color: #d8f4ff;
-    margin-top: 10px;
-    margin-bottom: 25px;
-">
+<div style="text-align:center; margin-top:10px; margin-bottom:30px;">
 
-Entropy ağırlıklı bileşik risk analizi<br>
-11 merkez ilçe verisi<br>
-Mann-Kendall trend testi<br>
-LISA mekânsal analizi<br>
-2040 projeksiyonu<br>
-Bootstrap simülasyonu ile oluşturulmuştur
+    <div style="
+        font-size:1.15rem;
+        font-weight:600;
+        color:#e6f7ff;
+        margin-bottom:8px;
+    ">
+        Entropy Ağırlıklı Bileşik Risk Analizi
+    </div>
+
+    <div style="
+        font-size:1.02rem;
+        color:#b9e6f2;
+        letter-spacing:0.3px;
+        line-height:1.8;
+    ">
+        11 Merkez İlçe • Mann-Kendall Trend Testi • LISA Mekânsal Analizi
+    </div>
+
+    <div style="
+        font-size:0.98rem;
+        color:#8fd3e6;
+        margin-top:6px;
+    ">
+        2040 Projeksiyonu • Bootstrap Simülasyonu
+    </div>
 
 </div>
 """, unsafe_allow_html=True)
-
-        # ── Veri hesapla
-        df23 = risk_df[risk_df["Yıl"]==2023].sort_values("Risk_Skor", ascending=False)
-        en_riskli = df23.iloc[0]
-        en_az = df23.iloc[-1]
-        orta_sayi = len(df23[df23["Risk_Sınıf"]=="Orta Risk"])
-        dusuk_sayi = len(df23[df23["Risk_Sınıf"]=="Düşük Risk"])
-        tahtali = tablo2[tablo2["Yıl"]==2023]["Tahtalı_Doluluk_%"].values[0]
-        toplam_tuketim = int(tablo1[tablo1["Yıl"]==2023]["Tüketim_m3"].sum() / 1e6)
-        kayip_oran = float(tablo2[tablo2["Yıl"]==2023]["Su_Kayıp_Oranı_%"].values[0])
-        en_riskli_skor = float(en_riskli["Risk_Skor"])
-
-        # ── Animasyonlu Sayaçlar
-        cnt1_val = int(tablo1[tablo1["Yıl"]==2023]["Tüketim_m3"].sum() / 1e6)
-        cnt2_val = round(float(df23.iloc[0]["Risk_Skor"]), 1)
-        cnt3_val = round(float(tablo2[tablo2["Yıl"]==2023]["Su_Kayıp_Oranı_%"].values[0]), 2)
-        en_riskli_adi = str(df23.iloc[0]["İlçe"])
-        bar1 = min(cnt1_val/300*100, 100)
-        bar3 = min(cnt3_val*3, 100)
-
-        sayac_html = f"""
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;">
-            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(56,209,227,0.2);border-radius:12px;padding:1.2rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Toplam Tüketim 2023</div>
-                <div style="color:#38d1e3;font-size:2.4rem;font-weight:700;" id="cnt1">{ cnt1_val }</div>
-                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">milyon m³</div>
-                <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
-                    <div style="height:100%;width:{bar1:.0f}%;background:#38d1e3;border-radius:2px;"></div></div>
-            </div>
-            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(214,39,40,0.3);border-radius:12px;padding:1.2rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">En Yüksek Risk Skoru</div>
-                <div style="color:#d62728;font-size:2.4rem;font-weight:700;" id="cnt2">{ cnt2_val }</div>
-                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">{ en_riskli_adi } · Orta Risk</div>
-                <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
-                    <div style="height:100%;width:{cnt2_val:.0f}%;background:#d62728;border-radius:2px;"></div></div>
-            </div>
-            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,127,14,0.3);border-radius:12px;padding:1.2rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Su Kayıp Oranı 2023</div>
-                <div style="color:#ff7f0e;font-size:2.4rem;font-weight:700;" id="cnt3">{ cnt3_val }</div>
-                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">% · sistem geneli</div>
-                <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
-                    <div style="height:100%;width:{bar3:.0f}%;background:#ff7f0e;border-radius:2px;"></div></div>
-            </div>
-        </div>"""
-        st.markdown(sayac_html, unsafe_allow_html=True)
 
         # ── KPI Kartları — özel HTML
 
