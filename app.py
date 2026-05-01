@@ -585,7 +585,7 @@ if data_loaded:
             <p style="color:#a8d8f0;font-size:1rem;margin:0.6rem 0 0 0;max-width:600px;
                       display:inline-block;line-height:1.6;">
                 Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe · Mann-Kendall trend testi ·
-                LISA mekânsal analizi · 2040 projeksiyonu<br>Bootstrap simülasyonu ile oluşturulmuştur.
+                       LISA mekânsal analizi · 2040 projeksiyonu<br>Bootstrap simülasyonu ile oluşturulmuştur.
             </p>
             <div class="wave-container" style="margin-top:1.2rem;"><div class="wave"></div></div>
         </div>
