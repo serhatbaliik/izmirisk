@@ -557,8 +557,8 @@ if data_loaded:
     st.markdown("<hr style='border-color:rgba(56,209,227,0.15);margin:0.5rem 0 1rem 0;'>", unsafe_allow_html=True)
 
     # ════════════════════════════════
-    # ANA SAYFA
-    # ════════════════════════════════
+# ANA SAYFA
+# ════════════════════════════════
 if sayfa == "🏠 Ana Sayfa":
 
     # ── Değişkenler / Veri hesapla
@@ -618,67 +618,67 @@ if sayfa == "🏠 Ana Sayfa":
     </div>
     """, unsafe_allow_html=True)
 
-        # ── Animasyonlu Sayaçlar
-        cnt1_val = toplam_tuketim
-        cnt2_val = round(en_riskli_skor, 1)
-        cnt3_val = round(kayip_oran, 2)
-        en_riskli_adi = str(en_riskli["İlçe"])
-        bar1 = min(cnt1_val/300*100, 100)
-        bar3 = min(cnt3_val*3, 100)
+    # ── Animasyonlu Sayaçlar
+    cnt1_val = toplam_tuketim
+    cnt2_val = round(en_riskli_skor, 1)
+    cnt3_val = round(kayip_oran, 2)
+    en_riskli_adi = str(en_riskli["İlçe"])
+    bar1 = min(cnt1_val/300*100, 100)
+    bar3 = min(cnt3_val*3, 100)
 
-        sayac_html = f"""
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;">
-            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(56,209,227,0.2);border-radius:12px;padding:1.2rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Toplam Tüketim {END_YEAR}</div>
-                <div style="color:#38d1e3;font-size:2.4rem;font-weight:700;" id="cnt1">{ cnt1_val }</div>
-                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">milyon m³</div>
-                <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
-                    <div style="height:100%;width:{bar1:.0f}%;background:#38d1e3;border-radius:2px;"></div></div>
-            </div>
-            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(214,39,40,0.3);border-radius:12px;padding:1.2rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">En Yüksek Risk Skoru</div>
-                <div style="color:#d62728;font-size:2.4rem;font-weight:700;" id="cnt2">{ cnt2_val }</div>
-                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">{ en_riskli_adi } · {get_risk_label(cnt2_val)}</div>
-                <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
-                    <div style="height:100%;width:{cnt2_val:.0f}%;background:#d62728;border-radius:2px;"></div></div>
-            </div>
-            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,127,14,0.3);border-radius:12px;padding:1.2rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Su Kayıp Oranı {END_YEAR}</div>
-                <div style="color:#ff7f0e;font-size:2.4rem;font-weight:700;" id="cnt3">{ cnt3_val }</div>
-                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">% · sistem geneli</div>
-                <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
-                    <div style="height:100%;width:{bar3:.0f}%;background:#ff7f0e;border-radius:2px;"></div></div>
-            </div>
-        </div>"""
-        st.markdown(sayac_html, unsafe_allow_html=True)
+    sayac_html = f"""
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;">
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(56,209,227,0.2);border-radius:12px;padding:1.2rem;text-align:center;">
+            <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Toplam Tüketim {END_YEAR}</div>
+            <div style="color:#38d1e3;font-size:2.4rem;font-weight:700;" id="cnt1">{ cnt1_val }</div>
+            <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">milyon m³</div>
+            <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
+                <div style="height:100%;width:{bar1:.0f}%;background:#38d1e3;border-radius:2px;"></div></div>
+        </div>
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(214,39,40,0.3);border-radius:12px;padding:1.2rem;text-align:center;">
+            <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">En Yüksek Risk Skoru</div>
+            <div style="color:#d62728;font-size:2.4rem;font-weight:700;" id="cnt2">{ cnt2_val }</div>
+            <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">{ en_riskli_adi } · {get_risk_label(cnt2_val)}</div>
+            <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
+                <div style="height:100%;width:{cnt2_val:.0f}%;background:#d62728;border-radius:2px;"></div></div>
+        </div>
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,127,14,0.3);border-radius:12px;padding:1.2rem;text-align:center;">
+            <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Su Kayıp Oranı {END_YEAR}</div>
+            <div style="color:#ff7f0e;font-size:2.4rem;font-weight:700;" id="cnt3">{ cnt3_val }</div>
+            <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">% · sistem geneli</div>
+            <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
+                <div style="height:100%;width:{bar3:.0f}%;background:#ff7f0e;border-radius:2px;"></div></div>
+        </div>
+    </div>"""
+    st.markdown(sayac_html, unsafe_allow_html=True)
 
-        # ── KPI Kartları
-        k1,k2,k3,k4,k5 = st.columns(5)
-        kartlar = [
-            (k1, "🔴", "En Riskli İlçe", en_riskli["İlçe"], f"Skor: {en_riskli['Risk_Skor']:.1f}", "#d62728"),
-            (k2, "🟡", "Orta Risk", f"{orta_sayi} İlçe", f"{END_YEAR} yılı", "#ff7f0e"),
-            (k3, "🟢", "Düşük Risk", f"{dusuk_sayi} İlçe", f"{END_YEAR} yılı", "#2ca02c"),
-            (k4, "💧", "Tahtalı Doluluk", f"%{tahtali:.1f}", f"{END_YEAR} yılı", "#38d1e3"),
-            (k5, "✅", "En Az Riskli", en_az["İlçe"], f"Skor: {en_az['Risk_Skor']:.1f}", "#2ca02c"),
-        ]
-        for col, ikon, baslik, deger, alt, renk in kartlar:
-            with col:
-                st.markdown(f"""
-                <div style="background:rgba(255,255,255,0.06);
-                            border:1px solid {renk}44;
-                            border-top:3px solid {renk};
-                            border-radius:10px;padding:1rem;
-                            text-align:center;transition:all 0.2s;">
-                    <div style="font-size:1.6rem;margin-bottom:4px;">{ikon}</div>
-                    <div style="color:#a8d8f0;font-size:0.72rem;letter-spacing:1px;
-                                text-transform:uppercase;margin-bottom:6px;">{baslik}</div>
-                    <div style="color:#ffffff;font-size:1.3rem;font-weight:700;
-                                margin-bottom:4px;">{deger}</div>
-                    <div style="color:{renk};font-size:0.78rem;">{alt}</div>
-                </div>
-                """, unsafe_allow_html=True)
+    # ── KPI Kartları
+    k1,k2,k3,k4,k5 = st.columns(5)
+    kartlar = [
+        (k1, "🔴", "En Riskli İlçe", en_riskli["İlçe"], f"Skor: {en_riskli['Risk_Skor']:.1f}", "#d62728"),
+        (k2, "🟡", "Orta Risk", f"{orta_sayi} İlçe", f"{END_YEAR} yılı", "#ff7f0e"),
+        (k3, "🟢", "Düşük Risk", f"{dusuk_sayi} İlçe", f"{END_YEAR} yılı", "#2ca02c"),
+        (k4, "💧", "Tahtalı Doluluk", f"%{tahtali:.1f}", f"{END_YEAR} yılı", "#38d1e3"),
+        (k5, "✅", "En Az Riskli", en_az["İlçe"], f"Skor: {en_az['Risk_Skor']:.1f}", "#2ca02c"),
+    ]
+    for col, ikon, baslik, deger, alt, renk in kartlar:
+        with col:
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.06);
+                        border:1px solid {renk}44;
+                        border-top:3px solid {renk};
+                        border-radius:10px;padding:1rem;
+                        text-align:center;transition:all 0.2s;">
+                <div style="font-size:1.6rem;margin-bottom:4px;">{ikon}</div>
+                <div style="color:#a8d8f0;font-size:0.72rem;letter-spacing:1px;
+                            text-transform:uppercase;margin-bottom:6px;">{baslik}</div>
+                <div style="color:#ffffff;font-size:1.3rem;font-weight:700;
+                            margin-bottom:4px;">{deger}</div>
+                <div style="color:{renk};font-size:0.78rem;">{alt}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-        st.markdown("<div style='height:2rem'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height:2rem'></div>", unsafe_allow_html=True)
 
         # ── Bölüm başlığı — Risk Göstergesi
         st.markdown(f"""
