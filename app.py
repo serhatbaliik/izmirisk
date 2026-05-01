@@ -16,6 +16,8 @@ st.set_page_config(
 YEARS = list(range(2010, 2024))     # 2010..2023
 START_YEAR = 2010
 END_YEAR = 2023
+PRED_END_YEAR = 2040
+PRED_YEARS = list(range(END_YEAR + 1, PRED_END_YEAR + 1))
 
 st.markdown("""
 <style>
