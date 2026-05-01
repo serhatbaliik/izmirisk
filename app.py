@@ -410,155 +410,70 @@ if data_loaded:
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Premium Floating Glass Menü (st.pills + eski Streamlit için st.radio fallback)
+        # ── Büyük Butonlu Menü Stili
     st.markdown("""
     <style>
-        /* Sidebar hiçbir durumda görünmesin */
-        section[data-testid="stSidebar"], [data-testid="stSidebar"] {
-            display: none !important;
-            visibility: hidden !important;
-            width: 0 !important;
-            min-width: 0 !important;
-        }
+    div[data-testid="stPills"] {
+        display: flex !important;
+        justify-content: center !important;
+        width: 100% !important;
+        margin-top: 18px !important;
+        margin-bottom: 22px !important;
+    }
 
-        /* Menü satırı */
-        .floating-nav-wrap {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 8px 0 18px 0;
-        }
+    div[data-testid="stPills"] [role="radiogroup"] {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 14px !important;
+        padding: 14px 18px !important;
+        border-radius: 24px !important;
+        background: rgba(6, 22, 52, 0.82) !important;
+        border: 1px solid rgba(56, 209, 227, 0.35) !important;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.35) !important;
+        backdrop-filter: blur(14px) !important;
+        flex-wrap: wrap !important;
+    }
 
-        /* st.pills kapsül */
-        div[data-testid="stPills"] {
-            display: flex !important;
-            justify-content: center !important;
-            width: 100% !important;
-        }
-        div[data-testid="stPills"] [role="radiogroup"] {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            gap: 8px !important;
-            padding: 10px !important;
-            border-radius: 999px !important;
-            background: linear-gradient(135deg, rgba(8,25,58,0.78), rgba(2,10,28,0.66)) !important;
-            border: 1px solid rgba(56,209,227,0.30) !important;
-            box-shadow:
-                0 18px 44px rgba(0,0,0,0.34),
-                inset 0 1px 0 rgba(255,255,255,0.11),
-                0 0 28px rgba(56,209,227,0.12) !important;
-            backdrop-filter: blur(18px) saturate(145%) !important;
-            -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
-            max-width: max-content !important;
-            margin: 0 auto !important;
-        }
-        div[data-testid="stPills"] label {
-            min-height: 42px !important;
-            padding: 0 16px !important;
-            border-radius: 999px !important;
-            background: rgba(0,0,0,0.28) !important;
-            border: 1px solid rgba(255,255,255,0.11) !important;
-            color: #cdeeff !important;
-            font-size: 0.88rem !important;
-            font-weight: 650 !important;
-            letter-spacing: 0.1px !important;
-            transition: all 180ms ease !important;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05) !important;
-        }
-        div[data-testid="stPills"] label:hover {
-            transform: translateY(-2px) !important;
-            background: rgba(56,209,227,0.14) !important;
-            border-color: rgba(56,209,227,0.55) !important;
-            color: #ffffff !important;
-            box-shadow:
-                0 8px 20px rgba(0,0,0,0.26),
-                0 0 18px rgba(56,209,227,0.16) !important;
-        }
-        div[data-testid="stPills"] label:has(input:checked),
-        div[data-testid="stPills"] label[aria-checked="true"],
-        div[data-testid="stPills"] [aria-checked="true"],
-        div[data-testid="stPills"] button[aria-pressed="true"] {
-            background: linear-gradient(135deg, rgba(56,209,227,0.36), rgba(255,92,92,0.22)) !important;
-            border-color: rgba(56,209,227,0.90) !important;
-            color: #ffffff !important;
-            box-shadow:
-                0 0 0 1px rgba(56,209,227,0.20),
-                0 0 24px rgba(56,209,227,0.32),
-                inset 0 1px 0 rgba(255,255,255,0.20) !important;
-        }
-        div[data-testid="stPills"] input { display: none !important; }
+    div[data-testid="stPills"] label {
+        min-height: 58px !important;
+        padding: 0 26px !important;
+        border-radius: 18px !important;
+        background: rgba(255,255,255,0.07) !important;
+        border: 1px solid rgba(56,209,227,0.25) !important;
+        color: #d8f4ff !important;
+        font-size: 1.02rem !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.2px !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08) !important;
+        transition: all 0.2s ease !important;
+    }
 
-        /* Fallback: st.radio kullanılırsa aynı floating görünüm */
-        div[data-testid="stRadio"] {
-            display: flex !important;
-            justify-content: center !important;
-            width: 100% !important;
-        }
-        div[data-testid="stRadio"] [role="radiogroup"] {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            gap: 8px !important;
-            padding: 10px !important;
-            border-radius: 999px !important;
-            background: linear-gradient(135deg, rgba(8,25,58,0.78), rgba(2,10,28,0.66)) !important;
-            border: 1px solid rgba(56,209,227,0.30) !important;
-            box-shadow:
-                0 18px 44px rgba(0,0,0,0.34),
-                inset 0 1px 0 rgba(255,255,255,0.11),
-                0 0 28px rgba(56,209,227,0.12) !important;
-            backdrop-filter: blur(18px) saturate(145%) !important;
-            -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
-            max-width: max-content !important;
-            margin: 0 auto !important;
-        }
-        div[data-testid="stRadio"] label {
-            min-height: 42px !important;
-            padding: 0 16px !important;
-            border-radius: 999px !important;
-            background: rgba(0,0,0,0.28) !important;
-            border: 1px solid rgba(255,255,255,0.11) !important;
-            color: #cdeeff !important;
-            font-size: 0.88rem !important;
-            font-weight: 650 !important;
-            transition: all 180ms ease !important;
-        }
-        div[data-testid="stRadio"] label:hover {
-            transform: translateY(-2px) !important;
-            background: rgba(56,209,227,0.14) !important;
-            border-color: rgba(56,209,227,0.55) !important;
-        }
-        div[data-testid="stRadio"] label:has(input:checked) {
-            background: linear-gradient(135deg, rgba(56,209,227,0.36), rgba(255,92,92,0.22)) !important;
-            border-color: rgba(56,209,227,0.90) !important;
-            color: #ffffff !important;
-            box-shadow:
-                0 0 0 1px rgba(56,209,227,0.20),
-                0 0 24px rgba(56,209,227,0.32),
-                inset 0 1px 0 rgba(255,255,255,0.20) !important;
-        }
-        div[data-testid="stRadio"] input { display: none !important; }
+    div[data-testid="stPills"] label:hover {
+        transform: translateY(-3px) scale(1.03) !important;
+        background: rgba(56,209,227,0.18) !important;
+        border-color: rgba(56,209,227,0.75) !important;
+        color: #ffffff !important;
+        box-shadow:
+            0 10px 24px rgba(0,0,0,0.35),
+            0 0 22px rgba(56,209,227,0.22) !important;
+    }
 
-        /* Tema butonu */
-        div[data-testid="stButton"] > button[kind="secondary"] {
-            min-height: 42px !important;
-        }
+    div[data-testid="stPills"] label:has(input:checked),
+    div[data-testid="stPills"] label[aria-checked="true"],
+    div[data-testid="stPills"] [aria-checked="true"] {
+        background: linear-gradient(135deg, rgba(56,209,227,0.42), rgba(255,92,92,0.28)) !important;
+        border-color: rgba(56,209,227,1) !important;
+        color: #ffffff !important;
+        box-shadow:
+            0 0 0 1px rgba(56,209,227,0.28),
+            0 0 28px rgba(56,209,227,0.35),
+            inset 0 1px 0 rgba(255,255,255,0.22) !important;
+    }
 
-        @media (max-width: 1100px) {
-            div[data-testid="stPills"] [role="radiogroup"],
-            div[data-testid="stRadio"] [role="radiogroup"] {
-                max-width: 100% !important;
-                overflow-x: auto !important;
-                justify-content: flex-start !important;
-                scrollbar-width: thin !important;
-            }
-            div[data-testid="stPills"] label,
-            div[data-testid="stRadio"] label {
-                white-space: nowrap !important;
-            }
-        }
+    div[data-testid="stPills"] input {
+        display: none !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
