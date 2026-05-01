@@ -419,71 +419,37 @@ if data_loaded:
     """, unsafe_allow_html=True)
 
     # ── Premium Floating Glass Pill Menü CSS — büyük pill boyutu
-        # ── Büyük Butonlu Menü Stili
-    st.markdown("""
+        st.markdown("""
     <style>
-    div[data-testid="stPills"] {
-        display: flex !important;
-        justify-content: center !important;
-        width: 100% !important;
-        margin-top: 18px !important;
-        margin-bottom: 22px !important;
-    }
-
-    div[data-testid="stPills"] [role="radiogroup"] {
-        display: flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        gap: 14px !important;
-        padding: 14px 18px !important;
-        border-radius: 24px !important;
-        background: rgba(6, 22, 52, 0.82) !important;
-        border: 1px solid rgba(56, 209, 227, 0.35) !important;
-        box-shadow: 0 12px 30px rgba(0,0,0,0.35) !important;
-        backdrop-filter: blur(14px) !important;
-        flex-wrap: wrap !important;
-    }
-
-    div[data-testid="stPills"] label {
-        min-height: 58px !important;
-        padding: 0 26px !important;
-        border-radius: 18px !important;
-        background: rgba(255,255,255,0.07) !important;
-        border: 1px solid rgba(56,209,227,0.25) !important;
-        color: #d8f4ff !important;
-        font-size: 1.02rem !important;
-        font-weight: 800 !important;
-        letter-spacing: 0.2px !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08) !important;
-        transition: all 0.2s ease !important;
-    }
-
-    div[data-testid="stPills"] label:hover {
-        transform: translateY(-3px) scale(1.03) !important;
-        background: rgba(56,209,227,0.18) !important;
-        border-color: rgba(56,209,227,0.75) !important;
-        color: #ffffff !important;
-        box-shadow:
-            0 10px 24px rgba(0,0,0,0.35),
-            0 0 22px rgba(56,209,227,0.22) !important;
-    }
-
-    div[data-testid="stPills"] label:has(input:checked),
-    div[data-testid="stPills"] label[aria-checked="true"],
-    div[data-testid="stPills"] [aria-checked="true"] {
-        background: linear-gradient(135deg, rgba(56,209,227,0.42), rgba(255,92,92,0.28)) !important;
-        border-color: rgba(56,209,227,1) !important;
-        color: #ffffff !important;
-        box-shadow:
-            0 0 0 1px rgba(56,209,227,0.28),
-            0 0 28px rgba(56,209,227,0.35),
-            inset 0 1px 0 rgba(255,255,255,0.22) !important;
-    }
-
-    div[data-testid="stPills"] input {
-        display: none !important;
-    }
+        .nav-title-bar {width:100%;display:flex;justify-content:center;margin:10px 0 14px 0;}
+        .nav-title-inner {display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border-radius:22px;background:linear-gradient(135deg,rgba(6,22,52,0.90),rgba(2,10,28,0.76));border:1px solid rgba(56,209,227,0.34);box-shadow:0 14px 34px rgba(0,0,0,0.32),0 0 24px rgba(56,209,227,0.10);backdrop-filter:blur(16px);}
+        .nav-dot {width:8px;height:8px;border-radius:999px;background:#38d1e3;box-shadow:0 0 14px rgba(56,209,227,0.9);}
+        .nav-caption {color:#cdeeff;font-size:0.76rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;}
+        div[data-testid="stButton"] > button {min-height:58px !important;width:100% !important;padding:0 12px !important;border-radius:17px !important;background:linear-gradient(180deg,rgba(255,255,255,0.095),rgba(255,255,255,0.035)) !important;border:1px solid rgba(56,209,227,0.32) !important;color:#d8f4ff !important;font-size:0.96rem !important;font-weight:850 !important;letter-spacing:0.1px !important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 20px rgba(0,0,0,0.18) !important;transition:all 0.18s ease !important;white-space:nowrap !important;}
+        div[data-testid="stButton"] > button:hover {transform:translateY(-3px) scale(1.015) !important;background:linear-gradient(135deg,rgba(56,209,227,0.24),rgba(56,209,227,0.08)) !important;border-color:rgba(56,209,227,0.78) !important;color:#ffffff !important;box-shadow:0 12px 26px rgba(0,0,0,0.32),0 0 24px rgba(56,209,227,0.25),inset 0 1px 0 rgba(255,255,255,0.18) !important;}
+        div[data-testid="stButton"] > button:focus {outline:none !important;box-shadow:0 0 0 2px rgba(56,209,227,0.36),0 0 24px rgba(56,209,227,0.22) !important;}
+        @media (max-width:1100px) {div[data-testid="stButton"] > button {min-height:50px !important;font-size:0.82rem !important;padding:0 8px !important;}}
     </style>
+    """, unsafe_allow_html=True)
+
+    sayfa_listesi = [
+        "🏠 Ana Sayfa", "📊 EDA Analizi", "📈 Risk Endeksi", "🔮 2040 Tahmin", "📉 Senaryo Analizi",
+        "Izmir Risk Haritasi", "🗺️ Mekânsal Analiz", "💡 Öneriler", "📐 Metodoloji", "🔬 Araçlar",
+    ]
+    etiketler = [
+        "🏠 Ana Sayfa", "📊 EDA", "📈 Risk", "🔮 2040", "📉 Senaryo",
+        "🗺️ Harita", "📍 Mekânsal", "💡 Öneriler", "📐 Metodoloji", "🔬 Araçlar",
+    ]
+
+    if "secili_sayfa" not in st.session_state:
+        st.session_state.secili_sayfa = "🏠 Ana Sayfa"
+    if st.session_state.secili_sayfa not in sayfa_listesi:
+        st.session_state.secili_sayfa = "🏠 Ana Sayfa"
+    if "acik_tema" not in st.session_state:
+        st.session_state.acik_tema = False
+
+    st.markdown("""
+    <div class="nav-title-bar"><div class="nav-title-inner"><div class="nav-dot"></div><div class="nav-caption">Dashboard Navigation</div><div class="nav-dot"></div></div></div>
     """, unsafe_allow_html=True)
 
     sayfa_listesi = [
