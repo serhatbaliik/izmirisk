@@ -410,58 +410,6 @@ if data_loaded:
     </div>
     """, unsafe_allow_html=True)
 
-    sayfa_listesi = [
-        "🏠 Ana Sayfa",
-        "📊 EDA Analizi",
-        "📈 Risk Endeksi",
-        "🔮 2040 Tahmin",
-        "Izmir Risk Haritasi",
-        "🗺️ Mekânsal Analiz",
-        "💡 Öneriler",
-        "📐 Metodoloji",
-        "🔬 Araçlar",
-    ]
-    etiketler = [
-        "🏠 Ana Sayfa",
-        "📊 EDA",
-        "📈 Risk",
-        "🔮 2040",
-        "🗺️ Harita",
-        "📍 Mekânsal",
-        "💡 Öneriler",
-        "📐 Metodoloji",
-        "🔬 Araçlar",
-    ]
-
-    if "secili_sayfa" not in st.session_state:
-        st.session_state.secili_sayfa = "🏠 Ana Sayfa"
-
-    secili_etiket = st.pills(
-        label="",
-        options=etiketler,
-        default=etiketler[sayfa_listesi.index(st.session_state.secili_sayfa)]
-        if st.session_state.secili_sayfa in sayfa_listesi else etiketler[0],
-        key="nav_pills",
-        label_visibility="collapsed"
-    )
-
-    if secili_etiket:
-        yeni_sayfa = sayfa_listesi[etiketler.index(secili_etiket)]
-        if yeni_sayfa != st.session_state.secili_sayfa:
-            st.session_state.secili_sayfa = yeni_sayfa
-            st.rerun()
-
-        sayfa = st.session_state.secili_sayfa
-
-    # Tema toggle
-    if "acik_tema" not in st.session_state:
-        st.session_state.acik_tema = False
-
-    _, tema_col = st.columns([10,1])
-    with tema_col:
-        if st.button("🌙" if not st.session_state.acik_tema else "☀️", key="tema_btn"):
-            st.session_state.acik_tema = not st.session_state.acik_tema
-            st.rerun()
 
     if st.session_state.acik_tema:
         st.markdown("""
