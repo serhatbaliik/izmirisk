@@ -559,7 +559,7 @@ if data_loaded:
     # ════════════════════════════════
     # ANA SAYFA
     # ════════════════════════════════
-   if sayfa == "🏠 Ana Sayfa":
+if sayfa == "🏠 Ana Sayfa":
 
     # ── Değişkenler / Veri hesapla
     df_son = risk_df[risk_df["Yıl"] == END_YEAR].sort_values("Risk_Skor", ascending=False)
