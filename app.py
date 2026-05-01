@@ -430,8 +430,8 @@ if data_loaded:
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
-            gap: 6px !important;
-            padding: 10px 14px !important;
+            gap: 10px !important;
+            padding: 14px 20px !important;
             border-radius: 999px !important;
             background: linear-gradient(135deg, rgba(8,25,58,0.76), rgba(2,10,28,0.62)) !important;
             border: 1px solid rgba(56,209,227,0.28) !important;
@@ -445,18 +445,28 @@ if data_loaded:
             margin: 8px auto 18px auto !important;
         }
         div[data-testid="stPills"] label {
-            min-height: 54px !important;
-            padding: 0 22px !important;
+            min-height: 72px !important;
+            padding: 0 28px !important;
             border-radius: 999px !important;
             background: rgba(0,0,0,0.28) !important;
             border: 1px solid rgba(255,255,255,0.10) !important;
             color: #cdeeff !important;
-            font-size: 1.0rem !important;
+            font-size: 1.15rem !important;
             font-weight: 700 !important;
             letter-spacing: 0.2px !important;
             transition: all 180ms ease !important;
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.05) !important;
             cursor: pointer !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        /* Streamlit pills inner span/p */
+        div[data-testid="stPills"] label p,
+        div[data-testid="stPills"] label span {
+            font-size: 1.15rem !important;
+            font-weight: 700 !important;
+            color: inherit !important;
         }
         div[data-testid="stPills"] label:hover {
             transform: translateY(-2px) !important;
@@ -489,9 +499,9 @@ if data_loaded:
             }
             div[data-testid="stPills"] label {
                 white-space: nowrap !important;
-                min-height: 46px !important;
-                font-size: 0.88rem !important;
-                padding: 0 14px !important;
+                min-height: 56px !important;
+                font-size: 0.95rem !important;
+                padding: 0 18px !important;
             }
         }
     </style>
