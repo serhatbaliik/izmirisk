@@ -418,8 +418,8 @@ if data_loaded:
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Premium Floating Glass Pill Menü CSS — büyük pill boyutu
-        st.markdown("""
+    # ── Büyük Butonlu Dashboard Menü (st.pills yerine)
+    st.markdown("""
     <style>
         .nav-title-bar {width:100%;display:flex;justify-content:center;margin:10px 0 14px 0;}
         .nav-title-inner {display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border-radius:22px;background:linear-gradient(135deg,rgba(6,22,52,0.90),rgba(2,10,28,0.76));border:1px solid rgba(56,209,227,0.34);box-shadow:0 14px 34px rgba(0,0,0,0.32),0 0 24px rgba(56,209,227,0.10);backdrop-filter:blur(16px);}
