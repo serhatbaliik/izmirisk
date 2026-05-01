@@ -567,7 +567,7 @@ if data_loaded:
         en_az = df23.iloc[-1]
         orta_sayi = len(df23[df23["Risk_Sınıf"] == "Orta Risk"])
         dusuk_sayi = len(df23[df23["Risk_Sınıf"] == "Düşük Risk"])
-        tahtali = tablo2[tablo2["Yıl"] == END_YEAR]["Tahtalı_Doluluk_%"].values[0
+        tahtali = tablo2[tablo2["Yıl"] == END_YEAR]["Tahtalı_Doluluk_%"].values[0]
         # ── Hero başlık
         st.markdown(f"""
         <div style="text-align:center;padding:2.5rem 0 1.5rem 0;">
