@@ -488,27 +488,39 @@ if data_loaded:
 <div style="text-align:center; margin-top:10px; margin-bottom:30px;">
 
     <div style="
-        font-size:1.15rem;
-        font-weight:600;
-        color:#e6f7ff;
-        margin-bottom:8px;
+        font-size:1.25rem;
+        font-weight:700;
+        margin-bottom:10px;
+        background: linear-gradient(90deg, #38d1e3, #4facfe);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing:0.4px;
     ">
         Entropy Ağırlıklı Bileşik Risk Analizi
     </div>
 
     <div style="
-        font-size:1.02rem;
-        color:#b9e6f2;
+        width:60px;
+        height:2px;
+        background: rgba(56,209,227,0.6);
+        margin: 0 auto 14px auto;
+        border-radius:2px;
+    "></div>
+
+    <div style="
+        font-size:1.03rem;
+        color:#c9f2ff;
         letter-spacing:0.3px;
-        line-height:1.8;
+        line-height:1.9;
     ">
         11 Merkez İlçe • Mann-Kendall Trend Testi • LISA Mekânsal Analizi
     </div>
 
     <div style="
-        font-size:0.98rem;
+        font-size:0.95rem;
         color:#8fd3e6;
         margin-top:6px;
+        opacity:0.9;
     ">
         2040 Projeksiyonu • Bootstrap Simülasyonu
     </div>
