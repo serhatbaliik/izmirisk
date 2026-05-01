@@ -485,28 +485,45 @@ if data_loaded:
 
         # ── Hero başlık
         st.markdown("""
-        <div style="text-align:center;padding:2.5rem 0 1.5rem 0;">
-            <div style="display:inline-block;background:rgba(56,209,227,0.1);
-                        border:1px solid rgba(56,209,227,0.3);border-radius:50px;
-                        padding:6px 20px;margin-bottom:1rem;">
-                <span style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;font-weight:600;">
-                    WATER SECURITY ANALYSIS · İZMİR 2010–2040
-                </span>
-            </div>
-            <div class="wave-container"><div class="wave"></div></div>
-            <h1 style="color:#ffffff;font-size:2.6rem;font-weight:800;margin:0.8rem 0 0.4rem 0;
-                       letter-spacing:-0.5px;line-height:1.2;">
-                İzmir Su Güvenliği<br>
-                <span style="color:#38d1e3;">Risk Endeksi</span>
-            </h1>
-            <p style="color:#a8d8f0;font-size:1rem;margin:0.6rem 0 0 0;max-width:600px;
-                      display:inline-block;line-height:1.6;">
-                Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe · Mann-Kendall trend testi ·
-                LISA mekânsal analizi · 2040 projeksiyonu<br>Bootstrap simülasyonu ile oluşturulmuştur.
-            </p>
-            <div class="wave-container" style="margin-top:1.2rem;"><div class="wave"></div></div>
-        </div>
-        """, unsafe_allow_html=True)
+<style>
+.badge-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+    margin-bottom: 25px;
+}
+
+.badge {
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: rgba(56, 209, 227, 0.12);
+    border: 1px solid rgba(56, 209, 227, 0.35);
+    color: #d8f4ff;
+    backdrop-filter: blur(6px);
+    transition: all 0.2s ease;
+}
+
+.badge:hover {
+    transform: translateY(-3px);
+    background: rgba(56, 209, 227, 0.25);
+    border-color: rgba(56, 209, 227, 0.8);
+    color: white;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+</style>
+
+<div class="badge-container">
+    <div class="badge">📊 Entropy Ağırlıklı Bileşik Risk Analizi</div>
+    <div class="badge">📈 Mann-Kendall Trend Testi</div>
+    <div class="badge">📍 LISA Mekânsal Analizi</div>
+    <div class="badge">🔮 2040 Projeksiyonu</div>
+    <div class="badge">⚙️ Bootstrap Simülasyonu</div>
+</div>
+""", unsafe_allow_html=True)
 
         # ── Veri hesapla
         df23 = risk_df[risk_df["Yıl"]==2023].sort_values("Risk_Skor", ascending=False)
