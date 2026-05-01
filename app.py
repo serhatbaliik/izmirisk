@@ -678,8 +678,6 @@ if sayfa == "🏠 Ana Sayfa":
             </div>
             """, unsafe_allow_html=True)
 
-    st.markdown("<div style='height:2rem'></div>", unsafe_allow_html=True)
-
         # ── Bölüm başlığı — Risk Göstergesi
         st.markdown(f"""
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
