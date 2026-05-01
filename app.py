@@ -561,30 +561,13 @@ if data_loaded:
     # ════════════════════════════════
     if sayfa == "🏠 Ana Sayfa":
 
-        # ── Değişkenler (Ana Sayfa için)
-
-df23 = risk_df[risk_df["Yıl"] == END_YEAR].sort_values("Risk_Skor", ascending=False)
-
-# 🔴 EN RİSKLİ (MANUEL)
-en_riskli = {
-    "İlçe": "BORNOVA",
-    "Risk_Skor": 67.2,
-    "Risk_Sınıf": "Yüksek Risk"
-}
-
-# 🟢 EN AZ RİSKLİ (MANUEL)
-en_az = {
-    "İlçe": "NARLIDERE",
-    "Risk_Skor": 42.3,
-    "Risk_Sınıf": "Düşük Risk"
-}
-
-# 🟡 Diğerleri yine veriden gelsin
-orta_sayi = len(df23[df23["Risk_Sınıf"] == "Orta Risk"])
-dusuk_sayi = len(df23[df23["Risk_Sınıf"] == "Düşük Risk"])
-
-# 💧 Tahtalı doluluk (gerçek veri)
-tahtali = tablo2[tablo2["Yıl"] == END_YEAR]["Tahtalı_Doluluk_%"].values[0]
+          # ── Değişkenler (Ana Sayfa için)
+        df23 = risk_df[risk_df["Yıl"] == END_YEAR].sort_values("Risk_Skor", ascending=False)
+        en_riskli = df23.iloc[0]
+        en_az = df23.iloc[-1]
+        orta_sayi = len(df23[df23["Risk_Sınıf"] == "Orta Risk"])
+        dusuk_sayi = len(df23[df23["Risk_Sınıf"] == "Düşük Risk"])
+        tahtali = tablo2[tablo2["Yıl"] == END_YEAR]["Tahtalı_Doluluk_%"].values[0
         # ── Hero başlık
         st.markdown(f"""
         <div style="text-align:center;padding:2.5rem 0 1.5rem 0;">
