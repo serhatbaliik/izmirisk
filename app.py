@@ -21,45 +21,28 @@ section[data-testid="stSidebar"] {
     min-width: 320px !important;
 }
 
-/* SIDEBAR BACKGROUND (ŞEFFAF GLASS) */
-section[data-testid="stSidebar"] > div {
-    background: rgba(15, 25, 45, 0.55);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-right: 1px solid rgba(255,255,255,0.08);
-}
-
-/* SLIDER BOYUT BÜYÜTME */
-.stSlider > div {
+/* SLIDER GENEL BÜYÜTME */
+div[data-testid="stSlider"] {
     transform: scale(1.2);
+    transform-origin: left;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
-/* SELECTBOX / MENÜ BOYUT */
-div[data-baseweb="select"] {
+/* SLIDER TEXT (label) */
+div[data-testid="stSlider"] label {
+    font-size: 18px !important;
+    font-weight: 600;
+}
+
+/* SLIDER VALUE */
+div[data-testid="stSlider"] span {
     font-size: 16px !important;
-}
-
-/* RADIO BUTTON (MENÜ) */
-.stRadio > div {
-    font-size: 17px;
-    gap: 10px;
-}
-
-/* LABEL YAZILARI */
-label {
-    font-size: 16px !important;
-}
-
-/* SIDEBAR BAŞLIK */
-section[data-testid="stSidebar"] h1,
-section[data-testid="stSidebar"] h2,
-section[data-testid="stSidebar"] h3 {
-    font-size: 20px !important;
-    color: #e6f7ff;
 }
 
 </style>
 """, unsafe_allow_html=True)
+
 # ── Sabit yıl listesi (TÜM SİTE BUNU KULLANIR)
 YEARS = list(range(2010, 2024))     # 2010..2023
 START_YEAR = 2010
