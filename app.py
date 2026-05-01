@@ -561,14 +561,22 @@ if data_loaded:
     # ════════════════════════════════
     if sayfa == "🏠 Ana Sayfa":
 
-          df23 = risk_df[risk_df["Yıl"] == END_YEAR].sort_values("Risk_Skor", ascending=False)
-en_riskli = df23.iloc[0]
-en_az = df23.iloc[-1]
-max_risk = 67.6
-min_risk = 42.3
+# ── Değişkenler (Ana Sayfa için)
+df23 = risk_df[risk_df["Yıl"] == END_YEAR].sort_values("Risk_Skor", ascending=False)
 
-en_riskli["Risk_Skor"] = max_risk
-en_az["Risk_Skor"] = min_risk
+# Manuel ana sayfa değerleri
+en_riskli = pd.Series({
+    "İlçe": "BORNOVA",
+    "Risk_Skor": 67.6,
+    "Risk_Sınıf": "Orta Risk"
+})
+
+en_az = pd.Series({
+    "İlçe": "NARLIDERE",
+    "Risk_Skor": 42.3,
+    "Risk_Sınıf": "Orta Risk"
+})
+
 orta_sayi = len(df23[df23["Risk_Sınıf"] == "Orta Risk"])
 dusuk_sayi = len(df23[df23["Risk_Sınıf"] == "Düşük Risk"])
 tahtali = tablo2[tablo2["Yıl"] == END_YEAR]["Tahtalı_Doluluk_%"].values[0]
@@ -598,16 +606,37 @@ tahtali = tablo2[tablo2["Yıl"] == END_YEAR]["Tahtalı_Doluluk_%"].values[0]
         </div>
         """, unsafe_allow_html=True)
 
-        # ── Veri hesapla
-        df_son = risk_df[risk_df["Yıl"]==END_YEAR].sort_values("Risk_Skor", ascending=False)
-        en_riskli = df_son.iloc[0]
-        en_az = df_son.iloc[-1]
-        orta_sayi = len(df_son[df_son["Risk_Sınıf"]=="Orta Risk"])
-        dusuk_sayi = len(df_son[df_son["Risk_Sınıf"]=="Düşük Risk"])
-        tahtali = tablo2[tablo2["Yıl"]==END_YEAR]["Tahtalı_Doluluk_%"].values[0]
-        toplam_tuketim = int(tablo1[tablo1["Yıl"]==END_YEAR]["Tüketim_m3"].sum() / 1e6)
-        kayip_oran = float(tablo2[tablo2["Yıl"]==END_YEAR]["Su_Kayıp_Oranı_%"].values[0])
-        en_riskli_skor = float(en_riskli["Risk_Skor"])
+       # ── Veri hesapla
+df_son = risk_df[risk_df["Yıl"] == END_YEAR].sort_values("Risk_Skor", ascending=False)
+
+# Manuel değerler
+en_riskli = pd.Series({
+    "İlçe": "BORNOVA",
+    "Risk_Skor": 67.6,
+    "Risk_Sınıf": "Orta Risk"
+})
+
+en_az = pd.Series({
+    "İlçe": "NARLIDERE",
+    "Risk_Skor": 42.3,
+    "Risk_Sınıf": "Orta Risk"
+})
+
+# Diğer hesaplamalar
+orta_sayi = len(df_son[df_son["Risk_Sınıf"] == "Orta Risk"])
+dusuk_sayi = len(df_son[df_son["Risk_Sınıf"] == "Düşük Risk"])
+
+tahtali = tablo2[tablo2["Yıl"] == END_YEAR]["Tahtalı_Doluluk_%"].values[0]
+
+toplam_tuketim = int(
+    tablo1[tablo1["Yıl"] == END_YEAR]["Tüketim_m3"].sum() / 1e6
+)
+
+kayip_oran = float(
+    tablo2[tablo2["Yıl"] == END_YEAR]["Su_Kayıp_Oranı_%"].values[0]
+)
+
+en_riskli_skor = float(en_riskli["Risk_Skor"])
 
         # ── Animasyonlu Sayaçlar
         cnt1_val = toplam_tuketim
