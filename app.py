@@ -561,8 +561,8 @@ if data_loaded:
     # ════════════════════════════════
    if sayfa == "🏠 Ana Sayfa":
 
-    # ── Değişkenler (Ana Sayfa için)
-    df23 = risk_df[risk_df["Yıl"] == END_YEAR].sort_values("Risk_Skor", ascending=False)
+    # ── Değişkenler / Veri hesapla
+    df_son = risk_df[risk_df["Yıl"] == END_YEAR].sort_values("Risk_Skor", ascending=False)
 
     # Manuel ana sayfa değerleri
     en_riskli = pd.Series({
@@ -577,67 +577,46 @@ if data_loaded:
         "Risk_Sınıf": "Orta Risk"
     })
 
-    orta_sayi = len(df23[df23["Risk_Sınıf"] == "Orta Risk"])
-    dusuk_sayi = len(df23[df23["Risk_Sınıf"] == "Düşük Risk"])
+    orta_sayi = len(df_son[df_son["Risk_Sınıf"] == "Orta Risk"])
+    dusuk_sayi = len(df_son[df_son["Risk_Sınıf"] == "Düşük Risk"])
 
     tahtali = tablo2[tablo2["Yıl"] == END_YEAR]["Tahtalı_Doluluk_%"].values[0]
-        # ── Hero başlık
-        st.markdown(f"""
-        <div style="text-align:center;padding:2.5rem 0 1.5rem 0;">
-            <div style="display:inline-block;background:rgba(56,209,227,0.1);
-                        border:1px solid rgba(56,209,227,0.3);border-radius:50px;
-                        padding:6px 20px;margin-bottom:1rem;">
-                <span style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;font-weight:600;">
-                    WATER SECURITY ANALYSIS · İZMİR {START_YEAR}–{PRED_END_YEAR}
-                </span>
-            </div>
-            <div class="wave-container"><div class="wave"></div></div>
-            <h1 style="color:#ffffff;font-size:2.6rem;font-weight:800;margin:0.8rem 0 0.4rem 0;
-                       letter-spacing:-0.5px;line-height:1.2;">
-                İzmir Su Güvenliği<br>
-                <span style="color:#38d1e3;">Risk Endeksi</span>
-            </h1>
-            <p style="color:#a8d8f0;font-size:1rem;margin:0.6rem 0 0 0;max-width:600px;
-                      display:inline-block;line-height:1.6;">
-                Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe ·
-                {len(YEARS)} yıllık seri ({START_YEAR}–{END_YEAR}) · Bootstrap simülasyonu ·
-                Mann-Kendall trend testi · LISA mekânsal analizi · 2040 projeksiyonu
-            </p>
-            <div class="wave-container" style="margin-top:1.2rem;"><div class="wave"></div></div>
+
+    toplam_tuketim = int(
+        tablo1[tablo1["Yıl"] == END_YEAR]["Tüketim_m3"].sum() / 1e6
+    )
+
+    kayip_oran = float(
+        tablo2[tablo2["Yıl"] == END_YEAR]["Su_Kayıp_Oranı_%"].values[0]
+    )
+
+    en_riskli_skor = float(en_riskli["Risk_Skor"])
+
+    # ── Hero başlık
+    st.markdown(f"""
+    <div style="text-align:center;padding:2.5rem 0 1.5rem 0;">
+        <div style="display:inline-block;background:rgba(56,209,227,0.1);
+                    border:1px solid rgba(56,209,227,0.3);border-radius:50px;
+                    padding:6px 20px;margin-bottom:1rem;">
+            <span style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;font-weight:600;">
+                WATER SECURITY ANALYSIS · İZMİR {START_YEAR}–{PRED_END_YEAR}
+            </span>
         </div>
-        """, unsafe_allow_html=True)
-
-       # ── Veri hesapla
-df_son = risk_df[risk_df["Yıl"] == END_YEAR].sort_values("Risk_Skor", ascending=False)
-
-# Manuel değerler
-en_riskli = pd.Series({
-    "İlçe": "BORNOVA",
-    "Risk_Skor": 67.6,
-    "Risk_Sınıf": "Orta Risk"
-})
-
-en_az = pd.Series({
-    "İlçe": "NARLIDERE",
-    "Risk_Skor": 42.3,
-    "Risk_Sınıf": "Orta Risk"
-})
-
-# Diğer hesaplamalar
-orta_sayi = len(df_son[df_son["Risk_Sınıf"] == "Orta Risk"])
-dusuk_sayi = len(df_son[df_son["Risk_Sınıf"] == "Düşük Risk"])
-
-tahtali = tablo2[tablo2["Yıl"] == END_YEAR]["Tahtalı_Doluluk_%"].values[0]
-
-toplam_tuketim = int(
-    tablo1[tablo1["Yıl"] == END_YEAR]["Tüketim_m3"].sum() / 1e6
-)
-
-kayip_oran = float(
-    tablo2[tablo2["Yıl"] == END_YEAR]["Su_Kayıp_Oranı_%"].values[0]
-)
-
-en_riskli_skor = float(en_riskli["Risk_Skor"])
+        <div class="wave-container"><div class="wave"></div></div>
+        <h1 style="color:#ffffff;font-size:2.6rem;font-weight:800;margin:0.8rem 0 0.4rem 0;
+                   letter-spacing:-0.5px;line-height:1.2;">
+            İzmir Su Güvenliği<br>
+            <span style="color:#38d1e3;">Risk Endeksi</span>
+        </h1>
+        <p style="color:#a8d8f0;font-size:1rem;margin:0.6rem 0 0 0;max-width:600px;
+                  display:inline-block;line-height:1.6;">
+            Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe ·
+            {len(YEARS)} yıllık seri ({START_YEAR}–{END_YEAR}) · Bootstrap simülasyonu ·
+            Mann-Kendall trend testi · LISA mekânsal analizi · 2040 projeksiyonu
+        </p>
+        <div class="wave-container" style="margin-top:1.2rem;"><div class="wave"></div></div>
+    </div>
+    """, unsafe_allow_html=True)
 
         # ── Animasyonlu Sayaçlar
         cnt1_val = toplam_tuketim
