@@ -484,13 +484,13 @@ if data_loaded:
     if sayfa == "🏠 Ana Sayfa":
 
         # ── Hero başlık
-        st.markdown("""
+        st.markdown(f"""
         <div style="text-align:center;padding:2.5rem 0 1.5rem 0;">
             <div style="display:inline-block;background:rgba(56,209,227,0.1);
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:6px 20px;margin-bottom:1rem;">
                 <span style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;font-weight:600;">
-                    WATER SECURITY ANALYSIS · İZMİR 2010–2040
+                    WATER SECURITY ANALYSIS · İZMİR {YIL_BAS}–2040
                 </span>
             </div>
             <div class="wave-container"><div class="wave"></div></div>
@@ -501,8 +501,9 @@ if data_loaded:
             </h1>
             <p style="color:#a8d8f0;font-size:1rem;margin:0.6rem 0 0 0;max-width:600px;
                       display:inline-block;line-height:1.6;">
-                Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe · Mann-Kendall trend testi ·
-                LISA mekânsal analizi · 2040 projeksiyonu<br>Bootstrap simülasyonu ile oluşturulmuştur.
+                Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe ·
+                {N_YIL} yıllık seri ({YIL_BAS}–{YIL_SON}) · Bootstrap simülasyonu ·
+                Mann-Kendall trend testi · LISA mekânsal analizi · 2040 projeksiyonu
             </p>
             <div class="wave-container" style="margin-top:1.2rem;"><div class="wave"></div></div>
         </div>
