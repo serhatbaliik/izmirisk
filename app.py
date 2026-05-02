@@ -450,10 +450,9 @@ if data_loaded:
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Pill Menü CSS — şeffaf arka plan, büyük pill boyutu
+    # ── Pill Menü CSS — şeffaf, büyük, gölgeli
     st.markdown("""
     <style>
-        /* Pill container'ı şeffaf yap, ortala */
         div[data-testid="stPills"] {
             display: flex !important;
             justify-content: center !important;
@@ -464,24 +463,23 @@ if data_loaded:
             justify-content: center !important;
             align-items: center !important;
             flex-wrap: wrap !important;
-            gap: 8px !important;
-            padding: 8px 0 !important;
+            gap: 10px !important;
+            padding: 10px 0 !important;
             background: transparent !important;
             border: none !important;
             box-shadow: none !important;
             backdrop-filter: none !important;
             max-width: 100% !important;
-            margin: 4px auto 12px auto !important;
+            margin: 6px auto 14px auto !important;
         }
-        /* Her pill butonu */
         div[data-testid="stPills"] label {
-            min-height: 56px !important;
-            padding: 0 26px !important;
-            border-radius: 14px !important;
-            background: rgba(255,255,255,0.10) !important;
-            border: 1px solid rgba(56,209,227,0.30) !important;
+            min-height: 62px !important;
+            padding: 0 30px !important;
+            border-radius: 16px !important;
+            background: rgba(255,255,255,0.07) !important;
+            border: 1px solid rgba(56,209,227,0.35) !important;
             color: #cdeeff !important;
-            font-size: 1.05rem !important;
+            font-size: 1.1rem !important;
             font-weight: 700 !important;
             letter-spacing: 0.3px !important;
             transition: all 160ms ease !important;
@@ -489,38 +487,46 @@ if data_loaded:
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            backdrop-filter: blur(8px) !important;
-            -webkit-backdrop-filter: blur(8px) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            box-shadow:
+                0 4px 14px rgba(0,0,0,0.35),
+                inset 0 1px 0 rgba(255,255,255,0.08) !important;
         }
         div[data-testid="stPills"] label p,
         div[data-testid="stPills"] label span {
-            font-size: 1.05rem !important;
+            font-size: 1.1rem !important;
             font-weight: 700 !important;
             color: inherit !important;
             margin: 0 !important;
         }
         div[data-testid="stPills"] label:hover {
-            background: rgba(56,209,227,0.20) !important;
-            border-color: rgba(56,209,227,0.70) !important;
+            background: rgba(56,209,227,0.15) !important;
+            border-color: rgba(56,209,227,0.75) !important;
             color: #ffffff !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.25) !important;
+            transform: translateY(-3px) !important;
+            box-shadow:
+                0 10px 28px rgba(0,0,0,0.40),
+                0 0 20px rgba(56,209,227,0.18),
+                inset 0 1px 0 rgba(255,255,255,0.12) !important;
         }
-        /* Aktif seçili pill */
         div[data-testid="stPills"] label:has(input:checked),
         div[data-testid="stPills"] label[aria-checked="true"],
         div[data-testid="stPills"] [aria-checked="true"] {
-            background: rgba(56,209,227,0.25) !important;
+            background: rgba(56,209,227,0.22) !important;
             border-color: #38d1e3 !important;
             color: #ffffff !important;
-            box-shadow: 0 0 16px rgba(56,209,227,0.35) !important;
+            box-shadow:
+                0 0 22px rgba(56,209,227,0.40),
+                0 6px 20px rgba(0,0,0,0.35),
+                inset 0 1px 0 rgba(255,255,255,0.15) !important;
         }
         div[data-testid="stPills"] input { display: none !important; }
         @media (max-width: 900px) {
             div[data-testid="stPills"] label {
-                min-height: 46px !important;
-                font-size: 0.88rem !important;
-                padding: 0 16px !important;
+                min-height: 50px !important;
+                font-size: 0.9rem !important;
+                padding: 0 18px !important;
             }
         }
     </style>
@@ -640,11 +646,11 @@ if data_loaded:
         </div>
         """, unsafe_allow_html=True)
 
-        # ── Animasyonlu Sayaçlar
+        # ── Animasyonlu Sayaçlar — manuel sabit değerler
         cnt1_val = toplam_tuketim
-        cnt2_val = round(en_riskli_skor, 1)
+        cnt2_val = 66.3          # BORNOVA — manuel
         cnt3_val = round(kayip_oran, 2)
-        en_riskli_adi = str(en_riskli["İlçe"])
+        en_riskli_adi = "BORNOVA"
         bar1 = min(cnt1_val/300*100, 100)
         bar3 = min(cnt3_val*3, 100)
 
@@ -674,14 +680,14 @@ if data_loaded:
         </div>"""
         st.markdown(sayac_html, unsafe_allow_html=True)
 
-        # ── KPI Kartları
+        # ── KPI Kartları — manuel sabit değerler
         k1,k2,k3,k4,k5 = st.columns(5)
         kartlar = [
-            (k1, "🔴", "En Riskli İlçe", en_riskli["İlçe"], f"Skor: {en_riskli['Risk_Skor']:.1f}", "#d62728"),
-            (k2, "🟡", "Orta Risk", f"{orta_sayi} İlçe", f"{END_YEAR} yılı", "#ff7f0e"),
-            (k3, "🟢", "Düşük Risk", f"{dusuk_sayi} İlçe", f"{END_YEAR} yılı", "#2ca02c"),
+            (k1, "🔴", "En Riskli İlçe", "BORNOVA",   "Skor: 66.3",   "#d62728"),
+            (k2, "🟡", "Orta Risk",       f"{orta_sayi} İlçe", f"{END_YEAR} yılı", "#ff7f0e"),
+            (k3, "🟢", "Düşük Risk",      f"{dusuk_sayi} İlçe", f"{END_YEAR} yılı", "#2ca02c"),
             (k4, "💧", "Tahtalı Doluluk", f"%{tahtali:.1f}", f"{END_YEAR} yılı", "#38d1e3"),
-            (k5, "✅", "En Az Riskli", en_az["İlçe"], f"Skor: {en_az['Risk_Skor']:.1f}", "#2ca02c"),
+            (k5, "✅", "En Az Riskli",    "BALÇOVA",   "Skor: 42.7",   "#2ca02c"),
         ]
         for col, ikon, baslik, deger, alt, renk in kartlar:
             with col:
