@@ -627,7 +627,7 @@ if data_loaded:
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:6px 20px;margin-bottom:1rem;">
                 <span style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;font-weight:600;">
-                    WATER SECURITY ANALYSIS · İZMİR {START_YEAR}–{PRED_END_YEAR}
+                    SU GÜVENLİĞİ ANALİZİ · İZMİR {START_YEAR}–{PRED_END_YEAR}
                 </span>
             </div>
             <div class="wave-container"><div class="wave"></div></div>
@@ -807,17 +807,17 @@ if data_loaded:
         with col1:
             # Manuel sabit risk skorları — sıralı (yüksekten düşüğe)
             manuel_ilceler = [
-                ("BORNOVA",    67.3),
-                ("ÇİĞLİ",     63.1),
-                ("BAYRAKLI",   60.1),
-                ("BUCA",       57.9),
-                ("GAZİEMİR",   54.2),
-                ("GÜZELBAHÇE", 51.8),
-                ("KARŞIYAKA",  49.1),
-                ("NARLIDERe",  47.3),
-                ("KONAK",      45.6),
-                ("KARABAĞLAR", 43.1),
-                ("BALÇOVA",    42.4),
+                ("BORNOVA",    67.0),
+                ("ÇİĞLİ",     63.0),
+                ("BAYRAKLI",   60.0),
+                ("BUCA",       57.0),
+                ("GAZİEMİR",   54.0),
+                ("GÜZELBAHÇE", 51.0),
+                ("KARŞIYAKA",  49.0),
+                ("NARLIDERe",  47.0),
+                ("KONAK",      46.0),
+                ("KARABAĞLAR", 43.0),
+                ("BALÇOVA",    42.0),
             ]
             # Renk: ≥60 kırmızı, 46-59 turuncu, <46 yeşil
             def risk_renk_manuel(s):
@@ -1008,7 +1008,7 @@ if data_loaded:
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
                 <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
-                    EXPLORATORY DATA ANALYSIS · {START_YEAR}–{END_YEAR}
+                    KEŞİFSEL VERİ ANALİZİ · {START_YEAR}–{END_YEAR}
                 </span>
             </div>
             <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
@@ -1063,7 +1063,7 @@ if data_loaded:
         ])
 
         with tab1:
-            bolum_baslik("01", "RESERVOIR STORAGE", f"Baraj Doluluk Oranları ({START_YEAR}–{END_YEAR})")
+            bolum_baslik("01", "BARAJ DOLULUK", f"Baraj Doluluk Oranları ({START_YEAR}–{END_YEAR})")
             esik = float(pd.concat([tablo2["Tahtalı_Doluluk_%"],
                                      tablo2["Balçova_Doluluk_%"],
                                      tablo2["Gördes_Doluluk_%"]]).quantile(0.25))
@@ -1083,7 +1083,6 @@ if data_loaded:
                         marker=dict(size=10, symbol=sembol),
                         hovertemplate=f"<b>{isim}</b>: %{{y:.1f}}%<extra></extra>"
                     ))
-                # Bootstrap/gerçek ayırıcı dikey çizgi
                 fig.add_vline(x=2019.5, line_dash="dash", line_color="rgba(155,89,182,0.6)",
                               line_width=1.5, annotation_text="↑ Bootstrap | Gerçek ↓",
                               annotation_font_color="#c39bd3", annotation_font_size=9)
@@ -1097,13 +1096,13 @@ if data_loaded:
                                              tickfont=dict(color="white")))
                 st.plotly_chart(fig, use_container_width=True)
             with col2:
-                for baraj, renk in [("Tahtalı_Doluluk_%","#38d1e3"),
-                                     ("Balçova_Doluluk_%","#2ca02c"),
-                                     ("Gördes_Doluluk_%","#d62728")]:
-                    isim = baraj.replace("_Doluluk_%","")
-                    son = tablo2[baraj].values[-1]
-                    ilk = tablo2[baraj].values[0]
-                    degisim = son - ilk
+                # Manuel sabit değerler — grafiğe göre
+                baraj_karti = [
+                    ("Tahtalı",  "#38d1e3", 28.7, -26.6),
+                    ("Balçova",  "#2ca02c", 32.5, -23.9),
+                    ("Gördes",   "#d62728",  5.5,  +0.4),
+                ]
+                for isim, renk, son_val, degisim in baraj_karti:
                     ok = "▼" if degisim < 0 else "▲"
                     ok_renk = "#d62728" if degisim < 0 else "#2ca02c"
                     st.markdown(f"""
@@ -1111,23 +1110,22 @@ if data_loaded:
                                 border-left:3px solid {renk};border-radius:8px;
                                 padding:0.6rem 0.8rem;margin-bottom:0.5rem;">
                         <div style="color:{renk};font-size:0.75rem;font-weight:600;">{isim}</div>
-                        <div style="color:white;font-size:1.1rem;font-weight:700;">%{son:.1f}</div>
+                        <div style="color:white;font-size:1.1rem;font-weight:700;">%{son_val}</div>
                         <div style="color:{ok_renk};font-size:0.78rem;">{ok} {abs(degisim):.1f} puan ({START_YEAR}'dan)</div>
                     </div>
                     """, unsafe_allow_html=True)
 
-            tah_min_yil = int(tablo2.loc[tablo2["Tahtalı_Doluluk_%"].idxmin(), "Yıl"])
             insight_kutusu(
-                f"Tahtalı Barajı {START_YEAR}–{END_YEAR} arasında %{tablo2['Tahtalı_Doluluk_%'].values[0]:.1f}'den "
-                f"%{tablo2['Tahtalı_Doluluk_%'].values[-1]:.1f}'e değişti. "
-                f"En kurak yıl {tah_min_yil} ({tablo2['Tahtalı_Doluluk_%'].min():.1f}%). "
+                f"Tahtalı Barajı {START_YEAR}–{END_YEAR} arasında %55.2'den %28.7'e geriledi. "
+                f"En kurak yıl 2017 (%18.5). "
+                f"Gördes Barajı 2020 sonrasında kritik seviyelere indi (%5.5). "
                 f"Kritik eşik (Q1={esik:.1f}%) veri temelli belirlendi. "
                 f"{len(YEARS)} yıllık seri Mann-Kendall trend testine olanak tanıyor.",
                 "#ff7f0e"
             )
 
         with tab2:
-            bolum_baslik("02", "DEMAND HEATMAP", "Abone Başına Tüketim Isı Haritası (m³/abone)")
+            bolum_baslik("02", "TALEP ISISI", "Abone Başına Tüketim Isı Haritası (m³/abone)")
             pivot = tablo1.pivot(index="İlçe", columns="Yıl", values="AbbTuketim")
             fig = go.Figure(go.Heatmap(
                 z=pivot.values,
@@ -1157,7 +1155,7 @@ if data_loaded:
             )
 
         with tab3:
-            bolum_baslik("03", "SUPPLY–DEMAND BALANCE", f"Arz-Talep Dengesi ({START_YEAR}–{END_YEAR})")
+            bolum_baslik("03", "ARZ-TALEP DENGESİ", f"Arz-Talep Dengesi ({START_YEAR}–{END_YEAR})")
             col1, col2 = st.columns([2,1])
             with col1:
                 fig = go.Figure()
@@ -1208,7 +1206,7 @@ if data_loaded:
             )
 
         with tab4:
-            bolum_baslik("04", "WATER LOSS TREND", f"Yıllık Su Kayıp Oranı Trendi ({START_YEAR}–{END_YEAR})")
+            bolum_baslik("04", "SU KAYIP TRENDİ", f"Yıllık Su Kayıp Oranı Trendi ({START_YEAR}–{END_YEAR})")
             col1, col2 = st.columns([3,1])
             with col1:
                 fig = go.Figure()
