@@ -1656,8 +1656,7 @@ if data_loaded:
         k1, k2, k3, k4 = st.columns(4)
         for col, baslik, deger, alt, renk in [
             (k1, f"{END_YEAR} Risk Skoru", f"{skor_son:.1f}", sinif_son, renk_son),
-            (k2, "Risk Sınıfı", sinif_son,
-             "≥60 Yüksek · 46–60 Orta · <46 Düşük", renk_son),
+            (k2, "Risk Sınıfı", sinif_son),
             (k3, "2010→2023 Değişim",
              f"{degisim_ok} {abs(degisim):.1f} puan",
              f"2010 skoru: {skor_2010:.1f}", degisim_renk),
