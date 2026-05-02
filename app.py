@@ -814,7 +814,7 @@ if data_loaded:
                 ("GAZİEMİR",   54.0),
                 ("GÜZELBAHÇE", 51.0),
                 ("KARŞIYAKA",  49.0),
-                ("NARLIDERE",  47.0),
+                ("NARLIDERe",  47.0),
                 ("KONAK",      46.0),
                 ("KARABAĞLAR", 43.0),
                 ("BALÇOVA",    42.0),
@@ -1136,18 +1136,18 @@ if data_loaded:
             # Narlıdere: az nüfus → kişi başı yüksek tüketim (muhtemelen kentsel dönüşüm öncesi köy nüfusu)
             # Karabağlar: yoğun nüfus → tüketim düşük görünür (paylaşım etkisi)
             heatmap_data = {
-                "KARABAĞLAR": [112,110,108,106,109,107,105,107,109,106,103,101,104,102],
-                "BALÇOVA":    [118,116,114,112,115,113,111,113,115,112,109,107,110,108],
-                "KONAK":      [132,130,128,126,129,127,125,127,129,126,123,121,124,122],
-                "GÜZELBAHÇE":[148,146,144,142,145,143,141,143,145,142,139,137,140,138],
-                "GAZİEMİR":  [152,150,148,145,149,147,145,147,149,146,150,155,158,162],
+                "NARLIDERe":  [198,201,196,194,200,203,197,199,202,198,185,170,175,178],
+                "BORNOVA":    [193,190,186,183,188,186,183,185,187,184,180,178,181,179],
+                "BAYRAKLI":   [178,176,173,170,174,172,169,171,173,170,167,165,168,166],
+                "KARŞIYAKA":  [171,169,166,163,167,165,162,164,166,163,160,158,161,159],
+                "BUCA":       [162,160,157,154,158,156,153,155,157,154,151,149,152,150],
                 "ÇİĞLİ":     [158,156,153,150,154,152,150,152,154,151,148,146,149,147],
-                "BUCA":      [162,160,157,154,158,156,153,155,157,154,151,149,152,150],
-                "KARŞIYAKA": [171,169,166,163,167,165,162,164,166,163,160,158,161,159],
-                "BAYRAKLI":  [178,176,173,170,174,172,169,171,173,170,167,165,168,166],
-                "BORNOVA":   [193,190,186,183,188,186,183,185,187,184,180,178,181,179],
-                "NARLIDERE": [198,201,196,194,200,203,197,199,202,198,185,170,175,178],
-}
+                "GAZİEMİR":  [152,150,148,145,149,147,145,147,149,146,150,155,158,162],
+                "GÜZELBAHÇE":[148,146,144,142,145,143,141,143,145,142,139,137,140,138],
+                "KONAK":      [132,130,128,126,129,127,125,127,129,126,123,121,124,122],
+                "BALÇOVA":    [118,116,114,112,115,113,111,113,115,112,109,107,110,108],
+                "KARABAĞLAR": [112,110,108,106,109,107,105,107,109,106,103,101,104,102],
+            }
             ilce_sirali = list(heatmap_data.keys())
             yillar_str  = [str(y) for y in YEARS]   # 2010,2011,...,2023 — hepsi
             z_vals = [heatmap_data[ilce] for ilce in ilce_sirali]
@@ -1194,9 +1194,10 @@ if data_loaded:
                             border-radius:8px;padding:0.8rem 1rem;">
                     <div style="color:#d62728;font-size:0.72rem;font-weight:700;
                                 letter-spacing:1px;margin-bottom:5px;">
-                        🔴 NARLIDERE — Yüksek Tüketim</div>
+                        🔴 NARLIDERe — En Yüksek Tüketim, Düşük Risk</div>
                     <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">
-                        Narlıdere'nin küçük abone tabanı (az nüfus),
+                        Narlıdere kişi başı tüketime göre listenin en üstünde ancak risk sıralamasında
+                        alt sıralarda yer alıyor. Bunun nedeni: ilçenin küçük abone tabanı (az nüfus),
                         görece eski yapı stoğu ve 2010'lar boyunca süren kentsel dönüşüm sürecidir.
                         Abone sayısı hızla artmadan önce kişi başı tüketim yüksek görünmektedir.
                         Arz kısıtı ve kayıp oranı risk modelinde baskın gelince Narlıdere düşük riske düşmektedir.
@@ -1206,9 +1207,10 @@ if data_loaded:
                             border-radius:8px;padding:0.8rem 1rem;">
                     <div style="color:#38d1e3;font-size:0.72rem;font-weight:700;
                                 letter-spacing:1px;margin-bottom:5px;">
-                        🔵 GAZİEMİR — Düşük Tüketim</div>
+                        🔵 GAZİEMİR — Düşük Tüketim, Yüksek Risk</div>
                     <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">
-                        Gaziemir'in hızlı nüfus artışının yarattığı arz baskısı ve artan tüketim
+                        Gaziemir talep haritasında ortada görünürken risk sıralamasında yüksekte.
+                        Bunun nedeni: hızlı nüfus artışının yarattığı arz baskısı ve artan tüketim
                         <i>artış oranı</i>. Risk modeli mevcut tüketim düzeyi değil, büyüme hızını
                         da ağırlıklandırır — bu yüzden Gaziemir orta-yüksek risk bandına girmektedir.
                     </div>
@@ -1216,8 +1218,8 @@ if data_loaded:
             </div>
             """, unsafe_allow_html=True)
 
+
         with tab3:
-            bolum_baslik("03", "ARZ-TALEP DENGESİ", f"Arz-Talep Dengesi ({START_YEAR}–{END_YEAR})")
             col1, col2 = st.columns([2,1])
             with col1:
                 fig = go.Figure()
@@ -1349,48 +1351,74 @@ if data_loaded:
                 "#2ca02c"
             )
 
-        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
 
+        # ── Öne Çıkan Bulgular başlığı
         st.markdown(f"""
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+        <div style="display:flex;align-items:center;gap:12px;margin:1.2rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;">05 · VAKA ANALİZİ</div>
-                <div style="color:#ffffff;font-size:1.1rem;font-weight:600;">Öne Çıkan Olaylar & Dönüm Noktaları</div>
+                <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;">04 · BULGULAR</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Öne Çıkan Bulgular & Dönüm Noktaları</div>
             </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:0.8rem;">
             <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);
-                        border-radius:10px;padding:1rem;">
-                <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:6px;">
+                        border-radius:8px;padding:0.8rem 1rem;">
+                <div style="color:#d62728;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:5px;">
+                    🔴 NARLIDERe — Yüksek Tüketim, Düşük Risk</div>
+                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">
+                    Narlıdere kişi başı tüketime göre listenin en üstünde ancak risk sıralamasında
+                    alt sıralarda. Bunun nedeni küçük abone tabanı, eski yapı stoğu ve 2010'lar boyunca
+                    süren kentsel dönüşüm sürecidir. Abone sayısı artmadan önce kişi başı tüketim yüksek
+                    görünmektedir; arz kısıtı ve kayıp oranı risk modelinde baskın gelince Narlıdere
+                    düşük riske düşmektedir.
+                </div>
+            </div>
+            <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.22);
+                        border-radius:8px;padding:0.8rem 1rem;">
+                <div style="color:#38d1e3;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:5px;">
+                    🔵 GAZİEMİR — Orta Tüketim, Yüksek Risk</div>
+                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">
+                    Gaziemir talep haritasında ortada görünürken risk sıralamasında yüksekte.
+                    Hızlı nüfus artışının yarattığı arz baskısı ve artan tüketim artış oranı belirleyici.
+                    Risk modeli mevcut tüketim düzeyi değil büyüme hızını da ağırlıklandırır — bu yüzden
+                    Gaziemir orta-yüksek risk bandına girmektedir.
+                </div>
+            </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+            <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);
+                        border-radius:8px;padding:0.8rem 1rem;">
+                <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">
                     2014 & 2017 · KURAKLIK DİPLERİ</div>
-                <div style="color:#ffffff;font-size:0.9rem;font-weight:600;margin-bottom:6px;">
+                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:4px;">
                     Tahtalı en kritik seviyelerde</div>
-                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
-                    Bootstrap simülasyonu, İzmir'in gerçek hidrolojik geçmişiyle uyumlu olarak
+                <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">
+                    Bootstrap simülasyonu İzmir'in gerçek hidrolojik geçmişiyle uyumlu olarak
                     2014 ve 2017'de Tahtalı doluluğunun kritik seviyelere indiğini yansıtıyor.
                     Bu dönemler sistem geneli üretim üzerinde yoğun baskı yaratmıştır.
                 </div>
             </div>
             <div style="background:rgba(255,127,14,0.07);border:1px solid rgba(255,127,14,0.25);
-                        border-radius:10px;padding:1rem;">
-                <div style="color:#ff7f0e;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:6px;">
+                        border-radius:8px;padding:0.8rem 1rem;">
+                <div style="color:#ff7f0e;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">
                     {START_YEAR}–{END_YEAR} · KAYIP AZALMASI</div>
-                <div style="color:#ffffff;font-size:0.9rem;font-weight:600;margin-bottom:6px;">
+                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:4px;">
                     Su kayıpları istikrarlı düştü</div>
-                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
-                    {len(YEARS)} yıl boyunca su kayıp oranı kademeli olarak azaldı. Bu, İZSU'nun
-                    altyapı yatırımları ve akıllı sayaç sistemlerinin somut sonuçlarından biri
-                    olarak yorumlanabilir.
+                <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">
+                    {len(YEARS)} yıl boyunca su kayıp oranı kademeli olarak azaldı.
+                    İZSU'nun altyapı yatırımları ve akıllı sayaç sistemlerinin somut
+                    sonuçlarından biri olarak yorumlanabilir.
                 </div>
             </div>
             <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.25);
-                        border-radius:10px;padding:1rem;">
-                <div style="color:#38d1e3;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:6px;">
+                        border-radius:8px;padding:0.8rem 1rem;">
+                <div style="color:#38d1e3;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">
                     {END_YEAR} · GAZİEMİR AYRIŞMASI</div>
-                <div style="color:#ffffff;font-size:0.9rem;font-weight:600;margin-bottom:6px;">
+                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:4px;">
                     İzole yüksek risk: HL küme</div>
-                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
+                <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">
                     Gaziemir yüksek risk skoru ile komşularından belirgin biçimde ayrıştı.
                     LISA analizi HL (yüksek-düşük) sınıflandırdı.
                     Hızlı nüfus artışı ve yüksek abone tüketimi temel etkenler.
