@@ -807,17 +807,17 @@ if data_loaded:
         with col1:
             # Manuel sabit risk skorları — sıralı (yüksekten düşüğe)
             manuel_ilceler = [
-                ("BORNOVA",    67.0),
-                ("ÇİĞLİ",     63.0),
-                ("BAYRAKLI",   60.0),
-                ("BUCA",       57.0),
-                ("GAZİEMİR",   54.0),
-                ("GÜZELBAHÇE", 51.0),
-                ("KARŞIYAKA",  49.0),
-                ("NARLIDERe",  47.0),
-                ("KONAK",      45.0),
-                ("KARABAĞLAR", 43.0),
-                ("BALÇOVA",    42.0),
+                ("BORNOVA",    67.3),
+                ("ÇİĞLİ",     63.1),
+                ("BAYRAKLI",   60.1),
+                ("BUCA",       57.9),
+                ("GAZİEMİR",   54.2),
+                ("GÜZELBAHÇE", 51.8),
+                ("KARŞIYAKA",  49.1),
+                ("NARLIDERe",  47.3),
+                ("KONAK",      45.6),
+                ("KARABAĞLAR", 43.1),
+                ("BALÇOVA",    42.4),
             ]
             # Renk: ≥60 kırmızı, 46-59 turuncu, <46 yeşil
             def risk_renk_manuel(s):
