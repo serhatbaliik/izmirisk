@@ -815,7 +815,7 @@ if data_loaded:
                 ("GÜZELBAHÇE", 51.0),
                 ("KARŞIYAKA",  49.0),
                 ("NARLIDERe",  47.0),
-                ("KONAK",      46.0),
+                ("KONAK",      45.0),
                 ("KARABAĞLAR", 43.0),
                 ("BALÇOVA",    42.0),
             ]
