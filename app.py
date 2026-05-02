@@ -814,7 +814,7 @@ if data_loaded:
                 ("GAZİEMİR",   54.0),
                 ("GÜZELBAHÇE", 51.0),
                 ("KARŞIYAKA",  49.0),
-                ("NARLIDERe",  47.0),
+                ("NARLIDERE",  47.0),
                 ("KONAK",      46.0),
                 ("KARABAĞLAR", 43.0),
                 ("BALÇOVA",    42.0),
@@ -1064,79 +1064,72 @@ if data_loaded:
 
         with tab1:
             bolum_baslik("01", "BARAJ DOLULUK", f"Baraj Doluluk Oranları ({START_YEAR}–{END_YEAR})")
-
-            # Manuel gerçek veriler
             baraj_yillar = [2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
             tahtali_v = [38,35,37,36,44,41,34,36,36,35,35,31,40,29]
             balcova_v = [33,32,29,30,31,31,34,32,31,31,30,26,27,32]
             gordes_v  = [22,21,24,15,16,16,21,22,24,18, 2, 1, 4, 5]
-
-            esik = 15.0   # Q1 manuel (Gördes 2020-2021 dramatik düşüş)
+            esik = 15.0
             col1, col2 = st.columns([3,1])
             with col1:
                 fig = go.Figure()
                 for isim, renk, sembol, degerler in [
-                    ("Tahtalı", "#38d1e3", "circle",  tahtali_v),
-                    ("Balçova", "#2ca02c", "square",  balcova_v),
-                    ("Gördes",  "#d62728", "diamond", gordes_v),
+                    ("Tahtalı","#38d1e3","circle",tahtali_v),
+                    ("Balçova","#2ca02c","square",balcova_v),
+                    ("Gördes","#d62728","diamond",gordes_v),
                 ]:
-                    fig.add_trace(go.Scatter(
-                        x=baraj_yillar, y=degerler,
-                        mode="lines+markers", name=isim,
-                        line=dict(color=renk, width=2.5),
-                        marker=dict(size=10, symbol=sembol),
-                        hovertemplate=f"<b>{isim}</b>: %{{y:.0f}}%<extra></extra>"
-                    ))
-                fig.add_vline(x=2019.5, line_dash="dash",
-                              line_color="rgba(155,89,182,0.6)", line_width=1.5,
-                              annotation_text="Bootstrap | Gerçek →",
-                              annotation_font_color="#c39bd3", annotation_font_size=9)
+                    fig.add_trace(go.Scatter(x=baraj_yillar, y=degerler, mode="lines+markers", name=isim,
+                        line=dict(color=renk,width=2.5), marker=dict(size=10,symbol=sembol),
+                        hovertemplate=f"<b>{isim}</b>: %{{y:.0f}}%<extra></extra>"))
+                fig.add_vline(x=2019.5, line_dash="dash", line_color="rgba(155,89,182,0.6)", line_width=1.5,
+                    annotation_text="Bootstrap | Gerçek →", annotation_font_color="#c39bd3", annotation_font_size=9)
                 fig.add_hline(y=esik, line_dash="dash", line_color="#ff7f0e", line_width=1.5,
-                              annotation_text=f"Kritik Eşik: {esik:.0f}%",
-                              annotation_font_color="#ff7f0e", annotation_font_size=10)
+                    annotation_text=f"Kritik Eşik: {esik:.0f}%", annotation_font_color="#ff7f0e", annotation_font_size=10)
                 fig.update_layout(**layout_base, height=420,
-                                  yaxis=dict(title="Doluluk (%)", range=[0, 55],
-                                             gridcolor="rgba(255,255,255,0.1)",
-                                             tickfont=dict(color="white")))
+                    yaxis=dict(title="Doluluk (%)", range=[0,55], gridcolor="rgba(255,255,255,0.1)", tickfont=dict(color="white")))
                 st.plotly_chart(fig, use_container_width=True)
-
             with col2:
-                baraj_karti = [
-                    ("Tahtalı", "#38d1e3", 29, 38, -9),
-                    ("Balçova", "#2ca02c", 32, 33, -1),
-                    ("Gördes",  "#d62728",  5, 22, -17),
-                ]
-                for isim, renk, son_val, ilk_val, degisim in baraj_karti:
+                for isim, renk, son_val, ilk_val in [("Tahtalı","#38d1e3",29,38),("Balçova","#2ca02c",32,33),("Gördes","#d62728",5,22)]:
+                    degisim = son_val - ilk_val
                     ok = "▼" if degisim < 0 else "▲"
                     ok_renk = "#d62728" if degisim < 0 else "#2ca02c"
                     st.markdown(f"""
                     <div style="background:rgba(255,255,255,0.05);border:1px solid {renk}44;
-                                border-left:3px solid {renk};border-radius:8px;
-                                padding:0.6rem 0.8rem;margin-bottom:0.5rem;">
+                                border-left:3px solid {renk};border-radius:8px;padding:0.6rem 0.8rem;margin-bottom:0.5rem;">
                         <div style="color:{renk};font-size:0.75rem;font-weight:600;">{isim}</div>
                         <div style="color:white;font-size:1.1rem;font-weight:700;">%{son_val}</div>
                         <div style="color:{ok_renk};font-size:0.78rem;">{ok} {abs(degisim)} puan ({START_YEAR}'dan)</div>
-                    </div>
-                    """, unsafe_allow_html=True)
-
-            insight_kutusu(
-                "Tahtalı Barajı 2010–2023 arasında %38'den %29'a geriledi; "
-                "2014'te %44 ile zirveye ulaştı. "
-                "Gördes Barajı 2019–2020 arasında %18'den %2'ye dramatik biçimde çöktü — "
-                "bu tek yıllık düşüş İzmir'in arz güvenliğini ciddi biçimde etkiledi. "
-                f"Kritik eşik (Q1≈{esik:.0f}%) veri temelli belirlendi. "
-                f"{len(baraj_yillar)} yıllık seri Mann-Kendall trend testine olanak tanıyor.",
-                "#ff7f0e"
-            )
+                    </div>""", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div style="display:flex;align-items:center;gap:12px;margin:1.2rem 0 0.8rem 0;">
+                <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
+                <div><div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;">04 · BULGULAR</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Öne Çıkan Bulgular & Dönüm Noktaları</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+                <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);border-radius:8px;padding:0.8rem 1rem;">
+                    <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">2013–2015 · DÜŞÜK SEVİYE PERİYODU</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Tahtalı ve Gördes eş zamanlı geriledi</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">2013–2015 arasında Tahtalı %36–%41 bandında seyrederken Gördes %15–%16'ya indi.
+                    İki barajın eş zamanlı düşüşü arz esnekliğini daralttı ve sistem üzerinde yoğun baskı yarattı.</div>
+                </div>
+                <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);border-radius:8px;padding:0.8rem 1rem;">
+                    <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">2019–2021 · GÖRDES KRİZİ</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">%18'den %1'e tek yılda çöküş</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">Gördes 2019'da %18 dolulukla zaten düşük seyrederken 2020'de %2, 2021'de %1'e indi.
+                    Uzun süreli kuraklığın su kaynakları üzerindeki yıkıcı etkisini belgeleyen kritik bir veri noktasıdır.</div>
+                </div>
+                <div style="background:rgba(255,127,14,0.07);border:1px solid rgba(255,127,14,0.25);border-radius:8px;padding:0.8rem 1rem;">
+                    <div style="color:#ff7f0e;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">2020 · PANDEMİ DÖNEMİ ETKİSİ</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Evde kalma → artan tüketim baskısı</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">COVID-19 sürecinde hane içi su kullanımı belirgin biçimde arttı.
+                    Aynı dönemde Gördes kritik seviyelere inerken tüketim yüksek seyretti — arz-talep dengesi ciddi biçimde bozuldu.</div>
+                </div>
+            </div>""", unsafe_allow_html=True)
 
         with tab2:
             bolum_baslik("02", "TALEP ISISI", "Abone Başına Tüketim Isı Haritası (m³/abone)")
-
-            # Tüketime göre sıralı (yüksekten düşüğe) — gerçeğe yakın değerler
-            # Narlıdere: az nüfus → kişi başı yüksek tüketim (muhtemelen kentsel dönüşüm öncesi köy nüfusu)
-            # Karabağlar: yoğun nüfus → tüketim düşük görünür (paylaşım etkisi)
             heatmap_data = {
-                "NARLIDERe":  [198,201,196,194,200,203,197,199,202,198,185,170,175,178],
+                "NARLIDERE":  [198,201,196,194,200,203,197,199,202,198,185,170,175,178],
                 "BORNOVA":    [193,190,186,183,188,186,183,185,187,184,180,178,181,179],
                 "BAYRAKLI":   [178,176,173,170,174,172,169,171,173,170,167,165,168,166],
                 "KARŞIYAKA":  [171,169,166,163,167,165,162,164,166,163,160,158,161,159],
@@ -1149,209 +1142,189 @@ if data_loaded:
                 "KARABAĞLAR": [112,110,108,106,109,107,105,107,109,106,103,101,104,102],
             }
             ilce_sirali = list(heatmap_data.keys())
-            yillar_str  = [str(y) for y in YEARS]   # 2010,2011,...,2023 — hepsi
+            yillar_str = [str(y) for y in YEARS]
             z_vals = [heatmap_data[ilce] for ilce in ilce_sirali]
-
-            fig = go.Figure(go.Heatmap(
-                z=z_vals,
-                x=yillar_str,
-                y=ilce_sirali,
+            fig = go.Figure(go.Heatmap(z=z_vals, x=yillar_str, y=ilce_sirali,
                 colorscale=[[0,"#2ca02c"],[0.35,"#aacc44"],[0.6,"#ff7f0e"],[1,"#d62728"]],
                 zmin=100, zmax=210,
                 text=[[str(v) for v in row] for row in z_vals],
-                texttemplate="%{text}",
-                textfont=dict(size=9, color="white"),
+                texttemplate="%{text}", textfont=dict(size=9,color="white"),
                 hovertemplate="<b>%{y}</b> · %{x}<br>%{z} m³/abone<extra></extra>",
-                colorbar=dict(title="m³/abone", tickfont=dict(color="white"),
-                              len=0.9, thickness=14)
-            ))
-            fig.update_layout(
-                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                colorbar=dict(title="m³/abone",tickfont=dict(color="white"),len=0.9,thickness=14)))
+            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
                 height=480, margin=dict(t=10,b=40,l=130,r=30),
-                xaxis=dict(
-                    tickmode="array",
-                    tickvals=yillar_str,
-                    ticktext=yillar_str,
-                    tickfont=dict(color="white", size=10),
-                    tickangle=-45
-                ),
-                yaxis=dict(tickfont=dict(color="white", size=11))
-            )
+                xaxis=dict(tickmode="array",tickvals=yillar_str,ticktext=yillar_str,
+                           tickfont=dict(color="white",size=10),tickangle=-45),
+                yaxis=dict(tickfont=dict(color="white",size=11)))
             st.plotly_chart(fig, use_container_width=True)
-
-            # Analitik bulgular
-            st.markdown("""
-            <div style="background:rgba(56,209,227,0.07);border-left:3px solid #ff7f0e;
-                        border-radius:0 8px 8px 0;padding:0.8rem 1rem;margin-top:0.5rem;">
-                <span style="color:#ff7f0e;font-size:0.78rem;font-weight:600;">💡 BULGULAR &nbsp;</span>
-                <span style="color:#c5e8f7;font-size:0.85rem;">
-                    Bu grafik abone <b>başına</b> tüketimi gösterir — toplam tüketim değil.
-                    İlçeler yüksekten düşüğe sıralanmıştır.
-                </span>
+            st.markdown(f"""
+            <div style="display:flex;align-items:center;gap:12px;margin:1.2rem 0 0.8rem 0;">
+                <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
+                <div><div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;">04 · BULGULAR</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Öne Çıkan Bulgular & Dönüm Noktaları</div></div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:0.8rem;">
-                <div style="background:rgba(214,39,40,0.08);border:1px solid rgba(214,39,40,0.25);
-                            border-radius:8px;padding:0.8rem 1rem;">
-                    <div style="color:#d62728;font-size:0.72rem;font-weight:700;
-                                letter-spacing:1px;margin-bottom:5px;">
-                        🔴 NARLIDERe — En Yüksek Tüketim, Düşük Risk</div>
-                    <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">
-                        Narlıdere kişi başı tüketime göre listenin en üstünde ancak risk sıralamasında
-                        alt sıralarda yer alıyor. Bunun nedeni: ilçenin küçük abone tabanı (az nüfus),
-                        görece eski yapı stoğu ve 2010'lar boyunca süren kentsel dönüşüm sürecidir.
-                        Abone sayısı hızla artmadan önce kişi başı tüketim yüksek görünmektedir.
-                        Arz kısıtı ve kayıp oranı risk modelinde baskın gelince Narlıdere düşük riske düşmektedir.
-                    </div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+                <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);border-radius:8px;padding:0.8rem 1rem;">
+                    <div style="color:#d62728;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:5px;">🔴 NARLIDERE — Yüksek Tüketim, Düşük Risk</div>
+                    <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">Narlıdere kişi başı tüketime göre listenin en üstünde ancak risk sıralamasında alt sıralarda.
+                    Bunun nedeni küçük abone tabanı, eski yapı stoğu ve 2010'lar boyunca süren kentsel dönüşüm sürecidir.
+                    Arz kısıtı ve kayıp oranı risk modelinde baskın gelince Narlıdere düşük riske düşmektedir.</div>
                 </div>
-                <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.22);
-                            border-radius:8px;padding:0.8rem 1rem;">
-                    <div style="color:#38d1e3;font-size:0.72rem;font-weight:700;
-                                letter-spacing:1px;margin-bottom:5px;">
-                        🔵 GAZİEMİR — Düşük Tüketim, Yüksek Risk</div>
-                    <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">
-                        Gaziemir talep haritasında ortada görünürken risk sıralamasında yüksekte.
-                        Bunun nedeni: hızlı nüfus artışının yarattığı arz baskısı ve artan tüketim
-                        <i>artış oranı</i>. Risk modeli mevcut tüketim düzeyi değil, büyüme hızını
-                        da ağırlıklandırır — bu yüzden Gaziemir orta-yüksek risk bandına girmektedir.
-                    </div>
+                <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.22);border-radius:8px;padding:0.8rem 1rem;">
+                    <div style="color:#38d1e3;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:5px;">🔵 GAZİEMİR — Orta Tüketim, Yüksek Risk</div>
+                    <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">Gaziemir talep haritasında ortada görünürken risk sıralamasında yüksekte.
+                    Hızlı nüfus artışının yarattığı arz baskısı ve artan tüketim artış oranı belirleyici.
+                    Risk modeli büyüme hızını da ağırlıklandırır — Gaziemir orta-yüksek risk bandına girmektedir.</div>
                 </div>
-            </div>
-            """, unsafe_allow_html=True)
-
+            </div>""", unsafe_allow_html=True)
 
         with tab3:
+            bolum_baslik("03", "ARZ-TALEP DENGESİ", f"Arz-Talep Dengesi ({START_YEAR}–{END_YEAR})")
+            at_yillar = [2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
+            sisteme_v = [118,148,138,132,110,112,107,150,138,145,133,160,118,120]
+            tuketim_v = [136,139,141,145,147,150,153,156,159,162,166,160,166,165]
             col1, col2 = st.columns([2,1])
             with col1:
                 fig = go.Figure()
-                fig.add_trace(go.Bar(
-                    x=YEARS, y=tablo2["Sisteme_Giren_m3"]/1e6,
-                    name="Sisteme Giren Su",
-                    marker=dict(color="#38d1e3", opacity=0.8,
-                                line=dict(color="rgba(255,255,255,0.2)",width=1)),
-                    hovertemplate="Sisteme Giren: %{y:.1f}M m³<extra></extra>"
-                ))
-                fig.add_trace(go.Bar(
-                    x=YEARS, y=tablo2["Toplam_Üretim_m3"]/1e6,
-                    name="Toplam Üretim",
-                    marker=dict(color="#2ca02c", opacity=0.8,
-                                line=dict(color="rgba(255,255,255,0.2)",width=1)),
-                    hovertemplate="Üretim: %{y:.1f}M m³<extra></extra>"
-                ))
-                fig.add_vline(x=2019.5, line_dash="dash", line_color="rgba(155,89,182,0.6)",
-                              line_width=1.5)
-                fig.update_layout(**layout_base, barmode="group", height=420,
-                                  yaxis=dict(title="Milyon m³",
-                                             gridcolor="rgba(255,255,255,0.1)",
-                                             tickfont=dict(color="white")))
+                fig.add_trace(go.Bar(x=at_yillar, y=sisteme_v, name="Sisteme Giren Su (Arz)",
+                    marker=dict(color="#38d1e3",opacity=0.85,line=dict(color="rgba(255,255,255,0.2)",width=1)),
+                    hovertemplate="Sisteme Giren: %{y}M m³<extra></extra>"))
+                fig.add_trace(go.Bar(x=at_yillar, y=tuketim_v, name="Toplam Tüketim (Talep)",
+                    marker=dict(color="#2ca02c",opacity=0.85,line=dict(color="rgba(255,255,255,0.2)",width=1)),
+                    hovertemplate="Toplam Tüketim: %{y}M m³<extra></extra>"))
+                fig.add_vline(x=2019.5, line_dash="dash", line_color="rgba(155,89,182,0.6)", line_width=1.5,
+                    annotation_text="Bootstrap | Gerçek →", annotation_font_color="#c39bd3", annotation_font_size=9)
+                fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                    barmode="group", height=420, font=dict(color="white"), hovermode="x unified",
+                    xaxis=dict(tickvals=at_yillar, tickfont=dict(color="white"), gridcolor="rgba(255,255,255,0.1)"),
+                    yaxis=dict(title="Milyon m³", range=[0,200], gridcolor="rgba(255,255,255,0.1)", tickfont=dict(color="white")),
+                    legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)"),
+                    margin=dict(t=30,b=40,l=60,r=30))
                 st.plotly_chart(fig, use_container_width=True)
             with col2:
                 st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
-                # Sadece son 4 yılı kart olarak göster (gerçek dönem)
-                for yil in YEARS[-4:]:
-                    sg = tablo2[tablo2["Yıl"]==yil]["Sisteme_Giren_m3"].values[0]/1e6
-                    tu = tablo2[tablo2["Yıl"]==yil]["Toplam_Üretim_m3"].values[0]/1e6
-                    fark = sg - tu
+                for yil, sg, tt in [(2020,133,166),(2021,160,160),(2022,118,166),(2023,120,165)]:
+                    fark = tt - sg
+                    fark_renk = "#d62728" if fark > 0 else "#2ca02c"
+                    fark_yazi = f"Talep Açığı: {fark}M m³" if fark > 0 else f"Arz Fazlası: {abs(fark)}M m³"
                     st.markdown(f"""
-                    <div style="background:rgba(255,255,255,0.05);border-radius:8px;
-                                padding:0.6rem 0.8rem;margin-bottom:0.5rem;
-                                border-left:3px solid #d62728;">
+                    <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:0.6rem 0.8rem;
+                                margin-bottom:0.5rem;border-left:3px solid {fark_renk};">
                         <div style="color:#a8d8f0;font-size:0.72rem;">{yil} <span style="color:#2ca02c;">· gerçek</span></div>
-                        <div style="color:#d62728;font-size:1rem;font-weight:700;">
-                            Δ {fark:.0f}M m³ kayıp
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-
-            insight_kutusu(
-                f"Sisteme giren su ile üretilen su arasındaki fark sistem kayıplarına karşılık geliyor. "
-                f"{len(YEARS)} yıllık seri uzun vadeli arz-talep dinamiklerini görselleştiriyor. "
-                f"Mor çizgi bootstrap/gerçek veri sınırını gösterir.",
-                "#38d1e3"
-            )
+                        <div style="color:{fark_renk};font-size:0.95rem;font-weight:700;">{fark_yazi}</div>
+                        <div style="color:#a8d8f0;font-size:0.72rem;">Arz: {sg}M · Talep: {tt}M</div>
+                    </div>""", unsafe_allow_html=True)
+            st.markdown("""
+            <div style="display:flex;align-items:center;gap:12px;margin:1.2rem 0 0.8rem 0;">
+                <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
+                <div><div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;">04 · BULGULAR</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Öne Çıkan Bulgular & Dönüm Noktaları</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+                <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);border-radius:8px;padding:0.8rem 1rem;">
+                    <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">2014–2016 · ARZ KISITI ZİRVESİ</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Sisteme giren su 107M'e geriledi</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">2014–2016 döneminde sisteme giren su 107–132M m³ bandına inerken
+                    toplam tüketim 147–153M m³'te yükselmeye devam etti. Oluşan makas sistem kapasitesini ciddi biçimde zorladı.</div>
+                </div>
+                <div style="background:rgba(255,127,14,0.07);border:1px solid rgba(255,127,14,0.25);border-radius:8px;padding:0.8rem 1rem;">
+                    <div style="color:#ff7f0e;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">2021 · EŞİTLENME NOKTASI</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Arz ve talep 160M m³'te buluştu</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">2021'de sisteme giren su ve toplam tüketim her ikisi de 160M m³ ile eşitlenerek
+                    nadir görülen bir denge noktası yakalandı. Bu geçici iyileşme sistem verimliliğindeki artışa işaret eder.</div>
+                </div>
+                <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);border-radius:8px;padding:0.8rem 1rem;">
+                    <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">2022–2023 · AÇIK YENİDEN GENİŞLEDİ</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Talep arzı ~45M m³ geçti</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">Sisteme giren su 118–120M m³'e gerilerken tüketim 165–166M'de kaldı.
+                    Bu ~45M m³'lik açık altyapı kayıplarına ve sistem verimsizliğine işaret etmektedir.</div>
+                </div>
+            </div>""", unsafe_allow_html=True)
 
         with tab4:
             bolum_baslik("04", "SU KAYIP TRENDİ", f"Yıllık Su Kayıp Oranı Trendi ({START_YEAR}–{END_YEAR})")
+            kayip_yillar = [2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
+            kayip_toplam = [32.5,31.8,31.2,30.6,30.0,29.5,29.0,28.5,28.0,27.5,28.56,28.04,27.95,27.36]
+            fiziki_k     = [29.0,28.4,27.9,27.3,26.8,26.3,25.9,25.5,25.1,24.7,27.45,26.53,26.50,25.92]
+            idari_k      = [3.5, 3.4, 3.3, 3.3, 3.2, 3.2, 3.1, 3.0, 2.9, 2.8, 1.11, 1.51, 1.45, 1.43]
+            ilk_kayip = kayip_toplam[0]
+            son_kayip = kayip_toplam[-1]
+            azalma = ilk_kayip - son_kayip
             col1, col2 = st.columns([3,1])
             with col1:
                 fig = go.Figure()
-                fig.add_trace(go.Scatter(
-                    x=YEARS, y=tablo2["Su_Kayıp_Oranı_%"],
-                    mode="lines+markers+text",
-                    fill="tozeroy",
-                    fillcolor="rgba(214,39,40,0.1)",
-                    line=dict(color="#d62728", width=3),
-                    marker=dict(size=10, color="#d62728",
-                                line=dict(color="white", width=2)),
-                    text=[f"%{v:.1f}" for v in tablo2["Su_Kayıp_Oranı_%"]],
-                    textposition="top center",
-                    textfont=dict(color="white", size=10),
+                fig.add_trace(go.Scatter(x=kayip_yillar, y=kayip_toplam,
+                    mode="lines+markers+text", fill="tozeroy",
+                    fillcolor="rgba(214,39,40,0.1)", line=dict(color="#d62728",width=3),
+                    marker=dict(size=10,color="#d62728",line=dict(color="white",width=2)),
+                    text=[f"%{v:.1f}" for v in kayip_toplam],
+                    textposition="top center", textfont=dict(color="white",size=9),
                     name="Toplam Kayıp",
-                    hovertemplate="<b>%{x}</b><br>Kayıp Oranı: %{y:.2f}%<extra></extra>"
-                ))
-                fig.add_trace(go.Bar(
-                    x=YEARS, y=tablo2["Fiziki_Kayıp_%"],
-                    name="Fiziki Kayıp", marker_color="rgba(214,39,40,0.4)",
-                    yaxis="y2",
-                    hovertemplate="Fiziki: %{y:.2f}%<extra></extra>"
-                ))
-                fig.add_trace(go.Bar(
-                    x=YEARS, y=tablo2["İdari_Kayıp_%"],
-                    name="İdari Kayıp", marker_color="rgba(255,127,14,0.4)",
-                    yaxis="y2",
-                    hovertemplate="İdari: %{y:.2f}%<extra></extra>"
-                ))
-                fig.add_vline(x=2019.5, line_dash="dash", line_color="rgba(155,89,182,0.6)",
-                              line_width=1.5)
-                kayip_min = tablo2["Su_Kayıp_Oranı_%"].min() - 1
-                kayip_max = tablo2["Su_Kayıp_Oranı_%"].max() + 1
-                fig.update_layout(
-                    plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                    height=420, hovermode="x unified",
-                    font=dict(color="white"),
-                    xaxis=dict(tickvals=YEARS, gridcolor="rgba(255,255,255,0.1)",
+                    hovertemplate="<b>%{x}</b><br>Kayıp Oranı: %{y:.2f}%<extra></extra>"))
+                fig.add_trace(go.Bar(x=kayip_yillar, y=fiziki_k, name="Fiziki Kayıp",
+                    marker_color="rgba(214,39,40,0.4)", yaxis="y2",
+                    hovertemplate="Fiziki: %{y:.2f}%<extra></extra>"))
+                fig.add_trace(go.Bar(x=kayip_yillar, y=idari_k, name="İdari Kayıp",
+                    marker_color="rgba(255,127,14,0.4)", yaxis="y2",
+                    hovertemplate="İdari: %{y:.2f}%<extra></extra>"))
+                fig.add_vline(x=2019.5, line_dash="dash", line_color="rgba(155,89,182,0.6)", line_width=1.5,
+                    annotation_text="Bootstrap | Gerçek →", annotation_font_color="#c39bd3", annotation_font_size=9)
+                fig.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                    height=420, hovermode="x unified", font=dict(color="white"),
+                    xaxis=dict(tickvals=kayip_yillar, gridcolor="rgba(255,255,255,0.1)",
                                tickfont=dict(color="white"), tickangle=-45),
-                    yaxis=dict(title="Toplam Kayıp (%)", range=[kayip_min, kayip_max],
-                               gridcolor="rgba(255,255,255,0.1)",
-                               tickfont=dict(color="white")),
+                    yaxis=dict(title="Toplam Kayıp (%)", range=[min(kayip_toplam)-1, max(kayip_toplam)+1],
+                               gridcolor="rgba(255,255,255,0.1)", tickfont=dict(color="white")),
                     yaxis2=dict(title="Bileşen (%)", overlaying="y", side="right",
                                 tickfont=dict(color="white"), range=[0,40]),
                     legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)"),
-                    barmode="stack", margin=dict(t=30,b=50,l=60,r=60)
-                )
+                    barmode="stack", margin=dict(t=30,b=50,l=60,r=60))
                 st.plotly_chart(fig, use_container_width=True)
             with col2:
-                ilk_kayip = tablo2["Su_Kayıp_Oranı_%"].values[0]
-                son_kayip = tablo2["Su_Kayıp_Oranı_%"].values[-1]
-                azalma = ilk_kayip - son_kayip
                 st.markdown(f"""
                 <div style="background:rgba(44,160,44,0.1);border:1px solid #2ca02c44;
-                            border-top:3px solid #2ca02c;border-radius:8px;
-                            padding:1rem;text-align:center;margin-bottom:1rem;">
-                    <div style="color:#2ca02c;font-size:0.75rem;letter-spacing:1px;">
-                        TOPLAM AZALMA
-                    </div>
-                    <div style="color:white;font-size:2rem;font-weight:700;">
-                        ▼ {azalma:.2f}%
-                    </div>
+                            border-top:3px solid #2ca02c;border-radius:8px;padding:1rem;text-align:center;margin-bottom:1rem;">
+                    <div style="color:#2ca02c;font-size:0.75rem;letter-spacing:1px;">TOPLAM AZALMA</div>
+                    <div style="color:white;font-size:2rem;font-weight:700;">▼ {azalma:.1f}%</div>
                     <div style="color:#a8d8f0;font-size:0.8rem;">{START_YEAR} → {END_YEAR}</div>
                 </div>
                 <div style="background:rgba(255,255,255,0.05);border-radius:8px;
                             padding:0.8rem;font-size:0.82rem;color:#a8d8f0;line-height:1.6;">
                     🔵 <b style="color:white">Fiziki Kayıp</b><br>
-                    Boru sızıntıları, altyapı hasarı<br><br>
+                    Boru sızıntıları, altyapı hasarı<br>2023: %{fiziki_k[-1]:.2f}<br><br>
                     🟠 <b style="color:white">İdari Kayıp</b><br>
-                    Kaçak kullanım, sayaç hataları
+                    Kaçak kullanım, sayaç hataları<br>2023: %{idari_k[-1]:.2f}
+                </div>""", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div style="display:flex;align-items:center;gap:12px;margin:1.2rem 0 0.8rem 0;">
+                <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
+                <div><div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;">04 · BULGULAR</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Öne Çıkan Bulgular & Dönüm Noktaları</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+                <div style="background:rgba(44,160,44,0.08);border:1px solid rgba(44,160,44,0.28);border-radius:8px;padding:0.8rem 1rem;">
+                    <div style="color:#2ca02c;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">{START_YEAR}–{END_YEAR} · KAYDEDİLEN İYİLEŞME</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">%{ilk_kayip:.1f}'den %{son_kayip:.2f}'ye geriledi</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">14 yıllık dönemde toplam su kayıp oranı yaklaşık {azalma:.1f} puan azaldı.
+                    İZSU'nun altyapı yatırımları ve akıllı sayaç projelerinin somut çıktısıdır.
+                    Ancak %27 oranı Avrupa ortalamasının (~%15–20) hâlâ üzerindedir.</div>
                 </div>
-                """, unsafe_allow_html=True)
-
-            insight_kutusu(
-                f"Su kayıp oranı {START_YEAR}'daki %{ilk_kayip:.2f}'den {END_YEAR}'te %{son_kayip:.2f}'ye geriledi. "
-                f"{len(YEARS)} yıl boyunca toplam {azalma:.2f} puanlık iyileşme sağlandı. "
-                f"Mann-Kendall analizi {len(YEARS)} yıllık seriyle çok daha güvenilir trend tespiti yapıyor.",
-                "#2ca02c"
-            )
+                <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.22);border-radius:8px;padding:0.8rem 1rem;">
+                    <div style="color:#38d1e3;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">FİZİKİ KAYIP BASKINI</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Toplam kaybın ~%95'i boru sızıntısı</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">2023 verilerine göre fiziki kayıp %25.92, idari kayıp %1.43.
+                    Fiziki kayıpların baskın olması altyapı yenileme yatırımlarının öncelikli alan olduğuna işaret etmektedir.</div>
+                </div>
+                <div style="background:rgba(255,127,14,0.07);border:1px solid rgba(255,127,14,0.25);border-radius:8px;padding:0.8rem 1rem;">
+                    <div style="color:#ff7f0e;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">2020 · PANDEMİ YILINDA HAFİF ARTIŞ</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Kayıp oranı %28.56'ya çıktı</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">2020'de kayıp oranı bir önceki yıla kıyasla hafifçe yükseldi.
+                    Pandemi döneminde denetim ve bakım faaliyetlerinin yavaşlaması bu geçici kötüleşmenin olası nedenidir.</div>
+                </div>
+            </div>""", unsafe_allow_html=True)
 
         st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
+
 
         # ── Öne Çıkan Bulgular başlığı
         st.markdown(f"""
@@ -1366,7 +1339,7 @@ if data_loaded:
             <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);
                         border-radius:8px;padding:0.8rem 1rem;">
                 <div style="color:#d62728;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:5px;">
-                    🔴 NARLIDERe — Yüksek Tüketim, Düşük Risk</div>
+                    🔴 NARLIDERE — Yüksek Tüketim, Düşük Risk</div>
                 <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">
                     Narlıdere kişi başı tüketime göre listenin en üstünde ancak risk sıralamasında
                     alt sıralarda. Bunun nedeni küçük abone tabanı, eski yapı stoğu ve 2010'lar boyunca
