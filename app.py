@@ -406,21 +406,29 @@ except Exception as e:
 
 if data_loaded:
 
-    # ── Üst navigasyon
+    # ── Üst başlık — ortalı, büyük
     st.markdown(f"""
-    <div style="display:flex;align-items:center;justify-content:space-between;
-                padding:16px 0 12px 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:0.8rem;">
-        <div style="display:flex;align-items:center;gap:14px;">
-            <span style="font-size:2.2rem;">💧</span>
-            <div>
-                <div style="color:#ffffff;font-size:1.8rem;font-weight:800;
-                            letter-spacing:-0.5px;line-height:1.1;">İzmiRisk</div>
-                <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;
-                            margin-top:2px;">Su Güvenliği Risk Endeksi · İzmir · {START_YEAR}–2040</div>
-            </div>
-        </div>
-        <div style="color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.7;">
+    <div style="text-align:center;padding:28px 0 20px 0;
+                border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:0.8rem;
+                position:relative;">
+        <!-- sağ köşe bilgi -->
+        <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);
+                    color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.7;">
             Veri: İZSU + Bootstrap Simülasyonu<br>11 Merkez İlçe · Entropy-WSRI
+        </div>
+        <!-- orta logo + başlık -->
+        <div style="display:inline-flex;align-items:center;gap:18px;">
+            <span style="font-size:4rem;line-height:1;
+                         filter:drop-shadow(0 0 16px rgba(56,209,227,0.55));">💧</span>
+            <div style="text-align:left;">
+                <div style="color:#ffffff;font-size:3.2rem;font-weight:900;
+                            letter-spacing:-1px;line-height:1;
+                            text-shadow:0 0 24px rgba(56,209,227,0.20);">İzmiRisk</div>
+                <div style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;
+                            text-transform:uppercase;margin-top:6px;font-weight:600;">
+                    Su Güvenliği Risk Endeksi · İzmir · {START_YEAR}–2040
+                </div>
+            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
