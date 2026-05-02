@@ -648,7 +648,7 @@ if data_loaded:
 
         # ── Animasyonlu Sayaçlar — manuel sabit değerler
         cnt1_val = toplam_tuketim
-        cnt2_val = 66.3          # BORNOVA — manuel
+        cnt2_val = 67.3          # BORNOVA — manuel
         cnt3_val = round(kayip_oran, 2)
         en_riskli_adi = "BORNOVA"
         bar1 = min(cnt1_val/300*100, 100)
