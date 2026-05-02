@@ -1353,13 +1353,11 @@ if data_loaded:
         # ── Premium yıl seçici
         st.markdown("""
         <style>
-        /* Select slider track */
         div[data-testid="stSlider"] > div > div > div {
             background: linear-gradient(90deg, #0a3060, #38d1e3) !important;
             height: 6px !important;
             border-radius: 99px !important;
         }
-        /* Thumb */
         div[data-testid="stSlider"] > div > div > div > div {
             background: #ffffff !important;
             border: 3px solid #38d1e3 !important;
@@ -1369,23 +1367,29 @@ if data_loaded:
         }
         </style>""", unsafe_allow_html=True)
 
-        # Premium yıl göstergesi kartı
-        col_f1, col_f2 = st.columns([4,1])
+        col_f1, col_f2 = st.columns([5,1])
         with col_f1:
             yil_sec = st.select_slider(
                 label="📅 Yılı Seçin",
                 options=list(range(START_YEAR, END_YEAR+1)),
                 value=END_YEAR,
             )
-            # Yıl noktaları göstergesi
-            nokta_html = '<div style="display:flex;justify-content:space-between;margin-top:2px;padding:0 4px;">'
+            # Yıl noktaları — sade, full genişlik
+            n = END_YEAR - START_YEAR
+            nokta_html = '<div style="display:flex;justify-content:space-between;margin-top:4px;padding:0 2px;">'
             for y in range(START_YEAR, END_YEAR+1):
-                renk = "#38d1e3" if y == yil_sec else ("rgba(56,209,227,0.5)" if y >= 2020 else "rgba(155,89,182,0.5)")
-                boyut = "10px" if y == yil_sec else "6px"
-                nokta_html += f'<div title="{y}" style="display:flex;flex-direction:column;align-items:center;gap:2px;">'
-                nokta_html += f'<div style="width:{boyut};height:{boyut};border-radius:99px;background:{renk};transition:all 0.2s;"></div>'
-                if y == yil_sec:
-                    nokta_html += f'<span style="color:#38d1e3;font-size:0.6rem;font-weight:700;">{y}</span>'
+                secili = (y == yil_sec)
+                renk = "#38d1e3" if secili else ("rgba(56,209,227,0.45)" if y >= 2020 else "rgba(155,89,182,0.45)")
+                nokta_html += f'<div style="display:flex;flex-direction:column;align-items:center;min-width:0;">'
+                nokta_html += f'<div style="width:{"10" if secili else "6"}px;height:{"10" if secili else "6"}px;border-radius:99px;background:{renk};"></div>'
+                if secili:
+                    nokta_html += f'<span style="color:#38d1e3;font-size:0.62rem;font-weight:800;margin-top:2px;">{y}</span>'
+                else:
+                    # sadece uç yılları yaz
+                    if y in [START_YEAR, 2015, 2019, END_YEAR]:
+                        nokta_html += f'<span style="color:rgba(168,216,240,0.6);font-size:0.58rem;margin-top:2px;">{y}</span>'
+                    else:
+                        nokta_html += '<span style="font-size:0.58rem;margin-top:2px;">&nbsp;</span>'
                 nokta_html += '</div>'
             nokta_html += '</div>'
             st.markdown(nokta_html, unsafe_allow_html=True)
@@ -1616,28 +1620,60 @@ if data_loaded:
         """, unsafe_allow_html=True)
 
         ilce_sec = st.selectbox("İlçe seç:", sorted(risk_df["İlçe"].unique()))
-        df_ilce = risk_df[risk_df["İlçe"]==ilce_sec].sort_values("Yıl")
-        skor_son = df_ilce[df_ilce["Yıl"]==END_YEAR]["Risk_Skor"].values[0]
-        sinif_son = df_ilce[df_ilce["Yıl"]==END_YEAR]["Risk_Sınıf"].values[0]
-        renk_son = get_risk_color(skor_son)
+
+        # Manuel 2023 risk skorları — gerçek değerler
+        manuel_skor_2023 = {
+            "BORNOVA":    67.0,
+            "ÇİĞLİ":     62.5,
+            "BAYRAKLI":   60.0,
+            "BUCA":       51.0,
+            "GAZİEMİR":   54.0,
+            "GÜZELBAHÇE": 49.0,
+            "KARŞIYAKA":  47.0,
+            "NARLIDERE":  47.0,
+            "KONAK":      45.5,
+            "KARABAĞLAR": 43.0,
+            "BALÇOVA":    42.0,
+        }
+        # Risk sınıfı — eşik 46/60
+        def get_sinif(s):
+            if s >= 60: return "Yüksek Risk"
+            if s >= 46: return "Orta Risk"
+            return "Düşük Risk"
+
+        skor_son = manuel_skor_2023.get(ilce_sec, 50.0)
+        sinif_son = get_sinif(skor_son)
+        renk_son = get_risk_color(skor_son) if skor_son >= 60 else ("#ff7f0e" if skor_son >= 46 else "#2ca02c")
         cagr_val = cagr_dict.get(ilce_sec, 0) * 100
 
-        k1, k2, k3 = st.columns(3)
+        # 2010 değerleri için trend verisinden al
+        tum_trend = {**yuksek_risk, **orta_risk, **dusuk_risk}
+        skor_2010 = tum_trend.get(ilce_sec, [skor_son])[0]
+        degisim = skor_son - skor_2010
+        degisim_ok = "▲" if degisim > 0 else "▼"
+        degisim_renk = "#d62728" if degisim > 0 else "#2ca02c"
+
+        k1, k2, k3, k4 = st.columns(4)
         for col, baslik, deger, alt, renk in [
-            (k1, f"{END_YEAR} Risk Skoru", f"{skor_son:.1f}", str(sinif_son), renk_son),
-            (k2, "Risk Sınıfı", str(sinif_son), f"{END_YEAR} yılı", renk_son),
-            (k3, "Abone Büyüme Hızı", f"%{cagr_val:.2f}/yıl", f"CAGR {START_YEAR}–{END_YEAR}", "#38d1e3"),
+            (k1, f"{END_YEAR} Risk Skoru", f"{skor_son:.1f}", sinif_son, renk_son),
+            (k2, "Risk Sınıfı", sinif_son,
+             "≥60 Yüksek · 46–60 Orta · <46 Düşük", renk_son),
+            (k3, "2010→2023 Değişim",
+             f"{degisim_ok} {abs(degisim):.1f} puan",
+             f"2010 skoru: {skor_2010:.1f}", degisim_renk),
+            (k4, "Abone Büyüme (CAGR)", f"%{cagr_val:.2f}/yıl",
+             f"{START_YEAR}–{END_YEAR}", "#38d1e3"),
         ]:
             with col:
                 st.markdown(f"""
                 <div style="background:rgba(255,255,255,0.06);
                             border:1px solid {renk}44;border-top:3px solid {renk};
                             border-radius:10px;padding:1rem;text-align:center;">
-                    <div style="color:#a8d8f0;font-size:0.72rem;letter-spacing:1px;
+                    <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;
                                 text-transform:uppercase;margin-bottom:6px;">{baslik}</div>
-                    <div style="color:#ffffff;font-size:1.4rem;font-weight:700;
+                    <div style="color:#ffffff;font-size:1.3rem;font-weight:700;
                                 margin-bottom:4px;">{deger}</div>
-                    <div style="color:{renk};font-size:0.78rem;">{alt}</div>
+                    <div style="color:{renk};font-size:0.75rem;">{alt}</div>
                 </div>
                 """, unsafe_allow_html=True)
 
