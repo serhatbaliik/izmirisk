@@ -680,29 +680,33 @@ if data_loaded:
         </div>"""
         st.markdown(sayac_html, unsafe_allow_html=True)
 
-        # ── KPI Kartları — manuel sabit değerler
-        k1,k2,k3,k4,k5 = st.columns(5)
-        kartlar = [
-            (k1, "🔴", "En Riskli İlçe", "BORNOVA",   "Skor: 66.3",   "#d62728"),
-            (k2, "🟡", "Orta Risk",       f"{orta_sayi} İlçe", f"{END_YEAR} yılı", "#ff7f0e"),
-            (k3, "🟢", "Düşük Risk",      f"{dusuk_sayi} İlçe", f"{END_YEAR} yılı", "#2ca02c"),
-            (k4, "💧", "Tahtalı Doluluk", f"%{tahtali:.1f}", f"{END_YEAR} yılı", "#38d1e3"),
-            (k5, "✅", "En Az Riskli",    "BALÇOVA",   "Skor: 42.7",   "#2ca02c"),
+        # ── KPI Kartları — manuel, ilçe listeli
+        k1, k2, k3, k4, k5 = st.columns(5)
+
+        kpi_data = [
+            (k1, "🔴", "#d62728", "Yüksek Riskli İlçeler", ["Bornova", "Çiğli", "Bayraklı"]),
+            (k2, "🟡", "#ff7f0e", "Orta Riskli İlçeler",   ["Buca", "Gaziemir", "Güzelbahçe", "Karşıyaka", "Narlıdere"]),
+            (k3, "🟢", "#2ca02c", "Düşük Riskli İlçeler",  ["Konak", "Karabağlar", "Balçova"]),
+            (k4, "💧", "#38d1e3", "Tahtalı Doluluk",        [f"%{tahtali:.1f}", f"{END_YEAR} yılı"]),
+            (k5, "✅", "#2ca02c", "En Az Riskli",           ["Balçova", "Skor: 42.7"]),
         ]
-        for col, ikon, baslik, deger, alt, renk in kartlar:
+        for col, ikon, renk, baslik, satirlar in kpi_data:
             with col:
+                satirlar_html = "".join(
+                    f'<div style="color:#ffffff;font-size:0.82rem;font-weight:600;'
+                    f'line-height:1.6;">{s}</div>'
+                    for s in satirlar
+                )
                 st.markdown(f"""
                 <div style="background:rgba(255,255,255,0.06);
                             border:1px solid {renk}44;
                             border-top:3px solid {renk};
                             border-radius:10px;padding:1rem;
-                            text-align:center;transition:all 0.2s;">
-                    <div style="font-size:1.6rem;margin-bottom:4px;">{ikon}</div>
-                    <div style="color:#a8d8f0;font-size:0.72rem;letter-spacing:1px;
+                            text-align:center;min-height:130px;">
+                    <div style="font-size:1.4rem;margin-bottom:4px;">{ikon}</div>
+                    <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;
                                 text-transform:uppercase;margin-bottom:6px;">{baslik}</div>
-                    <div style="color:#ffffff;font-size:1.3rem;font-weight:700;
-                                margin-bottom:4px;">{deger}</div>
-                    <div style="color:{renk};font-size:0.78rem;">{alt}</div>
+                    {satirlar_html}
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -723,47 +727,64 @@ if data_loaded:
         </div>
         """, unsafe_allow_html=True)
 
+        # Gauge — manuel sabit değerler
+        gauge_data = [
+            ("BORNOVA",  67.0, +2.3),   # delta: geçen yıla göre artış
+            ("ÇİĞLİ",   63.0, +1.8),
+            ("BAYRAKLI", 60.0, -0.5),
+        ]
         gauge_col1, gauge_col2, gauge_col3 = st.columns(3)
-        for col, ilce_idx in zip([gauge_col1, gauge_col2, gauge_col3], [0, 1, 2]):
-            ilce_row = df_son.iloc[ilce_idx]
-            skor = ilce_row["Risk_Skor"]
-            ilce_adi = ilce_row["İlçe"]
-            sinif = ilce_row["Risk_Sınıf"]
-            renk = get_risk_color(skor)
+        for col, (ilce_adi, skor, delta_val) in zip(
+            [gauge_col1, gauge_col2, gauge_col3], gauge_data
+        ):
+            renk = "#d62728"   # hepsi yüksek risk (60+)
+            sinif_label = "Yüksek Risk"
             fig_gauge = go.Figure(go.Indicator(
                 mode="gauge+number+delta",
                 value=skor,
-                delta={"reference": 40, "valueformat": ".1f",
-                       "increasing": {"color": "#d62728"},
-                       "decreasing": {"color": "#2ca02c"}},
+                delta={
+                    "reference": skor - delta_val,
+                    "valueformat": ".1f",
+                    "increasing": {"color": "#d62728"},
+                    "decreasing": {"color": "#2ca02c"},
+                },
                 number={"font": {"size": 32, "color": "white"}, "valueformat": ".1f"},
-                title={"text": f"<b style='font-size:15px'>{ilce_adi}</b><br>"
-                               f"<span style='font-size:11px;color:{renk}'>{sinif}</span>",
-                       "font": {"size": 14, "color": "white"}},
+                title={
+                    "text": (
+                        f"<b style='font-size:15px'>{ilce_adi}</b><br>"
+                        f"<span style='font-size:11px;color:{renk}'>{sinif_label}</span>"
+                    ),
+                    "font": {"size": 14, "color": "white"},
+                },
                 gauge={
-                    "axis": {"range": [0, 100], "tickwidth": 1,
-                             "tickcolor": "rgba(255,255,255,0.3)",
-                             "tickfont": {"color": "rgba(255,255,255,0.5)", "size": 9}},
+                    "axis": {
+                        "range": [0, 100], "tickwidth": 1,
+                        "tickcolor": "rgba(255,255,255,0.3)",
+                        "tickfont": {"color": "rgba(255,255,255,0.5)", "size": 9},
+                    },
                     "bar": {"color": renk, "thickness": 0.3},
                     "bgcolor": "rgba(255,255,255,0.03)",
                     "borderwidth": 1,
                     "bordercolor": "rgba(255,255,255,0.15)",
                     "steps": [
-                        {"range": [0, 40],  "color": "rgba(44,160,44,0.15)"},
-                        {"range": [40, 70], "color": "rgba(255,127,14,0.15)"},
-                        {"range": [70, 100],"color": "rgba(214,39,40,0.15)"},
+                        {"range": [0,  60], "color": "rgba(44,160,44,0.15)"},
+                        {"range": [60, 80], "color": "rgba(214,39,40,0.20)"},
+                        {"range": [80,100], "color": "rgba(139,0,0,0.25)"},
                     ],
-                    "threshold": {"line": {"color": "white", "width": 2},
-                                  "thickness": 0.75, "value": skor}
-                }
+                    "threshold": {
+                        "line": {"color": "white", "width": 2},
+                        "thickness": 0.75, "value": skor,
+                    },
+                },
             ))
             fig_gauge.update_layout(
                 paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                 height=240, margin=dict(t=70, b=10, l=20, r=20),
-                font=dict(color="white")
+                font=dict(color="white"),
             )
             with col:
-                st.plotly_chart(fig_gauge, use_container_width=True)
+                st.plotly_chart(fig_gauge, use_container_width=True,
+                                key=f"gauge_{ilce_adi}")
 
         st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
 
