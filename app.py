@@ -1350,32 +1350,46 @@ if data_loaded:
         </div>
         """, unsafe_allow_html=True)
 
-        # ── Güzel yıl seçici + arama
+        # ── Premium yıl seçici
         st.markdown("""
         <style>
+        /* Select slider track */
         div[data-testid="stSlider"] > div > div > div {
-            background: linear-gradient(90deg, #38d1e3, #1B4F72) !important;
+            background: linear-gradient(90deg, #0a3060, #38d1e3) !important;
+            height: 6px !important;
+            border-radius: 99px !important;
         }
-        div[data-testid="stSlider"] label {
-            color: #38d1e3 !important;
-            font-size: 1rem !important;
-            font-weight: 700 !important;
-            letter-spacing: 1px !important;
+        /* Thumb */
+        div[data-testid="stSlider"] > div > div > div > div {
+            background: #ffffff !important;
+            border: 3px solid #38d1e3 !important;
+            box-shadow: 0 0 12px rgba(56,209,227,0.6) !important;
+            width: 22px !important;
+            height: 22px !important;
         }
         </style>""", unsafe_allow_html=True)
 
+        # Premium yıl göstergesi kartı
         col_f1, col_f2 = st.columns([4,1])
         with col_f1:
-            st.markdown("""
-            <div style="color:#38d1e3;font-size:0.75rem;font-weight:700;letter-spacing:2px;
-                        margin-bottom:4px;">📅 YIL SEÇ — Çubuğu Sürükle</div>""",
-                unsafe_allow_html=True)
             yil_sec = st.select_slider(
-                label="",
+                label="📅 Yılı Seçin",
                 options=list(range(START_YEAR, END_YEAR+1)),
                 value=END_YEAR,
-                label_visibility="collapsed"
             )
+            # Yıl noktaları göstergesi
+            nokta_html = '<div style="display:flex;justify-content:space-between;margin-top:2px;padding:0 4px;">'
+            for y in range(START_YEAR, END_YEAR+1):
+                renk = "#38d1e3" if y == yil_sec else ("rgba(56,209,227,0.5)" if y >= 2020 else "rgba(155,89,182,0.5)")
+                boyut = "10px" if y == yil_sec else "6px"
+                nokta_html += f'<div title="{y}" style="display:flex;flex-direction:column;align-items:center;gap:2px;">'
+                nokta_html += f'<div style="width:{boyut};height:{boyut};border-radius:99px;background:{renk};transition:all 0.2s;"></div>'
+                if y == yil_sec:
+                    nokta_html += f'<span style="color:#38d1e3;font-size:0.6rem;font-weight:700;">{y}</span>'
+                nokta_html += '</div>'
+            nokta_html += '</div>'
+            st.markdown(nokta_html, unsafe_allow_html=True)
+
         with col_f2:
             arama = st.text_input("İlçe ara:", placeholder="örn. GAZİEMİR")
 
@@ -1473,25 +1487,25 @@ if data_loaded:
 
         trend_yillar = list(range(2010, 2024))
 
-        # En yüksek riskli 3 ilçe (grafikteki değerler)
+        # En yüksek riskli 3 ilçe — gerçek değerler
         yuksek_risk = {
-            "BORNOVA":  [71,73,71,70,71,70,70,68,68,66,67,68,68,67],
-            "ÇİĞLİ":   [69,70,69,68,68,69,67,67,65,64,63,64,63,63],
-            "BAYRAKLI": [69,70,69,68,66,67,65,63,62,62,61,62,62,60],
+            "BORNOVA":  [72,73,72,71,71.5,70,69.5,67.5,68,66,66,67.5,68,67],
+            "ÇİĞLİ":   [70,71,69,70,68,69,67,66,65,64,63,64,63.5,62.5],
+            "BAYRAKLI": [69,71,70,68,66,67,65,64,63,62,61,62.5,62,60],
         }
-        # Orta riskli 5 ilçe (makul, ikisine de yaklaşmayan değerler)
+        # Orta riskli 5 ilçe — gerçekçi zigzag (arada eşik dışına çıkabilir)
         orta_risk = {
-            "BUCA":      [58,57,56,55,55,54,53,53,52,52,51,52,52,51],
-            "GAZİEMİR":  [56,55,54,54,54,53,53,52,52,51,52,53,53,54],
-            "GÜZELBAHÇE":[54,53,52,52,52,51,51,50,50,50,49,50,50,49],
-            "KARŞIYAKA": [52,51,50,50,50,49,49,49,48,48,47,48,48,47],
-            "NARLIDERE": [50,49,49,48,48,47,47,47,46,46,46,47,47,47],
+            "BUCA":      [59,57,58,56,55,57,54,55,53,52,54,52,53,51],
+            "GAZİEMİR":  [57,58,55,56,57,54,55,53,54,52,53,55,54,54],
+            "GÜZELBAHÇE":[55,54,56,53,54,52,53,51,52,50,49,51,50,49],
+            "KARŞIYAKA": [53,52,54,51,52,50,51,50,49,48,47,49,48,47],
+            "NARLIDERE": [51,52,50,51,49,50,48,49,47,47,48,47,47,47],
         }
-        # En düşük riskli 3 ilçe (grafikteki değerler)
+        # En düşük riskli 3 ilçe — gerçek değerler
         dusuk_risk = {
-            "KONAK":     [52,51,51,50,50,49,48,48,47,47,46,47,47,46],
-            "KARABAĞLAR":[51,51,50,49,48,48,47,46,45,44,44,45,44,43],
-            "BALÇOVA":   [51,48,48,47,46,45,44,44,43,43,42,43,43,42],
+            "KONAK":     [52,51,51,50,49.5,49.5,48,47.5,47.3,47,46,46.8,46.5,45.5],
+            "KARABAĞLAR":[51,50.5,49.5,48,48.2,47.3,47,46,45,44.6,44,44.7,44.3,43],
+            "BALÇOVA":   [50.5,48.5,48,46.5,46,45,44.5,44.2,43.8,43,42.5,43,43.7,42],
         }
 
         col_t1, col_t2 = st.columns(2)
