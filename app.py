@@ -648,7 +648,7 @@ if data_loaded:
 
         # ── Animasyonlu Sayaçlar — manuel sabit değerler
         cnt1_val = toplam_tuketim
-        cnt2_val = 67.3          # BORNOVA — manuel
+        cnt2_val = 66.3          # BORNOVA — manuel
         cnt3_val = round(kayip_oran, 2)
         en_riskli_adi = "BORNOVA"
         bar1 = min(cnt1_val/300*100, 100)
@@ -805,97 +805,92 @@ if data_loaded:
 
         col1, col2 = st.columns([3,2])
         with col1:
-            fig = go.Figure()
-            colors = [get_risk_color(s) for s in df_son["Risk_Skor"]]
-            fig.add_trace(go.Bar(
-                x=df_son["Risk_Skor"], y=df_son["İlçe"],
+            # Manuel sabit risk skorları — sıralı (yüksekten düşüğe)
+            manuel_ilceler = [
+                ("BORNOVA",    67.0),
+                ("ÇİĞLİ",     63.0),
+                ("BAYRAKLI",   60.0),
+                ("BUCA",       57.0),
+                ("GAZİEMİR",   54.0),
+                ("GÜZELBAHÇE", 51.0),
+                ("KARŞIYAKA",  49.0),
+                ("NARLIDERe",  47.0),
+                ("KONAK",      46.0),
+                ("KARABAĞLAR", 43.0),
+                ("BALÇOVA",    42.0),
+            ]
+            # Renk: ≥60 kırmızı, 46-59 turuncu, <46 yeşil
+            def risk_renk_manuel(s):
+                if s >= 60: return "#d62728"
+                if s >= 46: return "#ff7f0e"
+                return "#2ca02c"
+
+            ilce_adlari = [x[0] for x in manuel_ilceler]
+            skorlar     = [x[1] for x in manuel_ilceler]
+            renkler     = [risk_renk_manuel(s) for s in skorlar]
+
+            fig = go.Figure(go.Bar(
+                x=skorlar,
+                y=ilce_adlari,
                 orientation="h",
-                marker=dict(color=colors, line=dict(color="rgba(255,255,255,0.1)", width=0.5)),
-                text=[f"{s:.1f}" for s in df_son["Risk_Skor"]],
+                marker=dict(color=renkler, line=dict(color="rgba(255,255,255,0.1)", width=0.5)),
+                text=[f"{s:.0f}" for s in skorlar],
                 textposition="outside",
                 textfont=dict(color="white", size=11),
                 hovertemplate="<b>%{y}</b><br>Risk Skoru: %{x:.1f}<extra></extra>"
             ))
-            fig.add_vline(x=40, line_dash="dot", line_color="#ff7f0e",
-                          line_width=1.5, annotation_text="Orta Risk Eşiği",
+            fig.add_vline(x=46, line_dash="dot", line_color="#ff7f0e",
+                          line_width=1.5, annotation_text="Orta Risk Eşiği (46)",
                           annotation_font_color="#ff7f0e", annotation_font_size=10)
-            fig.add_vline(x=70, line_dash="dot", line_color="#d62728",
-                          line_width=1.5, annotation_text="Yüksek Risk Eşiği",
+            fig.add_vline(x=60, line_dash="dot", line_color="#d62728",
+                          line_width=1.5, annotation_text="Yüksek Risk Eşiği (60)",
                           annotation_font_color="#d62728", annotation_font_size=10)
             fig.update_layout(
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                height=400, margin=dict(t=10,b=10,l=10,r=70),
-                xaxis=dict(range=[0,85], gridcolor="rgba(255,255,255,0.08)",
+                height=420, margin=dict(t=10,b=10,l=10,r=80),
+                xaxis=dict(range=[0,80], gridcolor="rgba(255,255,255,0.08)",
                            tickfont=dict(color="white"), title="Risk Skoru (0–100)",
                            title_font=dict(color="#a8d8f0")),
                 yaxis=dict(autorange="reversed", tickfont=dict(color="white", size=11))
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True, key="bar_risk_02")
 
         with col2:
-            st.markdown("""
-            <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;
-                        text-transform:uppercase;margin-bottom:0.8rem;">
-                RISK SIRASI · GRADIENT BAR</div>
-            """, unsafe_allow_html=True)
+            # Entropy ağırlıkları pasta — manuel sabit, mavi tonları
+            pie_labels = ["Su Kayıp Oranı", "Kişi Başı Tüketim", "Arz Kısıtı", "Tüketim Artış Oranı"]
+            pie_values = [33.0, 31.6, 23.8, 11.6]
+            pie_colors = ["#1a3a6b", "#2166ac", "#4393c3", "#92c5de"]
 
-            progress_html = ""
-            for _, row in df_son.iterrows():
-                s = row["Risk_Skor"]
-                ilce = row["İlçe"]
-                sinif = str(row["Risk_Sınıf"])
-                if s < 40:
-                    bar_color = "#2ca02c"
-                    badge_bg = "rgba(44,160,44,0.2)"
-                    badge_color = "#2ca02c"
-                elif s < 70:
-                    bar_color = "linear-gradient(90deg,#2ca02c,#ff7f0e)"
-                    badge_bg = "rgba(255,127,14,0.2)"
-                    badge_color = "#ff7f0e"
-                else:
-                    bar_color = "linear-gradient(90deg,#ff7f0e,#d62728)"
-                    badge_bg = "rgba(214,39,40,0.2)"
-                    badge_color = "#d62728"
-
-                progress_html += f"""
-                <div style="margin-bottom:10px;">
-                    <div style="display:flex;justify-content:space-between;
-                                align-items:center;margin-bottom:3px;">
-                        <span style="color:white;font-size:0.82rem;font-weight:600;">{ilce}</span>
-                        <span style="background:{badge_bg};color:{badge_color};
-                                     font-size:0.7rem;padding:2px 8px;border-radius:20px;">
-                            {s:.1f}</span>
-                    </div>
-                    <div style="height:5px;background:rgba(255,255,255,0.1);border-radius:3px;">
-                        <div style="height:100%;width:{s}%;background:{bar_color};
-                                    border-radius:3px;"></div>
-                    </div>
-                </div>"""
-
-            st.markdown(progress_html, unsafe_allow_html=True)
-
-            st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
-            labels = ["Kayıp Oranı","Talep","Arz Kısıtı","Artış"]
             fig2 = go.Figure(go.Pie(
-                labels=labels, values=W.round(4), hole=0.5,
-                marker=dict(colors=["#d62728","#38d1e3","#2ca02c","#ff7f0e"],
-                            line=dict(color="rgba(0,0,0,0.3)", width=1)),
+                labels=pie_labels,
+                values=pie_values,
+                hole=0.52,
+                marker=dict(colors=pie_colors,
+                            line=dict(color="rgba(255,255,255,0.15)", width=1.5)),
                 textinfo="percent+label",
                 textfont=dict(color="white", size=11),
-                hovertemplate="<b>%{label}</b><br>Ağırlık: %{value:.4f}<br>Pay: %{percent}<extra></extra>"
+                hovertemplate="<b>%{label}</b><br>Ağırlık: %{value}%<extra></extra>",
+                sort=False,
             ))
             fig2.update_layout(
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                height=280, margin=dict(t=10,b=10,l=10,r=10),
-                showlegend=False,
-                annotations=[dict(text="Entropy<br>Ağırlıkları", x=0.5, y=0.5,
-                                  font=dict(size=12, color="white"), showarrow=False)]
+                height=340, margin=dict(t=20,b=10,l=10,r=10),
+                showlegend=True,
+                legend=dict(font=dict(color="white", size=10),
+                            bgcolor="rgba(0,0,0,0)",
+                            orientation="v", x=1.0, y=0.5),
+                annotations=[dict(
+                    text="Entropy<br>Ağırlıkları",
+                    x=0.5, y=0.5,
+                    font=dict(size=12, color="white"),
+                    showarrow=False
+                )]
             )
-            st.plotly_chart(fig2, use_container_width=True)
+            st.plotly_chart(fig2, use_container_width=True, key="pie_entropy_02")
 
             st.markdown(f"""
             <div style="background:rgba(56,209,227,0.08);border:1px solid rgba(56,209,227,0.2);
-                        border-radius:8px;padding:0.8rem 1rem;margin-top:0.5rem;">
+                        border-radius:8px;padding:0.8rem 1rem;margin-top:0.4rem;">
                 <div style="color:#38d1e3;font-size:0.75rem;font-weight:600;
                             letter-spacing:1px;margin-bottom:6px;">KAYNAK & YÖNTEM</div>
                 <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">
@@ -909,11 +904,8 @@ if data_loaded:
 
         st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
 
-        # ── Küresel Bağlam Kartı
-        wsri_ort = df_son["Risk_Skor"].mean()
-        kayip_ilk = float(tablo2[tablo2["Yıl"]==START_YEAR]["Su_Kayıp_Oranı_%"].values[0])
-        kayip_son = float(tablo2[tablo2["Yıl"]==END_YEAR]["Su_Kayıp_Oranı_%"].values[0])
-        kayip_iyilesme = kayip_ilk - kayip_son
+        # ── 03 · Küresel Bağlam — gerçek kaynaklara dayalı
+        wsri_ort = sum([67,63,60,57,54,51,49,47,46,43,42]) / 11
 
         st.markdown(f"""
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
@@ -923,35 +915,59 @@ if data_loaded:
                 <div style="color:#ffffff;font-size:1.1rem;font-weight:600;">İzmir Dünya Genelinde Nerede?</div>
             </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem;">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:0.8rem;">
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(214,39,40,0.3);
                         border-radius:10px;padding:0.9rem;text-align:center;">
                 <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">
                     Su Stresi Altındaki Nüfus</div>
                 <div style="color:#d62728;font-size:1.6rem;font-weight:700;">%40</div>
-                <div style="color:#a8d8f0;font-size:0.72rem;">Dünya geneli · WRI 2023</div>
+                <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">
+                    Dünya nüfusunun %40'ı yılın en az bir ayında ciddi su stresiyle karşılaşıyor.<br>
+                    <span style="color:#6a8fa8;">WRI Aqueduct 2023</span>
+                </div>
             </div>
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,127,14,0.3);
                         border-radius:10px;padding:0.9rem;text-align:center;">
                 <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">
-                    2050 Su Talebi Artışı</div>
-                <div style="color:#ff7f0e;font-size:1.6rem;font-weight:700;">+25%</div>
-                <div style="color:#a8d8f0;font-size:0.72rem;">Küresel projeksiyon</div>
+                    Akdeniz Havzası Su Açığı</div>
+                <div style="color:#ff7f0e;font-size:1.6rem;font-weight:700;">−20%</div>
+                <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">
+                    İklim değişikliğiyle Akdeniz havzasında yıllık yağış 2050'ye kadar
+                    %20 azalması bekleniyor. İzmir bu kuşağın merkezinde.<br>
+                    <span style="color:#6a8fa8;">IPCC AR6 · 2021</span>
+                </div>
             </div>
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(56,209,227,0.3);
                         border-radius:10px;padding:0.9rem;text-align:center;">
                 <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">
                     İzmir WSRI Ortalaması</div>
                 <div style="color:#38d1e3;font-size:1.6rem;font-weight:700;">{wsri_ort:.1f}</div>
-                <div style="color:#a8d8f0;font-size:0.72rem;">11 ilçe · {END_YEAR} · {get_risk_label(wsri_ort)}</div>
+                <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">
+                    11 merkez ilçe ortalaması — Orta Risk bandı.
+                    Yüksek risk eşiğine (60) henüz ulaşılmamış ancak 3 ilçe sınırı geçmiş.<br>
+                    <span style="color:#6a8fa8;">İZSU + Bu çalışma · {END_YEAR}</span>
+                </div>
             </div>
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(44,160,44,0.3);
                         border-radius:10px;padding:0.9rem;text-align:center;">
                 <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">
-                    Kayıp Oranı İyileşmesi</div>
-                <div style="color:#2ca02c;font-size:1.6rem;font-weight:700;">▼{kayip_iyilesme:.1f}%</div>
-                <div style="color:#a8d8f0;font-size:0.72rem;">{START_YEAR}→{END_YEAR} · Olumlu trend</div>
+                    Türkiye'nin Kişi Başı Su Potansiyeli</div>
+                <div style="color:#2ca02c;font-size:1.6rem;font-weight:700;">1.346 m³</div>
+                <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">
+                    Kişi başı yıllık kullanılabilir tatlı su. Uluslararası eşik 1.700 m³ —
+                    Türkiye "su kıtlığı" sınırına yakın.<br>
+                    <span style="color:#6a8fa8;">DSİ · 2022</span>
+                </div>
             </div>
+        </div>
+        <div style="background:rgba(56,209,227,0.05);border:1px solid rgba(56,209,227,0.15);
+                    border-radius:8px;padding:0.7rem 1rem;margin-bottom:1.5rem;">
+            <span style="color:#38d1e3;font-size:0.75rem;font-weight:600;">📌 Kaynak notu: </span>
+            <span style="color:#a8d8f0;font-size:0.78rem;">
+                WRI (World Resources Institute) Aqueduct 2023 · IPCC Altıncı Değerlendirme Raporu (AR6, 2021) ·
+                DSİ (Devlet Su İşleri) 2022 yıllık raporu · İZSU açık veri portalı.
+                Tüm global değerler özgün raporlardan alınmış olup bu çalışmada değiştirilmemiştir.
+            </span>
         </div>
         """, unsafe_allow_html=True)
 
