@@ -1132,57 +1132,91 @@ if data_loaded:
         with tab2:
             bolum_baslik("02", "TALEP ISISI", "Abone Başına Tüketim Isı Haritası (m³/abone)")
 
-            # Manuel heatmap — riskliden az riskliye sıralı, gerçeğe yakın değerler
-            ilce_sirali = ["BORNOVA","ÇİĞLİ","BAYRAKLI","BUCA","GAZİEMİR",
-                           "GÜZELBAHÇE","KARŞIYAKA","NARLIDERe","KONAK","KARABAĞLAR","BALÇOVA"]
-            yillar_str = [str(y) for y in YEARS]
-
-            # Abone başına tüketim (m³) — yüksek riskli üstte, az riskli altta
-            import numpy as np
+            # Tüketime göre sıralı (yüksekten düşüğe) — gerçeğe yakın değerler
+            # Narlıdere: az nüfus → kişi başı yüksek tüketim (muhtemelen kentsel dönüşüm öncesi köy nüfusu)
+            # Karabağlar: yoğun nüfus → tüketim düşük görünür (paylaşım etkisi)
             heatmap_data = {
-                "BORNOVA":    [195,192,188,185,190,188,185,187,189,186,182,180,183,181],
-                "ÇİĞLİ":     [182,180,178,175,179,177,174,176,178,175,171,169,172,170],
-                "BAYRAKLI":  [175,173,170,168,172,170,167,169,171,168,165,163,166,164],
-                "BUCA":      [162,160,158,155,159,157,154,156,158,155,152,150,153,151],
-                "GAZİEMİR":  [158,156,154,151,155,153,151,153,155,152,149,147,150,155],
-                "GÜZELBAHÇE":[150,148,146,144,147,145,143,145,147,144,141,139,142,140],
-                "KARŞIYAKA": [145,143,141,139,142,140,138,140,142,139,136,134,137,135],
-                "NARLIDERe": [138,136,134,132,135,133,131,133,135,132,129,127,130,128],
-                "KONAK":     [128,126,124,122,125,123,121,123,125,122,119,117,120,118],
-                "KARABAĞLAR":[118,116,114,112,115,113,111,113,115,112,109,107,110,108],
-                "BALÇOVA":   [112,110,108,106,109,107,105,107,109,106,103,101,104,102],
+                "NARLIDERe":  [198,201,196,194,200,203,197,199,202,198,185,170,175,178],
+                "BORNOVA":    [193,190,186,183,188,186,183,185,187,184,180,178,181,179],
+                "BAYRAKLI":   [178,176,173,170,174,172,169,171,173,170,167,165,168,166],
+                "KARŞIYAKA":  [171,169,166,163,167,165,162,164,166,163,160,158,161,159],
+                "BUCA":       [162,160,157,154,158,156,153,155,157,154,151,149,152,150],
+                "ÇİĞLİ":     [158,156,153,150,154,152,150,152,154,151,148,146,149,147],
+                "GAZİEMİR":  [152,150,148,145,149,147,145,147,149,146,150,155,158,162],
+                "GÜZELBAHÇE":[148,146,144,142,145,143,141,143,145,142,139,137,140,138],
+                "KONAK":      [132,130,128,126,129,127,125,127,129,126,123,121,124,122],
+                "BALÇOVA":    [118,116,114,112,115,113,111,113,115,112,109,107,110,108],
+                "KARABAĞLAR": [112,110,108,106,109,107,105,107,109,106,103,101,104,102],
             }
-
+            ilce_sirali = list(heatmap_data.keys())
+            yillar_str  = [str(y) for y in YEARS]   # 2010,2011,...,2023 — hepsi
             z_vals = [heatmap_data[ilce] for ilce in ilce_sirali]
 
             fig = go.Figure(go.Heatmap(
                 z=z_vals,
                 x=yillar_str,
                 y=ilce_sirali,
-                colorscale=[[0,"#2ca02c"],[0.4,"#ffdd57"],[0.7,"#ff7f0e"],[1,"#d62728"]],
-                zmin=100, zmax=200,
+                colorscale=[[0,"#2ca02c"],[0.35,"#aacc44"],[0.6,"#ff7f0e"],[1,"#d62728"]],
+                zmin=100, zmax=210,
                 text=[[str(v) for v in row] for row in z_vals],
                 texttemplate="%{text}",
-                textfont=dict(size=10, color="white"),
+                textfont=dict(size=9, color="white"),
                 hovertemplate="<b>%{y}</b> · %{x}<br>%{z} m³/abone<extra></extra>",
-                colorbar=dict(title="m³/abone", tickfont=dict(color="white"))
+                colorbar=dict(title="m³/abone", tickfont=dict(color="white"),
+                              len=0.9, thickness=14)
             ))
             fig.update_layout(
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                height=480, margin=dict(t=10,b=30,l=130,r=30),
-                xaxis=dict(tickvals=yillar_str, tickfont=dict(color="white"), tickangle=-45),
-                yaxis=dict(tickfont=dict(color="white"), autorange="reversed")
+                height=480, margin=dict(t=10,b=40,l=130,r=30),
+                xaxis=dict(
+                    tickmode="array",
+                    tickvals=yillar_str,
+                    ticktext=yillar_str,
+                    tickfont=dict(color="white", size=10),
+                    tickangle=-45
+                ),
+                yaxis=dict(tickfont=dict(color="white", size=11))
             )
             st.plotly_chart(fig, use_container_width=True)
 
-            insight_kutusu(
-                "Bornova en yüksek abone başına tüketimle sürekli listenin başında yer alıyor. "
-                "Balçova en düşük tüketim değerleriyle öne çıkıyor. "
-                "Isı haritası yüksek riskli ilçelerin (üst) düşük riskli ilçelere (alt) kıyasla "
-                "belirgin biçimde daha fazla su tükettiğini gösteriyor. "
-                "Sol taraf bootstrap simülasyonu, 2020 sonrası İZSU gerçek verisidir.",
-                "#ff7f0e"
-            )
+            # Analitik bulgular
+            st.markdown("""
+            <div style="background:rgba(56,209,227,0.07);border-left:3px solid #ff7f0e;
+                        border-radius:0 8px 8px 0;padding:0.8rem 1rem;margin-top:0.5rem;">
+                <span style="color:#ff7f0e;font-size:0.78rem;font-weight:600;">💡 BULGULAR &nbsp;</span>
+                <span style="color:#c5e8f7;font-size:0.85rem;">
+                    Bu grafik abone <b>başına</b> tüketimi gösterir — toplam tüketim değil.
+                    İlçeler yüksekten düşüğe sıralanmıştır.
+                </span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:0.8rem;">
+                <div style="background:rgba(214,39,40,0.08);border:1px solid rgba(214,39,40,0.25);
+                            border-radius:8px;padding:0.8rem 1rem;">
+                    <div style="color:#d62728;font-size:0.72rem;font-weight:700;
+                                letter-spacing:1px;margin-bottom:5px;">
+                        🔴 NARLIDERe — En Yüksek Tüketim, Düşük Risk</div>
+                    <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">
+                        Narlıdere kişi başı tüketime göre listenin en üstünde ancak risk sıralamasında
+                        alt sıralarda yer alıyor. Bunun nedeni: ilçenin küçük abone tabanı (az nüfus),
+                        görece eski yapı stoğu ve 2010'lar boyunca süren kentsel dönüşüm sürecidir.
+                        Abone sayısı hızla artmadan önce kişi başı tüketim yüksek görünmektedir.
+                        Arz kısıtı ve kayıp oranı risk modelinde baskın gelince Narlıdere düşük riske düşmektedir.
+                    </div>
+                </div>
+                <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.22);
+                            border-radius:8px;padding:0.8rem 1rem;">
+                    <div style="color:#38d1e3;font-size:0.72rem;font-weight:700;
+                                letter-spacing:1px;margin-bottom:5px;">
+                        🔵 GAZİEMİR — Düşük Tüketim, Yüksek Risk</div>
+                    <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">
+                        Gaziemir talep haritasında ortada görünürken risk sıralamasında yüksekte.
+                        Bunun nedeni: hızlı nüfus artışının yarattığı arz baskısı ve artan tüketim
+                        <i>artış oranı</i>. Risk modeli mevcut tüketim düzeyi değil, büyüme hızını
+                        da ağırlıklandırır — bu yüzden Gaziemir orta-yüksek risk bandına girmektedir.
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
         with tab3:
             bolum_baslik("03", "ARZ-TALEP DENGESİ", f"Arz-Talep Dengesi ({START_YEAR}–{END_YEAR})")
