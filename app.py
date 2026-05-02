@@ -1194,10 +1194,9 @@ if data_loaded:
                             border-radius:8px;padding:0.8rem 1rem;">
                     <div style="color:#d62728;font-size:0.72rem;font-weight:700;
                                 letter-spacing:1px;margin-bottom:5px;">
-                        🔴 NARLIDERE — En Yüksek Tüketim, Düşük Risk</div>
+                        🔴 NARLIDERE — Yüksek Tüketim</div>
                     <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">
-                        Narlıdere kişi başı tüketime göre listenin en üstünde ancak risk sıralamasında
-                        alt sıralarda yer alıyor. Bunun nedeni: ilçenin küçük abone tabanı (az nüfus),
+                        Narlıdere'nin küçük abone tabanı (az nüfus),
                         görece eski yapı stoğu ve 2010'lar boyunca süren kentsel dönüşüm sürecidir.
                         Abone sayısı hızla artmadan önce kişi başı tüketim yüksek görünmektedir.
                         Arz kısıtı ve kayıp oranı risk modelinde baskın gelince Narlıdere düşük riske düşmektedir.
@@ -1207,10 +1206,9 @@ if data_loaded:
                             border-radius:8px;padding:0.8rem 1rem;">
                     <div style="color:#38d1e3;font-size:0.72rem;font-weight:700;
                                 letter-spacing:1px;margin-bottom:5px;">
-                        🔵 GAZİEMİR — Düşük Tüketim, Yüksek Risk</div>
+                        🔵 GAZİEMİR — Düşük Tüketim</div>
                     <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">
-                        Gaziemir talep haritasında ortada görünürken risk sıralamasında yüksekte.
-                        Bunun nedeni: hızlı nüfus artışının yarattığı arz baskısı ve artan tüketim
+                        Gaziemir'in hızlı nüfus artışının yarattığı arz baskısı ve artan tüketim
                         <i>artış oranı</i>. Risk modeli mevcut tüketim düzeyi değil, büyüme hızını
                         da ağırlıklandırır — bu yüzden Gaziemir orta-yüksek risk bandına girmektedir.
                     </div>
