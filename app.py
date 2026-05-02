@@ -1326,80 +1326,6 @@ if data_loaded:
         st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
 
 
-        # ── Öne Çıkan Bulgular başlığı
-        st.markdown(f"""
-        <div style="display:flex;align-items:center;gap:12px;margin:1.2rem 0 0.8rem 0;">
-            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
-            <div>
-                <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;">04 · BULGULAR</div>
-                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Öne Çıkan Bulgular & Dönüm Noktaları</div>
-            </div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:0.8rem;">
-            <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);
-                        border-radius:8px;padding:0.8rem 1rem;">
-                <div style="color:#d62728;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:5px;">
-                    🔴 NARLIDERE — Yüksek Tüketim, Düşük Risk</div>
-                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">
-                    Narlıdere kişi başı tüketime göre listenin en üstünde ancak risk sıralamasında
-                    alt sıralarda. Bunun nedeni küçük abone tabanı, eski yapı stoğu ve 2010'lar boyunca
-                    süren kentsel dönüşüm sürecidir. Abone sayısı artmadan önce kişi başı tüketim yüksek
-                    görünmektedir; arz kısıtı ve kayıp oranı risk modelinde baskın gelince Narlıdere
-                    düşük riske düşmektedir.
-                </div>
-            </div>
-            <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.22);
-                        border-radius:8px;padding:0.8rem 1rem;">
-                <div style="color:#38d1e3;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:5px;">
-                    🔵 GAZİEMİR — Orta Tüketim, Yüksek Risk</div>
-                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">
-                    Gaziemir talep haritasında ortada görünürken risk sıralamasında yüksekte.
-                    Hızlı nüfus artışının yarattığı arz baskısı ve artan tüketim artış oranı belirleyici.
-                    Risk modeli mevcut tüketim düzeyi değil büyüme hızını da ağırlıklandırır — bu yüzden
-                    Gaziemir orta-yüksek risk bandına girmektedir.
-                </div>
-            </div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
-            <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);
-                        border-radius:8px;padding:0.8rem 1rem;">
-                <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">
-                    2014 & 2017 · KURAKLIK DİPLERİ</div>
-                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:4px;">
-                    Tahtalı en kritik seviyelerde</div>
-                <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">
-                    Bootstrap simülasyonu İzmir'in gerçek hidrolojik geçmişiyle uyumlu olarak
-                    2014 ve 2017'de Tahtalı doluluğunun kritik seviyelere indiğini yansıtıyor.
-                    Bu dönemler sistem geneli üretim üzerinde yoğun baskı yaratmıştır.
-                </div>
-            </div>
-            <div style="background:rgba(255,127,14,0.07);border:1px solid rgba(255,127,14,0.25);
-                        border-radius:8px;padding:0.8rem 1rem;">
-                <div style="color:#ff7f0e;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">
-                    {START_YEAR}–{END_YEAR} · KAYIP AZALMASI</div>
-                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:4px;">
-                    Su kayıpları istikrarlı düştü</div>
-                <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">
-                    {len(YEARS)} yıl boyunca su kayıp oranı kademeli olarak azaldı.
-                    İZSU'nun altyapı yatırımları ve akıllı sayaç sistemlerinin somut
-                    sonuçlarından biri olarak yorumlanabilir.
-                </div>
-            </div>
-            <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.25);
-                        border-radius:8px;padding:0.8rem 1rem;">
-                <div style="color:#38d1e3;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">
-                    {END_YEAR} · GAZİEMİR AYRIŞMASI</div>
-                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:4px;">
-                    İzole yüksek risk: HL küme</div>
-                <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">
-                    Gaziemir yüksek risk skoru ile komşularından belirgin biçimde ayrıştı.
-                    LISA analizi HL (yüksek-düşük) sınıflandırdı.
-                    Hızlı nüfus artışı ve yüksek abone tüketimi temel etkenler.
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
     # ════════════════════════════════
     # RİSK ENDEKSİ
     # ════════════════════════════════
@@ -1412,7 +1338,7 @@ if data_loaded:
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
                 <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
-                    WATER SECURITY RISK INDEX · WSRI · {START_YEAR}–{END_YEAR}
+                    SU GÜVENLİĞİ RİSK ENDEKSİ · WSRI · {START_YEAR}–{END_YEAR}
                 </span>
             </div>
             <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
@@ -1454,7 +1380,7 @@ if data_loaded:
                         border-radius:2px;"></div>
             <div>
                 <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">
-                    01 · DISTRICT SCORES</div>
+                    01 · İLÇE SKORLARI</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
                     İlçe Risk Skorları & {len(YEARS)} Yıllık Karşılaştırma</div>
             </div>
@@ -1519,7 +1445,7 @@ if data_loaded:
                         border-radius:2px;"></div>
             <div>
                 <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">
-                    02 · DISTRICT DETAIL</div>
+                    02 · İLÇE DETAYI</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
                     İlçe Bazlı Detay — Risk Bileşenleri</div>
             </div>
@@ -1564,7 +1490,7 @@ if data_loaded:
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
                 <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
-                    SCENARIO PROJECTION · 2024–2040
+                    SENARYO PROJEKSİYONU · 2024–2040
                 </span>
             </div>
             <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
@@ -1598,7 +1524,7 @@ if data_loaded:
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
                         border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">01 · PROJECTED SCORES</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">01 · PROJEKSIYON SKORLARI</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
                     İlçe Risk Skorları & Projeksiyon Trendi</div>
             </div>
@@ -1690,7 +1616,7 @@ if data_loaded:
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
                         border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">02 · SCENARIO SUMMARY</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">02 · SENARYO ÖZETİ</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
                     3 Senaryo Karşılaştırması — {hedef_yil}</div>
             </div>
@@ -1878,7 +1804,7 @@ if data_loaded:
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
                 <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
-                    SPATIAL ANALYSIS · MORAN'S I + LISA · {END_YEAR}
+                    MEKÂNSAL ANALİZ · MORAN'S I + LISA · {END_YEAR}
                 </span>
             </div>
             <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
@@ -1976,7 +1902,7 @@ if data_loaded:
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
                         border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">01 · SPATIAL ANALYSIS</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">01 · MEKÂNSAL ANALİZ</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
                     Moran Scatter Plot & LISA Sınıflandırması — {END_YEAR}</div>
             </div>
@@ -2039,7 +1965,7 @@ if data_loaded:
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
                 <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
-                    DISTRICT RECOMMENDATIONS · {END_YEAR}
+                    İLÇE ÖNERİLERİ · {END_YEAR}
                 </span>
             </div>
             <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
@@ -2104,7 +2030,7 @@ if data_loaded:
         with col2:
             st.markdown("""
             <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;margin-bottom:0.5rem;">
-                01 · RISK TRENDİ & ÖNERİLER</div>
+                01 · RİSK TRENDİ & ÖNERİLER</div>
             """, unsafe_allow_html=True)
             hist = risk_df[risk_df["İlçe"]==ilce_sec].sort_values("Yıl")
             pred = tahmin_df[tahmin_df["İlçe"]==ilce_sec].sort_values("Yıl")
@@ -2174,7 +2100,7 @@ if data_loaded:
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
                 <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
-                    INTERACTIVE RISK MAP · İZMİR · {START_YEAR}–2040
+                    ETKİLEŞİMLİ RİSK HARİTASI · İZMİR · {START_YEAR}–2040
                 </span>
             </div>
             <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
@@ -2357,7 +2283,7 @@ if data_loaded:
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
                 <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
-                    INTERACTIVE TOOLS · EXPLORE & ANALYZE
+                    ETKİLEŞİMLİ ARAÇLAR · KEŞFEDİN & ANALİZ EDİN
                 </span>
             </div>
             <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
@@ -2380,7 +2306,7 @@ if data_loaded:
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">01 · RADAR & COMPARISON</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">01 · RADAR & KARŞILAŞTIRMA</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">İlçe Radar Profili & Karşılaştırma</div>
             </div>
         </div>
@@ -2448,7 +2374,7 @@ if data_loaded:
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">02 · SIMULATOR</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">02 · SİMÜLATÖR</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Risk Simülatörü — Anlık Duyarlılık ({END_YEAR} bazlı)</div>
             </div>
         </div>
@@ -2484,7 +2410,7 @@ if data_loaded:
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">03 · TIME SERIES</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">03 · ZAMAN SERİSİ</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Animasyonlu Risk Değişimi — {START_YEAR}–{END_YEAR} ({len(YEARS)} yıl)</div>
             </div>
         </div>
@@ -2553,7 +2479,7 @@ if data_loaded:
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">04 · DATA EXPORT</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">04 · VERİ DIŞA AKTARIMI</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Veri İndir — CSV</div>
             </div>
         </div>
@@ -2584,7 +2510,7 @@ if data_loaded:
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
                 <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
-                    METHODOLOGY · TRANSPARENCY
+                    METODOLOJİ · ŞEFFAFLIK
                 </span>
             </div>
             <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
@@ -2622,7 +2548,7 @@ if data_loaded:
             """, unsafe_allow_html=True)
 
         # 01 VERİ KAYNAĞI
-        bolum("01", "DATA SOURCE", "Veri Kaynağı")
+        bolum("01", "VERİ KAYNAĞI", "Veri Kaynağı")
         col1, col2 = st.columns(2)
         with col1:
             st.markdown(f"""
@@ -2681,7 +2607,7 @@ if data_loaded:
         """, unsafe_allow_html=True)
 
         # 03 RİSK ENDEKSİ
-        bolum("03", "RISK INDEX", "Water Security Risk Index (WSRI)")
+        bolum("03", "RİSK ENDEKSİ", "Su Güvenliği Risk Endeksi (WSRI)")
 
         col1, col2 = st.columns(2)
         with col1:
@@ -2718,7 +2644,7 @@ if data_loaded:
             """, unsafe_allow_html=True)
 
         # 04 ZAMANSAL ANALİZ
-        bolum("04", "TEMPORAL ANALYSIS", "Mann-Kendall Trend Testi & Sen's Slope")
+        bolum("04", "ZAMANSAL ANALİZ", "Mann-Kendall Trend Testi & Sen's Slope")
         col1, col2 = st.columns(2)
         with col1:
             formul_kutusu(
@@ -2734,7 +2660,7 @@ if data_loaded:
             )
 
         # 05 MEKÂNSAL ANALİZ
-        bolum("05", "SPATIAL ANALYSIS", "Moran's I & LISA")
+        bolum("05", "MEKÂNSAL ANALİZ", "Moran's I & LISA")
         col1, col2 = st.columns(2)
         with col1:
             formul_kutusu(
@@ -2758,7 +2684,7 @@ if data_loaded:
         )
 
         # 07 SINIRLILIKLAR
-        bolum("07", "LIMITATIONS", "Sınırlılıklar & Şeffaflık")
+        bolum("07", "SINIRLILIKLAR", "Sınırlılıklar & Şeffaflık")
         st.markdown(f"""
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
             <div style="background:rgba(155,89,182,0.08);border:1px solid rgba(155,89,182,0.25);
@@ -2802,7 +2728,7 @@ if data_loaded:
         """, unsafe_allow_html=True)
 
         st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
-        bolum("08", "FAQ", "Sıkça Sorulan Sorular")
+        bolum("08", "SIKÇA SORULAN SORULAR", "Sıkça Sorulan Sorular")
 
         sss_listesi = [
             ("Bootstrap simülasyonu nedir, neden kullanıldı?",
