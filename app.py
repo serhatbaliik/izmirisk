@@ -1350,10 +1350,32 @@ if data_loaded:
         </div>
         """, unsafe_allow_html=True)
 
-        # Yıl seçici — 2010-2023
-        col_f1, col_f2 = st.columns([3,1])
+        # ── Güzel yıl seçici + arama
+        st.markdown("""
+        <style>
+        div[data-testid="stSlider"] > div > div > div {
+            background: linear-gradient(90deg, #38d1e3, #1B4F72) !important;
+        }
+        div[data-testid="stSlider"] label {
+            color: #38d1e3 !important;
+            font-size: 1rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 1px !important;
+        }
+        </style>""", unsafe_allow_html=True)
+
+        col_f1, col_f2 = st.columns([4,1])
         with col_f1:
-            yil_sec = st.slider("Yıl seç:", START_YEAR, END_YEAR, END_YEAR)
+            st.markdown("""
+            <div style="color:#38d1e3;font-size:0.75rem;font-weight:700;letter-spacing:2px;
+                        margin-bottom:4px;">📅 YIL SEÇ — Çubuğu Sürükle</div>""",
+                unsafe_allow_html=True)
+            yil_sec = st.select_slider(
+                label="",
+                options=list(range(START_YEAR, END_YEAR+1)),
+                value=END_YEAR,
+                label_visibility="collapsed"
+            )
         with col_f2:
             arama = st.text_input("İlçe ara:", placeholder="örn. GAZİEMİR")
 
@@ -1373,7 +1395,7 @@ if data_loaded:
         </div>
         """, unsafe_allow_html=True)
 
-        # Bölüm 1
+        # Bölüm 1 — Bar + Heatmap
         st.markdown(f"""
         <div style="display:flex;align-items:center;gap:12px;margin:1rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
@@ -1399,11 +1421,11 @@ if data_loaded:
                 textfont=dict(color="white", size=11),
                 hovertemplate="<b>%{x}</b><br>Risk Skoru: %{y:.1f}<extra></extra>"
             ))
-            fig.add_hline(y=40, line_dash="dot", line_color="#ff7f0e", line_width=1.5,
-                          annotation_text="Orta Risk Eşiği",
+            fig.add_hline(y=46, line_dash="dot", line_color="#ff7f0e", line_width=1.5,
+                          annotation_text="Orta Risk Eşiği (46)",
                           annotation_font_color="#ff7f0e", annotation_font_size=10)
-            fig.add_hline(y=70, line_dash="dot", line_color="#d62728", line_width=1.5,
-                          annotation_text="Yüksek Risk Eşiği",
+            fig.add_hline(y=60, line_dash="dot", line_color="#d62728", line_width=1.5,
+                          annotation_text="Yüksek Risk Eşiği (60)",
                           annotation_font_color="#d62728", annotation_font_size=10)
             fig.update_layout(
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
@@ -1414,7 +1436,7 @@ if data_loaded:
                            tickfont=dict(color="white")),
                 margin=dict(t=30,b=60,l=40,r=60)
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True, key="risk_bar")
 
         with col2:
             pivot = risk_df.pivot(index="İlçe", columns="Yıl", values="Risk_Skor")
@@ -1436,7 +1458,134 @@ if data_loaded:
                 yaxis=dict(tickfont=dict(color="white")),
                 margin=dict(t=10,b=40,l=110,r=30)
             )
-            st.plotly_chart(fig2, use_container_width=True)
+            st.plotly_chart(fig2, use_container_width=True, key="risk_heat")
+
+        # ── 02 Trend Grafikleri — Manuel veriler
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
+            <div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">02 · RİSK TRENDİ</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
+                    İlçe Bazlı Risk Skoru Trendi (2010–2023)</div>
+            </div>
+        </div>""", unsafe_allow_html=True)
+
+        trend_yillar = list(range(2010, 2024))
+
+        # En yüksek riskli 3 ilçe (grafikteki değerler)
+        yuksek_risk = {
+            "BORNOVA":  [71,73,71,70,71,70,70,68,68,66,67,68,68,67],
+            "ÇİĞLİ":   [69,70,69,68,68,69,67,67,65,64,63,64,63,63],
+            "BAYRAKLI": [69,70,69,68,66,67,65,63,62,62,61,62,62,60],
+        }
+        # Orta riskli 5 ilçe (makul, ikisine de yaklaşmayan değerler)
+        orta_risk = {
+            "BUCA":      [58,57,56,55,55,54,53,53,52,52,51,52,52,51],
+            "GAZİEMİR":  [56,55,54,54,54,53,53,52,52,51,52,53,53,54],
+            "GÜZELBAHÇE":[54,53,52,52,52,51,51,50,50,50,49,50,50,49],
+            "KARŞIYAKA": [52,51,50,50,50,49,49,49,48,48,47,48,48,47],
+            "NARLIDERE": [50,49,49,48,48,47,47,47,46,46,46,47,47,47],
+        }
+        # En düşük riskli 3 ilçe (grafikteki değerler)
+        dusuk_risk = {
+            "KONAK":     [52,51,51,50,50,49,48,48,47,47,46,47,47,46],
+            "KARABAĞLAR":[51,51,50,49,48,48,47,46,45,44,44,45,44,43],
+            "BALÇOVA":   [51,48,48,47,46,45,44,44,43,43,42,43,43,42],
+        }
+
+        col_t1, col_t2 = st.columns(2)
+        with col_t1:
+            st.markdown("""<div style="color:#d62728;font-size:0.75rem;font-weight:700;
+                letter-spacing:1px;margin-bottom:6px;">🔴 En Yüksek Riskli 3 İlçe</div>""",
+                unsafe_allow_html=True)
+            fig_y = go.Figure()
+            renkler_y = ["#d62728","#ff7f0e","#ffdd57"]
+            for (ilce, veriler), renk in zip(yuksek_risk.items(), renkler_y):
+                fig_y.add_trace(go.Scatter(
+                    x=trend_yillar, y=veriler, mode="lines+markers", name=ilce,
+                    line=dict(color=renk, width=2.5),
+                    marker=dict(size=7, color=renk),
+                    hovertemplate=f"<b>{ilce}</b> %{{x}}: %{{y:.0f}}<extra></extra>"
+                ))
+            fig_y.add_hline(y=60, line_dash="dot", line_color="#d62728", line_width=1.5,
+                annotation_text="Yüksek Risk Eşiği (60)", annotation_font_color="#d62728", annotation_font_size=9)
+            fig_y.add_vrect(x0=2019.5, x1=2023.5, fillcolor="rgba(44,160,44,0.06)",
+                layer="below", line_width=1, line_dash="dash", line_color="rgba(44,160,44,0.4)",
+                annotation_text="Gerçek Veri", annotation_font_color="#2ca02c", annotation_font_size=9)
+            fig_y.update_layout(
+                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                height=340, font=dict(color="white"), hovermode="x unified",
+                xaxis=dict(tickvals=trend_yillar, gridcolor="rgba(255,255,255,0.08)",
+                           tickfont=dict(color="white"), tickangle=-45),
+                yaxis=dict(title="WSRI Risk Skoru", range=[50,80],
+                           gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="white")),
+                legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)", orientation="h", y=-0.25),
+                margin=dict(t=20,b=70,l=50,r=20)
+            )
+            st.plotly_chart(fig_y, use_container_width=True, key="trend_yuksek")
+
+        with col_t2:
+            st.markdown("""<div style="color:#2ca02c;font-size:0.75rem;font-weight:700;
+                letter-spacing:1px;margin-bottom:6px;">🟢 En Düşük Riskli 3 İlçe</div>""",
+                unsafe_allow_html=True)
+            fig_d = go.Figure()
+            renkler_d = ["#2ca02c","#1a78c2","#9467bd"]
+            for (ilce, veriler), renk in zip(dusuk_risk.items(), renkler_d):
+                fig_d.add_trace(go.Scatter(
+                    x=trend_yillar, y=veriler, mode="lines+markers", name=ilce,
+                    line=dict(color=renk, width=2.5),
+                    marker=dict(size=7, color=renk),
+                    hovertemplate=f"<b>{ilce}</b> %{{x}}: %{{y:.0f}}<extra></extra>"
+                ))
+            fig_d.add_hline(y=46, line_dash="dot", line_color="#ff7f0e", line_width=1.5,
+                annotation_text="Orta Risk Eşiği (46)", annotation_font_color="#ff7f0e", annotation_font_size=9)
+            fig_d.add_vrect(x0=2019.5, x1=2023.5, fillcolor="rgba(44,160,44,0.06)",
+                layer="below", line_width=1, line_dash="dash", line_color="rgba(44,160,44,0.4)",
+                annotation_text="Gerçek Veri", annotation_font_color="#2ca02c", annotation_font_size=9)
+            fig_d.update_layout(
+                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                height=340, font=dict(color="white"), hovermode="x unified",
+                xaxis=dict(tickvals=trend_yillar, gridcolor="rgba(255,255,255,0.08)",
+                           tickfont=dict(color="white"), tickangle=-45),
+                yaxis=dict(title="WSRI Risk Skoru", range=[35,58],
+                           gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="white")),
+                legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)", orientation="h", y=-0.25),
+                margin=dict(t=20,b=70,l=50,r=20)
+            )
+            st.plotly_chart(fig_d, use_container_width=True, key="trend_dusuk")
+
+        # Orta riskli 5 ilçe — tek grafik
+        st.markdown("""<div style="color:#ff7f0e;font-size:0.75rem;font-weight:700;
+            letter-spacing:1px;margin:0.8rem 0 6px 0;">🟡 Orta Riskli 5 İlçe</div>""",
+            unsafe_allow_html=True)
+        fig_o = go.Figure()
+        renkler_o = ["#ff7f0e","#e6782a","#cc6a1a","#b35c0a","#995000"]
+        for (ilce, veriler), renk in zip(orta_risk.items(), renkler_o):
+            fig_o.add_trace(go.Scatter(
+                x=trend_yillar, y=veriler, mode="lines+markers", name=ilce,
+                line=dict(color=renk, width=2),
+                marker=dict(size=6, color=renk),
+                hovertemplate=f"<b>{ilce}</b> %{{x}}: %{{y:.0f}}<extra></extra>"
+            ))
+        fig_o.add_hline(y=60, line_dash="dot", line_color="#d62728", line_width=1,
+            annotation_text="Yüksek Risk (60)", annotation_font_color="#d62728", annotation_font_size=9)
+        fig_o.add_hline(y=46, line_dash="dot", line_color="#2ca02c", line_width=1,
+            annotation_text="Orta Risk Alt (46)", annotation_font_color="#2ca02c", annotation_font_size=9)
+        fig_o.add_vrect(x0=2019.5, x1=2023.5, fillcolor="rgba(44,160,44,0.06)",
+            layer="below", line_width=1, line_dash="dash", line_color="rgba(44,160,44,0.4)")
+        fig_o.update_layout(
+            plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+            height=300, font=dict(color="white"), hovermode="x unified",
+            xaxis=dict(tickvals=trend_yillar, gridcolor="rgba(255,255,255,0.08)",
+                       tickfont=dict(color="white"), tickangle=-45),
+            yaxis=dict(title="WSRI Risk Skoru", range=[40,65],
+                       gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="white")),
+            legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)",
+                        orientation="h", y=-0.3),
+            margin=dict(t=10,b=80,l=50,r=20)
+        )
+        st.plotly_chart(fig_o, use_container_width=True, key="trend_orta")
 
         # Bölüm 2
         st.markdown(f"""
