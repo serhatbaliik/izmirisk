@@ -1350,26 +1350,39 @@ if data_loaded:
         </div>
         """, unsafe_allow_html=True)
 
-        # ── Premium yıl seçici
+        # ── Yıl seçici
         st.markdown("""
         <style>
-        div[data-testid="stSlider"] > div > div > div {
-            background: linear-gradient(90deg, #0a3060, #38d1e3) !important;
-            height: 6px !important;
-            border-radius: 99px !important;
+        /* Slider track: tüm çubuk */
+        div[data-testid="stSlider"] [data-baseweb="slider"] > div > div:first-child {
+            background: rgba(56,209,227,0.2) !important;
+            height: 5px !important;
         }
-        div[data-testid="stSlider"] > div > div > div > div {
-            background: #ffffff !important;
-            border: 3px solid #38d1e3 !important;
-            box-shadow: 0 0 12px rgba(56,209,227,0.6) !important;
-            width: 22px !important;
-            height: 22px !important;
+        /* Dolu kısım (seçili) */
+        div[data-testid="stSlider"] [data-baseweb="slider"] > div > div:nth-child(2) {
+            background: #38d1e3 !important;
+            height: 5px !important;
+        }
+        /* Thumb */
+        div[data-testid="stSlider"] [role="slider"] {
+            background: #38d1e3 !important;
+            border: 3px solid white !important;
+            box-shadow: 0 0 14px rgba(56,209,227,0.85) !important;
+            width: 20px !important;
+            height: 20px !important;
+        }
+        /* Tooltip (üstteki yıl kutusu) */
+        div[data-testid="stSlider"] [data-baseweb="tooltip"] div {
+            background: rgba(10,30,70,0.95) !important;
+            border: 1px solid #38d1e3 !important;
+            color: #38d1e3 !important;
+            font-weight: 700 !important;
+            border-radius: 6px !important;
         }
         </style>""", unsafe_allow_html=True)
 
         col_f1, col_f2 = st.columns([5,1])
         with col_f1:
-            # Noktalı yıl göstergesi — sürüklendikçe güncellenir
             yil_sec = st.slider(
                 "📅 Yılı Seçin",
                 min_value=START_YEAR,
@@ -1378,26 +1391,33 @@ if data_loaded:
                 step=1,
                 format="%d"
             )
-            # Yıl noktaları — slider altında
-            nokta_html = '<div style="display:flex;justify-content:space-between;margin-top:-8px;padding:0 6px;">'
+            # Noktalı zaman çizelgesi
+            n_yil = END_YEAR - START_YEAR
+            nokta_html = '<div style="display:flex;justify-content:space-between;margin-top:4px;padding:0 4px;">'
             for y in range(START_YEAR, END_YEAR+1):
                 secili = (y == yil_sec)
+                gecmis = y < yil_sec
                 if secili:
-                    nokta_html += (
-                        f'<div style="display:flex;flex-direction:column;align-items:center;">'
-                        f'<div style="width:12px;height:12px;border-radius:99px;background:#38d1e3;'
-                        f'box-shadow:0 0 8px rgba(56,209,227,0.8);"></div>'
-                        f'<span style="color:#38d1e3;font-size:0.65rem;font-weight:800;margin-top:2px;">{y}</span>'
+                    n_html = (
+                        f'<div style="display:flex;flex-direction:column;align-items:center;flex:1;">'
+                        f'<div style="width:13px;height:13px;border-radius:99px;background:#38d1e3;'
+                        f'box-shadow:0 0 10px rgba(56,209,227,0.9);margin-bottom:3px;"></div>'
+                        f'<span style="color:#38d1e3;font-size:0.65rem;font-weight:800;">{y}</span>'
                         f'</div>'
                     )
                 else:
-                    renk = "rgba(56,209,227,0.5)" if y >= 2020 else "rgba(155,89,182,0.45)"
-                    etk = f'<span style="color:rgba(168,216,240,0.55);font-size:0.58rem;margin-top:2px;">{y}</span>' if y in [START_YEAR,2015,2019,END_YEAR] else '<span style="font-size:0.58rem;">&nbsp;</span>'
-                    nokta_html += (
-                        f'<div style="display:flex;flex-direction:column;align-items:center;">'
-                        f'<div style="width:6px;height:6px;border-radius:99px;background:{renk};"></div>'
-                        f'{etk}</div>'
+                    renk = "rgba(56,209,227,0.65)" if gecmis else ("rgba(56,209,227,0.25)" if y >= 2020 else "rgba(155,89,182,0.3)")
+                    yil_etk = ""
+                    if y in [START_YEAR, 2015, 2019, END_YEAR]:
+                        yil_etk = f'<span style="color:rgba(168,216,240,0.55);font-size:0.56rem;margin-top:3px;">{y}</span>'
+                    else:
+                        yil_etk = '<span style="font-size:0.56rem;visibility:hidden;">.</span>'
+                    n_html = (
+                        f'<div style="display:flex;flex-direction:column;align-items:center;flex:1;">'
+                        f'<div style="width:7px;height:7px;border-radius:99px;background:{renk};margin-bottom:3px;"></div>'
+                        f'{yil_etk}</div>'
                     )
+                nokta_html += n_html
             nokta_html += '</div>'
             st.markdown(nokta_html, unsafe_allow_html=True)
 
