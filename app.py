@@ -1155,7 +1155,7 @@ if data_loaded:
                 height=480, margin=dict(t=10,b=40,l=130,r=30),
                 xaxis=dict(tickmode="array",tickvals=yillar_str,ticktext=yillar_str,
                            tickfont=dict(color="white",size=10),tickangle=-45),
-                yaxis=dict(tickfont=dict(color="white",size=11)))
+                yaxis=dict(tickfont=dict(color="white",size=11), autorange="reversed"))
             st.plotly_chart(fig, use_container_width=True)
             st.markdown(f"""
             <div style="display:flex;align-items:center;gap:12px;margin:1.2rem 0 0.8rem 0;">
