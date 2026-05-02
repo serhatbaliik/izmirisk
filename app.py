@@ -814,7 +814,7 @@ if data_loaded:
                 ("GAZİEMİR",   54.0),
                 ("GÜZELBAHÇE", 51.0),
                 ("KARŞIYAKA",  49.0),
-                ("NARLIDERe",  47.0),
+                ("NARLIDERE",  47.0),
                 ("KONAK",      46.0),
                 ("KARABAĞLAR", 43.0),
                 ("BALÇOVA",    42.0),
@@ -1194,7 +1194,7 @@ if data_loaded:
                             border-radius:8px;padding:0.8rem 1rem;">
                     <div style="color:#d62728;font-size:0.72rem;font-weight:700;
                                 letter-spacing:1px;margin-bottom:5px;">
-                        🔴 NARLIDERe — En Yüksek Tüketim, Düşük Risk</div>
+                        🔴 NARLIDERE — En Yüksek Tüketim, Düşük Risk</div>
                     <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">
                         Narlıdere kişi başı tüketime göre listenin en üstünde ancak risk sıralamasında
                         alt sıralarda yer alıyor. Bunun nedeni: ilçenin küçük abone tabanı (az nüfus),
