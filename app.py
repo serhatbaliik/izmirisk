@@ -1369,28 +1369,35 @@ if data_loaded:
 
         col_f1, col_f2 = st.columns([5,1])
         with col_f1:
-            yil_sec = st.select_slider(
-                label="📅 Yılı Seçin",
-                options=list(range(START_YEAR, END_YEAR+1)),
+            # Noktalı yıl göstergesi — sürüklendikçe güncellenir
+            yil_sec = st.slider(
+                "📅 Yılı Seçin",
+                min_value=START_YEAR,
+                max_value=END_YEAR,
                 value=END_YEAR,
+                step=1,
+                format="%d"
             )
-            # Yıl noktaları — sade, full genişlik
-            n = END_YEAR - START_YEAR
-            nokta_html = '<div style="display:flex;justify-content:space-between;margin-top:4px;padding:0 2px;">'
+            # Yıl noktaları — slider altında
+            nokta_html = '<div style="display:flex;justify-content:space-between;margin-top:-8px;padding:0 6px;">'
             for y in range(START_YEAR, END_YEAR+1):
                 secili = (y == yil_sec)
-                renk = "#38d1e3" if secili else ("rgba(56,209,227,0.45)" if y >= 2020 else "rgba(155,89,182,0.45)")
-                nokta_html += f'<div style="display:flex;flex-direction:column;align-items:center;min-width:0;">'
-                nokta_html += f'<div style="width:{"10" if secili else "6"}px;height:{"10" if secili else "6"}px;border-radius:99px;background:{renk};"></div>'
                 if secili:
-                    nokta_html += f'<span style="color:#38d1e3;font-size:0.62rem;font-weight:800;margin-top:2px;">{y}</span>'
+                    nokta_html += (
+                        f'<div style="display:flex;flex-direction:column;align-items:center;">'
+                        f'<div style="width:12px;height:12px;border-radius:99px;background:#38d1e3;'
+                        f'box-shadow:0 0 8px rgba(56,209,227,0.8);"></div>'
+                        f'<span style="color:#38d1e3;font-size:0.65rem;font-weight:800;margin-top:2px;">{y}</span>'
+                        f'</div>'
+                    )
                 else:
-                    # sadece uç yılları yaz
-                    if y in [START_YEAR, 2015, 2019, END_YEAR]:
-                        nokta_html += f'<span style="color:rgba(168,216,240,0.6);font-size:0.58rem;margin-top:2px;">{y}</span>'
-                    else:
-                        nokta_html += '<span style="font-size:0.58rem;margin-top:2px;">&nbsp;</span>'
-                nokta_html += '</div>'
+                    renk = "rgba(56,209,227,0.5)" if y >= 2020 else "rgba(155,89,182,0.45)"
+                    etk = f'<span style="color:rgba(168,216,240,0.55);font-size:0.58rem;margin-top:2px;">{y}</span>' if y in [START_YEAR,2015,2019,END_YEAR] else '<span style="font-size:0.58rem;">&nbsp;</span>'
+                    nokta_html += (
+                        f'<div style="display:flex;flex-direction:column;align-items:center;">'
+                        f'<div style="width:6px;height:6px;border-radius:99px;background:{renk};"></div>'
+                        f'{etk}</div>'
+                    )
             nokta_html += '</div>'
             st.markdown(nokta_html, unsafe_allow_html=True)
 
@@ -1402,16 +1409,7 @@ if data_loaded:
             df_yil = df_yil[df_yil["İlçe"].str.contains(arama.upper(), na=False)]
 
         # Veri tipi rozeti
-        veri_tipi_str = "🔬 Bootstrap Simülasyonu" if yil_sec < 2020 else "✅ İZSU Gerçek Verisi"
-        rozet_renk = "#9b59b6" if yil_sec < 2020 else "#2ca02c"
-        st.markdown(f"""
-        <div style="background:rgba(255,255,255,0.04);border:1px solid {rozet_renk}44;
-                    border-radius:8px;padding:0.5rem 1rem;margin-bottom:1rem;display:inline-block;">
-            <span style="color:{rozet_renk};font-size:0.78rem;font-weight:600;">
-                {yil_sec} yılı verisi: {veri_tipi_str}
-            </span>
-        </div>
-        """, unsafe_allow_html=True)
+
 
         # Bölüm 1 — Bar + Heatmap
         st.markdown(f"""
@@ -1578,7 +1576,7 @@ if data_loaded:
             letter-spacing:1px;margin:0.8rem 0 6px 0;">🟡 Orta Riskli 5 İlçe</div>""",
             unsafe_allow_html=True)
         fig_o = go.Figure()
-        renkler_o = ["#ff7f0e","#e6782a","#cc6a1a","#b35c0a","#995000"]
+        renkler_o = ["#e67e22","#e74c3c","#8e44ad","#16a085","#2980b9"]
         for (ilce, veriler), renk in zip(orta_risk.items(), renkler_o):
             fig_o.add_trace(go.Scatter(
                 x=trend_yillar, y=veriler, mode="lines+markers", name=ilce,
@@ -1657,7 +1655,7 @@ if data_loaded:
         for col, baslik, deger, alt, renk in [
             (k1, f"{END_YEAR} Risk Skoru", f"{skor_son:.1f}", sinif_son, renk_son),
             (k2, "Risk Sınıfı", sinif_son,
-             "≥60 Yüksek · 46–60 Orta · <46 Düşük", renk_son),
+             "", renk_son),
             (k3, "2010→2023 Değişim",
              f"{degisim_ok} {abs(degisim):.1f} puan",
              f"2010 skoru: {skor_2010:.1f}", degisim_renk),
