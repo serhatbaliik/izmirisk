@@ -407,68 +407,81 @@ except Exception as e:
 
 if data_loaded:
 
-    # ── Üst başlık + arama (sağ köşede, yazı boyutunda)
     _dil_h = st.session_state.get("dil","TR")
 
+    # ── Başlık
     st.markdown(f"""
-    <div style="text-align:center;padding:28px 0 20px 0;
-                border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:0.8rem;
-                position:relative;">
+    <div style="text-align:center;padding:24px 0 18px 0;position:relative;">
         <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);
                     color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.9;">
             {(_dil_h=="TR" and "Veri: İZSU + Bootstrap Simülasyonu" or "Data: IZSU + Bootstrap Simulation")}<br>
-            {(_dil_h=="TR" and "11 Merkez İlçe · Entropy-WSRI" or "11 Central Districts · Entropy-WSRI")}<br>
-            <input id="izmir_search" type="text"
-                placeholder="🔍 {'Ara...' if _dil_h=='TR' else 'Search...'}"
-                onkeydown="if(event.key==='Enter'){{
-                    var v=this.value.toLowerCase();
-                    var map={{'baraj':'EDA','tahtalı':'EDA','doluluk':'EDA','tüketim':'EDA','kayıp':'EDA',
-                              'risk':'Risk','bornova':'Risk','çiğli':'Risk','wsri':'Risk',
-                              '2030':'2030','projeksiyon':'2030','senaryo':'2030',
-                              'harita':'Harita','map':'Harita',
-                              'moran':'Mekânsal','lisa':'Mekânsal','spatial':'Mekânsal',
-                              'öneri':'Öneriler','metodoloji':'Metodoloji','bootstrap':'Metodoloji',
-                              'radar':'Araçlar','simülatör':'Araçlar','araç':'Araçlar'}};
-                    for(var k in map){{if(v.includes(k)){{alert('→ '+map[k]+' sayfası');break;}}}}
-                }}"
-                style="margin-top:4px;width:140px;height:22px;
-                       background:transparent;border:1px solid rgba(56,209,227,0.35);
-                       border-radius:12px;color:#a8d8f0;font-size:0.68rem;
-                       padding:0 8px;outline:none;text-align:left;">
+            {(_dil_h=="TR" and "11 Merkez İlçe · Entropy-WSRI" or "11 Central Districts · Entropy-WSRI")}
         </div>
         <div style="display:inline-flex;align-items:center;gap:18px;">
-            <span style="font-size:4rem;line-height:1;
-                         filter:drop-shadow(0 0 16px rgba(56,209,227,0.55));">💧</span>
+            <span style="font-size:3.8rem;line-height:1;filter:drop-shadow(0 0 16px rgba(56,209,227,0.55));">💧</span>
             <div style="text-align:left;">
-                <div style="color:#ffffff;font-size:3.2rem;font-weight:900;
-                            letter-spacing:-1px;line-height:1;
+                <div style="color:#ffffff;font-size:3rem;font-weight:900;letter-spacing:-1px;line-height:1;
                             text-shadow:0 0 24px rgba(56,209,227,0.20);">İzmiRisk</div>
-                <div style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;
-                            text-transform:uppercase;margin-top:6px;font-weight:600;">
+                <div style="color:#38d1e3;font-size:0.78rem;letter-spacing:3px;
+                            text-transform:uppercase;margin-top:5px;font-weight:600;">
                     Su Güvenliği Risk Endeksi · İzmir · {START_YEAR}–2030
                 </div>
             </div>
         </div>
     </div>
+    <hr style="border-color:rgba(56,209,227,0.2);margin:0 0 0.6rem 0;">
     """, unsafe_allow_html=True)
 
-    # Streamlit arama (HTML input çalışmazsa fallback — gizli ama işlevsel)
-    _sp1, _sp2, _sp3 = st.columns([5.5, 1, 0.1])
-    with _sp2:
-        _arama_girdi = st.text_input("", key="site_arama", label_visibility="collapsed",
-                                     placeholder="")
-    if _arama_girdi and len(_arama_girdi) > 2:
+    # ── Arama satırı — büyüteç + input yan yana, sağ hizalı
+    st.markdown("""
+    <style>
+    /* Arama input tamamen transparan */
+    [data-testid="stTextInput"] input {
+        background: transparent !important;
+        border: 1px solid rgba(56,209,227,0.35) !important;
+        border-radius: 20px !important;
+        color: #a8d8f0 !important;
+        font-size: 0.78rem !important;
+        height: 32px !important;
+        padding: 0 12px !important;
+        box-shadow: none !important;
+    }
+    [data-testid="stTextInput"] > div,
+    [data-testid="stTextInput"] > div > div {
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+    [data-testid="stTextInput"] input::placeholder {
+        color: rgba(168,216,240,0.45) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    _s1, _s2, _s3 = st.columns([3.5, 1.8, 0.5])
+    with _s2:
+        _arama_girdi = st.text_input(
+            "", key="site_arama", label_visibility="collapsed",
+            placeholder="🔍 " + ("Ara: baraj, risk, 2030..." if _dil_h=="TR" else "Search: dam, risk, 2030...")
+        )
+    with _s3:
+        _ara_btn = st.button("🔍", key="arama_btn", use_container_width=True)
+
+    if _arama_girdi and (_ara_btn or len(_arama_girdi) > 2):
         _temiz = _arama_girdi.strip().lower()
+        _bulundu = False
         for _k, _v in _arama_sozluk.items():
             if _k in _temiz:
                 _h_sayfa, _ = _v
                 if _h_sayfa != st.session_state.get("secili_sayfa"):
                     st.session_state.secili_sayfa = _h_sayfa
                     st.rerun()
+                _bulundu = True
                 break
-        else:
-            with _sp2:
-                st.caption("❌ " + ("Sonuç yok" if _dil_h=="TR" else "No result"))
+        if not _bulundu:
+            with _s2:
+                st.caption("❌ " + ("Sonuç yok. Deneyin: baraj, risk, harita, 2030, metodoloji" if _dil_h=="TR" else "No result. Try: dam, risk, map, 2030, methodology"))
 
     _dil_banner = st.session_state.get("dil", "TR")
     _banner_metin = (
