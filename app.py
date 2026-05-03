@@ -562,6 +562,8 @@ if data_loaded:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
     if "acik_tema" not in st.session_state:
         st.session_state.acik_tema = False
+    if "dil" not in st.session_state:
+        st.session_state.dil = "TR"
 
     nav_left, nav_mid, nav_right = st.columns([0.45, 5.6, 0.45])
     with nav_mid:
@@ -574,7 +576,11 @@ if data_loaded:
             label_visibility="collapsed"
         )
     with nav_right:
-        st.markdown("<div style='height:6px'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+        dil_btn_label = "🇬🇧 EN" if st.session_state.dil == "TR" else "🇹🇷 TR"
+        if st.button(dil_btn_label, key="dil_btn", use_container_width=True):
+            st.session_state.dil = "EN" if st.session_state.dil == "TR" else "TR"
+            st.rerun()
         if st.button("🌙" if not st.session_state.acik_tema else "☀️", key="tema_btn", use_container_width=True):
             st.session_state.acik_tema = not st.session_state.acik_tema
             st.rerun()
@@ -586,6 +592,65 @@ if data_loaded:
             st.rerun()
 
     sayfa = st.session_state.secili_sayfa
+    dil   = st.session_state.dil   # "TR" veya "EN"
+
+    # ── Çeviri sözlüğü — sayfa genelinde kullanılır
+    T = {
+        # Genel
+        "ana_baslik":       {"TR": "Su Güvenliği Risk Endeksi · İzmir · 2010–2030",
+                             "EN": "Water Security Risk Index · Izmir · 2010–2030"},
+        "bootstrap_banner": {"TR": f"{START_YEAR}–2019 verileri block bootstrap yöntemiyle üretilmiştir. 2020–{END_YEAR} verileri İZSU resmi kaynağındandır.",
+                             "EN": f"{START_YEAR}–2019 data generated via block bootstrap simulation. 2020–{END_YEAR} data from official IZSU records."},
+        # Ana Sayfa
+        "hero_baslik":      {"TR": "İzmir Su Güvenliği\nRisk Endeksi",
+                             "EN": "Izmir Water Security\nRisk Index"},
+        "hero_alt":         {"TR": f"Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe · {len(YEARS)} yıllık seri ({START_YEAR}–{END_YEAR}) · Bootstrap simülasyonu · Mann-Kendall trend testi · LISA mekânsal analizi · 2030 projeksiyonu",
+                             "EN": f"Entropy-weighted composite risk analysis · 11 central districts · {len(YEARS)}-year series ({START_YEAR}–{END_YEAR}) · Bootstrap simulation · Mann-Kendall trend test · LISA spatial analysis · 2030 projection"},
+        "kpi_yuksek":       {"TR": "Yüksek Riskli İlçeler", "EN": "High-Risk Districts"},
+        "kpi_orta":         {"TR": "Orta Riskli İlçeler",   "EN": "Medium-Risk Districts"},
+        "kpi_dusuk":        {"TR": "Düşük Riskli İlçeler",  "EN": "Low-Risk Districts"},
+        "kpi_baraj":        {"TR": "Tahtalı Doluluk",        "EN": "Tahtalı Fill Rate"},
+        "kpi_enaz":         {"TR": "En Az Riskli",           "EN": "Lowest Risk"},
+        # Risk labels
+        "yuksek_risk":      {"TR": "Yüksek Risk", "EN": "High Risk"},
+        "orta_risk":        {"TR": "Orta Risk",   "EN": "Medium Risk"},
+        "dusuk_risk":       {"TR": "Düşük Risk",  "EN": "Low Risk"},
+        # Sayfa başlıkları
+        "eda_baslik":       {"TR": "Keşifsel Veri Analizi",    "EN": "Exploratory Data Analysis"},
+        "risk_baslik":      {"TR": "Su Güvenliği Risk Endeksi","EN": "Water Security Risk Index"},
+        "tahmin_baslik":    {"TR": "2030 Yılı Risk Projeksiyonu","EN":"2030 Risk Projection"},
+        "harita_baslik":    {"TR": "İzmir İlçe Risk Haritası", "EN": "Izmir District Risk Map"},
+        "mekansal_baslik":  {"TR": "Mekânsal Analiz",          "EN": "Spatial Analysis"},
+        "oneri_baslik":     {"TR": "İlçe Bazlı Öneriler",      "EN": "District-Based Recommendations"},
+        "metodoloji_baslik":{"TR": "Metodoloji & Teknik Detaylar","EN":"Methodology & Technical Details"},
+        "arac_baslik":      {"TR": "İnteraktif Araçlar",       "EN": "Interactive Tools"},
+        # Araçlar
+        "arac_alt":         {"TR": f"Radar profil · İlçe karşılaştırma · Risk simülatörü · {len(YEARS)} yıllık animasyonlu seri",
+                             "EN": f"Radar profile · District comparison · Risk simulator · {len(YEARS)}-year animated series"},
+        "ilce_sec":         {"TR": "🏙️ Analiz edilecek ilçeyi seç:", "EN": "🏙️ Select district to analyze:"},
+        "karsi_ilce":       {"TR": "Karşılaştırılacak ilçe:", "EN": "Compare with:"},
+        "sim_baslik":       {"TR": "Risk Simülatörü — Anlık Duyarlılık","EN":"Risk Simulator — Live Sensitivity"},
+        "sim_caption":      {"TR": "Gösterge değerlerini değiştir → Risk skoru entropy ağırlıklarıyla anlık güncellenir",
+                             "EN": "Adjust indicator values → Risk score updates instantly using entropy weights"},
+        "sim_talep_lbl":    {"TR": "💧 Abone Tüketim (m³)",  "EN": "💧 Per-Subscriber Consumption (m³)"},
+        "sim_artis_lbl":    {"TR": "📈 Tüketim Artışı (%)",  "EN": "📈 Consumption Growth (%)"},
+        "sim_arz_lbl":      {"TR": "⚖️ Arz Kısıtı (%)",      "EN": "⚖️ Supply Constraint (%)"},
+        "sim_kayip_lbl":    {"TR": "🔴 Kayıp Oranı (%)",     "EN": "🔴 Water Loss Rate (%)"},
+        "sim_skor":         {"TR": "Simüle Edilen Skor",      "EN": "Simulated Score"},
+        "sim_sinif":        {"TR": "Risk Sınıfı",             "EN": "Risk Class"},
+        "harita_yil_lbl":   {"TR": "📅 Yıl Seçin",           "EN": "📅 Select Year"},
+        "risk_sira":        {"TR": "Yılı Risk Sıralaması",    "EN": "Risk Ranking"},
+        "risk_skoru":       {"TR": "Risk Skoru",              "EN": "Risk Score"},
+        "risk_sinifi":      {"TR": "Risk Sınıfı",             "EN": "Risk Class"},
+        "proj_2030":        {"TR": "2030 Projeksiyonu",       "EN": "2030 Projection"},
+        "kotumser":         {"TR": "Kötümser",                "EN": "Pessimistic"},
+        "baz":              {"TR": "Baz",                     "EN": "Base"},
+        "iyimser":          {"TR": "İyimser",                 "EN": "Optimistic"},
+    }
+
+    def t(key):
+        """Çeviri yardımcı fonksiyon"""
+        return T.get(key, {}).get(dil, T.get(key, {}).get("TR", key))
 
     if st.session_state.acik_tema:
         st.markdown("""
@@ -1101,6 +1166,20 @@ if data_loaded:
             for col, isim, renk, konum_tip, aciklama, durum in baraj_detay:
                 with col:
                     with st.expander(isim, expanded=True):
+                        # Resim
+                        img_map = {
+                            "💧 Tahtalı Barajı": "tahtali.jpg",
+                            "🌿 Balçova Barajı": "balcova.jpg",
+                            "⚠️ Gördes Barajı":  "gordes.jpg",
+                        }
+                        img_file = img_map.get(isim, "")
+                        try:
+                            st.image(img_file, use_container_width=True)
+                        except Exception:
+                            st.markdown(f"""<div style="background:rgba(0,0,0,0.3);height:140px;
+                                display:flex;align-items:center;justify-content:center;
+                                border-radius:8px;font-size:2.5rem;margin-bottom:8px;">🏞️</div>""",
+                                unsafe_allow_html=True)
                         st.markdown(f"""
                         <div style="color:{renk};font-size:0.72rem;font-weight:600;
                                     letter-spacing:0.5px;margin-bottom:8px;white-space:pre-line;">
@@ -2868,6 +2947,136 @@ if data_loaded:
         fig_anim.frames = frames_anim
         st.plotly_chart(fig_anim, use_container_width=True, key="risk_anim")
         st.caption("🔬 = Bootstrap simülasyonu (2010–2019) · ✅ = İZSU Gerçek Verisi (2020–2023)")
+
+        # Bölüm 4: İlçe Risk Tahmini Oyunu
+        st.markdown(f"""
+        <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
+            <div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">04 · TAHMİN OYUNU</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">İlçe Risk Skoru Tahmin Et</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        st.caption("2023 yılı için seçilen ilçenin risk skorunu tahmin et — ne kadar yaklaşabilirsin?")
+
+        manuel_skor_oyun = {
+            "BORNOVA":67.0,"ÇİĞLİ":62.5,"BAYRAKLI":60.0,"BUCA":51.0,
+            "GAZİEMİR":54.0,"GÜZELBAHÇE":49.0,"KARŞIYAKA":47.0,
+            "NARLIDERE":47.0,"KONAK":45.5,"KARABAĞLAR":43.0,"BALÇOVA":42.0,
+        }
+        oyun_col1, oyun_col2 = st.columns([2,1])
+        with oyun_col1:
+            oyun_ilce = st.selectbox("İlçeyi seç:", sorted(manuel_skor_oyun.keys()), key="oyun_ilce")
+            tahmin = st.slider("Senin tahminin (0–100):", 0, 100, 50, key="tahmin_slider")
+            gercek = manuel_skor_oyun[oyun_ilce]
+            fark = abs(tahmin - gercek)
+            if st.button("✅ Tahmini Kontrol Et", key="tahmin_btn"):
+                if fark <= 2:
+                    emoji, mesaj, renk_o = "🏆", "Mükemmel! 2 puan içindesin!", "#2ca02c"
+                elif fark <= 5:
+                    emoji, mesaj, renk_o = "🎯", "Çok yakın! 5 puan içindesin.", "#38d1e3"
+                elif fark <= 10:
+                    emoji, mesaj, renk_o = "👍", "Fena değil — 10 puan içindesin.", "#ff7f0e"
+                else:
+                    emoji, mesaj, renk_o = "📖", f"Öğrenmeye devam! Gerçek skor: {gercek}", "#d62728"
+                st.markdown(f"""
+                <div style="background:rgba(255,255,255,0.06);border-left:4px solid {renk_o};
+                            border-radius:8px;padding:1rem 1.2rem;margin-top:0.5rem;">
+                    <div style="font-size:1.8rem;margin-bottom:4px;">{emoji}</div>
+                    <div style="color:white;font-size:1rem;font-weight:700;">{mesaj}</div>
+                    <div style="color:#a8d8f0;font-size:0.85rem;margin-top:4px;">
+                        Tahminın: <b>{tahmin}</b> · Gerçek: <b>{gercek}</b> · Fark: <b>{fark:.1f} puan</b>
+                    </div>
+                </div>""", unsafe_allow_html=True)
+        with oyun_col2:
+            st.markdown("""
+            <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.2);
+                        border-radius:10px;padding:1rem;margin-top:1rem;">
+                <div style="color:#38d1e3;font-size:0.72rem;font-weight:700;margin-bottom:8px;">📋 PUANLAMA</div>
+                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.8;">
+                    🏆 ≤ 2 puan: Mükemmel<br>
+                    🎯 ≤ 5 puan: Çok yakın<br>
+                    👍 ≤ 10 puan: İyi<br>
+                    📖 &gt;10 puan: Tekrar dene<br><br>
+                    <span style="color:#7a9ab0;font-size:0.72rem;">
+                    İpucu: Yüksek nüfuslu ve<br>sanayi yoğun ilçeler<br>genelde yüksek riskli!</span>
+                </div>
+            </div>""", unsafe_allow_html=True)
+
+        # Bölüm 5: Risk Değişim Hesaplayıcı
+        st.markdown(f"""
+        <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
+            <div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">05 · DEĞİŞİM HESAPLAYICI</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">İki İlçeyi Yıllar İçinde Karşılaştır</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        st.caption("İki ilçeyi seç, yıl aralığını belirle — puan farkı ve değişim yüzdesini gör")
+
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            hes_ilce1 = st.selectbox("1. İlçe:", sorted(manuel_risk_anim.keys()), key="hes1")
+        with c2:
+            hes_ilce2 = st.selectbox("2. İlçe:", sorted(manuel_risk_anim.keys()),
+                                      index=2, key="hes2")
+        with c3:
+            hes_yil1, hes_yil2 = st.select_slider(
+                "Yıl aralığı:", options=YEARS, value=(2010, 2023), key="hes_yil"
+            )
+
+        idx1 = YEARS.index(hes_yil1)
+        idx2 = YEARS.index(hes_yil2)
+        s1_bas = manuel_risk_anim[hes_ilce1][idx1]
+        s1_son = manuel_risk_anim[hes_ilce1][idx2]
+        s2_bas = manuel_risk_anim[hes_ilce2][idx1]
+        s2_son = manuel_risk_anim[hes_ilce2][idx2]
+
+        hc1,hc2,hc3,hc4 = st.columns(4)
+        for col, baslik, val1, val2, renk in [
+            (hc1, f"{hes_ilce1} ({hes_yil1})", s1_bas, None, "#38d1e3"),
+            (hc2, f"{hes_ilce1} ({hes_yil2})", s1_son, s1_son-s1_bas, "#38d1e3"),
+            (hc3, f"{hes_ilce2} ({hes_yil1})", s2_bas, None, "#ff7f0e"),
+            (hc4, f"{hes_ilce2} ({hes_yil2})", s2_son, s2_son-s2_bas, "#ff7f0e"),
+        ]:
+            with col:
+                delta_str = ""
+                if val2 is not None:
+                    ok = "▲" if val2>0 else "▼"
+                    dr = "#d62728" if val2>0 else "#2ca02c"
+                    delta_str = f'<div style="color:{dr};font-size:0.75rem;">{ok} {abs(val2):.1f} puan</div>'
+                st.markdown(f"""
+                <div style="background:rgba(255,255,255,0.05);border:1px solid {renk}44;
+                            border-top:2px solid {renk};border-radius:8px;padding:0.7rem;text-align:center;">
+                    <div style="color:#a8d8f0;font-size:0.65rem;">{baslik}</div>
+                    <div style="color:white;font-size:1.3rem;font-weight:700;">{val1:.1f}</div>
+                    {delta_str}
+                </div>""", unsafe_allow_html=True)
+
+        # Değişim grafiği
+        fig_hes = go.Figure()
+        x_range = YEARS[idx1:idx2+1]
+        fig_hes.add_trace(go.Scatter(
+            x=x_range, y=manuel_risk_anim[hes_ilce1][idx1:idx2+1],
+            mode="lines+markers", name=hes_ilce1,
+            line=dict(color="#38d1e3",width=2.5), marker=dict(size=7)))
+        fig_hes.add_trace(go.Scatter(
+            x=x_range, y=manuel_risk_anim[hes_ilce2][idx1:idx2+1],
+            mode="lines+markers", name=hes_ilce2,
+            line=dict(color="#ff7f0e",width=2.5), marker=dict(size=7)))
+        fig_hes.update_layout(
+            plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+            height=280, font=dict(color="white"), hovermode="x unified",
+            xaxis=dict(gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="white")),
+            yaxis=dict(title="Risk Skoru", gridcolor="rgba(255,255,255,0.08)",
+                       tickfont=dict(color="white"), range=[30,80]),
+            legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)"),
+            margin=dict(t=10,b=30,l=50,r=20)
+        )
+        st.plotly_chart(fig_hes, use_container_width=True, key="hes_grafik")
+
 
 
 
