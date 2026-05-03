@@ -9,3 +9,4 @@ requests
 streamlit-folium
 folium
 streamlit-option-menu
+geopandas
