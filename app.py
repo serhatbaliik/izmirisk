@@ -815,14 +815,98 @@ if data_loaded:
     if st.session_state.acik_tema:
         st.markdown("""
         <style>
+        /* ── GÜNDÜZ MODU — Derin deniz mavisi paleti ── */
         .stApp {
-            background-image: linear-gradient(rgba(240,248,255,0.92),rgba(235,245,255,0.92)),
-                url("https://images.unsplash.com/photo-1527489377706-5bf97e608852?w=1600&q=80") !important;
-            background-size: cover; background-position: center top; background-attachment: fixed;
+            background: linear-gradient(160deg, #dff0fb 0%, #c8e6f5 40%, #d6eef8 100%) !important;
+            background-image: none !important;
         }
-        h1,h2,h3 { color: #0a3060 !important; }
-        p, li, label, div { color: #1a3a5c !important; }
-        [data-testid="stSidebar"] { background: rgba(220,240,255,0.95) !important; }
+
+        /* Başlıklar */
+        h1 { color: #0a3d6b !important; }
+        h2 { color: #1a5276 !important; }
+        h3 { color: #1f618d !important; }
+
+        /* Genel metin */
+        p, li, label { color: #154360 !important; }
+        div { color: #154360 !important; }
+
+        /* Beyaz yazıları koyu maviye çevir */
+        [style*="color:#ffffff"], [style*="color: #ffffff"],
+        [style*="color:white"], [style*="color: white"] {
+            color: #0a3d6b !important;
+        }
+        [style*="color:#a8d8f0"], [style*="color:#38d1e3"],
+        [style*="color:#c5e8f7"], [style*="color:#d0e8f5"] {
+            color: #1a6ea8 !important;
+        }
+
+        /* Metric kartları */
+        [data-testid="metric-container"] {
+            background: rgba(255,255,255,0.7) !important;
+            border: 1px solid rgba(26,110,168,0.3) !important;
+        }
+        [data-testid="metric-container"] label { color: #1a6ea8 !important; }
+        [data-testid="metric-container"] [data-testid="stMetricValue"] { color: #0a3d6b !important; }
+
+        /* Nav butonlar */
+        div[data-testid="stHorizontalBlock"] > div[data-testid="column"]
+            > div > div > div > button {
+            background: rgba(255,255,255,0.65) !important;
+            border: 1.5px solid rgba(26,110,168,0.4) !important;
+            color: #0a3d6b !important;
+        }
+        div[data-testid="stHorizontalBlock"] > div[data-testid="column"]
+            > div > div > div > button:hover {
+            background: rgba(26,110,168,0.15) !important;
+            color: #052e5e !important;
+        }
+
+        /* Input alanlar */
+        [data-testid="stTextInput"] input {
+            background: rgba(255,255,255,0.7) !important;
+            border-color: rgba(26,110,168,0.4) !important;
+            color: #0a3d6b !important;
+        }
+
+        /* Plotly grafik arka planları */
+        .js-plotly-plot { background: rgba(255,255,255,0.6) !important; border-radius: 10px; }
+
+        /* Tab */
+        .stTabs [data-baseweb="tab"] {
+            color: #1a6ea8 !important;
+            background: rgba(255,255,255,0.5) !important;
+        }
+        .stTabs [aria-selected="true"] {
+            background: rgba(26,110,168,0.15) !important;
+            border-bottom: 2px solid #1a6ea8 !important;
+        }
+
+        /* Expander */
+        [data-testid="stExpander"] {
+            background: rgba(255,255,255,0.6) !important;
+            border: 1px solid rgba(26,110,168,0.25) !important;
+        }
+
+        /* Dataframe */
+        [data-testid="stDataFrame"] { background: rgba(255,255,255,0.7) !important; }
+
+        /* Sidebar */
+        [data-testid="stSidebar"] { background: rgba(200,230,248,0.95) !important; }
+
+        /* Alert/info kutular */
+        .stAlert { background: rgba(255,255,255,0.7) !important; border-color: rgba(26,110,168,0.3) !important; }
+
+        /* Genel container arka planlar */
+        [style*="background:rgba(255,255,255,0.05)"],
+        [style*="background:rgba(255,255,255,0.06)"],
+        [style*="background:rgba(255,255,255,0.04)"],
+        [style*="background:rgba(255,255,255,0.08)"] {
+            background: rgba(255,255,255,0.65) !important;
+        }
+        [style*="background:rgba(0,0,0,0.3)"],
+        [style*="background:rgba(0,0,0,0.25)"] {
+            background: rgba(255,255,255,0.5) !important;
+        }
         </style>
         """, unsafe_allow_html=True)
 
