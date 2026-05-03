@@ -469,6 +469,40 @@ if data_loaded:
         _ara_btn = st.button("🔍", key="arama_btn", use_container_width=True)
 
     if _arama_girdi and (_ara_btn or len(_arama_girdi) > 2):
+        _arama_sozluk = {
+            "baraj":("📊 EDA Analizi",None),"tahtalı":("📊 EDA Analizi",None),
+            "balçova":("📊 EDA Analizi",None),"gördes":("📊 EDA Analizi",None),
+            "doluluk":("📊 EDA Analizi",None),"dam":("📊 EDA Analizi",None),
+            "tüketim":("📊 EDA Analizi",None),"consumption":("📊 EDA Analizi",None),
+            "arz":("📊 EDA Analizi",None),"supply":("📊 EDA Analizi",None),
+            "kayıp":("📊 EDA Analizi",None),"loss":("📊 EDA Analizi",None),
+            "eda":("📊 EDA Analizi",None),"analiz":("📊 EDA Analizi",None),
+            "risk":("📈 Risk Endeksi",None),"wsri":("📈 Risk Endeksi",None),
+            "entropy":("📈 Risk Endeksi",None),"endeks":("📈 Risk Endeksi",None),
+            "bornova":("📈 Risk Endeksi",None),"çiğli":("📈 Risk Endeksi",None),
+            "bayraklı":("📈 Risk Endeksi",None),"buca":("📈 Risk Endeksi",None),
+            "gaziemir":("📈 Risk Endeksi",None),"karşıyaka":("📈 Risk Endeksi",None),
+            "konak":("📈 Risk Endeksi",None),"karabağlar":("📈 Risk Endeksi",None),
+            "narlidere":("📈 Risk Endeksi",None),"güzelbahçe":("📈 Risk Endeksi",None),
+            "district":("📈 Risk Endeksi",None),"ilçe":("📈 Risk Endeksi",None),
+            "2030":("🔮 2030 Tahmini",None),"projeksiyon":("🔮 2030 Tahmini",None),
+            "projection":("🔮 2030 Tahmini",None),"senaryo":("🔮 2030 Tahmini",None),
+            "tahmin":("🔮 2030 Tahmini",None),"forecast":("🔮 2030 Tahmini",None),
+            "harita":("Izmir Risk Haritasi",None),"map":("Izmir Risk Haritasi",None),
+            "moran":("🗺️ Mekânsal Analiz",None),"lisa":("🗺️ Mekânsal Analiz",None),
+            "mekânsal":("🗺️ Mekânsal Analiz",None),"spatial":("🗺️ Mekânsal Analiz",None),
+            "küme":("🗺️ Mekânsal Analiz",None),"cluster":("🗺️ Mekânsal Analiz",None),
+            "öneri":("💡 Öneriler",None),"recommendation":("💡 Öneriler",None),
+            "suggestion":("💡 Öneriler",None),"tavsiye":("💡 Öneriler",None),
+            "metodoloji":("📐 Metodoloji",None),"methodology":("📐 Metodoloji",None),
+            "bootstrap":("📐 Metodoloji",None),"mann":("📐 Metodoloji",None),
+            "formül":("📐 Metodoloji",None),"yöntem":("📐 Metodoloji",None),
+            "radar":("🔬 Araçlar",None),"simülatör":("🔬 Araçlar",None),
+            "simulator":("🔬 Araçlar",None),"araç":("🔬 Araçlar",None),
+            "tool":("🔬 Araçlar",None),"karşılaştır":("🔬 Araçlar",None),
+            "compare":("🔬 Araçlar",None),"animasyon":("🔬 Araçlar",None),
+            "hesapla":("🔬 Araçlar",None),"calculator":("🔬 Araçlar",None),
+        }
         _temiz = _arama_girdi.strip().lower()
         _bulundu = False
         for _k, _v in _arama_sozluk.items():
@@ -1744,7 +1778,7 @@ if data_loaded:
             st.plotly_chart(fig2, use_container_width=True, key="risk_heat")
 
         # ── 02 Trend Grafikleri — Manuel veriler
-        st.markdown("""
+        st.markdown(f"""
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
@@ -2762,7 +2796,7 @@ if data_loaded:
         renk = get_risk_color(skor)
 
         # Bölüm 1: Radar + Karşılaştırma
-        st.markdown("""
+        st.markdown(f"""
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
@@ -2875,7 +2909,7 @@ if data_loaded:
         )
 
         # Bölüm 2: Risk Simülatörü — düzeltilmiş
-        st.markdown("""
+        st.markdown(f"""
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
