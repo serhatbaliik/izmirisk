@@ -487,6 +487,20 @@ if data_loaded:
     div[data-testid="stTextInput"] input::placeholder {
         color: rgba(168,216,240,0.45) !important;
     }
+    /* Arama ok butonu — turkuaz */
+    div[data-testid="column"]:last-child > div > div > div > button {
+        background: rgba(56,209,227,0.12) !important;
+        border: 1px solid rgba(56,209,227,0.4) !important;
+        color: #38d1e3 !important;
+        border-radius: 20px !important;
+        font-size: 1rem !important;
+        height: 30px !important;
+        padding: 0 !important;
+    }
+    div[data-testid="column"]:last-child > div > div > div > button:hover {
+        background: rgba(56,209,227,0.25) !important;
+        color: #ffffff !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -2019,7 +2033,7 @@ if data_loaded:
         baz_2030 = [53, 50, 49, 46, 44, 42, 41, 39, 37, 35, 34]
         iyi_2030 = [48, 45, 44, 41, 40, 38, 36, 34, 33, 32, 30]
 
-        st.markdown("""
+        st.markdown(f"""
         <div style="display:flex;align-items:center;gap:12px;margin:0 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
