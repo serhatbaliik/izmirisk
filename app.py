@@ -415,7 +415,7 @@ if data_loaded:
         <!-- sağ köşe bilgi -->
         <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);
                     color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.7;">
-            Veri: İZSU + Bootstrap Simülasyonu<br>11 Merkez İlçe · Entropy-WSRI
+            {"Veri: İZSU + Bootstrap Simülasyonu" if dil=="TR" else "Data: IZSU + Bootstrap Simulation"}<br>{"11 Merkez İlçe · Entropy-WSRI" if dil=="TR" else "11 Central Districts · Entropy-WSRI"}
         </div>
         <!-- orta logo + başlık -->
         <div style="display:inline-flex;align-items:center;gap:18px;">
@@ -642,10 +642,10 @@ if data_loaded:
         "sim_arz_lbl":      {"TR": "⚖️ Arz Kısıtı (%)",      "EN": "⚖️ Supply Constraint (%)"},
         "sim_kayip_lbl":    {"TR": "🔴 Kayıp Oranı (%)",     "EN": "🔴 Water Loss Rate (%)"},
         "sim_skor":         {"TR": "Simüle Edilen Skor",      "EN": "Simulated Score"},
-        "sim_sinif":        {"TR": "Risk Sınıfı",             "EN": "Risk Class"},
+        "sim_sinif":        {"TR": "Risk Sınıfı" if dil=="TR" else "Risk Class",             "EN": "Risk Class"},
         "harita_yil_lbl":   {"TR": "📅 Yıl Seçin",           "EN": "📅 Select Year"},
         "risk_sira":        {"TR": "Yılı Risk Sıralaması",    "EN": "Risk Ranking"},
-        "risk_skoru":       {"TR": "Risk Skoru",              "EN": "Risk Score"},
+        "risk_skoru":       {"TR": "Risk Skoru" if dil=="TR" else "Risk Score",              "EN": "Risk Score"},
         "risk_sinifi":      {"TR": "Risk Sınıfı",             "EN": "Risk Class"},
         "proj_2030":        {"TR": "2030 Projeksiyonu",       "EN": "2030 Projection"},
         "kotumser":         {"TR": "Kötümser",                "EN": "Pessimistic"},
@@ -696,7 +696,7 @@ if data_loaded:
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:6px 20px;margin-bottom:1rem;">
                 <span style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;font-weight:600;">
-                    {t("ana_baslik").upper() if dil=="EN" else "SU GÜVENLİĞİ ANALİZİ · İZMİR {START_YEAR}–{PRED_END_YEAR}"}
+                    {"WATER SECURITY ANALYSIS · IZMIR" if dil=="EN" else "SU GÜVENLİĞİ ANALİZİ · İZMİR"} · {START_YEAR}–{PRED_END_YEAR}
                 </span>
             </div>
             <div class="wave-container"><div class="wave"></div></div>
@@ -786,9 +786,9 @@ if data_loaded:
                         border-radius:2px;"></div>
             <div>
                 <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;
-                            text-transform:uppercase;">01 · Risk Göstergesi</div>
+                            text-transform:uppercase;">{"01 · Risk Göstergesi" if dil=="TR" else "01 · Risk Indicator"}</div>
                 <div style="color:#ffffff;font-size:1.1rem;font-weight:600;">
-                    En Riskli 3 İlçe — {END_YEAR} Risk İbresi
+                    {"En Riskli 3 İlçe" if dil=="TR" else "Top 3 High-Risk Districts"} — {END_YEAR} {"Risk İbresi" if dil=="TR" else "Risk Gauge"}
                 </div>
             </div>
         </div>
@@ -862,9 +862,9 @@ if data_loaded:
                         border-radius:2px;"></div>
             <div>
                 <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;
-                            text-transform:uppercase;">02 · Risk Analizi</div>
+                            text-transform:uppercase;">{"02 · Risk Analizi" if dil=="TR" else "02 · Risk Analysis"}</div>
                 <div style="color:#ffffff;font-size:1.1rem;font-weight:600;">
-                    {END_YEAR} Yılı İlçe Risk Sıralaması & Ağırlık Dağılımı
+                    {"{END_YEAR} Yılı İlçe Risk Sıralaması & Ağırlık Dağılımı" if dil=="TR" else "{END_YEAR} District Risk Ranking & Weight Distribution"}
                 </div>
             </div>
         </div>
@@ -907,10 +907,10 @@ if data_loaded:
                 hovertemplate="<b>%{y}</b><br>Risk Skoru: %{x:.1f}<extra></extra>"
             ))
             fig.add_vline(x=46, line_dash="dot", line_color="#ff7f0e",
-                          line_width=1.5, annotation_text="Orta Risk Eşiği (46)",
+                          line_width=1.5, annotation_text=("Orta Risk Eşiği (46)" if dil=="TR" else "Medium Risk Threshold (46)"),
                           annotation_font_color="#ff7f0e", annotation_font_size=10)
             fig.add_vline(x=60, line_dash="dot", line_color="#d62728",
-                          line_width=1.5, annotation_text="Yüksek Risk Eşiği (60)",
+                          line_width=1.5, annotation_text=("Yüksek Risk Eşiği (60)" if dil=="TR" else "High Risk Threshold (60)"),
                           annotation_font_color="#d62728", annotation_font_size=10)
             fig.update_layout(
                 plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
@@ -978,15 +978,15 @@ if data_loaded:
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;">03 · KÜRESEL BAĞLAM</div>
-                <div style="color:#ffffff;font-size:1.1rem;font-weight:600;">İzmir Dünya Genelinde Nerede?</div>
+                <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;">{"03 · KÜRESEL BAĞLAM" if dil=="TR" else "03 · GLOBAL CONTEXT"}</div>
+                <div style="color:#ffffff;font-size:1.1rem;font-weight:600;">{"İzmir Dünya Genelinde Nerede?" if dil=="TR" else "Where Does Izmir Stand Globally?"}</div>
             </div>
         </div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:0.8rem;">
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(214,39,40,0.3);
                         border-radius:10px;padding:0.9rem;text-align:center;">
                 <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">
-                    Su Stresi Altındaki Nüfus</div>
+                    {"Su Stresi Altındaki Nüfus" if dil=="TR" else "Population Under Water Stress"}</div>
                 <div style="color:#d62728;font-size:1.6rem;font-weight:700;">%40</div>
                 <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">
                     Dünya nüfusunun %40'ı yılın en az bir ayında ciddi su stresiyle karşılaşıyor.<br>
@@ -996,7 +996,7 @@ if data_loaded:
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,127,14,0.3);
                         border-radius:10px;padding:0.9rem;text-align:center;">
                 <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">
-                    Akdeniz Havzası Su Açığı</div>
+                    {"Akdeniz Havzası Su Açığı" if dil=="TR" else "Mediterranean Basin Water Deficit"}</div>
                 <div style="color:#ff7f0e;font-size:1.6rem;font-weight:700;">−20%</div>
                 <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">
                     İklim değişikliğiyle Akdeniz havzasında yıllık yağış 2050'ye kadar
@@ -1007,7 +1007,7 @@ if data_loaded:
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(56,209,227,0.3);
                         border-radius:10px;padding:0.9rem;text-align:center;">
                 <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">
-                    İzmir WSRI Ortalaması</div>
+                    {"İzmir WSRI Ortalaması" if dil=="TR" else "Izmir WSRI Average"}</div>
                 <div style="color:#38d1e3;font-size:1.6rem;font-weight:700;">{wsri_ort:.1f}</div>
                 <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">
                     11 merkez ilçe ortalaması — Orta Risk bandı.
@@ -1018,7 +1018,7 @@ if data_loaded:
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(44,160,44,0.3);
                         border-radius:10px;padding:0.9rem;text-align:center;">
                 <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">
-                    Türkiye'nin Kişi Başı Su Potansiyeli</div>
+                    {"Türkiye'nin Kişi Başı Su Potansiyeli" if dil=="TR" else "Turkey's Per Capita Water Potential"}</div>
                 <div style="color:#2ca02c;font-size:1.6rem;font-weight:700;">1.346 m³</div>
                 <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">
                     Kişi başı yıllık kullanılabilir tatlı su. Uluslararası eşik 1.700 m³ —
@@ -1123,10 +1123,10 @@ if data_loaded:
         )
 
         tab1, tab2, tab3, tab4 = st.tabs([
-            "💧 Baraj Doluluk",
-            "🌡️ Tüketim Haritası",
-            "⚖️ Arz-Talep",
-            "📉 Kayıp Oranı"
+            "💧 " + ("Baraj Doluluk" if dil=="TR" else "Dam Levels"),
+            "🌡️ " + ("Tüketim Haritası" if dil=="TR" else "Consumption Map"),
+            "⚖️ " + ("Arz-Talep" if dil=="TR" else "Supply-Demand"),
+            "📉 " + ("Kayıp Oranı" if dil=="TR" else "Loss Rate")
         ])
 
         with tab1:
@@ -1463,7 +1463,7 @@ if data_loaded:
                 Su Güvenliği Risk Endeksi
             </div>
             <div style="color:#a8d8f0;font-size:0.9rem;">
-                Entropy ağırlıklı bileşik skor · 4 gösterge · 0–100 ölçeği · {len(YEARS)} yıllık seri
+                {"Entropy ağırlıklı bileşik skor · 4 gösterge · 0–100 ölçeği" if dil=="TR" else "Entropy-weighted composite score · 4 indicators · 0–100 scale"} · {len(YEARS)} {"yıllık seri" if dil=="TR" else "year series"}
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1578,9 +1578,9 @@ if data_loaded:
                         border-radius:2px;"></div>
             <div>
                 <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">
-                    01 · İLÇE SKORLARI</div>
+                    {"01 · İLÇE SKORLARI" if dil=="TR" else "01 · DISTRICT SCORES"}</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
-                    İlçe Risk Skorları & {len(YEARS)} Yıllık Karşılaştırma</div>
+                    {"İlçe Risk Skorları" if dil=="TR" else "District Risk Scores"} & {len(YEARS)} {"Yıllık Karşılaştırma" if dil=="TR" else "Year Comparison"}</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1644,9 +1644,9 @@ if data_loaded:
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">02 · RİSK TRENDİ</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">{"02 · RİSK TRENDİ" if dil=="TR" else "02 · RISK TREND"}</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
-                    İlçe Bazlı Risk Skoru Trendi (2010–2023)</div>
+                    {"İlçe Bazlı Risk Skoru Trendi" if dil=="TR" else "District-Level Risk Score Trend"} (2010–2023)</div>
             </div>
         </div>""", unsafe_allow_html=True)
 
@@ -1773,14 +1773,14 @@ if data_loaded:
                         border-radius:2px;"></div>
             <div>
                 <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">
-                    02 · İLÇE DETAYI</div>
+                    {"02 · İLÇE DETAYI" if dil=="TR" else "02 · DISTRICT DETAIL"}</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
-                    İlçe Bazlı Detay — Risk Bileşenleri</div>
+                    {"İlçe Bazlı Detay — Risk Bileşenleri" if dil=="TR" else "District Detail — Risk Components"}</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-        ilce_sec = st.selectbox("İlçe seç:", sorted(risk_df["İlçe"].unique()))
+        ilce_sec = st.selectbox("İlçe seç:" if dil=="TR" else "Select district:", sorted(risk_df["İlçe"].unique()))
 
         # Manuel 2023 risk skorları — gerçek değerler
         manuel_skor_2023 = {
@@ -1887,9 +1887,9 @@ if data_loaded:
         <div style="display:flex;align-items:center;gap:12px;margin:0 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">00 · 2030 ANİK PROJEKSİYONU</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">{"00 · 2030 ANİK PROJEKSİYONU" if dil=="TR" else "00 · 2030 INSTANT PROJECTION"}</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
-                    2030 Yılı Risk Skoru — 3 Senaryo (Tüm İlçeler)</div>
+                    {"2030 Yılı Risk Skoru — 3 Senaryo (Tüm İlçeler)" if dil=="TR" else "2030 Risk Score — 3 Scenarios (All Districts)"}</div>
             </div>
         </div>""", unsafe_allow_html=True)
 
@@ -1919,7 +1919,7 @@ if data_loaded:
             annotation_text="Yüksek Risk Eşiği (60)",
             annotation_font_color="#d62728", annotation_font_size=10)
         fig_2030.add_hline(y=46, line_dash="dot", line_color="#ff7f0e", line_width=1.5,
-            annotation_text="Orta Risk Alt Eşiği (46)",
+            annotation_text=("Orta Risk Alt Eşiği (46)" if dil=="TR" else "Medium Risk Lower Bound (46)"),
             annotation_font_color="#ff7f0e", annotation_font_size=10)
         fig_2030.update_layout(
             plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
@@ -1940,9 +1940,9 @@ if data_loaded:
             <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.28);
                         border-radius:10px;padding:0.9rem 1rem;">
                 <div style="color:#d62728;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">
-                    🔴 KÖTÜMSER SENARYO — CAGR × 1.5</div>
+                    {"🔴 KÖTÜMSER SENARYO" if dil=="TR" else "🔴 PESSIMISTIC SCENARIO"} — CAGR × 1.5</div>
                 <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:5px;">
-                    Mevcut büyüme hızı 1.5 katına çıkarsa</div>
+                    {"Mevcut büyüme hızı 1.5 katına çıkarsa" if dil=="TR" else "If current growth rate increases 1.5x"}</div>
                 <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
                     Hızlı kentleşme, iklim kaynaklı arz kısıtı ve altyapı yatırımlarının yetersiz
                     kalması durumunda risk skorları 2030'da belirgin biçimde yükselir.
@@ -1952,9 +1952,9 @@ if data_loaded:
             <div style="background:rgba(255,127,14,0.07);border:1px solid rgba(255,127,14,0.28);
                         border-radius:10px;padding:0.9rem 1rem;">
                 <div style="color:#ff7f0e;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">
-                    🟠 BAZ SENARYO — CAGR × 1.0</div>
+                    {"🟠 BAZ SENARYO" if dil=="TR" else "🟠 BASE SCENARIO"} — CAGR × 1.0</div>
                 <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:5px;">
-                    Mevcut trend aynen devam ederse</div>
+                    {"Mevcut trend aynen devam ederse" if dil=="TR" else "If current trend continues"}</div>
                 <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
                     2023 büyüme hızının korunduğu varsayımında 2030 risk görünümü.
                     Genel eğilim düşüş yönünde ancak yüksek riskli ilçelerde 60 eşiği
@@ -1964,9 +1964,9 @@ if data_loaded:
             <div style="background:rgba(44,160,44,0.07);border:1px solid rgba(44,160,44,0.28);
                         border-radius:10px;padding:0.9rem 1rem;">
                 <div style="color:#2ca02c;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">
-                    🟢 İYİMSER SENARYO — CAGR × 0.5</div>
+                    {"🟢 İYİMSER SENARYO" if dil=="TR" else "🟢 OPTIMISTIC SCENARIO"} — CAGR × 0.5</div>
                 <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:5px;">
-                    Su tasarrufu politikaları hayata geçerse</div>
+                    {"Su tasarrufu politikaları hayata geçerse" if dil=="TR" else "If water saving policies are implemented"}</div>
                 <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
                     Akıllı sayaç yaygınlaşması, su tasarrufu kampanyaları ve altyapı iyileştirmeleriyle
                     büyüme hızının yarıya inmesi durumunda tüm ilçelerde belirgin risk azalışı öngörülmektedir.
@@ -1993,19 +1993,19 @@ if data_loaded:
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
                 <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
-                    MEKÂNSAL ANALİZ · MORAN'S I + LISA · {END_YEAR}
+                    {"MEKÂNSAL ANALİZ" if dil=="TR" else "SPATIAL ANALYSIS"} · MORAN'S I + LISA · {END_YEAR}
                 </span>
             </div>
             <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
                 Mekânsal Analiz
             </div>
             <div style="color:#a8d8f0;font-size:0.9rem;">
-                Yüksek riskli ilçeler birbirine komşu mu? · Global Moran's I · LISA kümeleme · {END_YEAR}
+                {"Yüksek riskli ilçeler birbirine komşu mu?" if dil=="TR" else "Are high-risk districts clustered?"} · Global Moran's I · LISA · {END_YEAR}
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-        with st.expander("ℹ️ Moran's I ve LISA nedir?"):
+        with st.expander("ℹ️ " + ("Moran's I ve LISA nedir?" if dil=="TR" else "What is Moran's I and LISA?")):
             st.markdown("""
             **Mekânsal Analiz** — Yüksek riskli ilçeler birbirine komşu mu, yoksa dağınık mı?
 
@@ -2131,9 +2131,9 @@ if data_loaded:
         <div style="display:flex;align-items:center;gap:12px;margin:0.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">01 · MEKÂNSAL ANALİZ</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">{"01 · MEKÂNSAL ANALİZ" if dil=="TR" else "01 · SPATIAL ANALYSIS"}</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
-                    Moran Scatter Plot & LISA Sınıflandırması — {END_YEAR}</div>
+                    {"Moran Scatter Plot & LISA Sınıflandırması" if dil=="TR" else "Moran Scatter Plot & LISA Classification"} — {END_YEAR}</div>
             </div>
         </div>""", unsafe_allow_html=True)
 
@@ -2201,14 +2201,14 @@ if data_loaded:
         with col2:
             st.markdown(f"""
             <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;
-                        margin-bottom:0.8rem;">LISA SINIFLANDIRMASI · {END_YEAR}</div>""",
+                        margin-bottom:0.8rem;">{"LISA SINIFLANDIRMASI" if dil=="TR" else "LISA CLASSIFICATION"} · {END_YEAR}</div>""",
                 unsafe_allow_html=True)
             sinif_renk = {"HH":"🔴","LL":"🟢","HL":"🟠","LH":"🔵"}
             sinif_acik = {"HH":"Sıcak Küme","LL":"Soğuk Küme","HL":"İzole Yüksek","LH":"Çevre Yüksek"}
             lisa_df = pd.DataFrame([
                 {"İlçe":i,"Risk":lisa_manuel[i]["risk"],
                  "LISA":f"{sinif_renk[lisa_manuel[i]['sinif']]} {lisa_manuel[i]['sinif']}",
-                 "Açıklama":sinif_acik[lisa_manuel[i]["sinif"]]}
+                 "Açıklama" if dil=="TR" else "Description":sinif_acik[lisa_manuel[i]["sinif"]]}
                 for i in sorted(ilceler_m, key=lambda x:-lisa_manuel[x]["risk"])
             ])
             st.dataframe(lisa_df, use_container_width=True, hide_index=True)
@@ -2263,7 +2263,7 @@ if data_loaded:
                 İlçe Bazlı Öneriler
             </div>
             <div style="color:#a8d8f0;font-size:0.9rem;">
-                Risk sınıfına göre kişiselleştirilmiş öneri · {len(YEARS)} yıllık trend analizi · 2030 projeksiyonu
+                Risk sınıfına göre kişiselleştirilmiş öneri · {len(YEARS)} {"yıllık trend analizi" if dil=="TR" else "year trend analysis"} · {"2030 projeksiyonu" if dil=="TR" else "2030 projection"}
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -2492,10 +2492,10 @@ if data_loaded:
             <div style="display:inline-block;background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);
                         border-radius:50px;padding:4px 16px;margin-bottom:0.8rem;">
                 <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
-                    ETKİLEŞİMLİ RİSK HARİTASI · İZMİR · {START_YEAR}–2030</span>
+                    {"ETKİLEŞİMLİ RİSK HARİTASI" if dil=="TR" else "INTERACTIVE RISK MAP"} · İZMİR · {START_YEAR}–2030</span>
             </div>
             <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">İzmir İlçe Risk Haritası</div>
-            <div style="color:#a8d8f0;font-size:0.9rem;">İlçe üzerine gel → risk bilgisi · Yıl seçilebilir</div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">{"İlçe üzerine gel → risk bilgisi · Yıl seçilebilir" if dil=="TR" else "Hover over district → risk info · Year selectable"}</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -2662,8 +2662,8 @@ if data_loaded:
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">01 · RADAR & KARŞILAŞTIRMA</div>
-                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">İlçe Radar Profili & Karşılaştırma</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">{"01 · RADAR & KARŞILAŞTIRMA" if dil=="TR" else "01 · RADAR & COMPARISON"}</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">{"İlçe Radar Profili & Karşılaştırma" if dil=="TR" else "District Radar Profile & Comparison"}</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -2775,7 +2775,7 @@ if data_loaded:
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">02 · SİMÜLATÖR</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">{"02 · SİMÜLATÖR" if dil=="TR" else "02 · SIMULATOR"}</div>
                 <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Risk Simülatörü — Anlık Duyarlılık</div>
             </div>
         </div>
@@ -2841,8 +2841,8 @@ if data_loaded:
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">03 · ZAMAN SERİSİ</div>
-                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Animasyonlu Risk Değişimi — {START_YEAR}–{END_YEAR} ({len(YEARS)} yıl)</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">{"03 · ZAMAN SERİSİ" if dil=="TR" else "03 · TIME SERIES"}</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">{"Animasyonlu Risk Değişimi" if dil=="TR" else "Animated Risk Change"} — {START_YEAR}–{END_YEAR} ({len(YEARS)} {"yıl" if dil=="TR" else "years"})</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -2935,83 +2935,27 @@ if data_loaded:
         st.plotly_chart(fig_anim, use_container_width=True, key="risk_anim")
         st.caption("🔬 = Bootstrap simülasyonu (2010–2019) · ✅ = İZSU Gerçek Verisi (2020–2023)")
 
-        # Bölüm 4: İlçe Risk Tahmini Oyunu
+        # Bölüm 4: Değişim Hesaplayıcı
         st.markdown(f"""
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">04 · TAHMİN OYUNU</div>
-                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">İlçe Risk Skoru Tahmin Et</div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">{"04 · DEĞİŞİM HESAPLAYICI" if dil=="TR" else "04 · CHANGE CALCULATOR"}</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">{"İki İlçeyi Yıllar İçinde Karşılaştır" if dil=="TR" else "Compare Two Districts Over Time"}</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
-        st.caption("2023 yılı için seçilen ilçenin risk skorunu tahmin et — ne kadar yaklaşabilirsin?")
-
-        manuel_skor_oyun = {
-            "BORNOVA":67.0,"ÇİĞLİ":62.5,"BAYRAKLI":60.0,"BUCA":51.0,
-            "GAZİEMİR":54.0,"GÜZELBAHÇE":49.0,"KARŞIYAKA":47.0,
-            "NARLIDERE":47.0,"KONAK":45.5,"KARABAĞLAR":43.0,"BALÇOVA":42.0,
-        }
-        oyun_col1, oyun_col2 = st.columns([2,1])
-        with oyun_col1:
-            oyun_ilce = st.selectbox("İlçeyi seç:", sorted(manuel_skor_oyun.keys()), key="oyun_ilce")
-            tahmin = st.slider("Senin tahminin (0–100):", 0, 100, 50, key="tahmin_slider")
-            gercek = manuel_skor_oyun[oyun_ilce]
-            fark = abs(tahmin - gercek)
-            if st.button("✅ Tahmini Kontrol Et", key="tahmin_btn"):
-                if fark <= 2:
-                    emoji, mesaj, renk_o = "🏆", "Mükemmel! 2 puan içindesin!", "#2ca02c"
-                elif fark <= 5:
-                    emoji, mesaj, renk_o = "🎯", "Çok yakın! 5 puan içindesin.", "#38d1e3"
-                elif fark <= 10:
-                    emoji, mesaj, renk_o = "👍", "Fena değil — 10 puan içindesin.", "#ff7f0e"
-                else:
-                    emoji, mesaj, renk_o = "📖", f"Öğrenmeye devam! Gerçek skor: {gercek}", "#d62728"
-                st.markdown(f"""
-                <div style="background:rgba(255,255,255,0.06);border-left:4px solid {renk_o};
-                            border-radius:8px;padding:1rem 1.2rem;margin-top:0.5rem;">
-                    <div style="font-size:1.8rem;margin-bottom:4px;">{emoji}</div>
-                    <div style="color:white;font-size:1rem;font-weight:700;">{mesaj}</div>
-                    <div style="color:#a8d8f0;font-size:0.85rem;margin-top:4px;">
-                        Tahminın: <b>{tahmin}</b> · Gerçek: <b>{gercek}</b> · Fark: <b>{fark:.1f} puan</b>
-                    </div>
-                </div>""", unsafe_allow_html=True)
-        with oyun_col2:
-            st.markdown("""
-            <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.2);
-                        border-radius:10px;padding:1rem;margin-top:1rem;">
-                <div style="color:#38d1e3;font-size:0.72rem;font-weight:700;margin-bottom:8px;">📋 PUANLAMA</div>
-                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.8;">
-                    🏆 ≤ 2 puan: Mükemmel<br>
-                    🎯 ≤ 5 puan: Çok yakın<br>
-                    👍 ≤ 10 puan: İyi<br>
-                    📖 &gt;10 puan: Tekrar dene<br><br>
-                    <span style="color:#7a9ab0;font-size:0.72rem;">
-                    İpucu: Yüksek nüfuslu ve<br>sanayi yoğun ilçeler<br>genelde yüksek riskli!</span>
-                </div>
-            </div>""", unsafe_allow_html=True)
-
-        # Bölüm 5: Risk Değişim Hesaplayıcı
-        st.markdown(f"""
-        <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
-            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
-            <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">05 · DEĞİŞİM HESAPLAYICI</div>
-                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">İki İlçeyi Yıllar İçinde Karşılaştır</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        st.caption("İki ilçeyi seç, yıl aralığını belirle — puan farkı ve değişim yüzdesini gör")
+        st.caption("İki ilçeyi seç, yıl aralığını belirle — puan farkı ve değişim yüzdesini gör" if dil=="TR" else "Select two districts and year range — see point difference and change")
 
         c1, c2, c3 = st.columns(3)
         with c1:
-            hes_ilce1 = st.selectbox("1. İlçe:", sorted(manuel_risk_anim.keys()), key="hes1")
+            hes_ilce1 = st.selectbox("1. İlçe:" if dil=="TR" else "1st District:", sorted(manuel_risk_anim.keys()), key="hes1")
         with c2:
-            hes_ilce2 = st.selectbox("2. İlçe:", sorted(manuel_risk_anim.keys()),
+            hes_ilce2 = st.selectbox("2. İlçe:" if dil=="TR" else "2nd District:", sorted(manuel_risk_anim.keys()),
                                       index=2, key="hes2")
         with c3:
             hes_yil1, hes_yil2 = st.select_slider(
-                "Yıl aralığı:", options=YEARS, value=(2010, 2023), key="hes_yil"
+                "Yıl aralığı:" if dil=="TR" else "Year range:", options=YEARS, value=(2010, 2023), key="hes_yil"
             )
 
         idx1 = YEARS.index(hes_yil1)
@@ -3086,7 +3030,7 @@ if data_loaded:
                 Metodoloji & Teknik Detaylar
             </div>
             <div style="color:#a8d8f0;font-size:0.9rem;">
-                Veri kaynağı · Bootstrap simülasyonu · İstatistiksel yöntemler · Formüller · Sınırlılıklar
+                {"Veri kaynağı · Bootstrap simülasyonu · İstatistiksel yöntemler · Formüller · Sınırlılıklar" if dil=="TR" else "Data source · Bootstrap simulation · Statistical methods · Formulas · Limitations"}
             </div>
         </div>
         """, unsafe_allow_html=True)
