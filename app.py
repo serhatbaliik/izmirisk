@@ -468,16 +468,22 @@ if data_loaded:
     st.markdown("""
     <style>
     div[data-testid="stTextInput"] input {
-        font-size: 0.72rem !important;
-        padding: 3px 8px !important;
-        height: 26px !important;
-        min-height: 26px !important;
-        background: rgba(10,25,60,0.6) !important;
-        border: 1px solid rgba(56,209,227,0.25) !important;
+        font-size: 0.75rem !important;
+        padding: 4px 12px !important;
+        height: 28px !important;
+        min-height: 28px !important;
+        background: rgba(3,12,35,0.0) !important;
+        border: 1px solid rgba(56,209,227,0.3) !important;
         border-radius: 20px !important;
         color: #a8d8f0 !important;
+        box-shadow: none !important;
     }
-    div[data-testid="stTextInput"] input::placeholder { color: rgba(168,216,240,0.5) !important; }
+    div[data-testid="stTextInput"] > div {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    div[data-testid="stTextInput"] input::placeholder { color: rgba(168,216,240,0.45) !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -642,31 +648,86 @@ if data_loaded:
     if "dil" not in st.session_state:
         st.session_state.dil = "TR"
 
-    nav_left, nav_mid, nav_right = st.columns([0.45, 5.6, 0.45])
-    with nav_mid:
-        secili_etiket = st.pills(
-            label="",
-            options=etiketler,
-            default=etiketler[sayfa_listesi.index(st.session_state.secili_sayfa)]
-            if st.session_state.secili_sayfa in sayfa_listesi else etiketler[0],
-            key="nav_pills",
-            label_visibility="collapsed"
-        )
-    with nav_right:
-        st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
-        dil_btn_label = "🇬🇧 EN" if st.session_state.dil == "TR" else "🇹🇷 TR"
+    # ── Navigasyon — custom st.button'lar
+    st.markdown("""
+    <style>
+    /* Nav buton container */
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] > div[data-testid="stVerticalBlock"]
+        > div[data-testid="stButton"] > button {
+        width: 100% !important;
+        height: 52px !important;
+        font-size: 0.82rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.2px !important;
+        border-radius: 12px !important;
+        border: 1.5px solid rgba(56,209,227,0.30) !important;
+        background: rgba(5,18,48,0.72) !important;
+        color: #b8d8f0 !important;
+        transition: all 160ms ease !important;
+        backdrop-filter: blur(14px) !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+        white-space: nowrap !important;
+        padding: 0 8px !important;
+    }
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] > div[data-testid="stVerticalBlock"]
+        > div[data-testid="stButton"] > button:hover {
+        background: rgba(56,209,227,0.16) !important;
+        border-color: rgba(56,209,227,0.7) !important;
+        color: #ffffff !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.45), 0 0 14px rgba(56,209,227,0.2) !important;
+    }
+    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] > div[data-testid="stVerticalBlock"]
+        > div[data-testid="stButton"] > button:focus:not(:active) {
+        background: linear-gradient(135deg,rgba(56,209,227,0.25),rgba(27,79,114,0.55)) !important;
+        border-color: #38d1e3 !important;
+        color: #ffffff !important;
+        box-shadow: 0 0 20px rgba(56,209,227,0.4), 0 4px 16px rgba(0,0,0,0.4) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    sayfa = st.session_state.secili_sayfa
+    nav_cols = st.columns([1,1,1,1,1,1,1,1,1,0.5,0.5])
+    nav_items = [
+        ("🏠", "Ana Sayfa", "🏠 Ana Sayfa"),
+        ("📊", "EDA", "📊 EDA Analizi"),
+        ("📈", "Risk", "📈 Risk Endeksi"),
+        ("🔮", "2030", "🔮 2030 Tahmini"),
+        ("🗺️", "Harita", "Izmir Risk Haritasi"),
+        ("📍", "Mekânsal", "🗺️ Mekânsal Analiz"),
+        ("💡", "Öneriler", "💡 Öneriler"),
+        ("📐", "Metodoloji", "📐 Metodoloji"),
+        ("🔬", "Araçlar", "🔬 Araçlar"),
+    ]
+    for i, (emoji, label, sayfa_adi) in enumerate(nav_items):
+        with nav_cols[i]:
+            btn_label = f"{emoji}\n{label}"
+            if st.button(btn_label, key=f"nav_{i}", use_container_width=True):
+                st.session_state.secili_sayfa = sayfa_adi
+                st.rerun()
+    with nav_cols[9]:
+        dil_btn_label = "🇬🇧" if st.session_state.dil == "TR" else "🇹🇷"
         if st.button(dil_btn_label, key="dil_btn", use_container_width=True):
             st.session_state.dil = "EN" if st.session_state.dil == "TR" else "TR"
             st.rerun()
+    with nav_cols[10]:
         if st.button("🌙" if not st.session_state.acik_tema else "☀️", key="tema_btn", use_container_width=True):
             st.session_state.acik_tema = not st.session_state.acik_tema
             st.rerun()
 
-    if secili_etiket:
-        yeni_sayfa = sayfa_listesi[etiketler.index(secili_etiket)]
-        if yeni_sayfa != st.session_state.secili_sayfa:
-            st.session_state.secili_sayfa = yeni_sayfa
-            st.rerun()
+    # Aktif sayfa vurgusu
+    st.markdown(f"""
+    <style>
+    div[data-testid="stHorizontalBlock"] > div:nth-child({nav_items.index(next((x for x in nav_items if x[2]==sayfa), nav_items[0]))+1})
+        > div > div > div > button {{
+        background: linear-gradient(135deg,rgba(56,209,227,0.28),rgba(27,79,114,0.6)) !important;
+        border-color: #38d1e3 !important;
+        color: #ffffff !important;
+        box-shadow: 0 0 18px rgba(56,209,227,0.4), 0 4px 14px rgba(0,0,0,0.4) !important;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
 
     sayfa = st.session_state.secili_sayfa
     dil   = st.session_state.dil   # "TR" veya "EN"
