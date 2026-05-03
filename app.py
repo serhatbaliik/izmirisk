@@ -1725,6 +1725,7 @@ if data_loaded:
     # ════════════════════════════════
     elif sayfa == "🔮 2040 Tahmin":
 
+        # ── 2030 Projeksiyonu — Manuel 2023 verilerinden CAGR hesabı
         st.markdown(f"""
         <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);
                     margin-bottom:1.5rem;">
@@ -1743,6 +1744,137 @@ if data_loaded:
                 CAGR {len(YEARS)} yıllık seriden hesaplanmıştır
             </div>
         </div>
+        """, unsafe_allow_html=True)
+
+        # 2023 ve 2010 değerleri — manuel
+        skor_2023 = {
+            "BORNOVA":67,"ÇİĞLİ":62.5,"BAYRAKLI":60,
+            "BUCA":51,"GAZİEMİR":54,"GÜZELBAHÇE":49,
+            "KARŞIYAKA":47,"NARLIDERE":47,
+            "KONAK":45.5,"KARABAĞLAR":43,"BALÇOVA":42,
+        }
+        skor_2010 = {
+            "BORNOVA":72,"ÇİĞLİ":70,"BAYRAKLI":69,
+            "BUCA":59,"GAZİEMİR":57,"GÜZELBAHÇE":55,
+            "KARŞIYAKA":53,"NARLIDERE":51,
+            "KONAK":52,"KARABAĞLAR":51,"BALÇOVA":50.5,
+        }
+        n_yil = 13  # 2010→2023
+
+        # CAGR = (S2023/S2010)^(1/13) - 1
+        # Projeksiyon: S_t = S2023 × (1 + CAGR×k)^dt
+        dt2030 = 2030 - 2023
+
+        def proj(s23, s10, k, dt):
+            cagr = (s23/s10)**(1/n_yil) - 1
+            return round(min(max(s23 * (1 + cagr*k)**dt, 0), 100), 1)
+
+        ilceler_sirali = ["BORNOVA","ÇİĞLİ","BAYRAKLI","BUCA","GAZİEMİR",
+                          "GÜZELBAHÇE","KARŞIYAKA","NARLIDERE","KONAK","KARABAĞLAR","BALÇOVA"]
+
+        pes_2030 = [proj(skor_2023[i], skor_2010[i], 1.5, dt2030) for i in ilceler_sirali]
+        baz_2030 = [proj(skor_2023[i], skor_2010[i], 1.0, dt2030) for i in ilceler_sirali]
+        iyi_2030 = [proj(skor_2023[i], skor_2010[i], 0.5, dt2030) for i in ilceler_sirali]
+
+        # Kötümser skora göre büyükten küçüğe sırala
+        sirali = sorted(zip(ilceler_sirali, pes_2030, baz_2030, iyi_2030),
+                        key=lambda x: x[1], reverse=True)
+        ilceler_sirali = [x[0] for x in sirali]
+        pes_2030 = [x[1] for x in sirali]
+        baz_2030 = [x[2] for x in sirali]
+        iyi_2030 = [x[3] for x in sirali]
+
+        st.markdown("""
+        <div style="display:flex;align-items:center;gap:12px;margin:0 0 0.8rem 0;">
+            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
+            <div>
+                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">00 · 2030 ANİK PROJEKSİYONU</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
+                    2030 Yılı Risk Skoru — 3 Senaryo (Tüm İlçeler)</div>
+            </div>
+        </div>""", unsafe_allow_html=True)
+
+        fig_2030 = go.Figure()
+        fig_2030.add_trace(go.Bar(
+            name="Kötümser (CAGR × 1.5)", x=ilceler_sirali, y=pes_2030,
+            marker=dict(color="#d62728", opacity=0.85),
+            text=[f"{v}" for v in pes_2030], textposition="outside",
+            textfont=dict(color="white", size=10),
+            hovertemplate="<b>%{x}</b> · Kötümser: %{y}<extra></extra>"
+        ))
+        fig_2030.add_trace(go.Bar(
+            name="Baz (CAGR × 1.0)", x=ilceler_sirali, y=baz_2030,
+            marker=dict(color="#ff7f0e", opacity=0.85),
+            text=[f"{v}" for v in baz_2030], textposition="outside",
+            textfont=dict(color="white", size=10),
+            hovertemplate="<b>%{x}</b> · Baz: %{y}<extra></extra>"
+        ))
+        fig_2030.add_trace(go.Bar(
+            name="İyimser (CAGR × 0.5)", x=ilceler_sirali, y=iyi_2030,
+            marker=dict(color="#2ca02c", opacity=0.85),
+            text=[f"{v}" for v in iyi_2030], textposition="outside",
+            textfont=dict(color="white", size=10),
+            hovertemplate="<b>%{x}</b> · İyimser: %{y}<extra></extra>"
+        ))
+        fig_2030.add_hline(y=60, line_dash="dot", line_color="#d62728", line_width=1.5,
+            annotation_text="Yüksek Risk Eşiği (60)",
+            annotation_font_color="#d62728", annotation_font_size=10)
+        fig_2030.add_hline(y=46, line_dash="dot", line_color="#ff7f0e", line_width=1.5,
+            annotation_text="Orta Risk Alt Eşiği (46)",
+            annotation_font_color="#ff7f0e", annotation_font_size=10)
+        fig_2030.update_layout(
+            plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+            barmode="group", height=420, font=dict(color="white"),
+            xaxis=dict(tickangle=30, gridcolor="rgba(255,255,255,0.08)",
+                       tickfont=dict(color="white")),
+            yaxis=dict(range=[0,100], gridcolor="rgba(255,255,255,0.08)",
+                       tickfont=dict(color="white"), title="Risk Skoru (0–100)"),
+            legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)",
+                        orientation="h", y=1.08),
+            margin=dict(t=50,b=70,l=50,r=30)
+        )
+        st.plotly_chart(fig_2030, use_container_width=True, key="proj_2030")
+
+        # Bilgi kutuları
+        st.markdown(f"""
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;">
+            <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.28);
+                        border-radius:10px;padding:0.9rem 1rem;">
+                <div style="color:#d62728;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">
+                    🔴 KÖTÜMSER SENARYO — CAGR × 1.5</div>
+                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:5px;">
+                    Mevcut büyüme hızı 1.5 katına çıkarsa</div>
+                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
+                    Hızlı kentleşme, iklim kaynaklı arz kısıtı ve altyapı yatırımlarının yetersiz
+                    kalması durumunda risk skorları 2030'da belirgin biçimde yükselir.
+                    Bornova bu senaryoda en kritik konumdaki ilçe olmaya devam eder.
+                </div>
+            </div>
+            <div style="background:rgba(255,127,14,0.07);border:1px solid rgba(255,127,14,0.28);
+                        border-radius:10px;padding:0.9rem 1rem;">
+                <div style="color:#ff7f0e;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">
+                    🟠 BAZ SENARYO — CAGR × 1.0</div>
+                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:5px;">
+                    Mevcut trend aynen devam ederse</div>
+                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
+                    2023 büyüme hızının korunduğu varsayımında 2030 risk görünümü.
+                    Genel eğilim düşüş yönünde ancak yüksek riskli ilçelerde 60 eşiği
+                    kırılma riski devam ediyor.
+                </div>
+            </div>
+            <div style="background:rgba(44,160,44,0.07);border:1px solid rgba(44,160,44,0.28);
+                        border-radius:10px;padding:0.9rem 1rem;">
+                <div style="color:#2ca02c;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">
+                    🟢 İYİMSER SENARYO — CAGR × 0.5</div>
+                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:5px;">
+                    Su tasarrufu politikaları hayata geçerse</div>
+                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
+                    Akıllı sayaç yaygınlaşması, su tasarrufu kampanyaları ve altyapı iyileştirmeleriyle
+                    büyüme hızının yarıya inmesi durumunda tüm ilçelerde belirgin risk azalışı öngörülmektedir.
+                </div>
+            </div>
+        </div>
+        <hr style="border-color:rgba(56,209,227,0.15);margin:0.5rem 0 1.5rem 0;">
         """, unsafe_allow_html=True)
 
         c1, c2, c3 = st.columns([2,2,1])
