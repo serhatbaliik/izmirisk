@@ -410,35 +410,6 @@ if data_loaded:
     # ── Üst başlık + arama (sağ köşede, yazı boyutunda)
     _dil_h = st.session_state.get("dil","TR")
 
-    # Arama sözlüğü — başlıktan önce tanımla
-    _arama_sozluk = {
-        "baraj":("📊 EDA Analizi",None),"tahtalı":("📊 EDA Analizi",None),
-        "balçova":("📊 EDA Analizi",None),"gördes":("📊 EDA Analizi",None),
-        "doluluk":("📊 EDA Analizi",None),"dam":("📊 EDA Analizi",None),
-        "tüketim":("📊 EDA Analizi",None),"consumption":("📊 EDA Analizi",None),
-        "arz":("📊 EDA Analizi",None),"supply":("📊 EDA Analizi",None),
-        "kayıp":("📊 EDA Analizi",None),"loss":("📊 EDA Analizi",None),
-        "risk":("📈 Risk Endeksi",None),"wsri":("📈 Risk Endeksi",None),
-        "entropy":("📈 Risk Endeksi",None),"bornova":("📈 Risk Endeksi",None),
-        "çiğli":("📈 Risk Endeksi",None),"bayraklı":("📈 Risk Endeksi",None),
-        "buca":("📈 Risk Endeksi",None),"gaziemir":("📈 Risk Endeksi",None),
-        "karşıyaka":("📈 Risk Endeksi",None),"konak":("📈 Risk Endeksi",None),
-        "karabağlar":("📈 Risk Endeksi",None),"narlidere":("📈 Risk Endeksi",None),
-        "güzelbahçe":("📈 Risk Endeksi",None),"district":("📈 Risk Endeksi",None),
-        "2030":("🔮 2030 Tahmini",None),"projeksiyon":("🔮 2030 Tahmini",None),
-        "projection":("🔮 2030 Tahmini",None),"senaryo":("🔮 2030 Tahmini",None),
-        "harita":("Izmir Risk Haritasi",None),"map":("Izmir Risk Haritasi",None),
-        "moran":("🗺️ Mekânsal Analiz",None),"lisa":("🗺️ Mekânsal Analiz",None),
-        "mekânsal":("🗺️ Mekânsal Analiz",None),"spatial":("🗺️ Mekânsal Analiz",None),
-        "öneri":("💡 Öneriler",None),"recommendation":("💡 Öneriler",None),
-        "metodoloji":("📐 Metodoloji",None),"methodology":("📐 Metodoloji",None),
-        "bootstrap":("📐 Metodoloji",None),"mann":("📐 Metodoloji",None),
-        "radar":("🔬 Araçlar",None),"simülatör":("🔬 Araçlar",None),
-        "simulator":("🔬 Araçlar",None),"araç":("🔬 Araçlar",None),
-        "karşılaştır":("🔬 Araçlar",None),"compare":("🔬 Araçlar",None),
-    }
-
-    # Başlık HTML — arama kutusu sağ köşeye CSS ile gömülü
     st.markdown(f"""
     <div style="text-align:center;padding:28px 0 20px 0;
                 border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:0.8rem;
@@ -446,7 +417,24 @@ if data_loaded:
         <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);
                     color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.9;">
             {(_dil_h=="TR" and "Veri: İZSU + Bootstrap Simülasyonu" or "Data: IZSU + Bootstrap Simulation")}<br>
-            {(_dil_h=="TR" and "11 Merkez İlçe · Entropy-WSRI" or "11 Central Districts · Entropy-WSRI")}
+            {(_dil_h=="TR" and "11 Merkez İlçe · Entropy-WSRI" or "11 Central Districts · Entropy-WSRI")}<br>
+            <input id="izmir_search" type="text"
+                placeholder="🔍 {'Ara...' if _dil_h=='TR' else 'Search...'}"
+                onkeydown="if(event.key==='Enter'){{
+                    var v=this.value.toLowerCase();
+                    var map={{'baraj':'EDA','tahtalı':'EDA','doluluk':'EDA','tüketim':'EDA','kayıp':'EDA',
+                              'risk':'Risk','bornova':'Risk','çiğli':'Risk','wsri':'Risk',
+                              '2030':'2030','projeksiyon':'2030','senaryo':'2030',
+                              'harita':'Harita','map':'Harita',
+                              'moran':'Mekânsal','lisa':'Mekânsal','spatial':'Mekânsal',
+                              'öneri':'Öneriler','metodoloji':'Metodoloji','bootstrap':'Metodoloji',
+                              'radar':'Araçlar','simülatör':'Araçlar','araç':'Araçlar'}};
+                    for(var k in map){{if(v.includes(k)){{alert('→ '+map[k]+' sayfası');break;}}}}
+                }}"
+                style="margin-top:4px;width:140px;height:22px;
+                       background:transparent;border:1px solid rgba(56,209,227,0.35);
+                       border-radius:12px;color:#a8d8f0;font-size:0.68rem;
+                       padding:0 8px;outline:none;text-align:left;">
         </div>
         <div style="display:inline-flex;align-items:center;gap:18px;">
             <span style="font-size:4rem;line-height:1;
@@ -464,67 +452,20 @@ if data_loaded:
     </div>
     """, unsafe_allow_html=True)
 
-    # Arama kutusu — tam sağ, çok küçük (yazı boyutunda)
-    st.markdown("""
-    <style>
-    div[data-testid="stTextInput"] input {
-        font-size: 0.75rem !important;
-        padding: 4px 12px !important;
-        height: 30px !important;
-        min-height: 30px !important;
-        background: transparent !important;
-        border: 1px solid rgba(56,209,227,0.3) !important;
-        border-radius: 20px !important;
-        color: #a8d8f0 !important;
-        box-shadow: none !important;
-        outline: none !important;
-    }
-    div[data-testid="stTextInput"] > div > div {
-        background: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
-    }
-    div[data-testid="stTextInput"] input::placeholder {
-        color: rgba(168,216,240,0.45) !important;
-    }
-    /* Arama ok butonu — turkuaz */
-    div[data-testid="column"]:last-child > div > div > div > button {
-        background: rgba(56,209,227,0.12) !important;
-        border: 1px solid rgba(56,209,227,0.4) !important;
-        color: #38d1e3 !important;
-        border-radius: 20px !important;
-        font-size: 1rem !important;
-        height: 30px !important;
-        padding: 0 !important;
-    }
-    div[data-testid="column"]:last-child > div > div > div > button:hover {
-        background: rgba(56,209,227,0.25) !important;
-        color: #ffffff !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    _sp1, _sp2, _sp3 = st.columns([4.5, 1.2, 0.3])
+    # Streamlit arama (HTML input çalışmazsa fallback — gizli ama işlevsel)
+    _sp1, _sp2, _sp3 = st.columns([5.5, 1, 0.1])
     with _sp2:
-        _arama_girdi = st.text_input(
-            "", key="site_arama", label_visibility="collapsed",
-            placeholder="🔍 " + ("Ara..." if _dil_h=="TR" else "Search...")
-        )
-    with _sp3:
-        _arama_btn = st.button("→", key="arama_btn", use_container_width=True)
-
-    if _arama_girdi and (_arama_btn or len(_arama_girdi) > 2):
+        _arama_girdi = st.text_input("", key="site_arama", label_visibility="collapsed",
+                                     placeholder="")
+    if _arama_girdi and len(_arama_girdi) > 2:
         _temiz = _arama_girdi.strip().lower()
-        _eslesen = None
         for _k, _v in _arama_sozluk.items():
             if _k in _temiz:
-                _eslesen = _v
+                _h_sayfa, _ = _v
+                if _h_sayfa != st.session_state.get("secili_sayfa"):
+                    st.session_state.secili_sayfa = _h_sayfa
+                    st.rerun()
                 break
-        if _eslesen:
-            _h_sayfa, _ = _eslesen
-            if _h_sayfa != st.session_state.get("secili_sayfa"):
-                st.session_state.secili_sayfa = _h_sayfa
-                st.rerun()
         else:
             with _sp2:
                 st.caption("❌ " + ("Sonuç yok" if _dil_h=="TR" else "No result"))
