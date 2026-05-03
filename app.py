@@ -408,6 +408,33 @@ except Exception as e:
 if data_loaded:
 
     _dil_h = st.session_state.get("dil","TR")
+    _tema_h = st.session_state.get("acik_tema", False)
+
+    # ── Sağ üst: Dil + Tema butonları (başlığın üstünde)
+    st.markdown("""<style>
+    /* İlk st.columns satırı = dil+tema butonları — çok küçük */
+    div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"] button {
+        font-size: 0.75rem !important; height: 28px !important;
+        padding: 0 8px !important; line-height: 1 !important;
+        background: rgba(10,25,60,0.5) !important;
+        border: 1px solid rgba(56,209,227,0.3) !important;
+        border-radius: 8px !important; color: #c8e6f5 !important;
+    }
+    div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"] button:hover {
+        background: rgba(56,209,227,0.18) !important; color: #fff !important;
+    }
+    </style>""", unsafe_allow_html=True)
+
+    _t1, _t2, _t3 = st.columns([6.5, 0.6, 0.5])
+    with _t2:
+        _dil_label = "🇹🇷 TR" if _dil_h == "EN" else "🇬🇧 EN"
+        if st.button(_dil_label, key="dil_btn", use_container_width=True):
+            st.session_state.dil = "EN" if _dil_h == "TR" else "TR"
+            st.rerun()
+    with _t3:
+        if st.button("☀️" if _tema_h else "🌙", key="tema_btn", use_container_width=True):
+            st.session_state.acik_tema = not _tema_h
+            st.rerun()
 
     # ── Başlık
     st.markdown(f"""
@@ -693,7 +720,7 @@ if data_loaded:
     """, unsafe_allow_html=True)
 
     sayfa = st.session_state.secili_sayfa
-    nav_cols = st.columns([1,1,1,1,1,1,1,1,1,0.5,0.5])
+    nav_cols = st.columns([1,1,1,1,1,1,1,1,1])
     nav_items = [
         ("🏠", "Ana Sayfa", "🏠 Ana Sayfa"),
         ("📊", "EDA", "📊 EDA Analizi"),
@@ -711,15 +738,6 @@ if data_loaded:
             if st.button(btn_label, key=f"nav_{i}", use_container_width=True):
                 st.session_state.secili_sayfa = sayfa_adi
                 st.rerun()
-    with nav_cols[9]:
-        dil_btn_label = "🇬🇧" if st.session_state.dil == "TR" else "🇹🇷"
-        if st.button(dil_btn_label, key="dil_btn", use_container_width=True):
-            st.session_state.dil = "EN" if st.session_state.dil == "TR" else "TR"
-            st.rerun()
-    with nav_cols[10]:
-        if st.button("🌙" if not st.session_state.acik_tema else "☀️", key="tema_btn", use_container_width=True):
-            st.session_state.acik_tema = not st.session_state.acik_tema
-            st.rerun()
 
     # Aktif sayfa vurgusu
     st.markdown(f"""
