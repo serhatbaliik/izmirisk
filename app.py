@@ -415,7 +415,7 @@ if data_loaded:
         <!-- sağ köşe bilgi -->
         <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);
                     color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.7;">
-            {"Veri: İZSU + Bootstrap Simülasyonu" if dil=="TR" else "Data: IZSU + Bootstrap Simulation"}<br>{"11 Merkez İlçe · Entropy-WSRI" if dil=="TR" else "11 Central Districts · Entropy-WSRI"}
+            {(st.session_state.get("dil","TR")=="TR" and "Veri: İZSU + Bootstrap Simülasyonu" or "Data: IZSU + Bootstrap Simulation")}<br>{(st.session_state.get("dil","TR")=="TR" and "11 Merkez İlçe · Entropy-WSRI" or "11 Central Districts · Entropy-WSRI")}
         </div>
         <!-- orta logo + başlık -->
         <div style="display:inline-flex;align-items:center;gap:18px;">
