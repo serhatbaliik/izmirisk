@@ -1965,32 +1965,32 @@ if data_loaded:
         # KPI kartları — tıklanabilir expander
         k1,k2,k3,k4 = st.columns(4)
         kpi_aciklamalar = [
-            ("Global Moran's I", f"{I_glob}", f"{END_YEAR} risk skorları", "#38d1e3",
+            (k1, "Global Moran's I", f"{I_glob}", f"{END_YEAR} risk skorları", "#38d1e3",
              "Global Moran's I nedir?",
              f"Moran's I = {I_glob} (Negatif) · p = {p_glob}\n\n"
-             "**Ne anlama geliyor?**\n"
-             "Negatif Moran's I, yüksek riskli ilçelerin düşük riskli komşularla çevrili olduğunu gösterir — "
-             "risk değerleri mekânsal olarak *dağınık* bir dağılım izliyor.\n\n"
+             "**Ne anlama geliyor?**\n\n"
+             "Negatif Moran's I, yüksek riskli ilçelerin düşük riskli komşularla çevrili olduğunu "
+             "gösterir — risk değerleri mekânsal olarak dağınık izliyor, kümelenmek yerine.\n\n"
              "**Sonuç:** İzmir'de su riski homojen değil, ilçeden ilçeye keskin değişiyor. "
-             "İlçe bazlı politika önlemleri şehir geneli yaklaşımdan daha etkili olacaktır."),
-            ("p-değeri", f"{p_glob}", "999 permütasyon testi", "#a8d8f0",
+             "İlçe bazlı politika, şehir geneli yaklaşımdan daha etkili olacaktır."),
+            (k2, "p-değeri", f"{p_glob}", "999 permütasyon testi", "#a8d8f0",
              "p-değeri ne anlama geliyor?",
              f"p = {p_glob} (999 permütasyon testi)\n\n"
              "p > 0.05 olduğundan gözlemlenen mekânsal yapı istatistiksel olarak **anlamlı değil** "
              "(%95 güven düzeyinde). n=11 ilçe ile analiz gücü kısıtlıdır.\n\n"
              "**Sonuç:** İleride daha fazla ilçe eklenerek istatistiksel güç artırılabilir."),
-            ("Yorum", "Negatif", "Komşular farklılaşıyor", "#ff7f0e",
+            (k3, "Yorum", "Negatif", "Komşular farklılaşıyor", "#ff7f0e",
              "Negatif kümelenme ne demek?",
              "**Negatif Moran's I → Mekânsal Dağınıklık**\n\n"
              "Yüksek riskli bir ilçenin komşuları düşük riskli olma eğiliminde — satranç tahtası deseni.\n\n"
              "**Gaziemir istisnası:** HL kategorisinde — izole sıcak nokta. "
              "Hızlı nüfus artışı ve sanayi yoğunluğu nedeniyle komşularından ayrışıyor."),
-            ("HH Küme", "0 ilçe", "HH küme yok", "#2ca02c",
+            (k4, "HH Küme", "0 ilçe", "HH küme yok", "#2ca02c",
              "HH küme neden yok?",
              "**HH (Yüksek-Yüksek) Küme = 0 ilçe**\n\n"
              "Hiçbir ilçe hem kendisi yüksek riskli hem de yüksek riskli komşularla çevrili değil.\n\n"
-             "**Ne anlama geliyor?**\nİzmir'de birbirine bitişik riskli bir bölge yok. "
-             "Risk yönetimi ilçe bazında uygulanabilir."),
+             "**Ne anlama geliyor?**\n\nİzmir'de birbirine bitişik riskli bir bölge yok. "
+             "Risk yönetimi ilçe bazında uygulanabilir düzeyde."),
         ]
 
         for col, baslik, deger, alt, renk, exp_baslik, exp_metin in kpi_aciklamalar:
@@ -2306,103 +2306,91 @@ if data_loaded:
             if s >= 46: return "Orta Risk"
             return "Düşük Risk"
 
-        ilce_geojson_path = "izmir_ilceler.geojson"
-        try:
-            with open(ilce_geojson_path, "r", encoding="utf-8") as f:
-                ilce_geojson = json.load(f)
-        except FileNotFoundError:
-            # Fallback: basit dikdörtgen poligonlar
-            ilce_geojson = {
-              "type": "FeatureCollection",
-              "features": [
-                {"type":"Feature","id":"KONAK",     "properties":{"name":"KONAK"},     "geometry":{"type":"Polygon","coordinates":[[[27.08,38.405],[27.16,38.405],[27.16,38.445],[27.08,38.445],[27.08,38.405]]]}},
-                {"type":"Feature","id":"KARŞIYAKA", "properties":{"name":"KARŞIYAKA"}, "geometry":{"type":"Polygon","coordinates":[[[27.07,38.44],[27.16,38.44],[27.16,38.49],[27.07,38.49],[27.07,38.44]]]}},
-                {"type":"Feature","id":"BORNOVA",   "properties":{"name":"BORNOVA"},   "geometry":{"type":"Polygon","coordinates":[[[27.16,38.44],[27.32,38.44],[27.32,38.52],[27.16,38.52],[27.16,38.44]]]}},
-                {"type":"Feature","id":"BAYRAKLI",  "properties":{"name":"BAYRAKLI"},  "geometry":{"type":"Polygon","coordinates":[[[27.13,38.43],[27.21,38.43],[27.21,38.48],[27.13,38.48],[27.13,38.43]]]}},
-                {"type":"Feature","id":"ÇİĞLİ",    "properties":{"name":"ÇİĞLİ"},     "geometry":{"type":"Polygon","coordinates":[[[26.97,38.46],[27.10,38.46],[27.10,38.56],[26.97,38.56],[26.97,38.46]]]}},
-                {"type":"Feature","id":"BUCA",      "properties":{"name":"BUCA"},      "geometry":{"type":"Polygon","coordinates":[[[27.13,38.33],[27.28,38.33],[27.28,38.42],[27.13,38.42],[27.13,38.33]]]}},
-                {"type":"Feature","id":"KARABAĞLAR","properties":{"name":"KARABAĞLAR"},"geometry":{"type":"Polygon","coordinates":[[[27.04,38.36],[27.15,38.36],[27.15,38.42],[27.04,38.42],[27.04,38.36]]]}},
-                {"type":"Feature","id":"GAZİEMİR",  "properties":{"name":"GAZİEMİR"}, "geometry":{"type":"Polygon","coordinates":[[[27.07,38.27],[27.22,38.27],[27.22,38.35],[27.07,38.35],[27.07,38.27]]]}},
-                {"type":"Feature","id":"BALÇOVA",   "properties":{"name":"BALÇOVA"},   "geometry":{"type":"Polygon","coordinates":[[[26.98,38.36],[27.08,38.36],[27.08,38.42],[26.98,38.42],[26.98,38.36]]]}},
-                {"type":"Feature","id":"NARLIDERE", "properties":{"name":"NARLIDERE"}, "geometry":{"type":"Polygon","coordinates":[[[26.90,38.36],[26.99,38.36],[26.99,38.43],[26.90,38.43],[26.90,38.36]]]}},
-                {"type":"Feature","id":"GÜZELBAHÇE","properties":{"name":"GÜZELBAHÇE"},"geometry":{"type":"Polygon","coordinates":[[[26.80,38.33],[26.92,38.33],[26.92,38.44],[26.80,38.44],[26.80,38.33]]]}},
-              ]
-            }
-
         ilce_listesi  = list(ilce_skorlar.keys())
         skor_listesi  = [ilce_skorlar[i] for i in ilce_listesi]
 
-        import folium
-        from streamlit_folium import st_folium
+        # İlçe merkez koordinatları
+        ILCE_LAT = {
+            "BORNOVA":38.4750,"ÇİĞLİ":38.5050,"BAYRAKLI":38.4650,
+            "BUCA":38.3950,"GAZİEMİR":38.3200,"GÜZELBAHÇE":38.3900,
+            "KARŞIYAKA":38.4750,"NARLIDERE":38.4050,"KONAK":38.4200,
+            "KARABAĞLAR":38.3850,"BALÇOVA":38.4000,
+        }
+        ILCE_LON = {
+            "BORNOVA":27.2300,"ÇİĞLİ":27.0300,"BAYRAKLI":27.1600,
+            "BUCA":27.1800,"GAZİEMİR":27.1350,"GÜZELBAHÇE":26.9000,
+            "KARŞIYAKA":27.1100,"NARLIDERE":26.9800,"KONAK":27.1300,
+            "KARABAĞLAR":27.1000,"BALÇOVA":27.0300,
+        }
+        # Boyut — riske göre
+        boyutlar = [max(20, ilce_skorlar[i]/2) for i in ilce_listesi]
+        renkler_harita = [
+            "#d62728" if ilce_skorlar[i]>=60 else
+            ("#ff7f0e" if ilce_skorlar[i]>=46 else "#2ca02c")
+            for i in ilce_listesi
+        ]
+        hover_metinler = [
+            f"<b>{i}</b><br>Risk: {ilce_skorlar[i]:.1f}<br>"
+            f"{h_sinif(ilce_skorlar[i])}"
+            f"{'<br>🔮 2030 Projeksiyonu' if harita_yil==2030 else ''}"
+            for i in ilce_listesi
+        ]
 
-        m = folium.Map(
-            location=[38.42, 27.14],
-            zoom_start=11,
-            tiles="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-            attr="CartoDB Positron"
+        fig_harita = go.Figure(go.Scattermapbox(
+            lat=[ILCE_LAT[i] for i in ilce_listesi],
+            lon=[ILCE_LON[i] for i in ilce_listesi],
+            mode="markers+text",
+            marker=dict(
+                size=boyutlar,
+                color=[ilce_skorlar[i] for i in ilce_listesi],
+                colorscale=[[0,"#2ca02c"],[0.35,"#ff7f0e"],[1,"#d62728"]],
+                cmin=30, cmax=75,
+                opacity=0.85,
+                colorbar=dict(
+                    title="Risk<br>Skoru",
+                    tickfont=dict(color="white"),
+                    thickness=14, len=0.7, x=1.0
+                )
+            ),
+            text=ilce_listesi,
+            textfont=dict(size=11, color="white",
+                          family="Arial Black"),
+            textposition="middle center",
+            hovertext=hover_metinler,
+            hoverinfo="text",
+        ))
+        fig_harita.update_layout(
+            mapbox=dict(
+                style="carto-positron",
+                center=dict(lat=38.42, lon=27.10),
+                zoom=10.5
+            ),
+            margin=dict(l=0,r=0,t=0,b=0),
+            height=560,
+            paper_bgcolor="rgba(0,0,0,0)",
         )
 
-        for feat in ilce_geojson["features"]:
-            ilce = feat["id"]
-            skor = ilce_skorlar.get(ilce, 50)
-            renk = "#d62728" if skor >= 60 else ("#ff7f0e" if skor >= 46 else "#2ca02c")
-            sinif = h_sinif(skor)
+        # Lejant açıklaması
+        for renk, label in [("#d62728","Yüksek (≥60)"),
+                             ("#ff7f0e","Orta (46-60)"),
+                             ("#2ca02c","Düşük (<46)")]:
+            fig_harita.add_trace(go.Scattermapbox(
+                lat=[None], lon=[None], mode="markers",
+                marker=dict(size=14, color=renk),
+                name=label, showlegend=True
+            ))
 
-            tooltip = f"""<div style='font-family:Arial;padding:8px 12px;
-                background:white;border:2px solid {renk};border-radius:8px;
-                box-shadow:0 2px 6px rgba(0,0,0,0.15);min-width:140px;'>
-                <b style='color:{renk};font-size:13px;'>{ilce}</b><br>
-                <span style='color:#333;'>Risk: <b>{skor:.1f}</b></span><br>
-                <span style='color:#666;font-size:11px;'>{sinif}</span>
-                {"<br><span style='color:#9b59b6;font-size:10px;'>🔮 Projeksiyon</span>" if harita_yil==2030 else ""}
-                </div>"""
+        fig_harita.update_layout(
+            legend=dict(
+                font=dict(color="white", size=11),
+                bgcolor="rgba(10,30,70,0.85)",
+                bordercolor="rgba(56,209,227,0.3)",
+                borderwidth=1, x=0, y=0,
+                orientation="v"
+            )
+        )
+        st.plotly_chart(fig_harita, use_container_width=True, key="scatter_harita")
 
-            folium.GeoJson(
-                feat,
-                style_function=lambda x, r=renk: {
-                    "fillColor": r,
-                    "color": "white",
-                    "weight": 2,
-                    "fillOpacity": 0.7,
-                },
-                tooltip=folium.Tooltip(tooltip, sticky=True),
-                highlight_function=lambda x: {"weight": 3, "fillOpacity": 0.9}
-            ).add_to(m)
-
-            # İlçe adı + skor etiketi
-            coords = feat["geometry"]["coordinates"][0]
-            cx = sum(c[0] for c in coords) / len(coords)
-            cy = sum(c[1] for c in coords) / len(coords)
-            folium.Marker(
-                location=[cy, cx],
-                icon=folium.DivIcon(
-                    html=f"""<div style='font-family:Arial;font-size:10px;font-weight:700;
-                        color:white;text-align:center;
-                        text-shadow:1px 1px 2px rgba(0,0,0,0.8),-1px -1px 2px rgba(0,0,0,0.8);
-                        white-space:nowrap;line-height:1.4;'>
-                        {ilce}<br><span style='font-size:11px;'>{skor:.0f}</span></div>""",
-                    icon_size=(120, 28), icon_anchor=(60, 14)
-                )
-            ).add_to(m)
-
-        # Legend
-        legend = """<div style='position:fixed;bottom:20px;right:20px;z-index:999;
-            background:white;border:1px solid #ddd;border-radius:8px;padding:10px 14px;
-            font-family:Arial;box-shadow:0 2px 8px rgba(0,0,0,0.15);'>
-            <b style='color:#333;font-size:12px;'>Risk Sınıfları</b><br>
-            <div style='margin-top:6px;display:flex;align-items:center;gap:6px;'>
-                <div style='width:12px;height:12px;border-radius:3px;background:#d62728;'></div>
-                <span style='color:#555;font-size:11px;'>Yüksek (≥60)</span></div>
-            <div style='margin-top:4px;display:flex;align-items:center;gap:6px;'>
-                <div style='width:12px;height:12px;border-radius:3px;background:#ff7f0e;'></div>
-                <span style='color:#555;font-size:11px;'>Orta (46–60)</span></div>
-            <div style='margin-top:4px;display:flex;align-items:center;gap:6px;'>
-                <div style='width:12px;height:12px;border-radius:3px;background:#2ca02c;'></div>
-                <span style='color:#555;font-size:11px;'>Düşük (&lt;46)</span></div>
-        </div>"""
-        m.get_root().html.add_child(folium.Element(legend))
-
-        st_folium(m, use_container_width=True, height=540, returned_objects=[])
 
         st.markdown(f"""
         <div style="display:flex;align-items:center;gap:12px;margin:1rem 0 0.6rem 0;">
