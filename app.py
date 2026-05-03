@@ -410,12 +410,11 @@ if data_loaded:
     _dil_h = st.session_state.get("dil","TR")
     _tema_h = st.session_state.get("acik_tema", False)
 
-    # ── Sağ üst: Dil + Tema butonları (başlığın üstünde)
+    # ── Sağ üst: Dil + Tema butonları
     st.markdown("""<style>
-    /* İlk st.columns satırı = dil+tema butonları — çok küçük */
     div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"] button {
-        font-size: 0.75rem !important; height: 28px !important;
-        padding: 0 8px !important; line-height: 1 !important;
+        font-size: 0.78rem !important; height: 30px !important;
+        padding: 0 10px !important; line-height: 1 !important;
         background: rgba(10,25,60,0.5) !important;
         border: 1px solid rgba(56,209,227,0.3) !important;
         border-radius: 8px !important; color: #c8e6f5 !important;
@@ -427,7 +426,20 @@ if data_loaded:
 
     _t1, _t2, _t3 = st.columns([6.5, 0.6, 0.5])
     with _t2:
+        # Bayrak resmi — repo'da flag_en.png / flag_tr.png olacak
+        _flag_img = "flag_tr.png" if _dil_h == "EN" else "flag_en.png"
         _dil_label = "🇹🇷 TR" if _dil_h == "EN" else "🇬🇧 EN"
+        try:
+            import base64, os
+            if os.path.exists(_flag_img):
+                with open(_flag_img, "rb") as _f:
+                    _b64 = base64.b64encode(_f.read()).decode()
+                st.markdown(f"""<div style="text-align:center;margin-bottom:2px;">
+                    <img src="data:image/png;base64,{_b64}"
+                         style="height:14px;border-radius:2px;opacity:0.9;">
+                </div>""", unsafe_allow_html=True)
+        except:
+            pass
         if st.button(_dil_label, key="dil_btn", use_container_width=True):
             st.session_state.dil = "EN" if _dil_h == "TR" else "TR"
             st.rerun()
@@ -436,21 +448,21 @@ if data_loaded:
             st.session_state.acik_tema = not _tema_h
             st.rerun()
 
-    # ── Başlık
+    # ── Başlık — daha yukarı, daha büyük
     st.markdown(f"""
-    <div style="text-align:center;padding:24px 0 18px 0;position:relative;">
+    <div style="text-align:center;padding:8px 0 16px 0;position:relative;">
         <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);
                     color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.9;">
             {(_dil_h=="TR" and "Veri: İZSU + Bootstrap Simülasyonu" or "Data: IZSU + Bootstrap Simulation")}<br>
             {(_dil_h=="TR" and "11 Merkez İlçe · Entropy-WSRI" or "11 Central Districts · Entropy-WSRI")}
         </div>
-        <div style="display:inline-flex;align-items:center;gap:18px;">
-            <span style="font-size:3.8rem;line-height:1;filter:drop-shadow(0 0 16px rgba(56,209,227,0.55));">💧</span>
+        <div style="display:inline-flex;align-items:center;gap:20px;">
+            <span style="font-size:4.2rem;line-height:1;filter:drop-shadow(0 0 16px rgba(56,209,227,0.6));">💧</span>
             <div style="text-align:left;">
-                <div style="color:#ffffff;font-size:3rem;font-weight:900;letter-spacing:-1px;line-height:1;
+                <div style="color:#ffffff;font-size:3.4rem;font-weight:900;letter-spacing:-1px;line-height:1;
                             text-shadow:0 0 24px rgba(56,209,227,0.20);">İzmiRisk</div>
-                <div style="color:#38d1e3;font-size:0.78rem;letter-spacing:3px;
-                            text-transform:uppercase;margin-top:5px;font-weight:600;">
+                <div style="color:#38d1e3;font-size:0.85rem;letter-spacing:3px;
+                            text-transform:uppercase;margin-top:6px;font-weight:600;">
                     Su Güvenliği Risk Endeksi · İzmir · {START_YEAR}–2030
                 </div>
             </div>
