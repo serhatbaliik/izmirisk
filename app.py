@@ -435,6 +435,12 @@ if data_loaded:
     """, unsafe_allow_html=True)
 
     # ── Bootstrap bilgi banner — şeffaflık
+    _dil_banner = st.session_state.get("dil", "TR")
+    _banner_metin = (
+        f"{START_YEAR}–2019 data generated via block bootstrap simulation. 2020–{END_YEAR} data from official IZSU records."
+        if _dil_banner == "EN" else
+        f"{START_YEAR}–2019 verileri block bootstrap yöntemiyle İzmir kuraklık takvimi referans alınarak üretilmiştir. 2020–{END_YEAR} verileri İZSU resmi kaynağındandır."
+    )
     st.markdown(f"""
     <div style="background:linear-gradient(90deg,rgba(155,89,182,0.08),rgba(56,209,227,0.06));
                 border:1px solid rgba(155,89,182,0.25);border-radius:8px;
@@ -442,9 +448,9 @@ if data_loaded:
                 display:flex;align-items:center;gap:12px;">
         <span style="font-size:1.2rem;">🔬</span>
         <div style="flex:1;">
-            <span class="veri-rozet">BOOTSTRAP SİMÜLASYONU</span>
+            <span class="veri-rozet">{"BOOTSTRAP SIMULATION" if _dil_banner=="EN" else "BOOTSTRAP SİMÜLASYONU"}</span>
             <span style="color:#d0e8f5;font-size:0.82rem;margin-left:10px;">
-                {t("bootstrap_banner")}
+                {_banner_metin}
             </span>
         </div>
     </div>
@@ -605,11 +611,11 @@ if data_loaded:
                              "EN": "Izmir Water Security\nRisk Index"},
         "hero_alt":         {"TR": f"Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe · {len(YEARS)} yıllık seri ({START_YEAR}–{END_YEAR}) · Bootstrap simülasyonu · Mann-Kendall trend testi · LISA mekânsal analizi · 2030 projeksiyonu",
                              "EN": f"Entropy-weighted composite risk analysis · 11 central districts · {len(YEARS)}-year series ({START_YEAR}–{END_YEAR}) · Bootstrap simulation · Mann-Kendall trend test · LISA spatial analysis · 2030 projection"},
-        "kpi_yuksek":       {"TR": t("kpi_yuksek"), "EN": "High-Risk Districts"},
-        "kpi_orta":         {"TR": t("kpi_orta"),   "EN": "Medium-Risk Districts"},
-        "kpi_dusuk":        {"TR": t("kpi_dusuk"),  "EN": "Low-Risk Districts"},
-        "kpi_baraj":        {"TR": t("kpi_baraj"),        "EN": "Tahtalı Fill Rate"},
-        "kpi_enaz":         {"TR": t("kpi_enaz"),           "EN": "Lowest Risk"},
+        "kpi_yuksek":       {"TR": "Yüksek Riskli İlçeler", "EN": "High-Risk Districts"},
+        "kpi_orta":         {"TR": "Orta Riskli İlçeler",   "EN": "Medium-Risk Districts"},
+        "kpi_dusuk":        {"TR": "Düşük Riskli İlçeler",  "EN": "Low-Risk Districts"},
+        "kpi_baraj":        {"TR": "Tahtalı Doluluk",        "EN": "Tahtalı Fill Rate"},
+        "kpi_enaz":         {"TR": "En Az Riskli",           "EN": "Lowest Risk"},
         # Risk labels
         "yuksek_risk":      {"TR": "Yüksek Risk", "EN": "High Risk"},
         "orta_risk":        {"TR": "Orta Risk",   "EN": "Medium Risk"},
