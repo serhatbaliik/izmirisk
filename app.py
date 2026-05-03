@@ -1063,6 +1063,33 @@ if data_loaded:
 
         with tab1:
             bolum_baslik("01", "BARAJ DOLULUK", f"Baraj Doluluk Oranları ({START_YEAR}–{END_YEAR})")
+
+            # Baraj tanıtım kartları
+            bc1, bc2, bc3 = st.columns(3)
+            baraj_bilgi = [
+                (bc1, "Tahtalı Barajı", "#38d1e3", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Tahtali_baraji.jpg/320px-Tahtali_baraji.jpg",
+                 "İzmir'in ana su kaynağı. 1997'de tamamlandı. Depolama kapasitesi yaklaşık 310 milyon m³. İzmir'in su ihtiyacının %70'ini karşılar.",
+                 "2023: %29 doluluk"),
+                (bc2, "Balçova Barajı", "#2ca02c", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Balcova_dam.jpg/320px-Balcova_dam.jpg",
+                 "1995'te yapıldı. Küçük ölçekli, ağırlıklı olarak Bornova ve çevresini besler. Kapasitesi ~60 milyon m³.",
+                 "2023: %32 doluluk"),
+                (bc3, "Gördes Barajı", "#d62728", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Gordes_baraji.jpg/320px-Gordes_baraji.jpg",
+                 "Manisa'da yer alır, ancak İzmir'e su sağlar. 2020-2021 kuraklık krizinde kritik seviyelere indi (%1-2).",
+                 "2023: %5 doluluk ⚠️"),
+            ]
+            for col, isim, renk, img_url, aciklama, durum in baraj_bilgi:
+                with col:
+                    st.markdown(f"""
+                    <div style="background:rgba(255,255,255,0.05);border:1px solid {renk}44;
+                                border-top:3px solid {renk};border-radius:10px;overflow:hidden;margin-bottom:0.8rem;">
+                        <div style="background:rgba(0,0,0,0.3);height:120px;display:flex;align-items:center;
+                                    justify-content:center;font-size:2rem;">🏞️</div>
+                        <div style="padding:0.7rem 0.8rem;">
+                            <div style="color:{renk};font-size:0.8rem;font-weight:700;margin-bottom:4px;">{isim}</div>
+                            <div style="color:#a8d8f0;font-size:0.75rem;line-height:1.5;margin-bottom:6px;">{aciklama}</div>
+                            <div style="color:white;font-size:0.78rem;font-weight:600;">{durum}</div>
+                        </div>
+                    </div>""", unsafe_allow_html=True)
             baraj_yillar = [2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
             tahtali_v = [38,35,37,36,44,41,34,36,36,35,35,31,40,29]
             balcova_v = [33,32,29,30,31,31,34,32,31,31,30,26,27,32]
@@ -2527,12 +2554,12 @@ if data_loaded:
                 İnteraktif Araçlar
             </div>
             <div style="color:#a8d8f0;font-size:0.9rem;">
-                Radar profil · İlçe karşılaştırma · Risk simülatörü · {len(YEARS)} yıllık animasyonlu seri · Veri indirme
+                Radar profil · İlçe karşılaştırma · Risk simülatörü · {len(YEARS)} yıllık animasyonlu seri
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-        ilce_sec = st.selectbox("İlçe seç:", sorted(risk_df["İlçe"].unique()), key="arac_ilce")
+        ilce_sec = st.selectbox("🏙️ Analiz edilecek ilçeyi seç:", sorted(risk_df["İlçe"].unique()), key="arac_ilce")
         df_ilce = risk_df[risk_df["İlçe"]==ilce_sec]
         skor = df_ilce[df_ilce["Yıl"]==END_YEAR]["Risk_Skor"].values[0]
         sinif = df_ilce[df_ilce["Yıl"]==END_YEAR]["Risk_Sınıf"].values[0]
@@ -2621,17 +2648,7 @@ if data_loaded:
         )
         st.plotly_chart(fig_r, use_container_width=True)
 
-        # Karşılaştırma tablosu altında
-        st.markdown(f"""
-        <div style="display:grid;grid-template-columns:1fr 120px 1fr;gap:6px;
-                    background:rgba(255,255,255,0.03);border-radius:10px;padding:0.8rem 1rem;margin-top:0.5rem;">
-            <div style="text-align:center;color:#38d1e3;font-size:0.8rem;font-weight:700;padding-bottom:6px;
-                        border-bottom:1px solid rgba(255,255,255,0.1);">{ilce_sec}</div>
-            <div style="text-align:center;color:#a8d8f0;font-size:0.75rem;font-weight:600;padding-bottom:6px;
-                        border-bottom:1px solid rgba(255,255,255,0.1);">Gösterge</div>
-            <div style="text-align:center;color:#ff7f0e;font-size:0.8rem;font-weight:700;padding-bottom:6px;
-                        border-bottom:1px solid rgba(255,255,255,0.1);">{karsi_ilce}</div>
-        """, unsafe_allow_html=True)
+        # Karşılaştırma tablosu — kompakt
         karsi_satirlar = [
             ("talep","Abone Tüketim (m³)"),
             ("artis","Tüketim Artışı (%)"),
@@ -2639,17 +2656,27 @@ if data_loaded:
             ("kayip","Su Kayıp Oranı (%)"),
             ("risk","Risk Skoru"),
         ]
-        satirlar_html = ""
+        rows_html = ""
         for key, label in karsi_satirlar:
             v_1, v_2 = d1[key], d2[key]
-            fmt = f"{v_1:.1f}" if key != "artis" else f"%{v_1:.1f}"
-            fmt2 = f"{v_2:.1f}" if key != "artis" else f"%{v_2:.1f}"
-            satirlar_html += f"""
-            <div style="text-align:right;color:white;font-size:0.88rem;font-weight:600;padding:4px 0;">{fmt}</div>
-            <div style="text-align:center;color:#a8d8f0;font-size:0.72rem;">{label}</div>
-            <div style="color:white;font-size:0.88rem;font-weight:600;padding:4px 0;">{fmt2}</div>
-            """
-        st.markdown(satirlar_html + "</div>", unsafe_allow_html=True)
+            fmt  = f"%{v_1:.1f}" if key == "artis" else f"{v_1:.1f}"
+            fmt2 = f"%{v_2:.1f}" if key == "artis" else f"{v_2:.1f}"
+            rows_html += (
+                f'<div style="text-align:right;color:white;font-weight:600;">{fmt}</div>'
+                f'<div style="text-align:center;color:#a8d8f0;font-size:0.65rem;">{label}</div>'
+                f'<div style="text-align:left;color:white;font-weight:600;">{fmt2}</div>'
+            )
+        st.markdown(
+            f'<div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:0.5rem 0.8rem;margin-top:0.4rem;">'
+            f'<div style="display:grid;grid-template-columns:1fr 110px 1fr;gap:2px;margin-bottom:4px;'
+            f'padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,0.1);font-size:0.78rem;">'
+            f'<div style="text-align:right;color:#38d1e3;font-weight:700;">{ilce_sec}</div>'
+            f'<div style="text-align:center;color:#a8d8f0;font-size:0.65rem;">GÖSTERGE</div>'
+            f'<div style="text-align:left;color:#ff7f0e;font-weight:700;">{karsi_ilce}</div></div>'
+            f'<div style="display:grid;grid-template-columns:1fr 110px 1fr;gap:2px;font-size:0.78rem;">'
+            + rows_html + '</div></div>',
+            unsafe_allow_html=True
+        )
 
         # Bölüm 2: Risk Simülatörü — düzeltilmiş
         st.markdown("""
@@ -2676,11 +2703,10 @@ if data_loaded:
         arz_min,   arz_max   = 0.15, 0.40
         kayip_min, kayip_max = 20.0, 35.0
 
-        s1,s2,s3,s4 = st.columns(4)
-        with s1: sim_talep = st.slider("Abone Tüketim (m³)", 100, 210, 155, key="sim1")
-        with s2: sim_artis = st.slider("Tüketim Artışı (%)", 0, 20, 8, key="sim2")
-        with s3: sim_arz   = st.slider("Arz Kısıtı (%)", 15, 40, 25, key="sim3")
-        with s4: sim_kayip = st.slider("Kayıp Oranı (%)", 20, 35, 27, key="sim4")
+        sim_talep = st.slider("💧 Abone Tüketim (m³)", 100, 210, 155, key="sim1")
+        sim_artis = st.slider("📈 Tüketim Artışı (%)", 0, 20, 8, key="sim2")
+        sim_arz   = st.slider("⚖️ Arz Kısıtı (%)", 15, 40, 25, key="sim3")
+        sim_kayip = st.slider("🔴 Kayıp Oranı (%)", 20, 35, 27, key="sim4")
 
         def norm2(v, mn, mx):
             return max(0.0, min(1.0, (v - mn) / (mx - mn))) if mx > mn else 0.0
