@@ -1,4 +1,5 @@
 import streamlit as st
+import json
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
@@ -2204,45 +2205,103 @@ if data_loaded:
             if s >= 46: return "Orta Risk"
             return "Düşük Risk"
 
-        ilce_geojson = {
-            "type": "FeatureCollection",
-            "features": [
-                {"type":"Feature","id":"BALÇOVA",    "properties":{"name":"BALÇOVA"},    "geometry":{"type":"Polygon","coordinates":[[[27.01,38.37],[27.08,38.37],[27.08,38.40],[27.01,38.40],[27.01,38.37]]]}},
-                {"type":"Feature","id":"BAYRAKLI",   "properties":{"name":"BAYRAKLI"},   "geometry":{"type":"Polygon","coordinates":[[[27.14,38.44],[27.21,38.44],[27.21,38.48],[27.14,38.48],[27.14,38.44]]]}},
-                {"type":"Feature","id":"BORNOVA",    "properties":{"name":"BORNOVA"},    "geometry":{"type":"Polygon","coordinates":[[[27.18,38.45],[27.28,38.45],[27.28,38.50],[27.18,38.50],[27.18,38.45]]]}},
-                {"type":"Feature","id":"BUCA",       "properties":{"name":"BUCA"},       "geometry":{"type":"Polygon","coordinates":[[[27.14,38.36],[27.24,38.36],[27.24,38.41],[27.14,38.41],[27.14,38.36]]]}},
-                {"type":"Feature","id":"ÇİĞLİ",     "properties":{"name":"ÇİĞLİ"},      "geometry":{"type":"Polygon","coordinates":[[[26.99,38.47],[27.09,38.47],[27.09,38.53],[26.99,38.53],[26.99,38.47]]]}},
-                {"type":"Feature","id":"GAZİEMİR",   "properties":{"name":"GAZİEMİR"},  "geometry":{"type":"Polygon","coordinates":[[[27.08,38.29],[27.18,38.29],[27.18,38.34],[27.08,38.34],[27.08,38.29]]]}},
-                {"type":"Feature","id":"GÜZELBAHÇE", "properties":{"name":"GÜZELBAHÇE"},"geometry":{"type":"Polygon","coordinates":[[[26.84,38.36],[26.96,38.36],[26.96,38.43],[26.84,38.43],[26.84,38.36]]]}},
-                {"type":"Feature","id":"KARABAĞLAR", "properties":{"name":"KARABAĞLAR"},"geometry":{"type":"Polygon","coordinates":[[[27.06,38.37],[27.15,38.37],[27.15,38.42],[27.06,38.42],[27.06,38.37]]]}},
-                {"type":"Feature","id":"KARŞIYAKA",  "properties":{"name":"KARŞIYAKA"}, "geometry":{"type":"Polygon","coordinates":[[[27.07,38.44],[27.15,38.44],[27.15,38.48],[27.07,38.48],[27.07,38.44]]]}},
-                {"type":"Feature","id":"KONAK",      "properties":{"name":"KONAK"},      "geometry":{"type":"Polygon","coordinates":[[[27.08,38.40],[27.15,38.40],[27.15,38.44],[27.08,38.44],[27.08,38.40]]]}},
-                {"type":"Feature","id":"NARLIDERE",  "properties":{"name":"NARLIDERE"},  "geometry":{"type":"Polygon","coordinates":[[[26.94,38.37],[27.02,38.37],[27.02,38.42],[26.94,38.42],[26.94,38.37]]]}},
-            ]
-        }
+        ilce_geojson_path = "izmir_ilceler.geojson"
+        try:
+            with open(ilce_geojson_path, "r", encoding="utf-8") as f:
+                ilce_geojson = json.load(f)
+        except FileNotFoundError:
+            # Fallback: basit dikdörtgen poligonlar
+            ilce_geojson = {
+              "type": "FeatureCollection",
+              "features": [
+                {"type":"Feature","id":"KONAK",     "properties":{"name":"KONAK"},     "geometry":{"type":"Polygon","coordinates":[[[27.08,38.405],[27.16,38.405],[27.16,38.445],[27.08,38.445],[27.08,38.405]]]}},
+                {"type":"Feature","id":"KARŞIYAKA", "properties":{"name":"KARŞIYAKA"}, "geometry":{"type":"Polygon","coordinates":[[[27.07,38.44],[27.16,38.44],[27.16,38.49],[27.07,38.49],[27.07,38.44]]]}},
+                {"type":"Feature","id":"BORNOVA",   "properties":{"name":"BORNOVA"},   "geometry":{"type":"Polygon","coordinates":[[[27.16,38.44],[27.32,38.44],[27.32,38.52],[27.16,38.52],[27.16,38.44]]]}},
+                {"type":"Feature","id":"BAYRAKLI",  "properties":{"name":"BAYRAKLI"},  "geometry":{"type":"Polygon","coordinates":[[[27.13,38.43],[27.21,38.43],[27.21,38.48],[27.13,38.48],[27.13,38.43]]]}},
+                {"type":"Feature","id":"ÇİĞLİ",    "properties":{"name":"ÇİĞLİ"},     "geometry":{"type":"Polygon","coordinates":[[[26.97,38.46],[27.10,38.46],[27.10,38.56],[26.97,38.56],[26.97,38.46]]]}},
+                {"type":"Feature","id":"BUCA",      "properties":{"name":"BUCA"},      "geometry":{"type":"Polygon","coordinates":[[[27.13,38.33],[27.28,38.33],[27.28,38.42],[27.13,38.42],[27.13,38.33]]]}},
+                {"type":"Feature","id":"KARABAĞLAR","properties":{"name":"KARABAĞLAR"},"geometry":{"type":"Polygon","coordinates":[[[27.04,38.36],[27.15,38.36],[27.15,38.42],[27.04,38.42],[27.04,38.36]]]}},
+                {"type":"Feature","id":"GAZİEMİR",  "properties":{"name":"GAZİEMİR"}, "geometry":{"type":"Polygon","coordinates":[[[27.07,38.27],[27.22,38.27],[27.22,38.35],[27.07,38.35],[27.07,38.27]]]}},
+                {"type":"Feature","id":"BALÇOVA",   "properties":{"name":"BALÇOVA"},   "geometry":{"type":"Polygon","coordinates":[[[26.98,38.36],[27.08,38.36],[27.08,38.42],[26.98,38.42],[26.98,38.36]]]}},
+                {"type":"Feature","id":"NARLIDERE", "properties":{"name":"NARLIDERE"}, "geometry":{"type":"Polygon","coordinates":[[[26.90,38.36],[26.99,38.36],[26.99,38.43],[26.90,38.43],[26.90,38.36]]]}},
+                {"type":"Feature","id":"GÜZELBAHÇE","properties":{"name":"GÜZELBAHÇE"},"geometry":{"type":"Polygon","coordinates":[[[26.80,38.33],[26.92,38.33],[26.92,38.44],[26.80,38.44],[26.80,38.33]]]}},
+              ]
+            }
 
         ilce_listesi  = list(ilce_skorlar.keys())
         skor_listesi  = [ilce_skorlar[i] for i in ilce_listesi]
 
-        fig_harita = go.Figure(go.Choroplethmapbox(
-            geojson=ilce_geojson,
-            locations=ilce_listesi,
-            z=skor_listesi,
-            colorscale=[[0.0,"#2ca02c"],[0.35,"#ff7f0e"],[1.0,"#d62728"]],
-            zmin=30, zmax=75,
-            marker_opacity=0.75,
-            marker_line_width=1.5,
-            marker_line_color="white",
-            text=[f"{i}<br>Skor: {s:.1f}<br>{h_sinif(s)}" for i,s in zip(ilce_listesi,skor_listesi)],
-            hovertemplate="<b>%{text}</b><extra></extra>",
-            colorbar=dict(title="Risk Skoru",tickfont=dict(color="white"),
-                          titlefont=dict(color="white"),bgcolor="rgba(0,0,0,0.5)",borderwidth=0,x=1.0)
-        ))
-        fig_harita.update_layout(
-            mapbox=dict(style="carto-positron",center=dict(lat=38.42,lon=27.14),zoom=10.5),
-            margin=dict(l=0,r=0,t=0,b=0), height=560, paper_bgcolor="rgba(0,0,0,0)",
+        import folium
+        from streamlit_folium import st_folium
+
+        m = folium.Map(
+            location=[38.42, 27.14],
+            zoom_start=11,
+            tiles="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+            attr="CartoDB Positron"
         )
-        st.plotly_chart(fig_harita, use_container_width=True, key="choropleth_harita")
+
+        for feat in ilce_geojson["features"]:
+            ilce = feat["id"]
+            skor = ilce_skorlar.get(ilce, 50)
+            renk = "#d62728" if skor >= 60 else ("#ff7f0e" if skor >= 46 else "#2ca02c")
+            sinif = h_sinif(skor)
+
+            tooltip = f"""<div style='font-family:Arial;padding:8px 12px;
+                background:white;border:2px solid {renk};border-radius:8px;
+                box-shadow:0 2px 6px rgba(0,0,0,0.15);min-width:140px;'>
+                <b style='color:{renk};font-size:13px;'>{ilce}</b><br>
+                <span style='color:#333;'>Risk: <b>{skor:.1f}</b></span><br>
+                <span style='color:#666;font-size:11px;'>{sinif}</span>
+                {"<br><span style='color:#9b59b6;font-size:10px;'>🔮 Projeksiyon</span>" if harita_yil==2030 else ""}
+                </div>"""
+
+            folium.GeoJson(
+                feat,
+                style_function=lambda x, r=renk: {
+                    "fillColor": r,
+                    "color": "white",
+                    "weight": 2,
+                    "fillOpacity": 0.7,
+                },
+                tooltip=folium.Tooltip(tooltip, sticky=True),
+                highlight_function=lambda x: {"weight": 3, "fillOpacity": 0.9}
+            ).add_to(m)
+
+            # İlçe adı + skor etiketi
+            coords = feat["geometry"]["coordinates"][0]
+            cx = sum(c[0] for c in coords) / len(coords)
+            cy = sum(c[1] for c in coords) / len(coords)
+            folium.Marker(
+                location=[cy, cx],
+                icon=folium.DivIcon(
+                    html=f"""<div style='font-family:Arial;font-size:10px;font-weight:700;
+                        color:white;text-align:center;
+                        text-shadow:1px 1px 2px rgba(0,0,0,0.8),-1px -1px 2px rgba(0,0,0,0.8);
+                        white-space:nowrap;line-height:1.4;'>
+                        {ilce}<br><span style='font-size:11px;'>{skor:.0f}</span></div>""",
+                    icon_size=(120, 28), icon_anchor=(60, 14)
+                )
+            ).add_to(m)
+
+        # Legend
+        legend = """<div style='position:fixed;bottom:20px;right:20px;z-index:999;
+            background:white;border:1px solid #ddd;border-radius:8px;padding:10px 14px;
+            font-family:Arial;box-shadow:0 2px 8px rgba(0,0,0,0.15);'>
+            <b style='color:#333;font-size:12px;'>Risk Sınıfları</b><br>
+            <div style='margin-top:6px;display:flex;align-items:center;gap:6px;'>
+                <div style='width:12px;height:12px;border-radius:3px;background:#d62728;'></div>
+                <span style='color:#555;font-size:11px;'>Yüksek (≥60)</span></div>
+            <div style='margin-top:4px;display:flex;align-items:center;gap:6px;'>
+                <div style='width:12px;height:12px;border-radius:3px;background:#ff7f0e;'></div>
+                <span style='color:#555;font-size:11px;'>Orta (46–60)</span></div>
+            <div style='margin-top:4px;display:flex;align-items:center;gap:6px;'>
+                <div style='width:12px;height:12px;border-radius:3px;background:#2ca02c;'></div>
+                <span style='color:#555;font-size:11px;'>Düşük (&lt;46)</span></div>
+        </div>"""
+        m.get_root().html.add_child(folium.Element(legend))
+
+        st_folium(m, use_container_width=True, height=540, returned_objects=[])
 
         st.markdown(f"""
         <div style="display:flex;align-items:center;gap:12px;margin:1rem 0 0.6rem 0;">
