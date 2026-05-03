@@ -426,23 +426,7 @@ if data_loaded:
 
     _t1, _t2, _t3 = st.columns([6.5, 0.6, 0.5])
     with _t2:
-        import base64, os
-        _flag_file = "flag_tr.png" if _dil_h == "EN" else "flag_en.png"
-        _flag_b64 = ""
-        try:
-            if os.path.exists(_flag_file):
-                with open(_flag_file, "rb") as _f:
-                    _flag_b64 = base64.b64encode(_f.read()).decode()
-        except: pass
-
         _dil_label = "🇹🇷 TR" if _dil_h == "EN" else "🇬🇧 EN"
-        if _flag_b64:
-            _dil_text = "TR" if _dil_h == "EN" else "EN"
-            st.markdown(f"""
-            <img src="data:image/png;base64,{_flag_b64}"
-                 style="display:inline;height:13px;border-radius:2px;
-                        vertical-align:middle;margin-right:4px;opacity:0.92;">
-            """, unsafe_allow_html=True)
         if st.button(_dil_label, key="dil_btn", use_container_width=True):
             st.session_state.dil = "EN" if _dil_h == "TR" else "TR"
             st.rerun()
