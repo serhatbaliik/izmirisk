@@ -444,8 +444,7 @@ if data_loaded:
         <div style="flex:1;">
             <span class="veri-rozet">BOOTSTRAP SİMÜLASYONU</span>
             <span style="color:#d0e8f5;font-size:0.82rem;margin-left:10px;">
-                {START_YEAR}–2019 verileri block bootstrap yöntemiyle İzmir kuraklık takvimi
-                referans alınarak üretilmiştir. 2020–{END_YEAR} verileri İZSU resmi kaynağındandır.
+                {t("bootstrap_banner")}
             </span>
         </div>
     </div>
@@ -606,11 +605,11 @@ if data_loaded:
                              "EN": "Izmir Water Security\nRisk Index"},
         "hero_alt":         {"TR": f"Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe · {len(YEARS)} yıllık seri ({START_YEAR}–{END_YEAR}) · Bootstrap simülasyonu · Mann-Kendall trend testi · LISA mekânsal analizi · 2030 projeksiyonu",
                              "EN": f"Entropy-weighted composite risk analysis · 11 central districts · {len(YEARS)}-year series ({START_YEAR}–{END_YEAR}) · Bootstrap simulation · Mann-Kendall trend test · LISA spatial analysis · 2030 projection"},
-        "kpi_yuksek":       {"TR": "Yüksek Riskli İlçeler", "EN": "High-Risk Districts"},
-        "kpi_orta":         {"TR": "Orta Riskli İlçeler",   "EN": "Medium-Risk Districts"},
-        "kpi_dusuk":        {"TR": "Düşük Riskli İlçeler",  "EN": "Low-Risk Districts"},
-        "kpi_baraj":        {"TR": "Tahtalı Doluluk",        "EN": "Tahtalı Fill Rate"},
-        "kpi_enaz":         {"TR": "En Az Riskli",           "EN": "Lowest Risk"},
+        "kpi_yuksek":       {"TR": t("kpi_yuksek"), "EN": "High-Risk Districts"},
+        "kpi_orta":         {"TR": t("kpi_orta"),   "EN": "Medium-Risk Districts"},
+        "kpi_dusuk":        {"TR": t("kpi_dusuk"),  "EN": "Low-Risk Districts"},
+        "kpi_baraj":        {"TR": t("kpi_baraj"),        "EN": "Tahtalı Fill Rate"},
+        "kpi_enaz":         {"TR": t("kpi_enaz"),           "EN": "Lowest Risk"},
         # Risk labels
         "yuksek_risk":      {"TR": "Yüksek Risk", "EN": "High Risk"},
         "orta_risk":        {"TR": "Orta Risk",   "EN": "Medium Risk"},
@@ -627,18 +626,18 @@ if data_loaded:
         # Araçlar
         "arac_alt":         {"TR": f"Radar profil · İlçe karşılaştırma · Risk simülatörü · {len(YEARS)} yıllık animasyonlu seri",
                              "EN": f"Radar profile · District comparison · Risk simulator · {len(YEARS)}-year animated series"},
-        "ilce_sec":         {"TR": "🏙️ Analiz edilecek ilçeyi seç:", "EN": "🏙️ Select district to analyze:"},
-        "karsi_ilce":       {"TR": "Karşılaştırılacak ilçe:", "EN": "Compare with:"},
+        "ilce_sec":         {"TR": t("ilce_sec"), "EN": "🏙️ Select district to analyze:"},
+        "karsi_ilce":       {"TR": t("karsi_ilce"), "EN": "Compare with:"},
         "sim_baslik":       {"TR": "Risk Simülatörü — Anlık Duyarlılık","EN":"Risk Simulator — Live Sensitivity"},
         "sim_caption":      {"TR": "Gösterge değerlerini değiştir → Risk skoru entropy ağırlıklarıyla anlık güncellenir",
                              "EN": "Adjust indicator values → Risk score updates instantly using entropy weights"},
-        "sim_talep_lbl":    {"TR": "💧 Abone Tüketim (m³)",  "EN": "💧 Per-Subscriber Consumption (m³)"},
-        "sim_artis_lbl":    {"TR": "📈 Tüketim Artışı (%)",  "EN": "📈 Consumption Growth (%)"},
-        "sim_arz_lbl":      {"TR": "⚖️ Arz Kısıtı (%)",      "EN": "⚖️ Supply Constraint (%)"},
-        "sim_kayip_lbl":    {"TR": "🔴 Kayıp Oranı (%)",     "EN": "🔴 Water Loss Rate (%)"},
-        "sim_skor":         {"TR": "Simüle Edilen Skor",      "EN": "Simulated Score"},
+        "sim_talep_lbl":    {"TR": t("sim_talep_lbl"),  "EN": "💧 Per-Subscriber Consumption (m³)"},
+        "sim_artis_lbl":    {"TR": t("sim_artis_lbl"),  "EN": "📈 Consumption Growth (%)"},
+        "sim_arz_lbl":      {"TR": t("sim_arz_lbl"),      "EN": "⚖️ Supply Constraint (%)"},
+        "sim_kayip_lbl":    {"TR": t("sim_kayip_lbl"),     "EN": "🔴 Water Loss Rate (%)"},
+        "sim_skor":         {"TR": t("sim_skor"),      "EN": "Simulated Score"},
         "sim_sinif":        {"TR": "Risk Sınıfı",             "EN": "Risk Class"},
-        "harita_yil_lbl":   {"TR": "📅 Yıl Seçin",           "EN": "📅 Select Year"},
+        "harita_yil_lbl":   {"TR": t("harita_yil_lbl"),           "EN": "📅 Select Year"},
         "risk_sira":        {"TR": "Yılı Risk Sıralaması",    "EN": "Risk Ranking"},
         "risk_skoru":       {"TR": "Risk Skoru",              "EN": "Risk Score"},
         "risk_sinifi":      {"TR": "Risk Sınıfı",             "EN": "Risk Class"},
@@ -691,20 +690,18 @@ if data_loaded:
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:6px 20px;margin-bottom:1rem;">
                 <span style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;font-weight:600;">
-                    SU GÜVENLİĞİ ANALİZİ · İZMİR {START_YEAR}–{PRED_END_YEAR}
+                    {t("ana_baslik").upper() if dil=="EN" else "SU GÜVENLİĞİ ANALİZİ · İZMİR {START_YEAR}–{PRED_END_YEAR}"}
                 </span>
             </div>
             <div class="wave-container"><div class="wave"></div></div>
             <h1 style="color:#ffffff;font-size:2.6rem;font-weight:800;margin:0.8rem 0 0.4rem 0;
                        letter-spacing:-0.5px;line-height:1.2;">
-                İzmir Su Güvenliği<br>
-                <span style="color:#38d1e3;">Risk Endeksi</span>
+                {("Izmir Water Security" if dil=="EN" else "İzmir Su Güvenliği")}<br>
+                <span style="color:#38d1e3;">{"Risk Index" if dil=="EN" else "Risk Endeksi"}</span>
             </h1>
             <p style="color:#a8d8f0;font-size:1rem;margin:0.6rem 0 0 0;max-width:600px;
                       display:inline-block;line-height:1.6;">
-                Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe ·
-                {len(YEARS)} yıllık seri ({START_YEAR}–{END_YEAR}) · Bootstrap simülasyonu ·
-                Mann-Kendall trend testi · LISA mekânsal analizi · 2030 projeksiyonu
+                {t("hero_alt")}
             </p>
             <div class="wave-container" style="margin-top:1.2rem;"><div class="wave"></div></div>
         </div>
@@ -748,11 +745,11 @@ if data_loaded:
         k1, k2, k3, k4, k5 = st.columns(5)
 
         kpi_data = [
-            (k1, "🔴", "#d62728", "Yüksek Riskli İlçeler", ["Bornova", "Çiğli", "Bayraklı"]),
-            (k2, "🟡", "#ff7f0e", "Orta Riskli İlçeler",   ["Buca", "Gaziemir", "Güzelbahçe", "Karşıyaka", "Narlıdere"]),
-            (k3, "🟢", "#2ca02c", "Düşük Riskli İlçeler",  ["Konak", "Karabağlar", "Balçova"]),
-            (k4, "💧", "#38d1e3", "Tahtalı Doluluk",        [f"%{tahtali:.1f}", f"{END_YEAR} yılı"]),
-            (k5, "✅", "#2ca02c", "En Az Riskli",           ["Balçova", "Skor: 42.7"]),
+            (k1, "🔴", "#d62728", t("kpi_yuksek"), ["Bornova", "Çiğli", "Bayraklı"]),
+            (k2, "🟡", "#ff7f0e", t("kpi_orta"),   ["Buca", "Gaziemir", "Güzelbahçe", "Karşıyaka", "Narlıdere"]),
+            (k3, "🟢", "#2ca02c", t("kpi_dusuk"),  ["Konak", "Karabağlar", "Balçova"]),
+            (k4, "💧", "#38d1e3", t("kpi_baraj"),        [f"%{tahtali:.1f}", f"{END_YEAR} yılı"]),
+            (k5, "✅", "#2ca02c", t("kpi_enaz"),           ["Balçova", "Skor: 42.7"]),
         ]
         for col, ikon, renk, baslik, satirlar in kpi_data:
             with col:
@@ -1133,64 +1130,48 @@ if data_loaded:
             bc1, bc2, bc3 = st.columns(3)
             baraj_detay = [
                 (bc1, "💧 Tahtalı Barajı", "#38d1e3",
-                 "📍 Konum: Menderes İlçesi, İzmir\n📅 Yapım: 1993–1997 | 🏗️ Tip: Kaya dolgu",
-                 """**İzmir'in en büyük su deposu.** Tahtalı Barajı, şehrin su ihtiyacının yaklaşık **%60–70'ini** tek başına karşılar. 
-                 Tahtalı Çayı üzerinde inşa edilmiş olup havzası 432 km²'dir. 
-                 Toplam depolama kapasitesi **309 milyon m³** — bu miktar İzmir'in yaklaşık 2 yıllık su tüketimine eşdeğerdir.
-                 
-                 2014 yılında olağandışı yağışlarla %44 doluluk zirvesini yaşarken, 2020'de Gördes Barajı'nın kritik seviyelere inmesiyle üzerindeki baskı arttı.
-                 2023 itibarıyla %29 dolulukla seyretmekte — 2010'daki %38 seviyesinin belirgin altında.""",
-                 "2023 Doluluk: %29 | Kapasite: 309 M m³"),
-
+                 "📍 Konum: Menderes İlçesi, İzmir  |  📅 Yapım: 1993–1997  |  🏗️ Tip: Kaya dolgu",
+                 [
+                     ("İzmir'in en büyük su deposu.", "Tahtalı Barajı, şehrin su ihtiyacının yaklaşık **%60–70'ini** tek başına karşılar. Tahtalı Çayı üzerinde inşa edilmiş olup havzası 432 km²\'dir. Toplam depolama kapasitesi **309 milyon m³** — bu miktar İzmir\'in yaklaşık 2 yıllık su tüketimine eşdeğerdir."),
+                     ("2014–2023 Dönemi:", "2014 yılında olağandışı yağışlarla **%44 doluluk** zirvesini yaşadı. 2020\'de Gördes Barajı\'nın kritik seviyelere inmesiyle üzerindeki baskı arttı. 2023 itibarıyla **%29 dolulukla** seyretmekte — 2010\'daki %38 seviyesinin belirgin altında."),
+                 ],
+                 "2023 Doluluk: %29  |  Kapasite: 309 M m³"),
                 (bc2, "🌿 Balçova Barajı", "#2ca02c",
-                 "📍 Konum: Balçova İlçesi, İzmir\n📅 Yapım: 1991–1995 | 🏗️ Tip: Beton kemer",
-                 """**Küçük ama stratejik.** Balçova Barajı, Bornova ve yakın çevresi başta olmak üzere merkezi ilçeleri destekler. 
-                 Meles Çayı üzerinde konumlanan baraj, görece küçük havzasına (47 km²) karşın şehir içi konumu nedeniyle kritik önem taşır.
-                 Depolama kapasitesi **57 milyon m³** olup sisteme hızlı müdahale imkânı sunar.
-                 
-                 2010–2023 döneminde en istikrarlı doluluk seyrini gösteren baraj Balçova'dır: %26–%34 bandında kalmayı başardı. 
-                 Fiziki konumu gereği buharlaşma kaybı görece düşüktür.""",
-                 "2023 Doluluk: %32 | Kapasite: 57 M m³"),
-
-                (bc3, "⚠️ Gördes Barajı", "#d62728",
-                 "📍 Konum: Gördes İlçesi, Manisa\n📅 Yapım: 1976–1980 | 🏗️ Tip: Toprak dolgu",
-                 """**Kırılgan ama önemli.** Gördes Barajı coğrafi olarak Manisa iline bağlı olsa da İzmir'in su sistemine borularla bağlanmıştır.
-                 Depolama kapasitesi **176 milyon m³** olan bu baraj, aynı zamanda sulama ve taşkın önleme işlevi görür.
-                 
-                 **2019–2021 Krizi:** Gördes, 2019'da %18 dolulukla zaten düşük seyrederken, 2020'de %2'ye, 
-                 2021'de ise tarihi dip olan **%1'e** indi. Bu, tek bir barajın kuraklıkla nasıl çöküşe geçebildiğini gösteren çarpıcı bir örnektir.
-                 2022–2023'te kısmi toparlanma yaşandı ancak uzun vadeli kırılganlık devam etmektedir.""",
-                 "2023 Doluluk: %5 ⚠️ | Kapasite: 176 M m³"),
+                 "📍 Konum: Balçova İlçesi, İzmir  |  📅 Yapım: 1991–1995  |  🏗️ Tip: Beton kemer",
+                 [
+                     ("Küçük ama stratejik.", "Balçova Barajı, Bornova ve yakın çevresi başta olmak üzere merkezi ilçeleri destekler. Meles Çayı üzerinde konumlanan baraj, görece küçük havzasına (47 km²) karşın şehir içi konumu nedeniyle kritik önem taşır. Depolama kapasitesi **57 milyon m³** olup sisteme hızlı müdahale imkânı sunar."),
+                     ("2010–2023 İstikrarı:", "14 yıllık dönemde en istikrarlı doluluk seyrini gösteren barajdır: **%26–%34 bandında** kalmayı başardı. Fiziki konumu gereği buharlaşma kaybı görece düşüktür."),
+                 ],
+                 "2023 Doluluk: %32  |  Kapasite: 57 M m³"),
+                (bc3, "🚨 Gördes Barajı", "#d62728",
+                 "📍 Konum: Gördes İlçesi, Manisa  |  📅 Yapım: 1976–1980  |  🏗️ Tip: Toprak dolgu",
+                 [
+                     ("Kırılgan ama önemli.", "Gördes Barajı coğrafi olarak Manisa iline bağlı olsa da İzmir\'in su sistemine borularla bağlanmıştır. Depolama kapasitesi **176 milyon m³** olan bu baraj, aynı zamanda sulama ve taşkın önleme işlevi görür."),
+                     ("2019–2021 Kriz Dönemi:", "Gördes, 2019\'da %18 dolulukla zaten düşük seyrederken 2020\'de **%2\'ye**, 2021\'de ise tarihi dip olan **%1\'e** indi. Bu, tek bir barajın kuraklıkla nasıl çöküşe geçebildiğini gösteren çarpıcı bir örnektir. 2022–2023\'te kısmi toparlanma yaşandı ancak uzun vadeli kırılganlık devam etmektedir."),
+                 ],
+                 "2023 Doluluk: %5  |  Kapasite: 176 M m³  |  Kritik Seviye"),
             ]
 
-            for col, isim, renk, konum_tip, aciklama, durum in baraj_detay:
+            for col, isim, renk, konum_tip, aciklama_listesi, durum in baraj_detay:
                 with col:
                     with st.expander(isim, expanded=True):
-                        # Resim
                         img_map = {
                             "💧 Tahtalı Barajı": "tahtali.jpg",
                             "🌿 Balçova Barajı": "balcova.jpg",
-                            "⚠️ Gördes Barajı":  "gordes.jpg",
+                            "🚨 Gördes Barajı":  "gordes.jpg",
                         }
                         img_file = img_map.get(isim, "")
                         try:
                             st.image(img_file, use_container_width=True)
                         except Exception:
-                            st.markdown(f"""<div style="background:rgba(0,0,0,0.3);height:140px;
+                            st.markdown("""<div style="background:rgba(0,0,0,0.25);height:140px;
                                 display:flex;align-items:center;justify-content:center;
                                 border-radius:8px;font-size:2.5rem;margin-bottom:8px;">🏞️</div>""",
                                 unsafe_allow_html=True)
-                        st.markdown(f"""
-                        <div style="color:{renk};font-size:0.72rem;font-weight:600;
-                                    letter-spacing:0.5px;margin-bottom:8px;white-space:pre-line;">
-                            {konum_tip}</div>
-                        """, unsafe_allow_html=True)
-                        st.markdown(aciklama)
-                        st.markdown(f"""
-                        <div style="background:rgba(255,255,255,0.06);border-left:3px solid {renk};
-                                    border-radius:0 6px 6px 0;padding:0.5rem 0.8rem;margin-top:0.5rem;">
-                            <span style="color:{renk};font-size:0.78rem;font-weight:700;">{durum}</span>
-                        </div>""", unsafe_allow_html=True)
+                        st.markdown(f'<div style="color:{renk};font-size:0.72rem;font-weight:600;margin:8px 0 10px 0;">{konum_tip}</div>', unsafe_allow_html=True)
+                        for baslik_p, metin_p in aciklama_listesi:
+                            st.markdown(f"**{baslik_p}** {metin_p}")
+                        st.markdown(f'<div style="background:rgba(255,255,255,0.06);border-left:3px solid {renk};border-radius:0 6px 6px 0;padding:0.5rem 0.8rem;margin-top:0.8rem;"><span style="color:{renk};font-size:0.78rem;font-weight:700;">{durum}</span></div>', unsafe_allow_html=True)
 
             st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
             bolum_baslik("02", "BARAJ DOLULUK", f"Baraj Doluluk Oranları ({START_YEAR}–{END_YEAR})")
@@ -1908,21 +1889,21 @@ if data_loaded:
 
         fig_2030 = go.Figure()
         fig_2030.add_trace(go.Bar(
-            name="Kötümser (CAGR × 1.5)", x=ilceler_sirali, y=pes_2030,
+            name=f'{t("kotumser")} (CAGR × 1.5)', x=ilceler_sirali, y=pes_2030,
             marker=dict(color="#d62728", opacity=0.85),
             text=[f"{v}" for v in pes_2030], textposition="outside",
             textfont=dict(color="white", size=10),
             hovertemplate="<b>%{x}</b> · Kötümser: %{y}<extra></extra>"
         ))
         fig_2030.add_trace(go.Bar(
-            name="Baz (CAGR × 1.0)", x=ilceler_sirali, y=baz_2030,
+            name=f'{t("baz")} (CAGR × 1.0)', x=ilceler_sirali, y=baz_2030,
             marker=dict(color="#ff7f0e", opacity=0.85),
             text=[f"{v}" for v in baz_2030], textposition="outside",
             textfont=dict(color="white", size=10),
             hovertemplate="<b>%{x}</b> · Baz: %{y}<extra></extra>"
         ))
         fig_2030.add_trace(go.Bar(
-            name="İyimser (CAGR × 0.5)", x=ilceler_sirali, y=iyi_2030,
+            name=f'{t("iyimser")} (CAGR × 0.5)', x=ilceler_sirali, y=iyi_2030,
             marker=dict(color="#2ca02c", opacity=0.85),
             text=[f"{v}" for v in iyi_2030], textposition="outside",
             textfont=dict(color="white", size=10),
