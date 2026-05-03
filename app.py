@@ -1062,34 +1062,60 @@ if data_loaded:
         ])
 
         with tab1:
-            bolum_baslik("01", "BARAJ DOLULUK", f"Baraj Doluluk Oranları ({START_YEAR}–{END_YEAR})")
+            bolum_baslik("01", "BARAJ TARİHÇESİ", "İzmir'in Barajları — Tarihçe & Genel Bilgi")
 
-            # Baraj tanıtım kartları
+            # Baraj tanıtım kartları — detaylı
             bc1, bc2, bc3 = st.columns(3)
-            baraj_bilgi = [
-                (bc1, "Tahtalı Barajı", "#38d1e3", "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Tahtali_baraji.jpg/320px-Tahtali_baraji.jpg",
-                 "İzmir'in ana su kaynağı. 1997'de tamamlandı. Depolama kapasitesi yaklaşık 310 milyon m³. İzmir'in su ihtiyacının %70'ini karşılar.",
-                 "2023: %29 doluluk"),
-                (bc2, "Balçova Barajı", "#2ca02c", "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Balcova_dam.jpg/320px-Balcova_dam.jpg",
-                 "1995'te yapıldı. Küçük ölçekli, ağırlıklı olarak Bornova ve çevresini besler. Kapasitesi ~60 milyon m³.",
-                 "2023: %32 doluluk"),
-                (bc3, "Gördes Barajı", "#d62728", "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Gordes_baraji.jpg/320px-Gordes_baraji.jpg",
-                 "Manisa'da yer alır, ancak İzmir'e su sağlar. 2020-2021 kuraklık krizinde kritik seviyelere indi (%1-2).",
-                 "2023: %5 doluluk ⚠️"),
+            baraj_detay = [
+                (bc1, "💧 Tahtalı Barajı", "#38d1e3",
+                 "📍 Konum: Menderes İlçesi, İzmir\n📅 Yapım: 1993–1997 | 🏗️ Tip: Kaya dolgu",
+                 """**İzmir'in en büyük su deposu.** Tahtalı Barajı, şehrin su ihtiyacının yaklaşık **%60–70'ini** tek başına karşılar. 
+                 Tahtalı Çayı üzerinde inşa edilmiş olup havzası 432 km²'dir. 
+                 Toplam depolama kapasitesi **309 milyon m³** — bu miktar İzmir'in yaklaşık 2 yıllık su tüketimine eşdeğerdir.
+                 
+                 2014 yılında olağandışı yağışlarla %44 doluluk zirvesini yaşarken, 2020'de Gördes Barajı'nın kritik seviyelere inmesiyle üzerindeki baskı arttı.
+                 2023 itibarıyla %29 dolulukla seyretmekte — 2010'daki %38 seviyesinin belirgin altında.""",
+                 "2023 Doluluk: %29 | Kapasite: 309 M m³"),
+
+                (bc2, "🌿 Balçova Barajı", "#2ca02c",
+                 "📍 Konum: Balçova İlçesi, İzmir\n📅 Yapım: 1991–1995 | 🏗️ Tip: Beton kemer",
+                 """**Küçük ama stratejik.** Balçova Barajı, Bornova ve yakın çevresi başta olmak üzere merkezi ilçeleri destekler. 
+                 Meles Çayı üzerinde konumlanan baraj, görece küçük havzasına (47 km²) karşın şehir içi konumu nedeniyle kritik önem taşır.
+                 Depolama kapasitesi **57 milyon m³** olup sisteme hızlı müdahale imkânı sunar.
+                 
+                 2010–2023 döneminde en istikrarlı doluluk seyrini gösteren baraj Balçova'dır: %26–%34 bandında kalmayı başardı. 
+                 Fiziki konumu gereği buharlaşma kaybı görece düşüktür.""",
+                 "2023 Doluluk: %32 | Kapasite: 57 M m³"),
+
+                (bc3, "⚠️ Gördes Barajı", "#d62728",
+                 "📍 Konum: Gördes İlçesi, Manisa\n📅 Yapım: 1976–1980 | 🏗️ Tip: Toprak dolgu",
+                 """**Kırılgan ama önemli.** Gördes Barajı coğrafi olarak Manisa iline bağlı olsa da İzmir'in su sistemine borularla bağlanmıştır.
+                 Depolama kapasitesi **176 milyon m³** olan bu baraj, aynı zamanda sulama ve taşkın önleme işlevi görür.
+                 
+                 **2019–2021 Krizi:** Gördes, 2019'da %18 dolulukla zaten düşük seyrederken, 2020'de %2'ye, 
+                 2021'de ise tarihi dip olan **%1'e** indi. Bu, tek bir barajın kuraklıkla nasıl çöküşe geçebildiğini gösteren çarpıcı bir örnektir.
+                 2022–2023'te kısmi toparlanma yaşandı ancak uzun vadeli kırılganlık devam etmektedir.""",
+                 "2023 Doluluk: %5 ⚠️ | Kapasite: 176 M m³"),
             ]
-            for col, isim, renk, img_url, aciklama, durum in baraj_bilgi:
+
+            for col, isim, renk, konum_tip, aciklama, durum in baraj_detay:
                 with col:
-                    st.markdown(f"""
-                    <div style="background:rgba(255,255,255,0.05);border:1px solid {renk}44;
-                                border-top:3px solid {renk};border-radius:10px;overflow:hidden;margin-bottom:0.8rem;">
-                        <div style="background:rgba(0,0,0,0.3);height:120px;display:flex;align-items:center;
-                                    justify-content:center;font-size:2rem;">🏞️</div>
-                        <div style="padding:0.7rem 0.8rem;">
-                            <div style="color:{renk};font-size:0.8rem;font-weight:700;margin-bottom:4px;">{isim}</div>
-                            <div style="color:#a8d8f0;font-size:0.75rem;line-height:1.5;margin-bottom:6px;">{aciklama}</div>
-                            <div style="color:white;font-size:0.78rem;font-weight:600;">{durum}</div>
-                        </div>
-                    </div>""", unsafe_allow_html=True)
+                    with st.expander(isim, expanded=True):
+                        st.markdown(f"""
+                        <div style="color:{renk};font-size:0.72rem;font-weight:600;
+                                    letter-spacing:0.5px;margin-bottom:8px;white-space:pre-line;">
+                            {konum_tip}</div>
+                        """, unsafe_allow_html=True)
+                        st.markdown(aciklama)
+                        st.markdown(f"""
+                        <div style="background:rgba(255,255,255,0.06);border-left:3px solid {renk};
+                                    border-radius:0 6px 6px 0;padding:0.5rem 0.8rem;margin-top:0.5rem;">
+                            <span style="color:{renk};font-size:0.78rem;font-weight:700;">{durum}</span>
+                        </div>""", unsafe_allow_html=True)
+
+            st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
+            bolum_baslik("02", "BARAJ DOLULUK", f"Baraj Doluluk Oranları ({START_YEAR}–{END_YEAR})")
+
             baraj_yillar = [2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
             tahtali_v = [38,35,37,36,44,41,34,36,36,35,35,31,40,29]
             balcova_v = [33,32,29,30,31,31,34,32,31,31,30,26,27,32]
