@@ -1424,12 +1424,34 @@ if data_loaded:
         with col_f2:
             arama = st.text_input("İlçe ara:", placeholder="örn. GAZİEMİR")
 
-        df_yil = risk_df[risk_df["Yıl"]==yil_sec].sort_values("Risk_Skor", ascending=False)
+        # ── Manuel sabit risk skorları — tüm ilçeler, tüm yıllar
+        manuel_risk = {
+            "BORNOVA":    [72,73,72,71,71.5,70,69.5,67.5,68,66,66,67.5,68,67],
+            "ÇİĞLİ":     [70,71,69,70,68,69,67,66,65,64,63,64,63.5,62.5],
+            "BAYRAKLI":   [69,71,70,68,66,67,65,64,63,62,61,62.5,62,60],
+            "BUCA":       [59,57,58,56,55,57,54,55,53,52,54,52,53,51],
+            "GAZİEMİR":   [57,58,55,56,57,54,55,53,54,52,53,55,54,54],
+            "GÜZELBAHÇE": [55,54,56,53,54,52,53,51,52,50,49,51,50,49],
+            "KARŞIYAKA":  [53,52,54,51,52,50,51,50,49,48,47,49,48,47],
+            "NARLIDERE":  [51,52,50,51,49,50,48,49,47,47,48,47,47,47],
+            "KONAK":      [52,51,51,50,49.5,49.5,48,47.5,47.3,47,46,46.8,46.5,45.5],
+            "KARABAĞLAR": [51,50.5,49.5,48,48.2,47.3,47,46,45,44.6,44,44.7,44.3,43],
+            "BALÇOVA":    [50.5,48.5,48,46.5,46,45,44.5,44.2,43.8,43,42.5,43,43.7,42],
+        }
+        yil_idx = YEARS.index(yil_sec)
+
+        # Bar grafik için seçili yıl verisi
+        bar_data = [(ilce, veriler[yil_idx]) for ilce, veriler in manuel_risk.items()]
+        bar_data.sort(key=lambda x: x[1], reverse=True)
         if arama:
-            df_yil = df_yil[df_yil["İlçe"].str.contains(arama.upper(), na=False)]
+            bar_data = [(i,s) for i,s in bar_data if arama.upper() in i]
+        bar_ilceler = [x[0] for x in bar_data]
+        bar_skorlar = [x[1] for x in bar_data]
 
-        # Veri tipi rozeti
-
+        def get_risk_renk(s):
+            if s >= 60: return "#d62728"
+            if s >= 46: return "#ff7f0e"
+            return "#2ca02c"
 
         # Bölüm 1 — Bar + Heatmap
         st.markdown(f"""
@@ -1447,12 +1469,12 @@ if data_loaded:
 
         col1, col2 = st.columns([3,2])
         with col1:
-            colors = [get_risk_color(s) for s in df_yil["Risk_Skor"]]
+            colors = [get_risk_renk(s) for s in bar_skorlar]
             fig = go.Figure(go.Bar(
-                x=df_yil["İlçe"], y=df_yil["Risk_Skor"],
+                x=bar_ilceler, y=bar_skorlar,
                 marker=dict(color=colors, opacity=0.85,
                             line=dict(color="rgba(255,255,255,0.1)", width=0.5)),
-                text=[f"{s:.1f}" for s in df_yil["Risk_Skor"]],
+                text=[f"{s:.1f}" for s in bar_skorlar],
                 textposition="outside",
                 textfont=dict(color="white", size=11),
                 hovertemplate="<b>%{x}</b><br>Risk Skoru: %{y:.1f}<extra></extra>"
@@ -1475,13 +1497,16 @@ if data_loaded:
             st.plotly_chart(fig, use_container_width=True, key="risk_bar")
 
         with col2:
-            pivot = risk_df.pivot(index="İlçe", columns="Yıl", values="Risk_Skor")
+            # Heatmap — manuel verilerden
+            ilce_sirali = list(manuel_risk.keys())
+            z_heat = [[manuel_risk[ilce][i] for i in range(len(YEARS))] for ilce in ilce_sirali]
             fig2 = go.Figure(go.Heatmap(
-                z=pivot.values,
-                x=[str(y) for y in pivot.columns],
-                y=pivot.index.tolist(),
-                colorscale=[[0,"#2ca02c"],[0.4,"#ff7f0e"],[0.7,"#d62728"],[1,"#8b0000"]],
-                text=pivot.values.round(1),
+                z=z_heat,
+                x=[str(y) for y in YEARS],
+                y=ilce_sirali,
+                colorscale=[[0,"#2ca02c"],[0.35,"#ff7f0e"],[0.6,"#d62728"],[1,"#8b0000"]],
+                zmin=40, zmax=75,
+                text=[[f"{v:.0f}" for v in row] for row in z_heat],
                 texttemplate="%{text}",
                 textfont=dict(size=9, color="white"),
                 hovertemplate="<b>%{y}</b> · %{x}<br>Risk: %{z:.1f}<extra></extra>",
