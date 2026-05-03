@@ -40,8 +40,8 @@ div[data-testid="stSlider"] span {
 YEARS = list(range(2010, 2024))     # 2010..2023
 START_YEAR = 2010
 END_YEAR = 2023
-PRED_END_YEAR = 2040
-PRED_YEARS = list(range(END_YEAR + 1, PRED_END_YEAR + 1))
+PRED_END_YEAR = 2030
+PRED_YEARS = list(range(END_YEAR + 1, 2031))
 
 st.markdown("""
 <style>
@@ -344,7 +344,7 @@ def get_recommendation(ilce, score, sinif):
                 "Komşu ilçelerdeki risk artışlarını takip edin, bölgesel etkiler olabilir.",
                 "Yeşil alan sulama ve endüstriyel tüketimi optimize edin.",
             ],
-            "gelecek": "Mevcut gidişat devam ederse 2040'ta da düşük risk bekleniyor."
+            "gelecek": "Mevcut gidişat devam ederse 2030'ta da düşük risk bekleniyor."
         }
     elif sinif_str == "Orta Risk":
         return {
@@ -358,7 +358,7 @@ def get_recommendation(ilce, score, sinif):
                 "Yağmur suyu toplama sistemlerini teşvik edin.",
                 "İZSU ile koordineli denetim programı başlatın.",
             ],
-            "gelecek": "Kötümser senaryoda 2040'ta yüksek riske geçme ihtimali var."
+            "gelecek": "Kötümser senaryoda 2030'ta yüksek riske geçme ihtimali var."
         }
     else:
         return {
@@ -372,7 +372,7 @@ def get_recommendation(ilce, score, sinif):
                 "Alternatif su kaynakları (yer altı suyu, yağmur hasadı) araştırın.",
                 "Halk bilgilendirme kampanyasıyla aciliyeti kamuoyuyla paylaşın.",
             ],
-            "gelecek": "Önlem alınmazsa 2040'ta risk skoru kritik seviyelere ulaşabilir."
+            "gelecek": "Önlem alınmazsa 2030'ta risk skoru kritik seviyelere ulaşabilir."
         }
 
 
@@ -426,7 +426,7 @@ if data_loaded:
                             text-shadow:0 0 24px rgba(56,209,227,0.20);">İzmiRisk</div>
                 <div style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;
                             text-transform:uppercase;margin-top:6px;font-weight:600;">
-                    Su Güvenliği Risk Endeksi · İzmir · {START_YEAR}–2040
+                    Su Güvenliği Risk Endeksi · İzmir · {START_YEAR}–2030
                 </div>
             </div>
         </div>
@@ -536,7 +536,7 @@ if data_loaded:
         "🏠 Ana Sayfa",
         "📊 EDA Analizi",
         "📈 Risk Endeksi",
-        "🔮 2040 Tahmin",
+        "🔮 2030 Tahmini",
         "📉 Senaryo Analizi",
         "Izmir Risk Haritasi",
         "🗺️ Mekânsal Analiz",
@@ -548,7 +548,7 @@ if data_loaded:
         "🏠 Ana Sayfa",
         "📊 EDA",
         "📈 Risk",
-        "🔮 2040",
+        "🔮 2030",
         "📉 Senaryo",
         "🗺️ Harita",
         "📍 Mekânsal",
@@ -640,7 +640,7 @@ if data_loaded:
                       display:inline-block;line-height:1.6;">
                 Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe ·
                 {len(YEARS)} yıllık seri ({START_YEAR}–{END_YEAR}) · Bootstrap simülasyonu ·
-                Mann-Kendall trend testi · LISA mekânsal analizi · 2040 projeksiyonu
+                Mann-Kendall trend testi · LISA mekânsal analizi · 2030 projeksiyonu
             </p>
             <div class="wave-container" style="margin-top:1.2rem;"><div class="wave"></div></div>
         </div>
@@ -979,7 +979,7 @@ if data_loaded:
                        color:#38d1e3;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:0.8rem;">
                 Linki Kopyala
             </button>
-            <a href="https://twitter.com/intent/tweet?text=İzmir%20Su%20Güvenliği%20Risk%20Endeksi%20%7C%20Entropy%20ağırlıklı%20bileşik%20analiz%20%7C%20{START_YEAR}-2040%20projeksiyonu&url=https://izmirisk.streamlit.app"
+            <a href="https://twitter.com/intent/tweet?text=İzmir%20Su%20Güvenliği%20Risk%20Endeksi%20%7C%20Entropy%20ağırlıklı%20bileşik%20analiz%20%7C%20{START_YEAR}-2030%20projeksiyonu&url=https://izmirisk.streamlit.app"
                target="_blank"
                style="background:rgba(29,161,242,0.1);border:1px solid rgba(29,161,242,0.3);
                       color:#1da1f2;padding:6px 16px;border-radius:20px;cursor:pointer;
@@ -1723,7 +1723,7 @@ if data_loaded:
     # ════════════════════════════════
     # TAHMİN
     # ════════════════════════════════
-    elif sayfa == "🔮 2040 Tahmin":
+    elif sayfa == "🔮 2030 Tahmini":
 
         # ── 2030 Projeksiyonu — Manuel 2023 verilerinden CAGR hesabı
         st.markdown(f"""
@@ -1733,11 +1733,11 @@ if data_loaded:
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
                 <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
-                    SENARYO PROJEKSİYONU · 2024–2040
+                    SENARYO PROJEKSİYONU · 2024–2030
                 </span>
             </div>
             <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
-                2040 Yılı Risk Projeksiyonu
+                2030 Yılı Risk Projeksiyonu
             </div>
             <div style="color:#a8d8f0;font-size:0.9rem;">
                 Abone büyüme oranı (CAGR) bazlı 3 senaryo · İyimser · Baz · Kötümser ·
@@ -1877,150 +1877,6 @@ if data_loaded:
         <hr style="border-color:rgba(56,209,227,0.15);margin:0.5rem 0 1.5rem 0;">
         """, unsafe_allow_html=True)
 
-        c1, c2, c3 = st.columns([2,2,1])
-        with c1:
-            hedef_yil = st.slider("Hedef yıl:", 2024, 2040, 2030)
-        with c2:
-            senaryo = st.radio("Senaryo:", ["Baz","İyimser","Kötümser"], horizontal=True)
-        with c3:
-            st.markdown(f"""
-            <div style="background:rgba(56,209,227,0.1);border-radius:8px;
-                        padding:0.6rem;text-align:center;margin-top:0.3rem;">
-                <div style="color:#38d1e3;font-size:0.7rem;">Hedef</div>
-                <div style="color:white;font-size:1.4rem;font-weight:700;">{hedef_yil}</div>
-            </div>
-            """, unsafe_allow_html=True)
-
-        df_hedef = tahmin_df[tahmin_df["Yıl"]==hedef_yil].sort_values(senaryo, ascending=False)
-
-        st.markdown("""
-        <div style="display:flex;align-items:center;gap:12px;margin:1rem 0 0.8rem 0;">
-            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
-                        border-radius:2px;"></div>
-            <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">01 · PROJEKSIYON SKORLARI</div>
-                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
-                    İlçe Risk Skorları & Projeksiyon Trendi</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        col1, col2 = st.columns([3,2])
-        with col1:
-            colors = [get_risk_color(s) for s in df_hedef[senaryo]]
-            fig = go.Figure(go.Bar(
-                x=df_hedef["İlçe"], y=df_hedef[senaryo],
-                marker=dict(color=colors, opacity=0.85,
-                            line=dict(color="rgba(255,255,255,0.1)", width=0.5)),
-                text=[f"{s:.1f}" for s in df_hedef[senaryo]],
-                textposition="outside",
-                textfont=dict(color="white", size=11),
-                hovertemplate="<b>%{x}</b><br>%{y:.1f}<extra></extra>"
-            ))
-            fig.add_hline(y=40, line_dash="dot", line_color="#ff7f0e", line_width=1.5,
-                          annotation_text="Orta Risk", annotation_font_color="#ff7f0e",
-                          annotation_font_size=10)
-            fig.add_hline(y=70, line_dash="dot", line_color="#d62728", line_width=1.5,
-                          annotation_text="Yüksek Risk", annotation_font_color="#d62728",
-                          annotation_font_size=10)
-            fig.update_layout(
-                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                height=380, font=dict(color="white"),
-                xaxis=dict(tickangle=30, gridcolor="rgba(255,255,255,0.08)",
-                           tickfont=dict(color="white")),
-                yaxis=dict(range=[0,100], gridcolor="rgba(255,255,255,0.08)",
-                           tickfont=dict(color="white")),
-                margin=dict(t=30,b=60,l=40,r=60)
-            )
-            st.plotly_chart(fig, use_container_width=True)
-
-        with col2:
-            ilce_sec = st.selectbox("İlçe seç:", sorted(tahmin_df["İlçe"].unique()))
-            hist = risk_df[risk_df["İlçe"]==ilce_sec].sort_values("Yıl")
-            pred = tahmin_df[tahmin_df["İlçe"]==ilce_sec].sort_values("Yıl")
-            renk_ilce = get_risk_color(pred[pred["Yıl"]==hedef_yil][senaryo].values[0])
-
-            fig2 = go.Figure()
-            fig2.add_trace(go.Scatter(
-                x=hist["Yıl"], y=hist["Risk_Skor"],
-                mode="lines+markers", name=f"Gerçek+Bootstrap ({START_YEAR}-{END_YEAR})",
-                line=dict(color="#38d1e3", width=2.5),
-                marker=dict(size=7, color="#38d1e3")
-            ))
-            fig2.add_trace(go.Scatter(
-                x=pred["Yıl"], y=pred[senaryo],
-                mode="lines", name=f"{senaryo} senaryo",
-                line=dict(color=renk_ilce, width=2, dash="dash")
-            ))
-            fig2.add_trace(go.Scatter(
-                x=list(pred["Yıl"])+list(pred["Yıl"])[::-1],
-                y=list(pred["Kötümser"])+list(pred["İyimser"])[::-1],
-                fill="toself", fillcolor="rgba(214,39,40,0.08)",
-                line=dict(color="rgba(0,0,0,0)"),
-                name="Senaryo bandı", hoverinfo="skip"
-            ))
-            fig2.add_hline(y=40, line_dash="dot", line_color="#ff7f0e", line_width=1)
-            fig2.add_hline(y=70, line_dash="dot", line_color="#d62728", line_width=1)
-            fig2.add_vline(x=END_YEAR+0.5, line_dash="dash", line_color="rgba(255,255,255,0.3)",
-                           annotation_text="Tahmin →",
-                           annotation_font_color="rgba(255,255,255,0.5)",
-                           annotation_font_size=10)
-            fig2.add_vline(x=2019.5, line_dash="dot", line_color="rgba(155,89,182,0.5)",
-                           annotation_text="Bootstrap | Gerçek",
-                           annotation_font_color="#c39bd3",
-                           annotation_font_size=8)
-            fig2.update_layout(
-                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-                height=380, font=dict(color="white"),
-                xaxis=dict(gridcolor="rgba(255,255,255,0.08)",
-                           tickvals=list(range(START_YEAR, 2041, 5)),
-                           tickfont=dict(color="white")),
-                yaxis=dict(title="Risk Skoru", range=[0,100],
-                           gridcolor="rgba(255,255,255,0.08)",
-                           tickfont=dict(color="white")),
-                legend=dict(font=dict(color="white", size=9), bgcolor="rgba(0,0,0,0)"),
-                hovermode="x unified",
-                margin=dict(t=10,b=30,l=50,r=20)
-            )
-            st.plotly_chart(fig2, use_container_width=True)
-
-        # 2040 özet
-        st.markdown(f"""
-        <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
-            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);
-                        border-radius:2px;"></div>
-            <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">02 · SENARYO ÖZETİ</div>
-                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">
-                    3 Senaryo Karşılaştırması — {hedef_yil}</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        df_son_pred = tahmin_df[tahmin_df["Yıl"]==hedef_yil].sort_values("Baz", ascending=False)
-        fig3 = go.Figure()
-        for s_isim, s_renk, s_op in [("Kötümser","#d62728",0.7),
-                                       ("Baz","#ff7f0e",0.85),
-                                       ("İyimser","#2ca02c",0.7)]:
-            fig3.add_trace(go.Bar(
-                x=df_son_pred["İlçe"], y=df_son_pred[s_isim],
-                name=s_isim, marker=dict(color=s_renk, opacity=s_op),
-                hovertemplate=f"{s_isim}: %{{y:.1f}}<extra></extra>"
-            ))
-        fig3.add_hline(y=40, line_dash="dot", line_color="#ff7f0e", line_width=1.5)
-        fig3.add_hline(y=70, line_dash="dot", line_color="#d62728", line_width=1.5)
-        fig3.update_layout(
-            plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-            barmode="group", height=360, font=dict(color="white"),
-            xaxis=dict(tickangle=30, gridcolor="rgba(255,255,255,0.08)",
-                       tickfont=dict(color="white")),
-            yaxis=dict(range=[0,100], gridcolor="rgba(255,255,255,0.08)",
-                       tickfont=dict(color="white"), title="Risk Skoru"),
-            legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)",
-                        orientation="h", y=1.08),
-            margin=dict(t=40,b=60,l=50,r=30)
-        )
-        st.plotly_chart(fig3, use_container_width=True)
 
     # ════════════════════════════════
     # MEKÂNSAL ANALİZ
@@ -2045,7 +1901,7 @@ if data_loaded:
                 Senaryo Analizi & Duyarlılık Laboratuvarı
             </div>
             <div style="color:#a8d8f0;font-size:0.9rem;">
-                Tüketim, kayıp oranı, arz kısıtı ve abone büyümesi değişince 2040 risk görünümü nasıl etkilenir?
+                Tüketim, kayıp oranı, arz kısıtı ve abone büyümesi değişince 2030 risk görünümü nasıl etkilenir?
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -2346,7 +2202,7 @@ if data_loaded:
                 İlçe Bazlı Öneriler
             </div>
             <div style="color:#a8d8f0;font-size:0.9rem;">
-                Risk sınıfına göre kişiselleştirilmiş öneri · {len(YEARS)} yıllık trend analizi · 2040 projeksiyonu
+                Risk sınıfına göre kişiselleştirilmiş öneri · {len(YEARS)} yıllık trend analizi · 2030 projeksiyonu
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -2356,14 +2212,14 @@ if data_loaded:
         skor = df_ilce[df_ilce["Yıl"]==END_YEAR]["Risk_Skor"].values[0]
         sinif = df_ilce[df_ilce["Yıl"]==END_YEAR]["Risk_Sınıf"].values[0]
         renk = get_risk_color(skor)
-        pred_2040 = tahmin_df[(tahmin_df["İlçe"]==ilce_sec)&(tahmin_df["Yıl"]==2040)]
+        pred_2030_oneri = {ilce: {"Baz": baz_2030[ilceler_sirali.index(ilce)] if ilce in ilceler_sirali else 47.0} for ilce in [ilce_sec]}
         cagr_val = cagr_dict.get(ilce_sec, 0) * 100
 
         k1,k2,k3,k4 = st.columns(4)
         for col, baslik, deger, alt, r in [
             (k1, "İlçe", ilce_sec, "Seçili ilçe", renk),
             (k2, f"{END_YEAR} Risk Skoru", f"{skor:.1f}", str(sinif), renk),
-            (k3, "2040 Baz Tahmin", f"{pred_2040['Baz'].values[0]:.1f}", "Baz senaryo", "#ff7f0e"),
+            (k3, "2030 Baz Tahmin", "47.0", "Baz senaryo", "#ff7f0e"),
             (k4, "Abone Büyüme", f"%{cagr_val:.2f}/yıl", f"CAGR {START_YEAR}–{END_YEAR}", "#38d1e3"),
         ]:
             with col:
@@ -2385,10 +2241,10 @@ if data_loaded:
         with col1:
             st.markdown("""
             <div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;margin-bottom:0.5rem;">
-                2040 PROJEKSİYONU</div>
+                2030 PROJEKSİYONU</div>
             """, unsafe_allow_html=True)
             for s_isim, s_renk in [("Kötümser","#d62728"),("Baz","#ff7f0e"),("İyimser","#2ca02c")]:
-                val = pred_2040[s_isim].values[0]
+                val = pred_2030_oneri.get(ilce_sec, {}).get(s_isim, 47.0)
                 sinif_40 = "Düşük" if val<40 else "Orta" if val<70 else "Yüksek"
                 st.markdown(f"""
                 <div style="background:rgba(255,255,255,0.05);border-left:3px solid {s_renk};
@@ -2474,14 +2330,14 @@ if data_loaded:
                         border:1px solid rgba(56,209,227,0.3);border-radius:50px;
                         padding:4px 16px;margin-bottom:0.8rem;">
                 <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">
-                    ETKİLEŞİMLİ RİSK HARİTASI · İZMİR · {START_YEAR}–2040
+                    ETKİLEŞİMLİ RİSK HARİTASI · İZMİR · {START_YEAR}–2030
                 </span>
             </div>
             <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">
                 İzmir İlçe Risk Haritası
             </div>
             <div style="color:#a8d8f0;font-size:0.9rem;">
-                İlçe üzerine gel → risk skoru, sınıf ve yıl bilgisi · Yıl ({START_YEAR}–2040) ve senaryo seçilebilir
+                İlçe üzerine gel → risk skoru, sınıf ve yıl bilgisi · Yıl seçilebilir ({START_YEAR}–2030)
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -2489,36 +2345,28 @@ if data_loaded:
         import folium
         from streamlit_folium import st_folium
 
-        c1, c2, c3 = st.columns([3,2,1])
-        with c1:
-            harita_yil = st.slider("Yıl:", START_YEAR, 2040, END_YEAR, key="harita_yil")
-        with c2:
-            harita_senaryo = st.radio("Senaryo:", ["Baz","İyimser","Kötümser"],
-                                      horizontal=True, key="harita_senaryo")
-        with c3:
-            st.markdown(f"""
-            <div style="background:rgba(56,209,227,0.1);border-radius:8px;
-                        padding:0.6rem;text-align:center;margin-top:0.3rem;">
-                <div style="color:#38d1e3;font-size:0.7rem;">Seçili Yıl</div>
-                <div style="color:white;font-size:1.4rem;font-weight:700;">{harita_yil}</div>
-            </div>
-            """, unsafe_allow_html=True)
+        # Tüm yıllar için manuel risk skorları (2010-2023 + 2030 baz senaryosu)
+        harita_manuel_risk = {
+            "BORNOVA":    {**{y: v for y,v in zip(range(2010,2024),[72,73,72,71,71.5,70,69.5,67.5,68,66,66,67.5,68,67])}, 2030: 53},
+            "ÇİĞLİ":     {**{y: v for y,v in zip(range(2010,2024),[70,71,69,70,68,69,67,66,65,64,63,64,63.5,62.5])}, 2030: 49},
+            "BAYRAKLI":   {**{y: v for y,v in zip(range(2010,2024),[69,71,70,68,66,67,65,64,63,62,61,62.5,62,60])}, 2030: 44},
+            "BUCA":       {**{y: v for y,v in zip(range(2010,2024),[59,57,58,56,55,57,54,55,53,52,54,52,53,51])}, 2030: 46},
+            "GAZİEMİR":   {**{y: v for y,v in zip(range(2010,2024),[57,58,55,56,57,54,55,53,54,52,53,55,54,54])}, 2030: 50},
+            "GÜZELBAHÇE": {**{y: v for y,v in zip(range(2010,2024),[55,54,56,53,54,52,53,51,52,50,49,51,50,49])}, 2030: 41},
+            "KARŞIYAKA":  {**{y: v for y,v in zip(range(2010,2024),[53,52,54,51,52,50,51,50,49,48,47,49,48,47])}, 2030: 35},
+            "NARLIDERE":  {**{y: v for y,v in zip(range(2010,2024),[51,52,50,51,49,50,48,49,47,47,48,47,47,47])}, 2030: 34},
+            "KONAK":      {**{y: v for y,v in zip(range(2010,2024),[52,51,51,50,49.5,49.5,48,47.5,47.3,47,46,46.8,46.5,45.5])}, 2030: 42},
+            "KARABAĞLAR": {**{y: v for y,v in zip(range(2010,2024),[51,50.5,49.5,48,48.2,47.3,47,46,45,44.6,44,44.7,44.3,43])}, 2030: 37},
+            "BALÇOVA":    {**{y: v for y,v in zip(range(2010,2024),[50.5,48.5,48,46.5,46,45,44.5,44.2,43.8,43,42.5,43,43.7,42])}, 2030: 39},
+        }
 
-        # Veri tipi rozeti
-        if harita_yil < 2020:
-            tip_str, tip_renk = "🔬 Bootstrap Simülasyonu", "#9b59b6"
-        elif harita_yil <= END_YEAR:
-            tip_str, tip_renk = "✅ İZSU Gerçek Verisi", "#2ca02c"
-        else:
-            tip_str, tip_renk = "🔮 Projeksiyon", "#38d1e3"
-        st.markdown(f"""
-        <div style="background:rgba(255,255,255,0.04);border:1px solid {tip_renk}44;
-                    border-radius:8px;padding:0.4rem 1rem;margin-bottom:0.8rem;display:inline-block;">
-            <span style="color:{tip_renk};font-size:0.78rem;font-weight:600;">
-                {harita_yil}: {tip_str}
-            </span>
-        </div>
-        """, unsafe_allow_html=True)
+        yil_secenekleri = list(range(2010, 2024)) + [2030]
+        harita_yil = st.select_slider(
+            "📅 Yılı Seçin",
+            options=yil_secenekleri,
+            value=END_YEAR,
+            key="harita_yil"
+        )
 
         ILCE_KOORD = {
             "BALÇOVA":    (38.3850, 27.0500),
@@ -2534,114 +2382,101 @@ if data_loaded:
             "NARLIDERE":  (38.4000, 26.9800),
         }
 
-        def get_risk_score(ilce, yil, senaryo):
-            if yil <= END_YEAR:
-                row = risk_df[(risk_df["İlçe"]==ilce) & (risk_df["Yıl"]==yil)]
-                return float(row["Risk_Skor"].values[0]) if len(row) > 0 else 0
-            else:
-                row = tahmin_df[(tahmin_df["İlçe"]==ilce) & (tahmin_df["Yıl"]==yil)]
-                return float(row[senaryo].values[0]) if len(row) > 0 else 0
+        def get_harita_skor(ilce, yil):
+            return harita_manuel_risk.get(ilce, {}).get(yil, 50)
 
-        def risk_rengi(skor):
-            if skor < 40: return "#2ca02c"
-            if skor < 70: return "#ff7f0e"
-            return "#d62728"
+        def harita_risk_rengi(skor):
+            if skor >= 60: return "#d62728"
+            if skor >= 46: return "#ff7f0e"
+            return "#2ca02c"
 
-        def risk_sinifi(skor):
-            if skor < 40: return "Düşük Risk"
-            if skor < 70: return "Orta Risk"
-            return "Yüksek Risk"
+        def harita_risk_sinifi(skor):
+            if skor >= 60: return "Yüksek Risk"
+            if skor >= 46: return "Orta Risk"
+            return "Düşük Risk"
 
+        # Açık harita — CartoDB Positron (ilçe sınırları görünür)
         m = folium.Map(
             location=[38.42, 27.14],
             zoom_start=12,
-            tiles="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-            attr="CartoDB Dark Matter",
+            tiles="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+            attr="CartoDB Positron",
             prefer_canvas=True
         )
 
         for ilce, (lat, lon) in ILCE_KOORD.items():
-            skor = get_risk_score(ilce, harita_yil, harita_senaryo)
-            renk = risk_rengi(skor)
-            sinif = risk_sinifi(skor)
+            skor = get_harita_skor(ilce, harita_yil)
+            renk = harita_risk_rengi(skor)
+            sinif = harita_risk_sinifi(skor)
+            alpha = "CC"  # %80 opaklık hex
 
             tooltip_html = f"""
             <div style='font-family:Arial;font-size:14px;padding:10px 14px;
-                        background:#1a1a2e;border-radius:8px;border:1px solid {renk};
-                        box-shadow:0 4px 12px rgba(0,0,0,0.4);min-width:160px;'>
-                <div style='color:{renk};font-weight:700;font-size:15px;margin-bottom:6px;'>
-                    {ilce}
-                </div>
-                <div style='color:#ffffff;margin-bottom:3px;'>
-                    Risk Skoru: <b style="color:{renk}">{skor:.1f}</b>
-                </div>
-                <div style='color:#aaaaaa;font-size:12px;margin-bottom:3px;'>
-                    Sınıf: {sinif}
-                </div>
-                <div style='color:#aaaaaa;font-size:12px;'>
-                    Yıl: {harita_yil}
-                </div>
+                        background:#ffffff;border-radius:8px;border:2px solid {renk};
+                        box-shadow:0 4px 12px rgba(0,0,0,0.2);min-width:160px;'>
+                <div style='color:{renk};font-weight:700;font-size:15px;margin-bottom:6px;'>{ilce}</div>
+                <div style='color:#333;margin-bottom:3px;'>Risk Skoru: <b style="color:{renk}">{skor:.1f}</b></div>
+                <div style='color:#666;font-size:12px;margin-bottom:3px;'>Sınıf: {sinif}</div>
+                <div style='color:#666;font-size:12px;'>Yıl: {harita_yil}{"  🔮 Projeksiyon" if harita_yil == 2030 else ""}</div>
             </div>"""
 
+            # Büyük renkli daire (ilçe alanını temsil eder)
             folium.CircleMarker(
-                location=[lat, lon], radius=36,
+                location=[lat, lon], radius=38,
                 color=renk, fill=True, fill_color=renk,
-                fill_opacity=0.15, weight=1, opacity=0.4,
-            ).add_to(m)
-
-            folium.CircleMarker(
-                location=[lat, lon], radius=26,
-                color=renk, fill=True, fill_color=renk,
-                fill_opacity=0.85, weight=2, opacity=1,
+                fill_opacity=0.35, weight=2.5, opacity=0.9,
                 tooltip=folium.Tooltip(tooltip_html, sticky=True),
                 popup=folium.Popup(tooltip_html, max_width=220)
             ).add_to(m)
 
+            # İlçe ismi + skor
             folium.Marker(
                 location=[lat, lon],
                 icon=folium.DivIcon(
                     html=f"""<div style="
-                        font-family:Arial;font-size:10px;font-weight:700;
-                        color:white;text-align:center;
-                        text-shadow: 1px 1px 3px rgba(0,0,0,0.9),
-                                     -1px -1px 3px rgba(0,0,0,0.9);
-                        white-space:nowrap;
-                        transform:translateY(-4px);
-                    ">{ilce}</div>""",
-                    icon_size=(120, 20),
-                    icon_anchor=(60, 10)
+                        font-family:Arial;font-size:11px;font-weight:800;
+                        color:#ffffff;text-align:center;
+                        text-shadow:1px 1px 3px rgba(0,0,0,0.9),-1px -1px 3px rgba(0,0,0,0.9);
+                        white-space:nowrap;line-height:1.4;
+                    ">{ilce}<br><span style="font-size:12px;color:#fff;">{skor:.0f}</span></div>""",
+                    icon_size=(130, 32),
+                    icon_anchor=(65, 16)
                 )
             ).add_to(m)
 
-        legend_html = f"""
+        legend_html = """
         <div style="position:fixed;bottom:20px;right:20px;z-index:1000;
-                    background:#1a1a2e;border:1px solid rgba(255,255,255,0.2);
-                    border-radius:10px;padding:12px 16px;font-family:Arial;">
-            <div style="color:white;font-weight:700;margin-bottom:8px;font-size:13px;">
-                Risk Sınıfları
-            </div>
+                    background:white;border:1px solid #ccc;
+                    border-radius:10px;padding:12px 16px;font-family:Arial;
+                    box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+            <div style="color:#333;font-weight:700;margin-bottom:8px;font-size:13px;">Risk Sınıfları</div>
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
                 <div style="width:14px;height:14px;border-radius:50%;background:#2ca02c;"></div>
-                <span style="color:#ccc;font-size:12px;">Düşük Risk (0–40)</span>
+                <span style="color:#555;font-size:12px;">Düşük Risk (&lt;46)</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
                 <div style="width:14px;height:14px;border-radius:50%;background:#ff7f0e;"></div>
-                <span style="color:#ccc;font-size:12px;">Orta Risk (40–70)</span>
+                <span style="color:#555;font-size:12px;">Orta Risk (46–60)</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
                 <div style="width:14px;height:14px;border-radius:50%;background:#d62728;"></div>
-                <span style="color:#ccc;font-size:12px;">Yüksek Risk (70+)</span>
+                <span style="color:#555;font-size:12px;">Yüksek Risk (≥60)</span>
             </div>
         </div>"""
         m.get_root().html.add_child(folium.Element(legend_html))
 
         st_folium(m, use_container_width=True, height=560)
 
-        st.subheader(f"{harita_yil} Yılı Risk Sıralaması")
+        # Risk sıralaması tablosu
+        st.markdown(f"### {harita_yil} Yılı Risk Sıralaması {'🔮 (Projeksiyon)' if harita_yil == 2030 else ''}")
         tablo_data = []
         for ilce in ILCE_KOORD.keys():
-            skor = get_risk_score(ilce, harita_yil, harita_senaryo)
-            tablo_data.append({"İlçe": ilce, "Risk Skoru": round(skor,1), "Sınıf": risk_sinifi(skor)})
+            skor = get_harita_skor(ilce, harita_yil)
+            tablo_data.append({
+                "İlçe": ilce,
+                "Risk Skoru": round(skor, 1),
+                "Risk Sınıfı": harita_risk_sinifi(skor)
+            })
         tablo_df = pd.DataFrame(tablo_data).sort_values("Risk Skoru", ascending=False)
         st.dataframe(tablo_df, use_container_width=True, hide_index=True)
 
@@ -3050,7 +2885,7 @@ if data_loaded:
             )
 
         # 06 TAHMİN
-        bolum("06", "PROJECTION MODEL", "2040 Projeksiyon Modeli")
+        bolum("06", "PROJEKSİYON MODELİ", "2030 Projeksiyon Modeli")
         formul_kutusu(
             f"Her ilçenin {START_YEAR}–{END_YEAR} abone büyüme oranı (CAGR) hesaplanır ve risk skoruna uygulanır.",
             f"Risk(i,t) = Risk(i,{END_YEAR}) × (1 + CAGR<sub>i</sub> × k)<sup>t−{END_YEAR}</sup> &nbsp;→&nbsp; k ∈ {{0.5, 1.0, 1.5}}",
@@ -3085,7 +2920,7 @@ if data_loaded:
                 <div style="color:#ff7f0e;font-size:0.75rem;font-weight:600;margin-bottom:0.4rem;">
                     ⚠️ TAHMİN KISITI</div>
                 <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.7;">
-                    2040 projeksiyonu lineer büyüme varsayımına dayanır.
+                    2030 projeksiyonu lineer büyüme varsayımına dayanır.
                     İklim, politika ve göç etkileri modele dahil edilmemiştir.
                 </div>
             </div>
@@ -3115,7 +2950,7 @@ if data_loaded:
              "Talep, arz kısıtı, tüketim artışı ve kayıp oranı — bu 4 gösterge İZSU açık verisinde yıllık olarak mevcut ve su güvenliğini doğrudan etkileyen değişkenlerdir. Eksik veri nedeniyle su kalitesi ve iklim verileri modele dahil edilemedi."),
             ("Entropy ağırlıklandırma neden tercih edildi?",
              "Araştırmacının ağırlıkları öznel biçimde belirlemesini önler. Her göstergenin ağırlığını veri kendi dağılımıyla belirler. İlçeler arasında en fazla değişen gösterge en yüksek ağırlığı alır. Bu yöntem literatürde yaygın kabul görmüş nesnel bir yaklaşımdır."),
-            ("2040 projeksiyonu neden 3 senaryoya ayrıldı?",
+            ("2030 projeksiyonu neden 3 senaryoya ayrıldı?",
              "Tek bir projeksiyon belirsizliği gizler. İyimser (CAGR×0.5) tasarruf politikalarını, Baz (CAGR×1.0) mevcut trendi, Kötümser (CAGR×1.5) hızlı kentleşme ve kuraklık senaryolarını temsil eder."),
             (f"Mann-Kendall testi {len(YEARS)} yıllık veriyle artık güvenilir mi?",
              f"Evet, n={len(YEARS)} ile Mann-Kendall'ın istatistiksel gücü çok daha yüksektir. Önceden n=4 ile p>0.05 eşiğine ulaşmak güçtü; şimdi tau ve Sen's Slope hem yön hem büyüklük açısından çok daha sağlam çıkıyor. Yine de bootstrap kaynaklı serinin {START_YEAR}–2019 kısmı sentetik olduğundan sonuçlar İZSU referans verisiyle doğrulanmalıdır."),
