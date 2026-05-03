@@ -408,7 +408,6 @@ except Exception as e:
 if data_loaded:
 
     _dil_h = st.session_state.get("dil","TR")
-    _tema_h = st.session_state.get("acik_tema", False)
 
     # ── Sağ üst: Dil + Tema butonları
     st.markdown("""<style>
@@ -424,16 +423,13 @@ if data_loaded:
     }
     </style>""", unsafe_allow_html=True)
 
-    _t1, _t2, _t3 = st.columns([6.5, 0.6, 0.5])
+    _t1, _t2 = st.columns([7.0, 0.6])
     with _t2:
         _dil_label = "🇹🇷 TR" if _dil_h == "EN" else "🇬🇧 EN"
         if st.button(_dil_label, key="dil_btn", use_container_width=True):
             st.session_state.dil = "EN" if _dil_h == "TR" else "TR"
             st.rerun()
-    with _t3:
-        if st.button("☀️" if _tema_h else "🌙", key="tema_btn", use_container_width=True):
-            st.session_state.acik_tema = not _tema_h
-            st.rerun()
+
 
     # ── Başlık — daha yukarı, daha büyük
     st.markdown(f"""
@@ -674,8 +670,6 @@ if data_loaded:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
     if st.session_state.secili_sayfa not in sayfa_listesi:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
-    if "acik_tema" not in st.session_state:
-        st.session_state.acik_tema = False
     if "dil" not in st.session_state:
         st.session_state.dil = "TR"
 
@@ -811,104 +805,6 @@ if data_loaded:
     def t(key):
         """Çeviri yardımcı fonksiyon"""
         return T.get(key, {}).get(dil, T.get(key, {}).get("TR", key))
-
-    if st.session_state.acik_tema:
-        st.markdown("""
-        <style>
-        /* ── GÜNDÜZ MODU — Derin deniz mavisi paleti ── */
-        .stApp {
-            background: linear-gradient(160deg, #dff0fb 0%, #c8e6f5 40%, #d6eef8 100%) !important;
-            background-image: none !important;
-        }
-
-        /* Başlıklar */
-        h1 { color: #0a3d6b !important; }
-        h2 { color: #1a5276 !important; }
-        h3 { color: #1f618d !important; }
-
-        /* Genel metin */
-        p, li, label { color: #154360 !important; }
-        div { color: #154360 !important; }
-
-        /* Beyaz yazıları koyu maviye çevir */
-        [style*="color:#ffffff"], [style*="color: #ffffff"],
-        [style*="color:white"], [style*="color: white"] {
-            color: #0a3d6b !important;
-        }
-        [style*="color:#a8d8f0"], [style*="color:#38d1e3"],
-        [style*="color:#c5e8f7"], [style*="color:#d0e8f5"] {
-            color: #1a6ea8 !important;
-        }
-
-        /* Metric kartları */
-        [data-testid="metric-container"] {
-            background: rgba(255,255,255,0.7) !important;
-            border: 1px solid rgba(26,110,168,0.3) !important;
-        }
-        [data-testid="metric-container"] label { color: #1a6ea8 !important; }
-        [data-testid="metric-container"] [data-testid="stMetricValue"] { color: #0a3d6b !important; }
-
-        /* Nav butonlar */
-        div[data-testid="stHorizontalBlock"] > div[data-testid="column"]
-            > div > div > div > button {
-            background: rgba(255,255,255,0.65) !important;
-            border: 1.5px solid rgba(26,110,168,0.4) !important;
-            color: #0a3d6b !important;
-        }
-        div[data-testid="stHorizontalBlock"] > div[data-testid="column"]
-            > div > div > div > button:hover {
-            background: rgba(26,110,168,0.15) !important;
-            color: #052e5e !important;
-        }
-
-        /* Input alanlar */
-        [data-testid="stTextInput"] input {
-            background: rgba(255,255,255,0.7) !important;
-            border-color: rgba(26,110,168,0.4) !important;
-            color: #0a3d6b !important;
-        }
-
-        /* Plotly grafik arka planları */
-        .js-plotly-plot { background: rgba(255,255,255,0.6) !important; border-radius: 10px; }
-
-        /* Tab */
-        .stTabs [data-baseweb="tab"] {
-            color: #1a6ea8 !important;
-            background: rgba(255,255,255,0.5) !important;
-        }
-        .stTabs [aria-selected="true"] {
-            background: rgba(26,110,168,0.15) !important;
-            border-bottom: 2px solid #1a6ea8 !important;
-        }
-
-        /* Expander */
-        [data-testid="stExpander"] {
-            background: rgba(255,255,255,0.6) !important;
-            border: 1px solid rgba(26,110,168,0.25) !important;
-        }
-
-        /* Dataframe */
-        [data-testid="stDataFrame"] { background: rgba(255,255,255,0.7) !important; }
-
-        /* Sidebar */
-        [data-testid="stSidebar"] { background: rgba(200,230,248,0.95) !important; }
-
-        /* Alert/info kutular */
-        .stAlert { background: rgba(255,255,255,0.7) !important; border-color: rgba(26,110,168,0.3) !important; }
-
-        /* Genel container arka planlar */
-        [style*="background:rgba(255,255,255,0.05)"],
-        [style*="background:rgba(255,255,255,0.06)"],
-        [style*="background:rgba(255,255,255,0.04)"],
-        [style*="background:rgba(255,255,255,0.08)"] {
-            background: rgba(255,255,255,0.65) !important;
-        }
-        [style*="background:rgba(0,0,0,0.3)"],
-        [style*="background:rgba(0,0,0,0.25)"] {
-            background: rgba(255,255,255,0.5) !important;
-        }
-        </style>
-        """, unsafe_allow_html=True)
 
     st.markdown("<hr style='border-color:rgba(56,209,227,0.15);margin:0.5rem 0 1rem 0;'>", unsafe_allow_html=True)
 
