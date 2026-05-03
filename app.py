@@ -470,20 +470,23 @@ if data_loaded:
     div[data-testid="stTextInput"] input {
         font-size: 0.75rem !important;
         padding: 4px 12px !important;
-        height: 28px !important;
-        min-height: 28px !important;
-        background: rgba(3,12,35,0.0) !important;
+        height: 30px !important;
+        min-height: 30px !important;
+        background: transparent !important;
         border: 1px solid rgba(56,209,227,0.3) !important;
         border-radius: 20px !important;
         color: #a8d8f0 !important;
         box-shadow: none !important;
+        outline: none !important;
     }
-    div[data-testid="stTextInput"] > div {
+    div[data-testid="stTextInput"] > div > div {
         background: transparent !important;
-        border: none !important;
         box-shadow: none !important;
+        border: none !important;
     }
-    div[data-testid="stTextInput"] input::placeholder { color: rgba(168,216,240,0.45) !important; }
+    div[data-testid="stTextInput"] input::placeholder {
+        color: rgba(168,216,240,0.45) !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
