@@ -408,16 +408,16 @@ except Exception as e:
 if data_loaded:
 
     # ── Üst başlık — ortalı, büyük
+    _dil_h = st.session_state.get("dil","TR")
     st.markdown(f"""
     <div style="text-align:center;padding:28px 0 20px 0;
                 border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:0.8rem;
                 position:relative;">
-        <!-- sağ köşe bilgi -->
         <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);
-                    color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.7;">
-            {(st.session_state.get("dil","TR")=="TR" and "Veri: İZSU + Bootstrap Simülasyonu" or "Data: IZSU + Bootstrap Simulation")}<br>{(st.session_state.get("dil","TR")=="TR" and "11 Merkez İlçe · Entropy-WSRI" or "11 Central Districts · Entropy-WSRI")}
+                    color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.9;">
+            {(_dil_h=="TR" and "Veri: İZSU + Bootstrap Simülasyonu" or "Data: IZSU + Bootstrap Simulation")}<br>
+            {(_dil_h=="TR" and "11 Merkez İlçe · Entropy-WSRI" or "11 Central Districts · Entropy-WSRI")}
         </div>
-        <!-- orta logo + başlık -->
         <div style="display:inline-flex;align-items:center;gap:18px;">
             <span style="font-size:4rem;line-height:1;
                          filter:drop-shadow(0 0 16px rgba(56,209,227,0.55));">💧</span>
@@ -434,68 +434,17 @@ if data_loaded:
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Arama kutusu
-    arama_sozluk = {
-        "baraj": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
-        "tahtalı": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
-        "balçova": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
-        "gördes": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
-        "doluluk": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
-        "tüketim": ("📊 EDA Analizi", "🌡️ Tüketim Haritası"),
-        "consumption": ("📊 EDA Analizi", "🌡️ Tüketim Haritası"),
-        "arz talep": ("📊 EDA Analizi", "⚖️ Arz-Talep"),
-        "supply": ("📊 EDA Analizi", "⚖️ Arz-Talep"),
-        "kayıp": ("📊 EDA Analizi", "📉 Kayıp Oranı"),
-        "loss": ("📊 EDA Analizi", "📉 Kayıp Oranı"),
-        "risk": ("📈 Risk Endeksi", None),
-        "wsri": ("📈 Risk Endeksi", None),
-        "entropy": ("📈 Risk Endeksi", None),
-        "bornova": ("📈 Risk Endeksi", None),
-        "çiğli": ("📈 Risk Endeksi", None),
-        "bayraklı": ("📈 Risk Endeksi", None),
-        "buca": ("📈 Risk Endeksi", None),
-        "gaziemir": ("📈 Risk Endeksi", None),
-        "karşıyaka": ("📈 Risk Endeksi", None),
-        "konak": ("📈 Risk Endeksi", None),
-        "karabağlar": ("📈 Risk Endeksi", None),
-        "narlidere": ("📈 Risk Endeksi", None),
-        "güzelbahçe": ("📈 Risk Endeksi", None),
-        "2030": ("🔮 2030 Tahmini", None),
-        "projeksiyon": ("🔮 2030 Tahmini", None),
-        "projection": ("🔮 2030 Tahmini", None),
-        "senaryo": ("🔮 2030 Tahmini", None),
-        "scenario": ("🔮 2030 Tahmini", None),
-        "harita": ("Izmir Risk Haritasi", None),
-        "map": ("Izmir Risk Haritasi", None),
-        "moran": ("🗺️ Mekânsal Analiz", None),
-        "lisa": ("🗺️ Mekânsal Analiz", None),
-        "mekânsal": ("🗺️ Mekânsal Analiz", None),
-        "spatial": ("🗺️ Mekânsal Analiz", None),
-        "öneri": ("💡 Öneriler", None),
-        "recommendation": ("💡 Öneriler", None),
-        "metodoloji": ("📐 Metodoloji", None),
-        "methodology": ("📐 Metodoloji", None),
-        "bootstrap": ("📐 Metodoloji", None),
-        "mann-kendall": ("📐 Metodoloji", None),
-        "radar": ("🔬 Araçlar", None),
-        "simülatör": ("🔬 Araçlar", None),
-        "simulator": ("🔬 Araçlar", None),
-        "araç": ("🔬 Araçlar", None),
-        "tool": ("🔬 Araçlar", None),
-        "karşılaştır": ("🔬 Araçlar", None),
-        "compare": ("🔬 Araçlar", None),
-    }
-
-    search_col1, search_col2 = st.columns([4, 1])
-    with search_col1:
+    # ── Arama kutusu — sağ hizalı, küçük
+    _a1, _a2, _a3 = st.columns([3, 2, 0.6])
+    with _a2:
         arama_girdisi = st.text_input(
             "",
-            placeholder="🔍  " + ("Arama yapın... (örn: baraj, risk, bornova, 2030)" if st.session_state.get("dil","TR")=="TR" else "Search... (e.g. dam, risk, bornova, 2030)"),
+            placeholder="🔍 " + ("Ara: baraj, risk, harita..." if _dil_h=="TR" else "Search: dam, risk, map..."),
             key="site_arama",
             label_visibility="collapsed"
         )
-    with search_col2:
-        arama_btn = st.button("🔍 " + ("Ara" if st.session_state.get("dil","TR")=="TR" else "Search"), key="arama_btn", use_container_width=True)
+    with _a3:
+        arama_btn = st.button("→", key="arama_btn", use_container_width=True)
 
     if arama_girdisi and (arama_btn or len(arama_girdisi) > 2):
         arama_temiz = arama_girdisi.strip().lower()
@@ -506,18 +455,13 @@ if data_loaded:
                 break
         if eslesen:
             hedef_sayfa, hedef_tab = eslesen
-            if st.session_state.get("dil","TR") == "TR":
-                st.success(f"✅ **{arama_temiz!r}** için sonuç bulundu → **{hedef_sayfa}** sayfasına yönlendiriliyorsunuz...")
-            else:
-                st.success(f"✅ Result found for **{arama_temiz!r}** → Redirecting to **{hedef_sayfa}**...")
             if hedef_sayfa != st.session_state.get("secili_sayfa"):
                 st.session_state.secili_sayfa = hedef_sayfa
                 st.rerun()
         else:
-            if st.session_state.get("dil","TR") == "TR":
-                st.warning(f"❌ **{arama_temiz!r}** için sonuç bulunamadı. Deneyin: baraj, risk, bornova, 2030, harita, metodoloji")
-            else:
-                st.warning(f"❌ No result for **{arama_temiz!r}**. Try: dam, risk, bornova, 2030, map, methodology")
+            with _a2:
+                st.caption("❌ " + ("Sonuç yok" if _dil_h=="TR" else "No result"))
+
     _dil_banner = st.session_state.get("dil", "TR")
     _banner_metin = (
         f"{START_YEAR}–2019 data generated via block bootstrap simulation. 2020–{END_YEAR} data from official IZSU records."
@@ -550,20 +494,20 @@ if data_loaded:
         div[data-testid="stPills"] [role="radiogroup"] {
             display: flex !important;
             justify-content: center !important;
-            align-items: center !important;
-            flex-wrap: wrap !important;
-            gap: 10px !important;
-            padding: 10px 0 !important;
+            align-items: stretch !important;
+            flex-wrap: nowrap !important;
+            gap: 8px !important;
+            padding: 12px 4px !important;
             background: transparent !important;
             border: none !important;
             box-shadow: none !important;
             backdrop-filter: none !important;
             max-width: 100% !important;
-            margin: 6px auto 14px auto !important;
+            margin: 4px auto 12px auto !important;
         }
         div[data-testid="stPills"] label {
-            min-height: 52px !important;
-            padding: 0 22px !important;
+            min-height: 56px !important;
+            padding: 0 18px !important;
             border-radius: 14px !important;
             background: rgba(10,25,60,0.75) !important;
             border: 1.5px solid rgba(56,209,227,0.4) !important;
