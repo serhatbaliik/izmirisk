@@ -434,7 +434,90 @@ if data_loaded:
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Bootstrap bilgi banner — şeffaflık
+    # ── Arama kutusu
+    arama_sozluk = {
+        "baraj": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
+        "tahtalı": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
+        "balçova": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
+        "gördes": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
+        "doluluk": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
+        "tüketim": ("📊 EDA Analizi", "🌡️ Tüketim Haritası"),
+        "consumption": ("📊 EDA Analizi", "🌡️ Tüketim Haritası"),
+        "arz talep": ("📊 EDA Analizi", "⚖️ Arz-Talep"),
+        "supply": ("📊 EDA Analizi", "⚖️ Arz-Talep"),
+        "kayıp": ("📊 EDA Analizi", "📉 Kayıp Oranı"),
+        "loss": ("📊 EDA Analizi", "📉 Kayıp Oranı"),
+        "risk": ("📈 Risk Endeksi", None),
+        "wsri": ("📈 Risk Endeksi", None),
+        "entropy": ("📈 Risk Endeksi", None),
+        "bornova": ("📈 Risk Endeksi", None),
+        "çiğli": ("📈 Risk Endeksi", None),
+        "bayraklı": ("📈 Risk Endeksi", None),
+        "buca": ("📈 Risk Endeksi", None),
+        "gaziemir": ("📈 Risk Endeksi", None),
+        "karşıyaka": ("📈 Risk Endeksi", None),
+        "konak": ("📈 Risk Endeksi", None),
+        "karabağlar": ("📈 Risk Endeksi", None),
+        "narlidere": ("📈 Risk Endeksi", None),
+        "güzelbahçe": ("📈 Risk Endeksi", None),
+        "2030": ("🔮 2030 Tahmini", None),
+        "projeksiyon": ("🔮 2030 Tahmini", None),
+        "projection": ("🔮 2030 Tahmini", None),
+        "senaryo": ("🔮 2030 Tahmini", None),
+        "scenario": ("🔮 2030 Tahmini", None),
+        "harita": ("Izmir Risk Haritasi", None),
+        "map": ("Izmir Risk Haritasi", None),
+        "moran": ("🗺️ Mekânsal Analiz", None),
+        "lisa": ("🗺️ Mekânsal Analiz", None),
+        "mekânsal": ("🗺️ Mekânsal Analiz", None),
+        "spatial": ("🗺️ Mekânsal Analiz", None),
+        "öneri": ("💡 Öneriler", None),
+        "recommendation": ("💡 Öneriler", None),
+        "metodoloji": ("📐 Metodoloji", None),
+        "methodology": ("📐 Metodoloji", None),
+        "bootstrap": ("📐 Metodoloji", None),
+        "mann-kendall": ("📐 Metodoloji", None),
+        "radar": ("🔬 Araçlar", None),
+        "simülatör": ("🔬 Araçlar", None),
+        "simulator": ("🔬 Araçlar", None),
+        "araç": ("🔬 Araçlar", None),
+        "tool": ("🔬 Araçlar", None),
+        "karşılaştır": ("🔬 Araçlar", None),
+        "compare": ("🔬 Araçlar", None),
+    }
+
+    search_col1, search_col2 = st.columns([4, 1])
+    with search_col1:
+        arama_girdisi = st.text_input(
+            "",
+            placeholder="🔍  " + ("Arama yapın... (örn: baraj, risk, bornova, 2030)" if st.session_state.get("dil","TR")=="TR" else "Search... (e.g. dam, risk, bornova, 2030)"),
+            key="site_arama",
+            label_visibility="collapsed"
+        )
+    with search_col2:
+        arama_btn = st.button("🔍 " + ("Ara" if st.session_state.get("dil","TR")=="TR" else "Search"), key="arama_btn", use_container_width=True)
+
+    if arama_girdisi and (arama_btn or len(arama_girdisi) > 2):
+        arama_temiz = arama_girdisi.strip().lower()
+        eslesen = None
+        for anahtar, hedef in arama_sozluk.items():
+            if anahtar in arama_temiz:
+                eslesen = hedef
+                break
+        if eslesen:
+            hedef_sayfa, hedef_tab = eslesen
+            if st.session_state.get("dil","TR") == "TR":
+                st.success(f"✅ **{arama_temiz!r}** için sonuç bulundu → **{hedef_sayfa}** sayfasına yönlendiriliyorsunuz...")
+            else:
+                st.success(f"✅ Result found for **{arama_temiz!r}** → Redirecting to **{hedef_sayfa}**...")
+            if hedef_sayfa != st.session_state.get("secili_sayfa"):
+                st.session_state.secili_sayfa = hedef_sayfa
+                st.rerun()
+        else:
+            if st.session_state.get("dil","TR") == "TR":
+                st.warning(f"❌ **{arama_temiz!r}** için sonuç bulunamadı. Deneyin: baraj, risk, bornova, 2030, harita, metodoloji")
+            else:
+                st.warning(f"❌ No result for **{arama_temiz!r}**. Try: dam, risk, bornova, 2030, map, methodology")
     _dil_banner = st.session_state.get("dil", "TR")
     _banner_metin = (
         f"{START_YEAR}–2019 data generated via block bootstrap simulation. 2020–{END_YEAR} data from official IZSU records."
@@ -479,60 +562,61 @@ if data_loaded:
             margin: 6px auto 14px auto !important;
         }
         div[data-testid="stPills"] label {
-            min-height: 62px !important;
-            padding: 0 30px !important;
-            border-radius: 16px !important;
-            background: rgba(255,255,255,0.07) !important;
-            border: 1px solid rgba(56,209,227,0.35) !important;
+            min-height: 52px !important;
+            padding: 0 22px !important;
+            border-radius: 14px !important;
+            background: rgba(10,25,60,0.75) !important;
+            border: 1.5px solid rgba(56,209,227,0.4) !important;
             color: #cdeeff !important;
-            font-size: 1.1rem !important;
+            font-size: 1.0rem !important;
             font-weight: 700 !important;
-            letter-spacing: 0.3px !important;
-            transition: all 160ms ease !important;
+            letter-spacing: 0.4px !important;
+            transition: all 180ms ease !important;
             cursor: pointer !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            backdrop-filter: blur(12px) !important;
-            -webkit-backdrop-filter: blur(12px) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
             box-shadow:
-                0 4px 14px rgba(0,0,0,0.35),
-                inset 0 1px 0 rgba(255,255,255,0.08) !important;
+                0 4px 16px rgba(0,0,0,0.45),
+                0 0 0 1px rgba(56,209,227,0.08),
+                inset 0 1px 0 rgba(255,255,255,0.10) !important;
         }
         div[data-testid="stPills"] label p,
         div[data-testid="stPills"] label span {
-            font-size: 1.1rem !important;
+            font-size: 1.0rem !important;
             font-weight: 700 !important;
             color: inherit !important;
             margin: 0 !important;
         }
         div[data-testid="stPills"] label:hover {
-            background: rgba(56,209,227,0.15) !important;
-            border-color: rgba(56,209,227,0.75) !important;
+            background: rgba(56,209,227,0.18) !important;
+            border-color: rgba(56,209,227,0.85) !important;
             color: #ffffff !important;
-            transform: translateY(-3px) !important;
+            transform: translateY(-2px) !important;
             box-shadow:
-                0 10px 28px rgba(0,0,0,0.40),
-                0 0 20px rgba(56,209,227,0.18),
-                inset 0 1px 0 rgba(255,255,255,0.12) !important;
+                0 8px 24px rgba(0,0,0,0.50),
+                0 0 18px rgba(56,209,227,0.22),
+                inset 0 1px 0 rgba(255,255,255,0.15) !important;
         }
         div[data-testid="stPills"] label:has(input:checked),
         div[data-testid="stPills"] label[aria-checked="true"],
         div[data-testid="stPills"] [aria-checked="true"] {
-            background: rgba(56,209,227,0.22) !important;
+            background: linear-gradient(135deg,rgba(56,209,227,0.28),rgba(27,79,114,0.6)) !important;
             border-color: #38d1e3 !important;
             color: #ffffff !important;
             box-shadow:
-                0 0 22px rgba(56,209,227,0.40),
-                0 6px 20px rgba(0,0,0,0.35),
-                inset 0 1px 0 rgba(255,255,255,0.15) !important;
+                0 0 24px rgba(56,209,227,0.45),
+                0 6px 20px rgba(0,0,0,0.40),
+                inset 0 1px 0 rgba(255,255,255,0.20) !important;
         }
         div[data-testid="stPills"] input { display: none !important; }
         @media (max-width: 900px) {
             div[data-testid="stPills"] label {
-                min-height: 50px !important;
-                font-size: 0.9rem !important;
-                padding: 0 18px !important;
+                min-height: 44px !important;
+                font-size: 0.85rem !important;
+                padding: 0 14px !important;
             }
         }
     </style>
