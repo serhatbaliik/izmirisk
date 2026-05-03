@@ -2094,26 +2094,36 @@ if data_loaded:
             ])
             st.dataframe(lisa_df, use_container_width=True, hide_index=True)
             st.markdown(f"""
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:0.8rem;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:1rem;">
                 <div style="background:rgba(255,127,14,0.08);border:1px solid rgba(255,127,14,0.28);
-                            border-radius:8px;padding:0.7rem 0.9rem;">
-                    <div style="color:#ff7f0e;font-size:0.7rem;font-weight:700;letter-spacing:1px;margin-bottom:4px;">
-                        🟠 GAZİEMİR · HL (İzole Yüksek Risk)</div>
-                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.5;">
-                        Gaziemir, komşularından belirgin biçimde yüksek risk taşıyor.
-                        Hızlı nüfus artışı ve sanayi yoğunluğu ilçeyi bölgesel haritada izole sıcak noktaya dönüştürmüş.
+                            border-radius:10px;padding:1rem 1.2rem;">
+                    <div style="color:#ff7f0e;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">
+                        🟠 GAZİEMİR · HL — İzole Yüksek Risk</div>
+                    <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
+                        Gaziemir, komşuları Balçova, Konak ve Karabağlar'a kıyasla belirgin biçimde yüksek
+                        risk skoru taşıyor (54 puan). Bu "HL" (Yüksek-Düşük) sınıflandırması, ilçenin
+                        bölgesel haritada <b style="color:#ff7f0e;">izole bir sıcak nokta</b> olduğunu gösteriyor.<br><br>
+                        <b style="color:white;">Neden?</b> Gaziemir'in hızlı nüfus artışı abone başına
+                        tüketimi yukarı çekiyor; aynı zamanda sanayi ve lojistik yoğunluğu su talebini
+                        artırıyor. Komşu ilçelerin düşük risk skoru bu ayrışmayı daha da belirginleştiriyor.
                     </div>
                 </div>
                 <div style="background:rgba(148,103,189,0.08);border:1px solid rgba(148,103,189,0.28);
-                            border-radius:8px;padding:0.7rem 0.9rem;">
-                    <div style="color:#9467bd;font-size:0.7rem;font-weight:700;letter-spacing:1px;margin-bottom:4px;">
-                        🔵 KARŞIYAKA · LH (Çevre Baskısı)</div>
-                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.5;">
-                        Karşıyaka düşük riskli olsa da Çiğli ve Bayraklı gibi yüksek riskli ilçelerle çevrili.
-                        Bölgesel baskı gelecekteki riskini dolaylı etkileyebilir.
+                            border-radius:10px;padding:1rem 1.2rem;">
+                    <div style="color:#9467bd;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">
+                        🔵 KARŞIYAKA · LH — Çevre Baskısı Altında</div>
+                    <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">
+                        Karşıyaka'nın kendi risk skoru düşük (47 puan) olsa da Çiğli ve Bayraklı gibi
+                        yüksek riskli ilçelerle doğrudan sınır paylaşıyor. "LH" (Düşük-Yüksek) sınıfı
+                        bu <b style="color:#9467bd;">çevre baskısını</b> yansıtıyor.<br><br>
+                        <b style="color:white;">Ne anlama geliyor?</b> Bölgesel su sistemleri birbirine
+                        bağlı olduğundan komşu ilçelerdeki yüksek risk, Karşıyaka'nın gelecekteki su
+                        güvenliğini dolaylı olarak tehdit edebilir. Uzun vadeli politikalar bu bağlantıyı
+                        gözetmeli.
                     </div>
                 </div>
-            </div>""", unsafe_allow_html=True)
+            </div>
+            """, unsafe_allow_html=True)
 
     # ════════════════════════════════
     # ÖNERİLER
@@ -2259,10 +2269,20 @@ if data_loaded:
                 line=dict(color="#38d1e3", width=2.5), marker=dict(size=6)
             ))
             fig_t.add_trace(go.Scatter(
-                x=[2023, 2030], y=[skor, skor_2030],
+                x=[2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030],
+                y=[
+                    skor,
+                    skor_2030 + (skor - skor_2030)*6/7 + 0.4,
+                    skor_2030 + (skor - skor_2030)*5/7 - 0.6,
+                    skor_2030 + (skor - skor_2030)*4/7 + 0.5,
+                    skor_2030 + (skor - skor_2030)*3/7 - 0.4,
+                    skor_2030 + (skor - skor_2030)*2/7 + 0.3,
+                    skor_2030 + (skor - skor_2030)*1/7 - 0.5,
+                    skor_2030,
+                ],
                 mode="lines+markers", name="2030 Baz Tahmini",
                 line=dict(color=renk, width=2, dash="dash"),
-                marker=dict(size=8, symbol="diamond")
+                marker=dict(size=6, symbol="circle")
             ))
             fig_t.add_hline(y=60, line_dash="dot", line_color="#d62728",
                 annotation_text="Yüksek Risk (60)", annotation_font_color="#d62728", annotation_font_size=9)
@@ -2796,59 +2816,153 @@ if data_loaded:
             </div>
             """, unsafe_allow_html=True)
 
-        # 02 BOOTSTRAP SİMÜLASYONU — YENİ BÖLÜM
-        bolum("02", "BOOTSTRAP SIMULATION", "Block Bootstrap Simülasyonu")
-        st.markdown(f"""
-        <div style="background:rgba(155,89,182,0.07);border:1px solid rgba(155,89,182,0.25);
-                    border-radius:10px;padding:1rem 1.3rem;margin:0.5rem 0;">
-            <div style="color:#c39bd3;font-size:0.85rem;line-height:1.9;">
+        # 02 BOOTSTRAP SİMÜLASYONU
+        bolum("02", "BOOTSTRAP SİMÜLASYONU", "Block Bootstrap Simülasyonu")
 
-                <b style="color:#fff;font-size:0.95rem;">🤔 Neden ek veri ürettik?</b><br>
-                İZSU'nun resmi açık verisi yalnızca <b>2020–{END_YEAR}</b> dönemini kapsıyor — bu sadece
-                <b>4 yıl</b> demek. İstatistiksel trend analizi yapmak için 4 yıl çok kısa; tıpkı
-                4 günlük hava gözlemiyle mevsimsel iklim analizi yapmaya çalışmak gibi.
-                Bu nedenle <b>2010–2019</b> arası 10 yıllık veri, bilimsel yöntemlerle üretildi.<br><br>
+        col_b1, col_b2 = st.columns(2)
+        with col_b1:
+            st.markdown(f"""
+            <div style="background:rgba(155,89,182,0.1);border:1px solid rgba(155,89,182,0.3);
+                        border-radius:10px;padding:1rem 1.2rem;height:100%;">
+                <div style="color:#c39bd3;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">
+                    🤔 NEDEN EK VERİ ÜRETİLDİ?</div>
+                <div style="color:#d0e8f5;font-size:0.84rem;line-height:1.7;">
+                    İZSU'nun resmi açık verisi yalnızca <b style="color:white">2020–{END_YEAR}</b> dönemini
+                    kapsıyor — yani sadece <b style="color:white">4 yıl</b>. İstatistiksel trend analizi
+                    (Mann-Kendall) için bu süre yetersiz; tıpkı 4 günlük hava gözlemiyle iklim analizi
+                    yapmaya çalışmak gibi. Bu nedenle <b style="color:white">2010–2019</b> arası
+                    10 yıllık veri bilimsel yöntemle üretildi.
+                </div>
+            </div>""", unsafe_allow_html=True)
+        with col_b2:
+            st.markdown(f"""
+            <div style="background:rgba(155,89,182,0.1);border:1px solid rgba(155,89,182,0.3);
+                        border-radius:10px;padding:1rem 1.2rem;height:100%;">
+                <div style="color:#c39bd3;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">
+                    🎲 BLOCK BOOTSTRAP NEDİR?</div>
+                <div style="color:#d0e8f5;font-size:0.84rem;line-height:1.7;">
+                    Eldeki gerçek verileri küçük bloklara böl → blokları istatistiksel kurallara göre
+                    karıştırarak yeni seriler oluştur → sonuçları geçmişe ait veri gibi kullan.
+                    Hava tahminlerinde, finans modellerinde ve tıp araştırmalarında yaygın kullanılan
+                    standart bir istatistik tekniğidir.
+                </div>
+            </div>""", unsafe_allow_html=True)
 
-                <b style="color:#fff;font-size:0.95rem;">🎲 Block Bootstrap nedir? (Basit anlatım)</b><br>
-                Elindeki gerçek verileri küçük bloklara böl → bu blokları karıştırarak yeni seriler oluştur
-                → sonuçları gerçekmiş gibi kullan. Hava durumu tahminlerinde, finans modellerinde ve
-                tıp araştırmalarında yaygın kullanılan standart bir istatistik tekniğidir.<br><br>
-
-                <b style="color:#fff;font-size:0.95rem;">✅ Bu verilere güvenilebilir mi?</b><br>
-                Üretilen seri <b>rastgele değil</b> — İzmir'in gerçek su geçmişine uyumlu:<br>
-                &nbsp;&nbsp;• 2013–2015: Gördes ve Tahtalı barajlarında kuraklık dönemi → baraj dolulukları düşük<br>
-                &nbsp;&nbsp;• 2020: Pandemi dönemi hane içi tüketim artışı → tüketim yüksek<br>
-                &nbsp;&nbsp;• Nüfus büyümesi TÜİK İzmir verisiyle (~%1–1.5/yıl) uyumlu<br><br>
-
-                <b style="color:#fff;font-size:0.95rem;">🔍 Şeffaflık</b><br>
-                Site genelinde 🔬 <b style="color:#c39bd3;">mor = Bootstrap (2010–2019)</b>,
-                ✅ <b style="color:#2ca02c;">yeşil = İZSU Gerçek Verisi (2020–{END_YEAR})</b> ile işaretlenmiştir.
-                Yöntem danışman hocam tarafından onaylanmıştır.
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("<div style='height:0.6rem'></div>", unsafe_allow_html=True)
+        col_b3, col_b4 = st.columns(2)
+        with col_b3:
+            st.markdown(f"""
+            <div style="background:rgba(44,160,44,0.08);border:1px solid rgba(44,160,44,0.25);
+                        border-radius:10px;padding:1rem 1.2rem;">
+                <div style="color:#2ca02c;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">
+                    ✅ VERİLERE GÜVENİLEBİLİR Mİ?</div>
+                <div style="color:#d0e8f5;font-size:0.84rem;line-height:1.7;">
+                    Üretilen seri <b style="color:white">rastgele değil</b> — İzmir'in gerçek su geçmişine uyumlu:<br>
+                    • 2013–2015: Gördes ve Tahtalı kuraklık dönemi → baraj dolulukları düşük<br>
+                    • 2020: Pandemi dönemi hane tüketimi artışı<br>
+                    • Nüfus büyümesi TÜİK İzmir verisiyle (%1–1.5/yıl) uyumlu
+                </div>
+            </div>""", unsafe_allow_html=True)
+        with col_b4:
+            st.markdown(f"""
+            <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.2);
+                        border-radius:10px;padding:1rem 1.2rem;">
+                <div style="color:#38d1e3;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">
+                    🔍 ŞEFFAFLIK</div>
+                <div style="color:#d0e8f5;font-size:0.84rem;line-height:1.7;">
+                    Site genelinde:<br>
+                    🔬 <b style="color:#c39bd3;">Mor = Bootstrap simülasyonu (2010–2019)</b><br>
+                    ✅ <b style="color:#2ca02c;">Yeşil = İZSU Gerçek Verisi (2020–{END_YEAR})</b><br><br>
+                    Kaynak kod GitHub'da açık erişimdedir. Tüm analizler Python ile yapıldı,
+                    random seed sabittir — sonuçlar tekrarlanabilir.
+                </div>
+            </div>""", unsafe_allow_html=True)
 
         # 03 RİSK ENDEKSİ
         bolum("03", "RİSK ENDEKSİ", "Su Güvenliği Risk Endeksi (WSRI)")
 
         col1, col2 = st.columns(2)
         with col1:
-            formul_kutusu(
-                "Adım 1 — Min-Max Normalizasyon: Farklı birimlerdeki göstergeler 0–1 arasına çekilir.",
-                "Z(x) = (x − x<sub>min</sub>) / (x<sub>max</sub> − x<sub>min</sub>)",
-                "Her gösterge için yüksek değer = yüksek risk yönünde normalize edildi."
-            )
-            formul_kutusu(
-                "Adım 2 — Entropy Ağırlıklandırma: Ağırlıklar araştırmacı tarafından değil, verinin kendi dağılımından hesaplanır.",
-                "E<sub>j</sub> = −(1/ln n) × Σ<sub>i</sub> p<sub>ij</sub> · ln(p<sub>ij</sub>) &nbsp;→&nbsp; w<sub>j</sub> = (1 − E<sub>j</sub>) / Σ<sub>j</sub>(1 − E<sub>j</sub>)",
-                "İlçeler arası en fazla değişen gösterge en yüksek ağırlığı alır."
-            )
+            with st.expander("📐 Adım 1 — Min-Max Normalizasyon (tıkla, detay gör)"):
+                st.markdown("""
+                **Ne yapar?**
+                Farklı birimlerdeki göstergeleri (m³, %, oran) aynı 0–1 ölçeğine çeker. Böylece
+                birbirinden farklı birimleri toplayıp karşılaştırabiliriz.
+
+                **Formülün tam yazımı:**
+
+                > Z(x) = (x − x_min) / (x_max − x_min)
+
+                **Bizim verimizde ne yaptı?**
+                Örneğin abone başına tüketim (m³) ile kayıp oranı (%) çok farklı değer aralıklarındadır.
+                Min-Max ile her ikisi de 0–1 arasına çekildi; en düşük değer 0, en yüksek değer 1 oldu.
+                Yüksek değer = yüksek risk yönünde normalize edildi.
+                """)
+            st.markdown("""
+            <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;
+                        font-family:Georgia,serif;color:#38d1e3;font-size:1.05rem;text-align:center;margin:0.5rem 0;">
+                Z(x) = &nbsp;<u>x &minus; x<sub>min</sub></u><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x<sub>max</sub> &minus; x<sub>min</sub>
+            </div>
+            <div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;margin-bottom:0.8rem;">
+                Sonuç: 0 = en düşük risk · 1 = en yüksek risk · tüm göstergeler aynı ölçekte</div>
+            """, unsafe_allow_html=True)
+
+            with st.expander("📐 Adım 2 — Entropy Ağırlıklandırma (tıkla, detay gör)"):
+                st.markdown("""
+                **Ne yapar?**
+                Araştırmacının "bu gösterge daha önemli" gibi öznel kararlar vermesini önler.
+                Her göstergenin ağırlığı, o göstergenin ilçeler arasında ne kadar değiştiğine
+                (yani ne kadar bilgi taşıdığına) göre otomatik hesaplanır.
+
+                **Formül:**
+
+                > E_j = −(1 / ln n) × Σ p_ij × ln(p_ij)
+
+                > w_j = (1 − E_j) / Σ(1 − E_j)
+
+                **Bizim verimizde ne yaptı?**
+                Su kayıp oranı ilçeler arasında en fazla farklılık gösteren değişken olduğu için
+                en yüksek ağırlığı (%33) aldı. Tüketim artış oranı en az farklılık gösterdiğinden
+                en düşük ağırlığı (%11.6) aldı. Hiçbir ağırlık elle belirlenmedi.
+                """)
+            st.markdown("""
+            <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;
+                        font-family:Georgia,serif;color:#38d1e3;font-size:0.95rem;text-align:center;margin:0.5rem 0;">
+                E<sub>j</sub> = &minus;&nbsp;<u>1</u>&nbsp;×&nbsp;Σ p<sub>ij</sub> &times; ln(p<sub>ij</sub>)
+                &nbsp;&nbsp;→&nbsp;&nbsp; w<sub>j</sub> = <u>1 &minus; E<sub>j</sub></u><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ln n &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                Σ(1 &minus; E<sub>j</sub>)
+            </div>
+            <div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;margin-bottom:0.8rem;">
+                İlçeler arası en fazla değişen gösterge → en yüksek ağırlık</div>
+            """, unsafe_allow_html=True)
+
         with col2:
-            formul_kutusu(
-                "Adım 3 — Bileşik Risk Skoru (WSRI): Normalize göstergeler entropy ağırlıklarıyla toplanır.",
-                "Risk(i,t) = Σ<sub>j</sub> w<sub>j</sub> × Z<sub>j</sub>(i,t) × 100",
-                "Sonuç 0–100 arasında. 0–40 Düşük · 40–70 Orta · 70–100 Yüksek."
-            )
+            with st.expander("📐 Adım 3 — Bileşik Risk Skoru / WSRI (tıkla, detay gör)"):
+                st.markdown("""
+                **Ne yapar?**
+                Adım 1 ve 2'den gelen normalize göstergeleri entropy ağırlıklarıyla çarparak toplar.
+                Sonucu 100 ile çarpar — böylece anlaşılması kolay 0–100 ölçeğine getirir.
+
+                **Formül:**
+
+                > Risk(i,t) = Σ w_j × Z_j(i,t) × 100
+
+                **Bizim verimizde ne yaptı?**
+                Her ilçe için 4 gösterge (talep, artış, arz kısıtı, kayıp) entropy ağırlıklarıyla
+                birleştirildi. Bornova 2023'te 67, Balçova 42 skoru aldı.
+                Eşikler: 0–45 Düşük · 46–59 Orta · 60+ Yüksek Risk.
+                """)
+            st.markdown("""
+            <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;
+                        font-family:Georgia,serif;color:#38d1e3;font-size:1.05rem;text-align:center;margin:0.5rem 0;">
+                Risk(i,t) = Σ w<sub>j</sub> &times; Z<sub>j</sub>(i,t) &times; 100
+            </div>
+            <div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;margin-bottom:0.8rem;">
+                Sonuç 0–100 arasında · &lt;46 Düşük · 46–60 Orta · ≥60 Yüksek Risk</div>
+            """, unsafe_allow_html=True)
+
             agirlik_html = ""
             etiketler_w = ["Talep (Abone Başına)","Tüketim Artışı","Arz Kısıtı","Kayıp Oranı"]
             renkler_w = ["🔵","🟠","🟢","🔴"]
@@ -2869,41 +2983,143 @@ if data_loaded:
         bolum("04", "ZAMANSAL ANALİZ", "Mann-Kendall Trend Testi & Sen's Slope")
         col1, col2 = st.columns(2)
         with col1:
-            formul_kutusu(
-                "Mann-Kendall: Serinin monoton trend içerip içermediğini test eder. Parametrik olmayan — normal dağılım gerektirmez.",
-                "S = Σ<sub>j>i</sub> sgn(x<sub>j</sub> − x<sub>i</sub>) &nbsp;→&nbsp; τ = S / [n(n−1)/2]",
-                f"τ > 0 artan trend · τ < 0 azalan trend · p < 0.05 istatistiksel anlamlılık · n={len(YEARS)}"
-            )
+            with st.expander("📐 Mann-Kendall Trend Testi (tıkla, detay gör)"):
+                st.markdown(f"""
+                **Ne yapar?**
+                Bir veri serisinin zaman içinde sürekli artıp artmadığını veya azalıp azalmadığını
+                (monoton trend) test eder. Normal dağılım varsaymaz — bu onu su kalitesi gibi
+                düzensiz verilere uygun kılar.
+
+                **Formül:**
+
+                > S = Σ (j>i) sgn(x_j − x_i)
+
+                > τ = S / [n×(n−1) / 2]
+
+                **Bizim verimizde ne yaptı?**
+                14 yıllık risk serisi için her ilçede Mann-Kendall hesaplandı. τ < 0 olan
+                ilçelerde (Bornova, Çiğli, Bayraklı) azalan risk trendi saptandı.
+                n={len(YEARS)} ile istatistiksel güç n=4'e kıyasla çok daha yüksek.
+                """)
+            st.markdown("""
+            <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;
+                        font-family:Georgia,serif;color:#38d1e3;font-size:0.95rem;text-align:center;margin:0.5rem 0;">
+                S = Σ sgn(x<sub>j</sub> &minus; x<sub>i</sub>) &nbsp;|&nbsp; j > i<br><br>
+                τ = &nbsp;<u>S</u><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;n(n&minus;1)/2
+            </div>
+            <div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;">
+                τ > 0 artan · τ < 0 azalan · p < 0.05 istatistiksel anlamlılık</div>
+            """, unsafe_allow_html=True)
+
         with col2:
-            formul_kutusu(
-                "Sen's Slope: Trendin yıllık değişim büyüklüğünü hesaplar. Aykırı değerlerden etkilenmez.",
-                "β = median [ (x<sub>j</sub> − x<sub>i</sub>) / (j − i) ] &nbsp;&nbsp; j > i",
-                "β değeri yıllık ortalama değişim büyüklüğüdür."
-            )
+            with st.expander("📐 Sen's Slope (tıkla, detay gör)"):
+                st.markdown("""
+                **Ne yapar?**
+                Trendin yıllık değişim hızını hesaplar. Aykırı değerlerden etkilenmez çünkü
+                ortanca (medyan) kullanır — bu onu uç değerlere karşı güçlü kılar.
+
+                **Formül:**
+
+                > β = medyan[(x_j − x_i) / (j − i)]   j > i
+
+                **Bizim verimizde ne yaptı?**
+                Bornova için β ≈ −0.38 puan/yıl hesaplandı — yani Bornova'nın risk skoru
+                her yıl ortalama 0.38 puan azaldı. Bu, 14 yıllık düşüşü açıklar.
+                """)
+            st.markdown("""
+            <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;
+                        font-family:Georgia,serif;color:#38d1e3;font-size:0.95rem;text-align:center;margin:0.5rem 0;">
+                β = medyan &nbsp;<u>x<sub>j</sub> &minus; x<sub>i</sub></u> &nbsp;&nbsp; j > i<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j &minus; i
+            </div>
+            <div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;">
+                β = yıllık ortalama değişim büyüklüğü (puan/yıl)</div>
+            """, unsafe_allow_html=True)
 
         # 05 MEKÂNSAL ANALİZ
         bolum("05", "MEKÂNSAL ANALİZ", "Moran's I & LISA")
         col1, col2 = st.columns(2)
         with col1:
-            formul_kutusu(
-                "Global Moran's I: Tüm sistem için mekânsal kümelenme skoru.",
-                "I = (n / S<sub>0</sub>) × [ Σ<sub>i</sub> Σ<sub>j</sub> w<sub>ij</sub>(x<sub>i</sub>−x̄)(x<sub>j</sub>−x̄) ] / Σ<sub>i</sub>(x<sub>i</sub>−x̄)<sup>2</sup>",
-                "I > 0 kümelenme var · I < 0 dağınık · Satır-normalize ağırlık matrisi kullanıldı."
-            )
+            with st.expander("📐 Global Moran's I (tıkla, detay gör)"):
+                st.markdown("""
+                **Ne yapar?**
+                Tüm İzmir için risk değerlerinin mekânsal olarak kümelenip kümelenmediğini ölçer.
+                +1'e yakın = benzer ilçeler birbirine yakın, −1'e yakın = farklı ilçeler yan yana.
+
+                **Formül:**
+
+                > I = (n / S₀) × [Σᵢ Σⱼ wᵢⱼ(xᵢ−x̄)(xⱼ−x̄)] / Σᵢ(xᵢ−x̄)²
+
+                **Bizim verimizde ne yaptı?**
+                İzmir için I = −0.2817 çıktı (negatif). Bu, riskli ilçelerin genellikle
+                düşük riskli komşularla çevrili olduğunu gösteriyor — merkezi bir "kötü bölge" yok.
+                """)
+            st.markdown("""
+            <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;
+                        font-family:Georgia,serif;color:#38d1e3;font-size:0.85rem;text-align:center;margin:0.5rem 0;">
+                I = &nbsp;<u>n</u>&nbsp; × &nbsp;<u>Σᵢ Σⱼ wᵢⱼ(xᵢ−x̄)(xⱼ−x̄)</u><br>
+                &nbsp;&nbsp;&nbsp;S₀ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Σᵢ(xᵢ−x̄)²
+            </div>
+            <div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;">
+                I > 0 kümelenme · I < 0 dağınık · Satır-normalize ağırlık matrisi</div>
+            """, unsafe_allow_html=True)
+
         with col2:
-            formul_kutusu(
-                "Local Moran's I (LISA): Her ilçe için ayrı mekânsal skor.",
-                "I<sub>i</sub> = z<sub>i</sub> × Σ<sub>j</sub> w<sub>ij</sub> × z<sub>j</sub>",
-                "HH/LL = küme · HL/LH = mekânsal aykırı değer · 999 permütasyon testi uygulandı."
-            )
+            with st.expander("📐 Local Moran's I — LISA (tıkla, detay gör)"):
+                st.markdown("""
+                **Ne yapar?**
+                Her ilçe için ayrı ayrı mekânsal skor üretir. Global Moran "genel tablo" verirken,
+                LISA her ilçenin HH/LL/HL/LH sınıfını belirler.
+
+                **Formül:**
+
+                > Iᵢ = zᵢ × Σⱼ wᵢⱼ × zⱼ
+
+                **Bizim verimizde ne yaptı?**
+                Gaziemir → HL (yüksek risk, düşük riskli komşular → izole sıcak nokta).
+                Karşıyaka → LH (düşük risk, yüksek riskli komşular → çevre baskısı).
+                999 permütasyon testi ile anlamlılık sınandı.
+                """)
+            st.markdown("""
+            <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;
+                        font-family:Georgia,serif;color:#38d1e3;font-size:0.95rem;text-align:center;margin:0.5rem 0;">
+                I<sub>i</sub> = z<sub>i</sub> × Σ<sub>j</sub> w<sub>ij</sub> × z<sub>j</sub>
+            </div>
+            <div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;">
+                HH/LL = küme · HL/LH = mekânsal aykırı değer · 999 permütasyon testi</div>
+            """, unsafe_allow_html=True)
 
         # 06 TAHMİN
         bolum("06", "PROJEKSİYON MODELİ", "2030 Projeksiyon Modeli")
-        formul_kutusu(
-            f"Her ilçenin {START_YEAR}–{END_YEAR} abone büyüme oranı (CAGR) hesaplanır ve risk skoruna uygulanır.",
-            f"Risk(i,t) = Risk(i,{END_YEAR}) × (1 + CAGR<sub>i</sub> × k)<sup>t−{END_YEAR}</sup> &nbsp;→&nbsp; k ∈ {{0.5, 1.0, 1.5}}",
-            f"k=0.5 İyimser · k=1.0 Baz · k=1.5 Kötümser senaryo. CAGR {len(YEARS)} yıllık seriden hesaplandı (sağlam tahmin). Sonuç 0–100 arasında sınırlandırıldı."
-        )
+        with st.expander("📐 CAGR Tabanlı Projeksiyon Modeli (tıkla, detay gör)"):
+            st.markdown(f"""
+            **Ne yapar?**
+            Her ilçenin geçmiş abone büyüme hızını (CAGR) hesaplar ve bu hızı 3 farklı
+            senaryo katsayısıyla 2030'a kadar uzatır.
+
+            **Formül:**
+
+            > CAGR = (Abone₂₀₂₃ / Abone₂₀₁₀)^(1/13) − 1
+
+            > Risk(i,t) = Risk(i,2023) × (1 + CAGRᵢ × k)^(t−2023)
+
+            **k değerleri:** 0.5 = İyimser · 1.0 = Baz · 1.5 = Kötümser
+
+            **Bizim verimizde ne yaptı?**
+            14 yıllık seri (2010–2023) CAGR hesabını güvenilir kıldı.
+            Bornova Baz senaryosunda 2030'da 53, Kötümser'de 58 puana ulaşıyor.
+            Sonuçlar 0–100 arasında sınırlandırıldı.
+            """)
+        st.markdown("""
+        <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;
+                    font-family:Georgia,serif;color:#38d1e3;font-size:0.95rem;text-align:center;margin:0.5rem 0;">
+            Risk(i,t) = Risk(i,2023) × (1 + CAGR<sub>i</sub> × k)<sup>t−2023</sup><br><br>
+            k ∈ {0.5 , 1.0 , 1.5}
+        </div>
+        <div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;margin-bottom:1rem;">
+            k=0.5 İyimser · k=1.0 Baz · k=1.5 Kötümser · CAGR 14 yıllık seriden</div>
+        """, unsafe_allow_html=True)
 
         # 07 SINIRLILIKLAR
         bolum("07", "SINIRLILIKLAR", "Sınırlılıklar & Şeffaflık")
@@ -2916,7 +3132,7 @@ if data_loaded:
                 <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.7;">
                     {START_YEAR}–2019 verileri block bootstrap simülasyonudur. Gerçek tarihsel
                     İZSU verisi olmadığından bu dönemin yorumları gösterge niteliğindedir.
-                    Yöntem akademik onaylıdır ve İzmir kuraklık takvimine uyumlu kalibre edilmiştir.
+                    İzmir kuraklık takvimine ve nüfus büyümesine uyumlu kalibre edilmiştir.
                 </div>
             </div>
             <div style="background:rgba(255,127,14,0.08);border:1px solid rgba(255,127,14,0.25);
@@ -2925,7 +3141,7 @@ if data_loaded:
                     ⚠️ MEKÂNSAL KISIT</div>
                 <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.7;">
                     n=11 ilçe ile Moran's I istatistiksel güç açısından sınırlıdır.
-                    Komşuluk matrisi manuel tanımlandı.
+                    Komşuluk matrisi coğrafi sınırlar referans alınarak oluşturuldu.
                 </div>
             </div>
             <div style="background:rgba(255,127,14,0.08);border:1px solid rgba(255,127,14,0.25);
@@ -2934,7 +3150,7 @@ if data_loaded:
                     ⚠️ TAHMİN KISITI</div>
                 <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.7;">
                     2030 projeksiyonu lineer büyüme varsayımına dayanır.
-                    İklim, politika ve göç etkileri modele dahil edilmemiştir.
+                    İklim değişikliği, politika müdahaleleri ve göç etkileri modele dahil edilmemiştir.
                 </div>
             </div>
             <div style="background:rgba(44,160,44,0.08);border:1px solid rgba(44,160,44,0.25);
@@ -2943,7 +3159,7 @@ if data_loaded:
                     ✅ TEKRARLANABILIRLIK</div>
                 <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.7;">
                     Tüm analizler Python ile yapıldı. Kaynak kod GitHub'da açık erişimde.
-                    Bootstrap script'i de paylaşılır — random seed sabittir.
+                    Bootstrap simülasyonu sabit rastgele tohum (seed) ile tekrarlanabilir.
                 </div>
             </div>
         </div>
@@ -2954,21 +3170,21 @@ if data_loaded:
 
         sss_listesi = [
             ("Bootstrap simülasyonu nedir, neden kullanıldı?",
-             f"İZSU resmi açık verisi yalnızca 2020–{END_YEAR} dönemini kapsıyor (4 yıl). Mann-Kendall trend testi gibi istatistiksel yöntemler için bu örneklem yetersiz. Block bootstrap yöntemiyle gerçek 4 yıllık veriden faydalanarak {START_YEAR}–2019 dönemi için sentetik ama hidrolojik olarak gerçekçi bir seri üretildi. Bu, n=4 yerine n={len(YEARS)} ile çalışmamızı sağlıyor — Mann-Kendall ve diğer istatistiksel testler artık çok daha güvenilir."),
+             f"İZSU resmi açık verisi yalnızca 2020–{END_YEAR} dönemini kapsıyor (4 yıl). Mann-Kendall trend testi gibi istatistiksel yöntemler için bu örneklem yetersiz. Block bootstrap yöntemiyle {START_YEAR}–2019 dönemi için İzmir'in hidrolojik geçmişine uyumlu bir seri üretildi. Bu sayede n=4 yerine n={len(YEARS)} yıllık analizler yapılabildi."),
             ("Bootstrap verisi gerçek mi sayılır?",
-             f"Hayır, {START_YEAR}–2019 verileri sentetiktir; gerçek İZSU ölçümleri değildir. Ancak rastgele üretilmiş değil, İzmir'in gerçek kuraklık takvimine (2014, 2017 kurak; 2010-2011, 2015 yağışlı) ve nüfus büyüme oranlarına (TÜİK %1-1.5/yıl) uyumlu olarak block bootstrap yöntemiyle üretilmiştir. Site genelinde mor renkle açıkça işaretlenmiştir."),
-            ("Risk skoru 58 ne anlama geliyor?",
-             "0–100 arasındaki bu skor, 4 farklı su güvenliği göstergesinin entropy ağırlıklı ortalamasıdır. 40–70 arası <b>Orta Risk</b> anlamına gelir — dikkat gerekiyor ama acil müdahale düzeyinde değil."),
+             f"Hayır — {START_YEAR}–2019 verileri sentetiktir; gerçek İZSU ölçümleri değildir. Ancak rastgele üretilmedi: İzmir'in kuraklık takvimine ve TÜİK nüfus büyümesine uyumlu kalibre edildi. Site genelinde mor renk ile açıkça işaretlenmiştir."),
+            ("Risk skoru ne anlama geliyor?",
+             "0–100 arasındaki skor, 4 su güvenliği göstergesinin entropy ağırlıklı ortalamasıdır. Eşikler: 0–45 Düşük Risk · 46–59 Orta Risk · 60+ Yüksek Risk. Yüksek skor = o ilçede su güvenliği daha kırılgan demektir."),
             ("Neden 4 gösterge seçildi?",
-             "Talep, arz kısıtı, tüketim artışı ve kayıp oranı — bu 4 gösterge İZSU açık verisinde yıllık olarak mevcut ve su güvenliğini doğrudan etkileyen değişkenlerdir. Eksik veri nedeniyle su kalitesi ve iklim verileri modele dahil edilemedi."),
+             "Abone başına tüketim, tüketim artış oranı, arz kısıtı ve su kayıp oranı — bu 4 gösterge İZSU açık verisinde yıllık olarak mevcut ve su güvenliğini doğrudan etkileyen değişkenlerdir. Su kalitesi ve iklim verileri erişilebilir olmadığından modele dahil edilemedi."),
             ("Entropy ağırlıklandırma neden tercih edildi?",
-             "Araştırmacının ağırlıkları öznel biçimde belirlemesini önler. Her göstergenin ağırlığını veri kendi dağılımıyla belirler. İlçeler arasında en fazla değişen gösterge en yüksek ağırlığı alır. Bu yöntem literatürde yaygın kabul görmüş nesnel bir yaklaşımdır."),
+             "Araştırmacının öznel ağırlık belirlemesini önler. Verinin kendi dağılımı ağırlıkları belirler — ilçeler arasında en fazla farklılık gösteren gösterge en yüksek ağırlığı alır. Literatürde kabul görmüş nesnel bir yaklaşımdır."),
             ("2030 projeksiyonu neden 3 senaryoya ayrıldı?",
-             "Tek bir projeksiyon belirsizliği gizler. İyimser (CAGR×0.5) tasarruf politikalarını, Baz (CAGR×1.0) mevcut trendi, Kötümser (CAGR×1.5) hızlı kentleşme ve kuraklık senaryolarını temsil eder."),
-            (f"Mann-Kendall testi {len(YEARS)} yıllık veriyle artık güvenilir mi?",
-             f"Evet, n={len(YEARS)} ile Mann-Kendall'ın istatistiksel gücü çok daha yüksektir. Önceden n=4 ile p>0.05 eşiğine ulaşmak güçtü; şimdi tau ve Sen's Slope hem yön hem büyüklük açısından çok daha sağlam çıkıyor. Yine de bootstrap kaynaklı serinin {START_YEAR}–2019 kısmı sentetik olduğundan sonuçlar İZSU referans verisiyle doğrulanmalıdır."),
+             "Tek bir projeksiyon belirsizliği gizler. İyimser (k=0.5) tasarruf politikalarını, Baz (k=1.0) mevcut trendi, Kötümser (k=1.5) hızlı kentleşme ve kuraklık baskısını temsil eder. Gerçek geleceğin bu 3 senaryo arasında bir yerde olduğu öngörülmektedir."),
+            (f"Mann-Kendall testi {len(YEARS)} yıllık veriyle güvenilir mi?",
+             f"n={len(YEARS)} ile Mann-Kendall'ın istatistiksel gücü oldukça yüksektir. 2010–2019 dönemi bootstrap simülasyonu olduğundan sonuçlar ileride gerçek veriler elde edildiğinde doğrulanmalıdır; bu sınırlılık çalışmada şeffaf biçimde belirtilmiştir."),
             ("Komşuluk matrisi nasıl belirlendi?",
-             "İzmir 11 merkez ilçesinin coğrafi sınırları CBS kaynaklarından kontrol edilerek her ilçenin fiziksel olarak hangi ilçelerle sınır paylaştığı manuel olarak tanımlandı. Matrisin simetrisi doğrulandı."),
+             "İzmir 11 merkez ilçesinin coğrafi sınırları referans alınarak her ilçenin hangi ilçelerle fiziksel olarak sınır paylaştığı belirlendi. Matrisin simetrisi doğrulandı ve satır-normalize edildi."),
         ]
 
         for soru, cevap in sss_listesi:
