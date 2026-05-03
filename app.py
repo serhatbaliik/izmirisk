@@ -2549,100 +2549,176 @@ if data_loaded:
         </div>
         """, unsafe_allow_html=True)
 
-        col_r, col_k = st.columns(2)
+        ilce_list = sorted(risk_df["İlçe"].unique().tolist())
+        diger = [i for i in ilce_list if i != ilce_sec]
+        karsi_ilce = st.selectbox("Karşılaştırılacak ilçe:", diger, key="karsi")
 
-        with col_r:
-            st.caption(f"Radar — Risk Bileşen Profili ({END_YEAR})")
-            df_r_son = risk_df[risk_df["Yıl"]==END_YEAR]
-            row = risk_df[(risk_df["İlçe"]==ilce_sec)&(risk_df["Yıl"]==END_YEAR)].iloc[0]
-            def minmax_col(col):
-                mn,mx = df_r_son[col].min(), df_r_son[col].max()
-                return 0 if mx==mn else (row[col]-mn)/(mx-mn)
-            vals = [minmax_col("AbbTuketim"), minmax_col("Artis"),
-                    minmax_col("Arz_Kısıtı"), minmax_col("Su_Kayıp_Oranı_%")]
-            cats = ["Talep","Artış","Arz","Kayıp"]
-            fig_r = go.Figure(go.Scatterpolar(
-                r=vals+[vals[0]], theta=cats+[cats[0]],
-                fill="toself", fillcolor=f"rgba(56,209,227,0.15)",
-                line=dict(color="#38d1e3", width=2),
-                marker=dict(size=6, color="#38d1e3"),
-                hovertemplate="%{theta}: %{r:.2f}<extra></extra>"
-            ))
-            fig_r.update_layout(
-                polar=dict(
-                    bgcolor="rgba(0,0,0,0)",
-                    radialaxis=dict(range=[0,1], showticklabels=False, gridcolor="rgba(255,255,255,0.15)"),
-                    angularaxis=dict(tickfont=dict(color="white", size=11), gridcolor="rgba(255,255,255,0.15)")
-                ),
-                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                height=300, margin=dict(t=20,b=20,l=40,r=40),
-                showlegend=False
-            )
-            st.plotly_chart(fig_r, use_container_width=True)
+        # Manuel 2023 değerleri (gerçek veriler)
+        manuel_2023_araç = {
+            "BORNOVA":    {"talep":181,"artis":1.2,"arz":0.28,"kayip":27.36,"risk":67.0},
+            "ÇİĞLİ":     {"talep":147,"artis":0.9,"arz":0.31,"kayip":27.36,"risk":62.5},
+            "BAYRAKLI":   {"talep":164,"artis":1.0,"arz":0.29,"kayip":27.36,"risk":60.0},
+            "BUCA":       {"talep":150,"artis":0.8,"arz":0.27,"kayip":27.36,"risk":51.0},
+            "GAZİEMİR":   {"talep":162,"artis":1.4,"arz":0.32,"kayip":27.36,"risk":54.0},
+            "GÜZELBAHÇE": {"talep":138,"artis":0.6,"arz":0.25,"kayip":27.36,"risk":49.0},
+            "KARŞIYAKA":  {"talep":159,"artis":0.7,"arz":0.24,"kayip":27.36,"risk":47.0},
+            "NARLIDERE":  {"talep":178,"artis":0.5,"arz":0.23,"kayip":27.36,"risk":47.0},
+            "KONAK":      {"talep":122,"artis":0.4,"arz":0.22,"kayip":27.36,"risk":45.5},
+            "KARABAĞLAR": {"talep":108,"artis":0.3,"arz":0.20,"kayip":27.36,"risk":43.0},
+            "BALÇOVA":    {"talep":102,"artis":0.2,"arz":0.19,"kayip":27.36,"risk":42.0},
+        }
 
-        with col_k:
-            st.caption(f"Karşılaştırma — İki İlçe ({END_YEAR})")
-            ilce_list = sorted(risk_df["İlçe"].unique().tolist())
-            diger = [i for i in ilce_list if i != ilce_sec]
-            karsi_ilce = st.selectbox("Karşılaştır:", diger, key="karsi")
-            row1 = risk_df[(risk_df["İlçe"]==ilce_sec)&(risk_df["Yıl"]==END_YEAR)].iloc[0]
-            row2 = risk_df[(risk_df["İlçe"]==karsi_ilce)&(risk_df["Yıl"]==END_YEAR)].iloc[0]
-            gostergeler = [
-                ("Abone Başına Tüketim","AbbTuketim","m³"),
-                ("Tüketim Artışı","Artis","%"),
-                ("Arz Kısıtı","Arz_Kısıtı",""),
-                ("Su Kayıp Oranı","Su_Kayıp_Oranı_%","%"),
-                ("Risk Skoru","Risk_Skor","")
-            ]
-            for gad, gcol, gbirim in gostergeler:
-                v1,v2 = float(row1[gcol]),float(row2[gcol])
-                r1,r2 = get_risk_color(row1["Risk_Skor"]),get_risk_color(row2["Risk_Skor"])
-                st.markdown(f"""
-                <div style="display:grid;grid-template-columns:1fr 80px 1fr;gap:4px;align-items:center;
-                            padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-                    <div style="text-align:right;color:white;font-size:0.85rem;font-weight:600;">{v1:.2f}<span style="color:{r1};font-size:0.7rem;"> {gbirim}</span></div>
-                    <div style="text-align:center;color:#a8d8f0;font-size:0.72rem;">{gad}</div>
-                    <div style="color:white;font-size:0.85rem;font-weight:600;">{v2:.2f}<span style="color:{r2};font-size:0.7rem;"> {gbirim}</span></div>
-                </div>
-                """, unsafe_allow_html=True)
+        def normalize_araç(val, key):
+            vals = [d[key] for d in manuel_2023_araç.values()]
+            mn, mx = min(vals), max(vals)
+            return (val - mn) / (mx - mn) if mx > mn else 0
 
-        # Bölüm 2: Risk Simülatörü
+        d1 = manuel_2023_araç.get(ilce_sec, list(manuel_2023_araç.values())[0])
+        d2 = manuel_2023_araç.get(karsi_ilce, list(manuel_2023_araç.values())[1])
+
+        cats = ["Talep", "Artış", "Arz Kısıtı", "Kayıp", "Risk"]
+        keys = ["talep","artis","arz","kayip","risk"]
+        v1 = [normalize_araç(d1[k], k) for k in keys]
+        v2 = [normalize_araç(d2[k], k) for k in keys]
+
+        renk1 = "#38d1e3"  # turkuaz — seçili ilçe
+        renk2 = "#ff7f0e"  # turuncu — karşılaştırılan
+
+        fig_r = go.Figure()
+        fig_r.add_trace(go.Scatterpolar(
+            r=v1+[v1[0]], theta=cats+[cats[0]],
+            fill="toself",
+            fillcolor="rgba(56,209,227,0.18)",
+            line=dict(color=renk1, width=2.5),
+            marker=dict(size=8, color=renk1),
+            name=ilce_sec,
+            hovertemplate="%{theta}: %{r:.2f}<extra></extra>"
+        ))
+        fig_r.add_trace(go.Scatterpolar(
+            r=v2+[v2[0]], theta=cats+[cats[0]],
+            fill="toself",
+            fillcolor="rgba(255,127,14,0.18)",
+            line=dict(color=renk2, width=2.5),
+            marker=dict(size=8, color=renk2),
+            name=karsi_ilce,
+            hovertemplate="%{theta}: %{r:.2f}<extra></extra>"
+        ))
+        fig_r.update_layout(
+            polar=dict(
+                bgcolor="rgba(0,0,0,0)",
+                radialaxis=dict(range=[0,1], showticklabels=False,
+                                gridcolor="rgba(255,255,255,0.15)"),
+                angularaxis=dict(tickfont=dict(color="white",size=12),
+                                 gridcolor="rgba(255,255,255,0.15)")
+            ),
+            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+            height=380, margin=dict(t=40,b=20,l=40,r=40),
+            legend=dict(font=dict(color="white",size=11), bgcolor="rgba(0,0,0,0)",
+                        orientation="h", y=-0.05),
+            title=dict(text=f"<span style='color:#38d1e3'>{ilce_sec}</span> vs "
+                           f"<span style='color:#ff7f0e'>{karsi_ilce}</span>",
+                       font=dict(color="white",size=13), x=0.5)
+        )
+        st.plotly_chart(fig_r, use_container_width=True)
+
+        # Karşılaştırma tablosu altında
         st.markdown(f"""
+        <div style="display:grid;grid-template-columns:1fr 120px 1fr;gap:6px;
+                    background:rgba(255,255,255,0.03);border-radius:10px;padding:0.8rem 1rem;margin-top:0.5rem;">
+            <div style="text-align:center;color:#38d1e3;font-size:0.8rem;font-weight:700;padding-bottom:6px;
+                        border-bottom:1px solid rgba(255,255,255,0.1);">{ilce_sec}</div>
+            <div style="text-align:center;color:#a8d8f0;font-size:0.75rem;font-weight:600;padding-bottom:6px;
+                        border-bottom:1px solid rgba(255,255,255,0.1);">Gösterge</div>
+            <div style="text-align:center;color:#ff7f0e;font-size:0.8rem;font-weight:700;padding-bottom:6px;
+                        border-bottom:1px solid rgba(255,255,255,0.1);">{karsi_ilce}</div>
+        """, unsafe_allow_html=True)
+        karsi_satirlar = [
+            ("talep","Abone Tüketim (m³)"),
+            ("artis","Tüketim Artışı (%)"),
+            ("arz","Arz Kısıtı"),
+            ("kayip","Su Kayıp Oranı (%)"),
+            ("risk","Risk Skoru"),
+        ]
+        satirlar_html = ""
+        for key, label in karsi_satirlar:
+            v_1, v_2 = d1[key], d2[key]
+            fmt = f"{v_1:.1f}" if key != "artis" else f"%{v_1:.1f}"
+            fmt2 = f"{v_2:.1f}" if key != "artis" else f"%{v_2:.1f}"
+            satirlar_html += f"""
+            <div style="text-align:right;color:white;font-size:0.88rem;font-weight:600;padding:4px 0;">{fmt}</div>
+            <div style="text-align:center;color:#a8d8f0;font-size:0.72rem;">{label}</div>
+            <div style="color:white;font-size:0.88rem;font-weight:600;padding:4px 0;">{fmt2}</div>
+            """
+        st.markdown(satirlar_html + "</div>", unsafe_allow_html=True)
+
+        # Bölüm 2: Risk Simülatörü — düzeltilmiş
+        st.markdown("""
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
                 <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">02 · SİMÜLATÖR</div>
-                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Risk Simülatörü — Anlık Duyarlılık ({END_YEAR} bazlı)</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Risk Simülatörü — Anlık Duyarlılık</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-        st.caption("Gösterge değerlerini değiştir — risk skoru anlık güncellenir")
+        st.caption("Gösterge değerlerini değiştir → Risk skoru entropy ağırlıklarıyla anlık güncellenir")
+
+        # Entropy ağırlıkları (sabit — veriden hesaplandı)
+        w_talep  = 0.316   # %31.6
+        w_artis  = 0.116   # %11.6
+        w_arz    = 0.238   # %23.8
+        w_kayip  = 0.330   # %33.0
+
+        # Tüm ilçe değerlerinin min/max'ı (normalizasyon için)
+        talep_min, talep_max = 100, 210
+        artis_min, artis_max = 0.0, 2.0
+        arz_min,   arz_max   = 0.15, 0.40
+        kayip_min, kayip_max = 20.0, 35.0
+
         s1,s2,s3,s4 = st.columns(4)
-        with s1: sim_talep = st.slider("Abone Tüketim (m³)", 80, 320, int(row1["AbbTuketim"]), key="sim1")
-        with s2: sim_artis = st.slider("Tüketim Artışı (%)", -10, 20, int(row1["Artis"]*100), key="sim2")
-        with s3: sim_arz = st.slider("Arz Kısıtı (%)", 0, 40, int(row1["Arz_Kısıtı"]*100), key="sim3")
-        with s4: sim_kayip = st.slider("Kayıp Oranı (%)", 15, 45, int(row1["Su_Kayıp_Oranı_%"]), key="sim4")
+        with s1: sim_talep = st.slider("Abone Tüketim (m³)", 100, 210, 155, key="sim1")
+        with s2: sim_artis = st.slider("Tüketim Artışı (%)", 0, 20, 8, key="sim2")
+        with s3: sim_arz   = st.slider("Arz Kısıtı (%)", 15, 40, 25, key="sim3")
+        with s4: sim_kayip = st.slider("Kayıp Oranı (%)", 20, 35, 27, key="sim4")
 
-        df_sim = risk_df[risk_df["Yıl"]==END_YEAR].copy()
-        def norm(v,mn,mx): return max(0,min(1,(v-mn)/(mx-mn))) if mx>mn else 0
-        # Dinamik W (compute_risk'ten geleni kullan)
-        W_sim = list(W)
-        z1 = norm(sim_talep, df_sim["AbbTuketim"].min(), df_sim["AbbTuketim"].max())
-        z2 = norm(sim_artis/100, df_sim["Artis"].min(), df_sim["Artis"].max())
-        z3 = norm(sim_arz/100, df_sim["Arz_Kısıtı"].min(), df_sim["Arz_Kısıtı"].max())
-        z4 = norm(sim_kayip, df_sim["Su_Kayıp_Oranı_%"].min(), df_sim["Su_Kayıp_Oranı_%"].max())
-        sim_skor = (z1*W_sim[0]+z2*W_sim[1]+z3*W_sim[2]+z4*W_sim[3])*100
-        sim_sinif = "Düşük Risk" if sim_skor<40 else "Orta Risk" if sim_skor<70 else "Yüksek Risk"
-        gercek_skor = float(row1["Risk_Skor"])
-        delta = sim_skor - gercek_skor
+        def norm2(v, mn, mx):
+            return max(0.0, min(1.0, (v - mn) / (mx - mn))) if mx > mn else 0.0
 
-        sc1,sc2,sc3 = st.columns(3)
-        sc1.metric("Simüle Edilen Skor", f"{sim_skor:.1f}", f"{delta:+.1f} gerçekten")
-        sc2.metric("Risk Sınıfı", sim_sinif)
-        sc3.metric(f"Gerçek {END_YEAR} Skoru", f"{gercek_skor:.1f}")
+        z_t = norm2(sim_talep,  talep_min,  talep_max)
+        z_a = norm2(sim_artis / 100.0, artis_min, artis_max)
+        z_r = norm2(sim_arz   / 100.0, arz_min,   arz_max)
+        z_k = norm2(sim_kayip,  kayip_min,  kayip_max)
 
-        # Bölüm 3: Animasyonlu Zaman Serisi — 14 yıl
+        sim_skor = (z_t*w_talep + z_a*w_artis + z_r*w_arz + z_k*w_kayip) * 100
+
+        if sim_skor >= 60:
+            sim_sinif = "🔴 Yüksek Risk"
+            sim_renk  = "#d62728"
+        elif sim_skor >= 46:
+            sim_sinif = "🟠 Orta Risk"
+            sim_renk  = "#ff7f0e"
+        else:
+            sim_sinif = "🟢 Düşük Risk"
+            sim_renk  = "#2ca02c"
+
+        sc1,sc2,sc3,sc4 = st.columns(4)
+        for col, baslik, deger, renk in [
+            (sc1, "Simüle Edilen Skor", f"{sim_skor:.1f}", sim_renk),
+            (sc2, "Risk Sınıfı", sim_sinif, sim_renk),
+            (sc3, "Ağırlıklı Hesap", f"Talep%31.6 · Kayıp%33.0", "#a8d8f0"),
+            (sc4, "Arz+Artış", f"Arz%23.8 · Artış%11.6", "#a8d8f0"),
+        ]:
+            with col:
+                st.markdown(f"""
+                <div style="background:rgba(255,255,255,0.06);border:1px solid {renk}44;
+                            border-top:3px solid {renk};border-radius:10px;padding:0.8rem;text-align:center;">
+                    <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;
+                                text-transform:uppercase;margin-bottom:4px;">{baslik}</div>
+                    <div style="color:{renk};font-size:1.2rem;font-weight:700;">{deger}</div>
+                </div>""", unsafe_allow_html=True)
+
+        # Bölüm 3: Animasyonlu Zaman Serisi — manuel risk verileri
         st.markdown(f"""
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
@@ -2653,87 +2729,95 @@ if data_loaded:
         </div>
         """, unsafe_allow_html=True)
 
+        # Manuel risk verileri (tüm ilçeler 2010-2023)
+        manuel_risk_anim = {
+            "BORNOVA":    [72,73,72,71,71.5,70,69.5,67.5,68,66,66,67.5,68,67],
+            "ÇİĞLİ":     [70,71,69,70,68,69,67,66,65,64,63,64,63.5,62.5],
+            "BAYRAKLI":   [69,71,70,68,66,67,65,64,63,62,61,62.5,62,60],
+            "BUCA":       [59,57,58,56,55,57,54,55,53,52,54,52,53,51],
+            "GAZİEMİR":   [57,58,55,56,57,54,55,53,54,52,53,55,54,54],
+            "GÜZELBAHÇE": [55,54,56,53,54,52,53,51,52,50,49,51,50,49],
+            "KARŞIYAKA":  [53,52,54,51,52,50,51,50,49,48,47,49,48,47],
+            "NARLIDERE":  [51,52,50,51,49,50,48,49,47,47,48,47,47,47],
+            "KONAK":      [52,51,51,50,49.5,49.5,48,47.5,47.3,47,46,46.8,46.5,45.5],
+            "KARABAĞLAR": [51,50.5,49.5,48,48.2,47.3,47,46,45,44.6,44,44.7,44.3,43],
+            "BALÇOVA":    [50.5,48.5,48,46.5,46,45,44.5,44.2,43.8,43,42.5,43,43.7,42],
+        }
+        ilce_sirali_anim = list(manuel_risk_anim.keys())
+
         fig_anim = go.Figure()
         for i, yil in enumerate(YEARS):
-            df_y = risk_df[risk_df["Yıl"]==yil].sort_values("Risk_Skor",ascending=False)
-            colors_y = [get_risk_color(s) for s in df_y["Risk_Skor"]]
+            yil_idx = YEARS.index(yil)
+            skorlar_yil = [manuel_risk_anim[ilce][yil_idx] for ilce in ilce_sirali_anim]
+            sirali = sorted(zip(ilce_sirali_anim, skorlar_yil), key=lambda x: -x[1])
+            ilceler_s = [x[0] for x in sirali]
+            skorlar_s = [x[1] for x in sirali]
+            colors_y = ["#d62728" if s>=60 else "#ff7f0e" if s>=46 else "#2ca02c" for s in skorlar_s]
             fig_anim.add_trace(go.Bar(
-                x=df_y["İlçe"], y=df_y["Risk_Skor"],
+                x=ilceler_s, y=skorlar_s,
                 name=str(yil), visible=(i==0),
                 marker=dict(color=colors_y, opacity=0.85),
-                text=[f"{s:.1f}" for s in df_y["Risk_Skor"]],
+                text=[f"{s:.1f}" for s in skorlar_s],
                 textposition="outside", textfont=dict(color="white",size=10),
-                hovertemplate="<b>%{x}</b> · " + str(yil) + "<br>Risk: %{y:.1f}<extra></extra>"
+                hovertemplate="<b>%{x}</b><br>Risk: %{y:.1f}<extra></extra>"
             ))
 
-        steps = []
+        steps_anim = []
         for i, yil in enumerate(YEARS):
-            label = str(yil) + (" (B)" if yil < 2020 else "")
+            label = str(yil) + (" 🔬" if yil < 2020 else " ✅")
             step = dict(method="update", label=label,
                         args=[{"visible":[j==i for j in range(len(YEARS))]},
                               {"title.text":f"Risk Skorları — {yil}"}])
-            steps.append(step)
+            steps_anim.append(step)
 
         fig_anim.update_layout(
-            sliders=[dict(active=0, steps=steps, x=0.05, len=0.9,
-                          currentvalue=dict(prefix="Yıl: ", font=dict(color="white")),
-                          font=dict(color="white", size=10))],
+            sliders=[dict(active=len(YEARS)-1, steps=steps_anim, x=0.05, len=0.9,
+                          currentvalue=dict(prefix="Yıl: ", font=dict(color="white",size=13)),
+                          font=dict(color="white", size=10),
+                          bgcolor="rgba(56,209,227,0.1)",
+                          activebgcolor="rgba(56,209,227,0.4)")],
             updatemenus=[dict(
-                type="buttons", showactive=False, y=1.15, x=0,
+                type="buttons", showactive=False, y=1.18, x=0.02,
                 buttons=[
                     dict(label="▶ Oynat", method="animate",
-                         args=[None, {"frame":{"duration":600}, "fromcurrent":True}]),
+                         args=[None, {"frame":{"duration":700,"redraw":True},
+                                      "fromcurrent":True,"transition":{"duration":300}}]),
                     dict(label="⏸ Durdur", method="animate",
-                         args=[[None], {"frame":{"duration":0}, "mode":"immediate"}])
+                         args=[[None], {"frame":{"duration":0},"mode":"immediate"}])
                 ],
-                font=dict(color="white"), bgcolor="rgba(56,209,227,0.2)",
-                bordercolor="rgba(56,209,227,0.4)"
+                font=dict(color="white",size=11),
+                bgcolor="rgba(56,209,227,0.15)",
+                bordercolor="rgba(56,209,227,0.5)"
             )],
             plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
-            height=420, font=dict(color="white"),
+            height=450, font=dict(color="white"),
             xaxis=dict(tickangle=30, gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="white")),
-            yaxis=dict(range=[0, max(80, risk_df["Risk_Skor"].max()+5)],
-                       gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="white")),
-            margin=dict(t=80,b=80,l=40,r=40)
+            yaxis=dict(range=[0,80], gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="white"),
+                       title="Risk Skoru"),
+            margin=dict(t=80,b=80,l=50,r=20)
         )
 
-        frames = []
+        frames_anim = []
         for yil in YEARS:
-            df_y = risk_df[risk_df["Yıl"]==yil].sort_values("Risk_Skor",ascending=False)
-            frames.append(go.Frame(
-                data=[go.Bar(x=df_y["İlçe"], y=df_y["Risk_Skor"],
-                             marker=dict(color=[get_risk_color(s) for s in df_y["Risk_Skor"]], opacity=0.85),
-                             text=[f"{s:.1f}" for s in df_y["Risk_Skor"]], textposition="outside",
+            yil_idx = YEARS.index(yil)
+            skorlar_yil = [manuel_risk_anim[ilce][yil_idx] for ilce in ilce_sirali_anim]
+            sirali = sorted(zip(ilce_sirali_anim, skorlar_yil), key=lambda x: -x[1])
+            ilceler_s = [x[0] for x in sirali]
+            skorlar_s = [x[1] for x in sirali]
+            colors_y = ["#d62728" if s>=60 else "#ff7f0e" if s>=46 else "#2ca02c" for s in skorlar_s]
+            frames_anim.append(go.Frame(
+                data=[go.Bar(x=ilceler_s, y=skorlar_s,
+                             marker=dict(color=colors_y, opacity=0.85),
+                             text=[f"{s:.1f}" for s in skorlar_s],
+                             textposition="outside",
                              textfont=dict(color="white",size=10))],
                 name=str(yil)
             ))
-        fig_anim.frames = frames
-        st.plotly_chart(fig_anim, use_container_width=True)
-        st.caption("(B) = Bootstrap simülasyonu (2010-2019)")
+        fig_anim.frames = frames_anim
+        st.plotly_chart(fig_anim, use_container_width=True, key="risk_anim")
+        st.caption("🔬 = Bootstrap simülasyonu (2010–2019) · ✅ = İZSU Gerçek Verisi (2020–2023)")
 
-        # Bölüm 4: CSV İndir
-        st.markdown("""
-        <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
-            <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
-            <div>
-                <div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;">04 · VERİ DIŞA AKTARIMI</div>
-                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Veri İndir — CSV</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
 
-        dl1,dl2,dl3 = st.columns([2,2,1])
-        with dl1:
-            dl_ilce = st.selectbox("İlçe:", ["Tüm ilçeler"]+sorted(risk_df["İlçe"].unique().tolist()), key="dl_ilce")
-        with dl2:
-            dl_yil = st.selectbox("Yıl:", ["Tüm yıllar"]+YEARS, key="dl_yil")
-        with dl3:
-            st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
-            dl_df = risk_df.copy()
-            if dl_ilce != "Tüm ilçeler": dl_df = dl_df[dl_df["İlçe"]==dl_ilce]
-            if dl_yil != "Tüm yıllar": dl_df = dl_df[dl_df["Yıl"]==dl_yil]
-            csv = dl_df.to_csv(index=False).encode("utf-8")
-            st.download_button("⬇ CSV İndir", csv, "izmirisk_data.csv", "text/csv", use_container_width=True)
 
     # ════════════════════════════════
     # METODOLOJİ
@@ -2883,7 +2967,7 @@ if data_loaded:
 
         col1, col2 = st.columns(2)
         with col1:
-            with st.expander("📐 Adım 1 — Min-Max Normalizasyon (tıkla, detay gör)"):
+            with st.expander("📐 Adım 1 — Min-Max Normalizasyon"):
                 st.markdown("""
                 **Ne yapar?**
                 Farklı birimlerdeki göstergeleri (m³, %, oran) aynı 0–1 ölçeğine çeker. Böylece
@@ -2908,7 +2992,7 @@ if data_loaded:
                 Sonuç: 0 = en düşük risk · 1 = en yüksek risk · tüm göstergeler aynı ölçekte</div>
             """, unsafe_allow_html=True)
 
-            with st.expander("📐 Adım 2 — Entropy Ağırlıklandırma (tıkla, detay gör)"):
+            with st.expander("📐 Adım 2 — Entropy Ağırlıklandırma"):
                 st.markdown("""
                 **Ne yapar?**
                 Araştırmacının "bu gösterge daha önemli" gibi öznel kararlar vermesini önler.
@@ -2939,7 +3023,7 @@ if data_loaded:
             """, unsafe_allow_html=True)
 
         with col2:
-            with st.expander("📐 Adım 3 — Bileşik Risk Skoru / WSRI (tıkla, detay gör)"):
+            with st.expander("📐 Adım 3 — Bileşik Risk Skoru / WSRI"):
                 st.markdown("""
                 **Ne yapar?**
                 Adım 1 ve 2'den gelen normalize göstergeleri entropy ağırlıklarıyla çarparak toplar.
@@ -2983,7 +3067,7 @@ if data_loaded:
         bolum("04", "ZAMANSAL ANALİZ", "Mann-Kendall Trend Testi & Sen's Slope")
         col1, col2 = st.columns(2)
         with col1:
-            with st.expander("📐 Mann-Kendall Trend Testi (tıkla, detay gör)"):
+            with st.expander("📐 Mann-Kendall Trend Testi"):
                 st.markdown(f"""
                 **Ne yapar?**
                 Bir veri serisinin zaman içinde sürekli artıp artmadığını veya azalıp azalmadığını
@@ -3013,7 +3097,7 @@ if data_loaded:
             """, unsafe_allow_html=True)
 
         with col2:
-            with st.expander("📐 Sen's Slope (tıkla, detay gör)"):
+            with st.expander("📐 Sen's Slope"):
                 st.markdown("""
                 **Ne yapar?**
                 Trendin yıllık değişim hızını hesaplar. Aykırı değerlerden etkilenmez çünkü
@@ -3041,7 +3125,7 @@ if data_loaded:
         bolum("05", "MEKÂNSAL ANALİZ", "Moran's I & LISA")
         col1, col2 = st.columns(2)
         with col1:
-            with st.expander("📐 Global Moran's I (tıkla, detay gör)"):
+            with st.expander("📐 Global Moran's I"):
                 st.markdown("""
                 **Ne yapar?**
                 Tüm İzmir için risk değerlerinin mekânsal olarak kümelenip kümelenmediğini ölçer.
@@ -3066,7 +3150,7 @@ if data_loaded:
             """, unsafe_allow_html=True)
 
         with col2:
-            with st.expander("📐 Local Moran's I — LISA (tıkla, detay gör)"):
+            with st.expander("📐 Local Moran's I — LISA"):
                 st.markdown("""
                 **Ne yapar?**
                 Her ilçe için ayrı ayrı mekânsal skor üretir. Global Moran "genel tablo" verirken,
@@ -3092,7 +3176,7 @@ if data_loaded:
 
         # 06 TAHMİN
         bolum("06", "PROJEKSİYON MODELİ", "2030 Projeksiyon Modeli")
-        with st.expander("📐 CAGR Tabanlı Projeksiyon Modeli (tıkla, detay gör)"):
+        with st.expander("📐 CAGR Tabanlı Projeksiyon Modeli"):
             st.markdown(f"""
             **Ne yapar?**
             Her ilçenin geçmiş abone büyüme hızını (CAGR) hesaplar ve bu hızı 3 farklı
