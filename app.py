@@ -3602,5 +3602,3 @@ if data_loaded:
             with st.expander(f"❓ {soru}"):
                 st.markdown(f"<div style='color:#d0e8f5;font-size:0.88rem;line-height:1.7;'>{cevap}</div>",
                             unsafe_allow_html=True)
-
-
