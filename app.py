@@ -407,138 +407,117 @@ except Exception as e:
 
 if data_loaded:
 
-    _dil_h = st.session_state.get("dil","TR")
-
-    # ── Sağ üst: Dil + Tema butonları
-    st.markdown("""<style>
-    div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"] button {
-        font-size: 0.78rem !important; height: 30px !important;
-        padding: 0 10px !important; line-height: 1 !important;
-        background: rgba(10,25,60,0.5) !important;
-        border: 1px solid rgba(56,209,227,0.3) !important;
-        border-radius: 8px !important; color: #c8e6f5 !important;
-    }
-    div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"] button:hover {
-        background: rgba(56,209,227,0.18) !important; color: #fff !important;
-    }
-    </style>""", unsafe_allow_html=True)
-
-    _t1, _t2 = st.columns([7.0, 0.6])
-    with _t2:
-        _dil_label = "🇹🇷 TR" if _dil_h == "EN" else "🇬🇧 EN"
-        if st.button(_dil_label, key="dil_btn", use_container_width=True):
-            st.session_state.dil = "EN" if _dil_h == "TR" else "TR"
-            st.rerun()
-
-
-    # ── Başlık — daha yukarı, daha büyük
+    # ── Üst başlık — ortalı, büyük
     st.markdown(f"""
-    <div style="text-align:center;padding:8px 0 16px 0;position:relative;">
+    <div style="text-align:center;padding:28px 0 20px 0;
+                border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:0.8rem;
+                position:relative;">
+        <!-- sağ köşe bilgi -->
         <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);
-                    color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.9;">
-            {(_dil_h=="TR" and "Veri: İZSU + Bootstrap Simülasyonu" or "Data: IZSU + Bootstrap Simulation")}<br>
-            {(_dil_h=="TR" and "11 Merkez İlçe · Entropy-WSRI" or "11 Central Districts · Entropy-WSRI")}
+                    color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.7;">
+            {(st.session_state.get("dil","TR")=="TR" and "Veri: İZSU + Bootstrap Simülasyonu" or "Data: IZSU + Bootstrap Simulation")}<br>{(st.session_state.get("dil","TR")=="TR" and "11 Merkez İlçe · Entropy-WSRI" or "11 Central Districts · Entropy-WSRI")}
         </div>
-        <div style="display:inline-flex;align-items:center;gap:20px;">
-            <span style="font-size:4.2rem;line-height:1;filter:drop-shadow(0 0 16px rgba(56,209,227,0.6));">💧</span>
+        <!-- orta logo + başlık -->
+        <div style="display:inline-flex;align-items:center;gap:18px;">
+            <span style="font-size:4rem;line-height:1;
+                         filter:drop-shadow(0 0 16px rgba(56,209,227,0.55));">💧</span>
             <div style="text-align:left;">
-                <div style="color:#ffffff;font-size:3.4rem;font-weight:900;letter-spacing:-1px;line-height:1;
+                <div style="color:#ffffff;font-size:3.2rem;font-weight:900;
+                            letter-spacing:-1px;line-height:1;
                             text-shadow:0 0 24px rgba(56,209,227,0.20);">İzmiRisk</div>
-                <div style="color:#38d1e3;font-size:0.85rem;letter-spacing:3px;
+                <div style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;
                             text-transform:uppercase;margin-top:6px;font-weight:600;">
                     Su Güvenliği Risk Endeksi · İzmir · {START_YEAR}–2030
                 </div>
             </div>
         </div>
     </div>
-    <hr style="border-color:rgba(56,209,227,0.2);margin:0 0 0.6rem 0;">
     """, unsafe_allow_html=True)
 
-    # ── Arama satırı — büyüteç + input yan yana, sağ hizalı
-    st.markdown("""
-    <style>
-    /* Arama input tamamen transparan */
-    [data-testid="stTextInput"] input {
-        background: transparent !important;
-        border: 1px solid rgba(56,209,227,0.35) !important;
-        border-radius: 20px !important;
-        color: #a8d8f0 !important;
-        font-size: 0.78rem !important;
-        height: 32px !important;
-        padding: 0 12px !important;
-        box-shadow: none !important;
+    # ── Arama kutusu
+    arama_sozluk = {
+        "baraj": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
+        "tahtalı": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
+        "balçova": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
+        "gördes": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
+        "doluluk": ("📊 EDA Analizi", "💧 Baraj Doluluk"),
+        "tüketim": ("📊 EDA Analizi", "🌡️ Tüketim Haritası"),
+        "consumption": ("📊 EDA Analizi", "🌡️ Tüketim Haritası"),
+        "arz talep": ("📊 EDA Analizi", "⚖️ Arz-Talep"),
+        "supply": ("📊 EDA Analizi", "⚖️ Arz-Talep"),
+        "kayıp": ("📊 EDA Analizi", "📉 Kayıp Oranı"),
+        "loss": ("📊 EDA Analizi", "📉 Kayıp Oranı"),
+        "risk": ("📈 Risk Endeksi", None),
+        "wsri": ("📈 Risk Endeksi", None),
+        "entropy": ("📈 Risk Endeksi", None),
+        "bornova": ("📈 Risk Endeksi", None),
+        "çiğli": ("📈 Risk Endeksi", None),
+        "bayraklı": ("📈 Risk Endeksi", None),
+        "buca": ("📈 Risk Endeksi", None),
+        "gaziemir": ("📈 Risk Endeksi", None),
+        "karşıyaka": ("📈 Risk Endeksi", None),
+        "konak": ("📈 Risk Endeksi", None),
+        "karabağlar": ("📈 Risk Endeksi", None),
+        "narlidere": ("📈 Risk Endeksi", None),
+        "güzelbahçe": ("📈 Risk Endeksi", None),
+        "2030": ("🔮 2030 Tahmini", None),
+        "projeksiyon": ("🔮 2030 Tahmini", None),
+        "projection": ("🔮 2030 Tahmini", None),
+        "senaryo": ("🔮 2030 Tahmini", None),
+        "scenario": ("🔮 2030 Tahmini", None),
+        "harita": ("Izmir Risk Haritasi", None),
+        "map": ("Izmir Risk Haritasi", None),
+        "moran": ("🗺️ Mekânsal Analiz", None),
+        "lisa": ("🗺️ Mekânsal Analiz", None),
+        "mekânsal": ("🗺️ Mekânsal Analiz", None),
+        "spatial": ("🗺️ Mekânsal Analiz", None),
+        "öneri": ("💡 Öneriler", None),
+        "recommendation": ("💡 Öneriler", None),
+        "metodoloji": ("📐 Metodoloji", None),
+        "methodology": ("📐 Metodoloji", None),
+        "bootstrap": ("📐 Metodoloji", None),
+        "mann-kendall": ("📐 Metodoloji", None),
+        "radar": ("🔬 Araçlar", None),
+        "simülatör": ("🔬 Araçlar", None),
+        "simulator": ("🔬 Araçlar", None),
+        "araç": ("🔬 Araçlar", None),
+        "tool": ("🔬 Araçlar", None),
+        "karşılaştır": ("🔬 Araçlar", None),
+        "compare": ("🔬 Araçlar", None),
     }
-    [data-testid="stTextInput"] > div,
-    [data-testid="stTextInput"] > div > div {
-        background: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
-        padding: 0 !important;
-    }
-    [data-testid="stTextInput"] input::placeholder {
-        color: rgba(168,216,240,0.45) !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
-    _s1, _s2, _s3 = st.columns([3.5, 1.8, 0.5])
-    with _s2:
-        _arama_girdi = st.text_input(
-            "", key="site_arama", label_visibility="collapsed",
-            placeholder="🔍 " + ("Ara: baraj, risk, 2030..." if _dil_h=="TR" else "Search: dam, risk, 2030...")
+    search_col1, search_col2 = st.columns([4, 1])
+    with search_col1:
+        arama_girdisi = st.text_input(
+            "",
+            placeholder="🔍  " + ("Arama yapın... (örn: baraj, risk, bornova, 2030)" if st.session_state.get("dil","TR")=="TR" else "Search... (e.g. dam, risk, bornova, 2030)"),
+            key="site_arama",
+            label_visibility="collapsed"
         )
-    with _s3:
-        _ara_btn = st.button("🔍", key="arama_btn", use_container_width=True)
+    with search_col2:
+        arama_btn = st.button("🔍 " + ("Ara" if st.session_state.get("dil","TR")=="TR" else "Search"), key="arama_btn", use_container_width=True)
 
-    if _arama_girdi and (_ara_btn or len(_arama_girdi) > 2):
-        _arama_sozluk = {
-            "baraj":("📊 EDA Analizi",None),"tahtalı":("📊 EDA Analizi",None),
-            "balçova":("📊 EDA Analizi",None),"gördes":("📊 EDA Analizi",None),
-            "doluluk":("📊 EDA Analizi",None),"dam":("📊 EDA Analizi",None),
-            "tüketim":("📊 EDA Analizi",None),"consumption":("📊 EDA Analizi",None),
-            "arz":("📊 EDA Analizi",None),"supply":("📊 EDA Analizi",None),
-            "kayıp":("📊 EDA Analizi",None),"loss":("📊 EDA Analizi",None),
-            "eda":("📊 EDA Analizi",None),"analiz":("📊 EDA Analizi",None),
-            "risk":("📈 Risk Endeksi",None),"wsri":("📈 Risk Endeksi",None),
-            "entropy":("📈 Risk Endeksi",None),"endeks":("📈 Risk Endeksi",None),
-            "bornova":("📈 Risk Endeksi",None),"çiğli":("📈 Risk Endeksi",None),
-            "bayraklı":("📈 Risk Endeksi",None),"buca":("📈 Risk Endeksi",None),
-            "gaziemir":("📈 Risk Endeksi",None),"karşıyaka":("📈 Risk Endeksi",None),
-            "konak":("📈 Risk Endeksi",None),"karabağlar":("📈 Risk Endeksi",None),
-            "narlidere":("📈 Risk Endeksi",None),"güzelbahçe":("📈 Risk Endeksi",None),
-            "district":("📈 Risk Endeksi",None),"ilçe":("📈 Risk Endeksi",None),
-            "2030":("🔮 2030 Tahmini",None),"projeksiyon":("🔮 2030 Tahmini",None),
-            "projection":("🔮 2030 Tahmini",None),"senaryo":("🔮 2030 Tahmini",None),
-            "tahmin":("🔮 2030 Tahmini",None),"forecast":("🔮 2030 Tahmini",None),
-            "harita":("Izmir Risk Haritasi",None),"map":("Izmir Risk Haritasi",None),
-            "moran":("🗺️ Mekânsal Analiz",None),"lisa":("🗺️ Mekânsal Analiz",None),
-            "mekânsal":("🗺️ Mekânsal Analiz",None),"spatial":("🗺️ Mekânsal Analiz",None),
-            "küme":("🗺️ Mekânsal Analiz",None),"cluster":("🗺️ Mekânsal Analiz",None),
-            "öneri":("💡 Öneriler",None),"recommendation":("💡 Öneriler",None),
-            "suggestion":("💡 Öneriler",None),"tavsiye":("💡 Öneriler",None),
-            "metodoloji":("📐 Metodoloji",None),"methodology":("📐 Metodoloji",None),
-            "bootstrap":("📐 Metodoloji",None),"mann":("📐 Metodoloji",None),
-            "formül":("📐 Metodoloji",None),"yöntem":("📐 Metodoloji",None),
-            "radar":("🔬 Araçlar",None),"simülatör":("🔬 Araçlar",None),
-            "simulator":("🔬 Araçlar",None),"araç":("🔬 Araçlar",None),
-            "tool":("🔬 Araçlar",None),"karşılaştır":("🔬 Araçlar",None),
-            "compare":("🔬 Araçlar",None),"animasyon":("🔬 Araçlar",None),
-            "hesapla":("🔬 Araçlar",None),"calculator":("🔬 Araçlar",None),
-        }
-        _temiz = _arama_girdi.strip().lower()
-        _bulundu = False
-        for _k, _v in _arama_sozluk.items():
-            if _k in _temiz:
-                _h_sayfa, _ = _v
-                if _h_sayfa != st.session_state.get("secili_sayfa"):
-                    st.session_state.secili_sayfa = _h_sayfa
-                    st.rerun()
-                _bulundu = True
+    if arama_girdisi and (arama_btn or len(arama_girdisi) > 2):
+        arama_temiz = arama_girdisi.strip().lower()
+        eslesen = None
+        for anahtar, hedef in arama_sozluk.items():
+            if anahtar in arama_temiz:
+                eslesen = hedef
                 break
-        if not _bulundu:
-            with _s2:
-                st.caption("❌ " + ("Sonuç yok. Deneyin: baraj, risk, harita, 2030, metodoloji" if _dil_h=="TR" else "No result. Try: dam, risk, map, 2030, methodology"))
-
+        if eslesen:
+            hedef_sayfa, hedef_tab = eslesen
+            if st.session_state.get("dil","TR") == "TR":
+                st.success(f"✅ **{arama_temiz!r}** için sonuç bulundu → **{hedef_sayfa}** sayfasına yönlendiriliyorsunuz...")
+            else:
+                st.success(f"✅ Result found for **{arama_temiz!r}** → Redirecting to **{hedef_sayfa}**...")
+            if hedef_sayfa != st.session_state.get("secili_sayfa"):
+                st.session_state.secili_sayfa = hedef_sayfa
+                st.rerun()
+        else:
+            if st.session_state.get("dil","TR") == "TR":
+                st.warning(f"❌ **{arama_temiz!r}** için sonuç bulunamadı. Deneyin: baraj, risk, bornova, 2030, harita, metodoloji")
+            else:
+                st.warning(f"❌ No result for **{arama_temiz!r}**. Try: dam, risk, bornova, 2030, map, methodology")
     _dil_banner = st.session_state.get("dil", "TR")
     _banner_metin = (
         f"{START_YEAR}–2019 data generated via block bootstrap simulation. 2020–{END_YEAR} data from official IZSU records."
@@ -571,20 +550,20 @@ if data_loaded:
         div[data-testid="stPills"] [role="radiogroup"] {
             display: flex !important;
             justify-content: center !important;
-            align-items: stretch !important;
-            flex-wrap: nowrap !important;
-            gap: 8px !important;
-            padding: 12px 4px !important;
+            align-items: center !important;
+            flex-wrap: wrap !important;
+            gap: 10px !important;
+            padding: 10px 0 !important;
             background: transparent !important;
             border: none !important;
             box-shadow: none !important;
             backdrop-filter: none !important;
             max-width: 100% !important;
-            margin: 4px auto 12px auto !important;
+            margin: 6px auto 14px auto !important;
         }
         div[data-testid="stPills"] label {
-            min-height: 56px !important;
-            padding: 0 18px !important;
+            min-height: 52px !important;
+            padding: 0 22px !important;
             border-radius: 14px !important;
             background: rgba(10,25,60,0.75) !important;
             border: 1.5px solid rgba(56,209,227,0.4) !important;
@@ -670,80 +649,36 @@ if data_loaded:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
     if st.session_state.secili_sayfa not in sayfa_listesi:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
+    if "acik_tema" not in st.session_state:
+        st.session_state.acik_tema = False
     if "dil" not in st.session_state:
         st.session_state.dil = "TR"
 
-    # ── Navigasyon — custom st.button'lar
-    st.markdown("""
-    <style>
-    /* Nav buton container */
-    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] > div[data-testid="stVerticalBlock"]
-        > div[data-testid="stButton"] > button {
-        width: 100% !important;
-        height: 52px !important;
-        font-size: 0.82rem !important;
-        font-weight: 700 !important;
-        letter-spacing: 0.2px !important;
-        border-radius: 12px !important;
-        border: 1.5px solid rgba(56,209,227,0.30) !important;
-        background: rgba(5,18,48,0.72) !important;
-        color: #b8d8f0 !important;
-        transition: all 160ms ease !important;
-        backdrop-filter: blur(14px) !important;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06) !important;
-        white-space: nowrap !important;
-        padding: 0 8px !important;
-    }
-    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] > div[data-testid="stVerticalBlock"]
-        > div[data-testid="stButton"] > button:hover {
-        background: rgba(56,209,227,0.16) !important;
-        border-color: rgba(56,209,227,0.7) !important;
-        color: #ffffff !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.45), 0 0 14px rgba(56,209,227,0.2) !important;
-    }
-    div[data-testid="stHorizontalBlock"] > div[data-testid="column"] > div[data-testid="stVerticalBlock"]
-        > div[data-testid="stButton"] > button:focus:not(:active) {
-        background: linear-gradient(135deg,rgba(56,209,227,0.25),rgba(27,79,114,0.55)) !important;
-        border-color: #38d1e3 !important;
-        color: #ffffff !important;
-        box-shadow: 0 0 20px rgba(56,209,227,0.4), 0 4px 16px rgba(0,0,0,0.4) !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+    nav_left, nav_mid, nav_right = st.columns([0.45, 5.6, 0.45])
+    with nav_mid:
+        secili_etiket = st.pills(
+            label="",
+            options=etiketler,
+            default=etiketler[sayfa_listesi.index(st.session_state.secili_sayfa)]
+            if st.session_state.secili_sayfa in sayfa_listesi else etiketler[0],
+            key="nav_pills",
+            label_visibility="collapsed"
+        )
+    with nav_right:
+        st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+        dil_btn_label = "🇬🇧 EN" if st.session_state.dil == "TR" else "🇹🇷 TR"
+        if st.button(dil_btn_label, key="dil_btn", use_container_width=True):
+            st.session_state.dil = "EN" if st.session_state.dil == "TR" else "TR"
+            st.rerun()
+        if st.button("🌙" if not st.session_state.acik_tema else "☀️", key="tema_btn", use_container_width=True):
+            st.session_state.acik_tema = not st.session_state.acik_tema
+            st.rerun()
 
-    sayfa = st.session_state.secili_sayfa
-    nav_cols = st.columns([1,1,1,1,1,1,1,1,1])
-    nav_items = [
-        ("🏠", "Ana Sayfa", "🏠 Ana Sayfa"),
-        ("📊", "EDA", "📊 EDA Analizi"),
-        ("📈", "Risk", "📈 Risk Endeksi"),
-        ("🔮", "2030", "🔮 2030 Tahmini"),
-        ("🗺️", "Harita", "Izmir Risk Haritasi"),
-        ("📍", "Mekânsal", "🗺️ Mekânsal Analiz"),
-        ("💡", "Öneriler", "💡 Öneriler"),
-        ("📐", "Metodoloji", "📐 Metodoloji"),
-        ("🔬", "Araçlar", "🔬 Araçlar"),
-    ]
-    for i, (emoji, label, sayfa_adi) in enumerate(nav_items):
-        with nav_cols[i]:
-            btn_label = f"{emoji}\n{label}"
-            if st.button(btn_label, key=f"nav_{i}", use_container_width=True):
-                st.session_state.secili_sayfa = sayfa_adi
-                st.rerun()
-
-    # Aktif sayfa vurgusu
-    st.markdown(f"""
-    <style>
-    div[data-testid="stHorizontalBlock"] > div:nth-child({nav_items.index(next((x for x in nav_items if x[2]==sayfa), nav_items[0]))+1})
-        > div > div > div > button {{
-        background: linear-gradient(135deg,rgba(56,209,227,0.28),rgba(27,79,114,0.6)) !important;
-        border-color: #38d1e3 !important;
-        color: #ffffff !important;
-        box-shadow: 0 0 18px rgba(56,209,227,0.4), 0 4px 14px rgba(0,0,0,0.4) !important;
-    }}
-    </style>
-    """, unsafe_allow_html=True)
+    if secili_etiket:
+        yeni_sayfa = sayfa_listesi[etiketler.index(secili_etiket)]
+        if yeni_sayfa != st.session_state.secili_sayfa:
+            st.session_state.secili_sayfa = yeni_sayfa
+            st.rerun()
 
     sayfa = st.session_state.secili_sayfa
     dil   = st.session_state.dil   # "TR" veya "EN"
@@ -805,6 +740,20 @@ if data_loaded:
     def t(key):
         """Çeviri yardımcı fonksiyon"""
         return T.get(key, {}).get(dil, T.get(key, {}).get("TR", key))
+
+    if st.session_state.acik_tema:
+        st.markdown("""
+        <style>
+        .stApp {
+            background-image: linear-gradient(rgba(240,248,255,0.92),rgba(235,245,255,0.92)),
+                url("https://images.unsplash.com/photo-1527489377706-5bf97e608852?w=1600&q=80") !important;
+            background-size: cover; background-position: center top; background-attachment: fixed;
+        }
+        h1,h2,h3 { color: #0a3060 !important; }
+        p, li, label, div { color: #1a3a5c !important; }
+        [data-testid="stSidebar"] { background: rgba(220,240,255,0.95) !important; }
+        </style>
+        """, unsafe_allow_html=True)
 
     st.markdown("<hr style='border-color:rgba(56,209,227,0.15);margin:0.5rem 0 1rem 0;'>", unsafe_allow_html=True)
 
@@ -1775,7 +1724,7 @@ if data_loaded:
             st.plotly_chart(fig2, use_container_width=True, key="risk_heat")
 
         # ── 02 Trend Grafikleri — Manuel veriler
-        st.markdown(f"""
+        st.markdown("""
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
@@ -2018,7 +1967,7 @@ if data_loaded:
         baz_2030 = [53, 50, 49, 46, 44, 42, 41, 39, 37, 35, 34]
         iyi_2030 = [48, 45, 44, 41, 40, 38, 36, 34, 33, 32, 30]
 
-        st.markdown(f"""
+        st.markdown("""
         <div style="display:flex;align-items:center;gap:12px;margin:0 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
@@ -2793,7 +2742,7 @@ if data_loaded:
         renk = get_risk_color(skor)
 
         # Bölüm 1: Radar + Karşılaştırma
-        st.markdown(f"""
+        st.markdown("""
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
@@ -2906,7 +2855,7 @@ if data_loaded:
         )
 
         # Bölüm 2: Risk Simülatörü — düzeltilmiş
-        st.markdown(f"""
+        st.markdown("""
         <div style="display:flex;align-items:center;gap:12px;margin:1.5rem 0 0.8rem 0;">
             <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
             <div>
