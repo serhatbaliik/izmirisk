@@ -408,6 +408,7 @@ except Exception as e:
 if data_loaded:
 
     _dil_h = st.session_state.get("dil","TR")
+    _tema_h = st.session_state.get("acik_tema", False)
 
     # ── Sağ üst: Dil + Tema butonları
     st.markdown("""<style>
@@ -423,13 +424,16 @@ if data_loaded:
     }
     </style>""", unsafe_allow_html=True)
 
-    _t1, _t2 = st.columns([7.0, 0.6])
+    _t1, _t2, _t3 = st.columns([6.5, 0.6, 0.5])
     with _t2:
         _dil_label = "🇹🇷 TR" if _dil_h == "EN" else "🇬🇧 EN"
         if st.button(_dil_label, key="dil_btn", use_container_width=True):
             st.session_state.dil = "EN" if _dil_h == "TR" else "TR"
             st.rerun()
-
+    with _t3:
+        if st.button("☀️" if _tema_h else "🌙", key="tema_btn", use_container_width=True):
+            st.session_state.acik_tema = not _tema_h
+            st.rerun()
 
     # ── Başlık — daha yukarı, daha büyük
     st.markdown(f"""
@@ -670,6 +674,8 @@ if data_loaded:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
     if st.session_state.secili_sayfa not in sayfa_listesi:
         st.session_state.secili_sayfa = "🏠 Ana Sayfa"
+    if "acik_tema" not in st.session_state:
+        st.session_state.acik_tema = False
     if "dil" not in st.session_state:
         st.session_state.dil = "TR"
 
@@ -805,6 +811,20 @@ if data_loaded:
     def t(key):
         """Çeviri yardımcı fonksiyon"""
         return T.get(key, {}).get(dil, T.get(key, {}).get("TR", key))
+
+    if st.session_state.acik_tema:
+        st.markdown("""
+        <style>
+        .stApp {
+            background-image: linear-gradient(rgba(240,248,255,0.92),rgba(235,245,255,0.92)),
+                url("https://images.unsplash.com/photo-1527489377706-5bf97e608852?w=1600&q=80") !important;
+            background-size: cover; background-position: center top; background-attachment: fixed;
+        }
+        h1,h2,h3 { color: #0a3060 !important; }
+        p, li, label, div { color: #1a3a5c !important; }
+        [data-testid="stSidebar"] { background: rgba(220,240,255,0.95) !important; }
+        </style>
+        """, unsafe_allow_html=True)
 
     st.markdown("<hr style='border-color:rgba(56,209,227,0.15);margin:0.5rem 0 1rem 0;'>", unsafe_allow_html=True)
 
