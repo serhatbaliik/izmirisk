@@ -7,7 +7,7 @@ st.set_page_config(
     page_title="İzmiRisk",
     page_icon="💧",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 YEARS = list(range(2010, 2024))
@@ -18,7 +18,7 @@ PRED_YEARS = list(range(END_YEAR + 1, 2031))
 
 st.markdown("""
 <style>
-section[data-testid="stSidebar"] { width: 320px !important; min-width: 320px !important; }
+section[data-testid="stSidebar"] { width: 280px !important; min-width: 280px !important; }
 
 .stApp {
     background-image:
@@ -93,37 +93,44 @@ hr { border-color: rgba(56,209,227,0.2) !important; }
     box-shadow: 0 0 14px rgba(56,209,227,0.25) !important;
 }
 
-/* ── Nav butonları — şeffaf mavi, siyah değil */
-div[data-testid="stHorizontalBlock"] > div[data-testid="column"] > div[data-testid="stVerticalBlock"]
-    > div[data-testid="stButton"] > button {
-    width: 100% !important; height: 52px !important;
-    font-size: 0.82rem !important; font-weight: 700 !important;
-    border-radius: 12px !important;
-    border: 1.5px solid rgba(56,209,227,0.35) !important;
+/* ── TÜM butonlar — şeffaf mavi, kesinlikle siyah değil */
+button[kind="secondary"],
+button[kind="primary"],
+.stButton > button,
+div[data-testid="stButton"] > button,
+[data-testid="stBaseButton-secondary"],
+[data-testid="stBaseButton-primary"],
+[data-testid="stBaseButton-secondaryFormSubmit"],
+.st-emotion-cache-1x8cf1d,
+.st-emotion-cache-7ym5gk,
+[class*="stButton"] button {
     background: rgba(4,20,60,0.55) !important;
+    border: 1.5px solid rgba(56,209,227,0.35) !important;
+    border-radius: 12px !important;
     color: #b8d8f0 !important;
-    transition: all 160ms ease !important;
     backdrop-filter: blur(16px) !important;
     -webkit-backdrop-filter: blur(16px) !important;
     box-shadow: 0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(56,209,227,0.08) !important;
-    white-space: nowrap !important; padding: 0 8px !important;
+    transition: all 160ms ease !important;
 }
-div[data-testid="stHorizontalBlock"] > div[data-testid="column"] > div[data-testid="stVerticalBlock"]
-    > div[data-testid="stButton"] > button:hover {
+button[kind="secondary"]:hover,
+button[kind="primary"]:hover,
+.stButton > button:hover,
+div[data-testid="stButton"] > button:hover,
+[data-testid="stBaseButton-secondary"]:hover,
+[data-testid="stBaseButton-primary"]:hover,
+[class*="stButton"] button:hover {
     background: rgba(56,209,227,0.18) !important;
     border-color: rgba(56,209,227,0.75) !important;
     color: #ffffff !important;
-    transform: translateY(-2px) !important;
     box-shadow: 0 6px 20px rgba(0,0,0,0.4), 0 0 16px rgba(56,209,227,0.22) !important;
 }
-
-/* Dil butonu (sağ üst) — küçük özel buton */
-div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"] button {
-    font-size: 0.78rem !important; height: 30px !important;
-    padding: 0 10px !important; line-height: 1 !important;
-    background: rgba(4,20,60,0.6) !important;
-    border: 1px solid rgba(56,209,227,0.35) !important;
-    border-radius: 8px !important; color: #c8e6f5 !important;
+/* p etiketleri buton içinde beyaz */
+[class*="stButton"] button p,
+div[data-testid="stButton"] > button p,
+[data-testid="stBaseButton-secondary"] p,
+[data-testid="stBaseButton-primary"] p {
+    color: inherit !important;
 }
 
 header[data-testid="stHeader"] { background: rgba(3,12,35,0.85) !important; border-bottom: 1px solid rgba(56,209,227,0.15) !important; }
@@ -489,8 +496,8 @@ if data_loaded:
         active_idx = 0
     st.markdown(f"""
     <style>
-    div[data-testid="stHorizontalBlock"] > div:nth-child({active_idx+1})
-        > div > div > div > button {{
+    div[data-testid="stHorizontalBlock"] > div:nth-child({active_idx+1}) button,
+    div[data-testid="stHorizontalBlock"] > div:nth-child({active_idx+1}) [data-testid="stBaseButton-secondary"] {{
         background: linear-gradient(135deg,rgba(56,209,227,0.30),rgba(10,50,120,0.65)) !important;
         border-color: #38d1e3 !important; color: #ffffff !important;
         box-shadow: 0 0 18px rgba(56,209,227,0.45), 0 4px 14px rgba(0,0,0,0.4) !important;
@@ -800,7 +807,7 @@ if data_loaded:
                 fig=go.Figure()
                 for isim, renk, sembol, degerler in [("Tahtalı","#38d1e3","circle",tahtali_v),("Balçova","#2ca02c","square",balcova_v),("Gördes","#d62728","diamond",gordes_v)]:
                     fig.add_trace(go.Scatter(x=baraj_yillar,y=degerler,mode="lines+markers",name=isim,line=dict(color=renk,width=2.5),marker=dict(size=10,symbol=sembol),hovertemplate=f"<b>{isim}</b>: %{{y:.0f}}%<extra></extra>"))
-                fig.add_vline(x=2019.5,line_dash="dash",line_color="rgba(155,89,182,0.6)",line_width=1.5,annotation_text="Bootstrap | Gerçek →",annotation_font_color="#c39bd3",annotation_font_size=9)
+                fig.add_vline(x=2019.5,line_dash="dash",line_color="rgba(155,89,182,0.6)",line_width=1.5,annotation_text="Bootstrap → Gerçek Veri",annotation_font_color="#c39bd3",annotation_font_size=9)
                 fig.add_hline(y=15,line_dash="dash",line_color="#ff7f0e",line_width=1.5,annotation_text="Kritik Eşik: 15%",annotation_font_color="#ff7f0e",annotation_font_size=10)
                 fig.update_layout(**layout_base,height=420,yaxis=dict(title="Doluluk (%)",range=[0,55],gridcolor="rgba(255,255,255,0.1)",tickfont=dict(color="white")))
                 st.plotly_chart(fig, use_container_width=True)
@@ -867,7 +874,7 @@ if data_loaded:
                 fig=go.Figure()
                 fig.add_trace(go.Bar(x=at_yillar,y=sisteme_v,name="Sisteme Giren Su (Arz)",marker=dict(color="#38d1e3",opacity=0.85,line=dict(color="rgba(255,255,255,0.2)",width=1)),hovertemplate="Sisteme Giren: %{y}M m³<extra></extra>"))
                 fig.add_trace(go.Bar(x=at_yillar,y=tuketim_v,name="Toplam Tüketim (Talep)",marker=dict(color="#2ca02c",opacity=0.85,line=dict(color="rgba(255,255,255,0.2)",width=1)),hovertemplate="Toplam Tüketim: %{y}M m³<extra></extra>"))
-                fig.add_vline(x=2019.5,line_dash="dash",line_color="rgba(155,89,182,0.6)",line_width=1.5,annotation_text="Bootstrap | Gerçek →",annotation_font_color="#c39bd3",annotation_font_size=9)
+                fig.add_vline(x=2019.5,line_dash="dash",line_color="rgba(155,89,182,0.6)",line_width=1.5,annotation_text="Bootstrap → Gerçek Veri",annotation_font_color="#c39bd3",annotation_font_size=9)
                 fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",barmode="group",height=420,font=dict(color="white"),hovermode="x unified",xaxis=dict(tickvals=at_yillar,tickfont=dict(color="white"),gridcolor="rgba(255,255,255,0.1)"),yaxis=dict(title="Milyon m³",range=[0,200],gridcolor="rgba(255,255,255,0.1)",tickfont=dict(color="white")),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)"),margin=dict(t=30,b=40,l=60,r=30))
                 st.plotly_chart(fig, use_container_width=True)
             with col2:
@@ -914,7 +921,7 @@ if data_loaded:
                 fig.add_trace(go.Scatter(x=kayip_yillar,y=kayip_toplam,mode="lines+markers+text",fill="tozeroy",fillcolor="rgba(214,39,40,0.1)",line=dict(color="#d62728",width=3),marker=dict(size=10,color="#d62728",line=dict(color="white",width=2)),text=[f"%{v:.1f}" for v in kayip_toplam],textposition="top center",textfont=dict(color="white",size=9),name="Toplam Kayıp",hovertemplate="<b>%{x}</b><br>Kayıp: %{y:.2f}%<extra></extra>"))
                 fig.add_trace(go.Bar(x=kayip_yillar,y=fiziki_k,name="Fiziki Kayıp",marker_color="rgba(214,39,40,0.4)",yaxis="y2"))
                 fig.add_trace(go.Bar(x=kayip_yillar,y=idari_k,name="İdari Kayıp",marker_color="rgba(255,127,14,0.4)",yaxis="y2"))
-                fig.add_vline(x=2019.5,line_dash="dash",line_color="rgba(155,89,182,0.6)",line_width=1.5,annotation_text="Bootstrap | Gerçek →",annotation_font_color="#c39bd3",annotation_font_size=9)
+                fig.add_vline(x=2019.5,line_dash="dash",line_color="rgba(155,89,182,0.6)",line_width=1.5,annotation_text="Bootstrap → Gerçek Veri",annotation_font_color="#c39bd3",annotation_font_size=9)
                 fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=420,hovermode="x unified",font=dict(color="white"),xaxis=dict(tickvals=kayip_yillar,gridcolor="rgba(255,255,255,0.1)",tickfont=dict(color="white"),tickangle=-45),yaxis=dict(title="Toplam Kayıp (%)",range=[min(kayip_toplam)-1,max(kayip_toplam)+1],gridcolor="rgba(255,255,255,0.1)",tickfont=dict(color="white")),yaxis2=dict(title="Bileşen (%)",overlaying="y",side="right",tickfont=dict(color="white"),range=[0,40]),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)"),barmode="stack",margin=dict(t=30,b=50,l=60,r=60))
                 st.plotly_chart(fig, use_container_width=True)
             with col2:
@@ -1004,7 +1011,7 @@ if data_loaded:
         with col2:
             ilce_sirali=list(manuel_risk_global.keys())
             z_heat=[[manuel_risk_global[ilce][i] for i in range(len(YEARS))] for ilce in ilce_sirali]
-            fig2=go.Figure(go.Heatmap(z=z_heat,x=[str(y) for y in YEARS],y=ilce_sirali,colorscale=[[0,"#2ca02c"],[0.35,"#ff7f0e"],[0.6,"#d62728"],[1,"#8b0000"]],zmin=40,zmax=75,text=[[f"{v:.0f}" for v in row] for row in z_heat],texttemplate="%{text}",textfont=dict(size=9,color="white"),hovertemplate="<b>%{y}</b> · %{x}<br>Risk: %{z:.1f}<extra></extra>",colorbar=dict(title="Risk",tickfont=dict(color="white"))))
+            fig2=go.Figure(go.Heatmap(z=z_heat,x=[str(y) for y in YEARS],y=ilce_sirali,colorscale=[[0,"#2ca02c"],[0.35,"#ff7f0e"],[0.6,"#d62728"],[1,"#8b0000"]],zmin=40,zmax=75,text=[[f"{v:.0f}" for v in row] for row in z_heat],texttemplate="%{text}",textfont=dict(size=9,color="white"),hovertemplate="<b>%{y}</b> · %{x}<br>Risk: %{z:.1f}<extra></extra>",colorbar=dict(title="Risk Skoru",tickfont=dict(color="white"))))
             fig2.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=380,font=dict(color="white"),xaxis=dict(tickfont=dict(color="white"),tickangle=-45),yaxis=dict(tickfont=dict(color="white")),margin=dict(t=10,b=40,l=110,r=30))
             st.plotly_chart(fig2, use_container_width=True, key="risk_heat")
 
@@ -1174,7 +1181,7 @@ if data_loaded:
                 with st.expander(exp_t): st.markdown(exp_m)
 
         st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
-        sec_baslik("01 · MEKÂNSAL ANALİZ", f"Moran Scatter Plot & LISA Sınıflandırması — {END_YEAR}")
+        sec_baslik("01 · MEKÂNSAL ANALİZ", f"Moran Saçılım Grafiği & LISA Sınıflandırması — {END_YEAR}")
 
         col1, col2 = st.columns(2)
         with col1:
@@ -1190,10 +1197,10 @@ if data_loaded:
                 if idx:
                     fig.add_trace(go.Scatter(x=z_m[idx],y=wz_m[idx],mode="markers+text",name=sinif_adi[sf],text=[ilceler_m[i] for i in idx],textposition="top center",textfont=dict(size=9,color="white"),marker=dict(size=[max(14,lisa_manuel[ilceler_m[i]]["risk"]/4.5) for i in idx],color=[lisa_manuel[ilceler_m[i]]["risk"] for i in idx],colorscale=[[0,"#2ca02c"],[0.5,"#ff7f0e"],[1,"#d62728"]],cmin=40,cmax=75,showscale=False,line=dict(color="white",width=1.5),opacity=0.95),hovertemplate="<b>%{text}</b><br>z: %{x:.2f}<br>Wz: %{y:.2f}<extra></extra>"))
             x_line=np.linspace(-2.5,2.5,50); slope=np.polyfit(z_m,wz_m,1)
-            fig.add_trace(go.Scatter(x=x_line,y=np.polyval(slope,x_line),mode="lines",line=dict(color="#ff4444",width=2,dash="dash"),name=f"Eğim={slope[0]:.3f}",hoverinfo="skip"))
+            fig.add_trace(go.Scatter(x=x_line,y=np.polyval(slope,x_line),mode="lines",line=dict(color="#ff4444",width=2,dash="dash"),name=f"Eğim: {slope[0]:.3f}",hoverinfo="skip"))
             fig.add_hline(y=0,line_color="rgba(255,255,255,0.3)",line_width=1)
             fig.add_vline(x=0,line_color="rgba(255,255,255,0.3)",line_width=1)
-            fig.update_layout(plot_bgcolor="rgba(10,20,50,0.65)",paper_bgcolor="rgba(0,0,0,0)",height=440,font=dict(color="white"),title=dict(text=f"Moran's I Scatter Plot (I={I_glob}, p={p_glob})",font=dict(color="white",size=12),x=0.5),xaxis=dict(title="Standardize Risk (z)",range=[-2.8,2.8],gridcolor="rgba(255,255,255,0.12)",zeroline=False,tickfont=dict(color="white"),title_font=dict(color="#a8d8f0")),yaxis=dict(title="Mekânsal Lag (Wz)",range=[-1.2,1.8],gridcolor="rgba(255,255,255,0.12)",zeroline=False,tickfont=dict(color="white"),title_font=dict(color="#a8d8f0")),legend=dict(font=dict(color="white",size=9),bgcolor="rgba(0,0,0,0.3)",bordercolor="rgba(255,255,255,0.1)",borderwidth=1))
+            fig.update_layout(plot_bgcolor="rgba(10,20,50,0.65)",paper_bgcolor="rgba(0,0,0,0)",height=440,font=dict(color="white"),title=dict(text=f"Moran's I Saçılım Grafiği (I={I_glob}, p={p_glob})",font=dict(color="white",size=12),x=0.5),xaxis=dict(title="Standardize Risk (z)",range=[-2.8,2.8],gridcolor="rgba(255,255,255,0.12)",zeroline=False,tickfont=dict(color="white"),title_font=dict(color="#a8d8f0")),yaxis=dict(title="Mekânsal Lag (Wz)",range=[-1.2,1.8],gridcolor="rgba(255,255,255,0.12)",zeroline=False,tickfont=dict(color="white"),title_font=dict(color="#a8d8f0")),legend=dict(font=dict(color="white",size=9),bgcolor="rgba(0,0,0,0.3)",bordercolor="rgba(255,255,255,0.1)",borderwidth=1))
             st.plotly_chart(fig, use_container_width=True)
         with col2:
             st.markdown(f'<div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;margin-bottom:0.8rem;">LISA SINIFLANDIRMASI · {END_YEAR}</div>', unsafe_allow_html=True)
@@ -1359,9 +1366,9 @@ if data_loaded:
         boyutlar=[max(20,ilce_skorlar[i]/2) for i in ilce_listesi]
         hover_metinler=[f"<b>{i}</b><br>Risk: {ilce_skorlar[i]:.1f}<br>{sinif_str(ilce_skorlar[i])}{'<br>🔮 2030 Projeksiyonu' if harita_yil==2030 else ''}" for i in ilce_listesi]
 
-        fig_harita=go.Figure(go.Scattermapbox(lat=[ILCE_LAT[i] for i in ilce_listesi],lon=[ILCE_LON[i] for i in ilce_listesi],mode="markers+text",marker=dict(size=boyutlar,color=[ilce_skorlar[i] for i in ilce_listesi],colorscale=[[0,"#2ca02c"],[0.35,"#ff7f0e"],[1,"#d62728"]],cmin=30,cmax=75,opacity=0.85,colorbar=dict(title="Risk",tickfont=dict(color="white"),thickness=14,len=0.7,x=1.0)),text=ilce_listesi,textfont=dict(size=11,color="white",family="Arial Black"),textposition="middle center",hovertext=hover_metinler,hoverinfo="text"))
+        fig_harita=go.Figure(go.Scattermapbox(lat=[ILCE_LAT[i] for i in ilce_listesi],lon=[ILCE_LON[i] for i in ilce_listesi],mode="markers+text",marker=dict(size=boyutlar,color=[ilce_skorlar[i] for i in ilce_listesi],colorscale=[[0,"#2ca02c"],[0.35,"#ff7f0e"],[1,"#d62728"]],cmin=30,cmax=75,opacity=0.85,colorbar=dict(title="Risk Skoru",tickfont=dict(color="white"),thickness=14,len=0.7,x=1.0)),text=ilce_listesi,textfont=dict(size=11,color="white",family="Arial Black"),textposition="middle center",hovertext=hover_metinler,hoverinfo="text"))
         fig_harita.update_layout(mapbox=dict(style="carto-positron",center=dict(lat=38.42,lon=27.10),zoom=10.5),margin=dict(l=0,r=0,t=0,b=0),height=560,paper_bgcolor="rgba(0,0,0,0)")
-        for renk,label in [("#d62728","Yüksek (≥60)"),("#ff7f0e","Orta (46-60)"),("#2ca02c","Düşük (<46)")]:
+        for renk,label in [("#d62728","Yüksek Risk (≥60)"),("#ff7f0e","Orta Risk (46-60)"),("#2ca02c","Düşük Risk (<46)")]:
             fig_harita.add_trace(go.Scattermapbox(lat=[None],lon=[None],mode="markers",marker=dict(size=14,color=renk),name=label,showlegend=True))
         fig_harita.update_layout(legend=dict(font=dict(color="white",size=11),bgcolor="rgba(10,30,70,0.85)",bordercolor="rgba(56,209,227,0.3)",borderwidth=1,x=0,y=0,orientation="v"))
         st.plotly_chart(fig_harita, use_container_width=True, key="scatter_harita")
@@ -1456,7 +1463,7 @@ if data_loaded:
         sim_sinif_ico=("🔴 " if sim_skor>=60 else "🟠 " if sim_skor>=46 else "🟢 ")+sim_sinif
 
         sc1,sc2,sc3,sc4=st.columns(4)
-        for col,baslik,deger,c_renk in [(sc1,"Simüle Edilen Skor",f"{sim_skor:.1f}",sim_renk),(sc2,"Risk Sınıfı",sim_sinif_ico,sim_renk),(sc3,"Ağırlıklı Hesap","Talep%31.6 · Kayıp%33.0","#a8d8f0"),(sc4,"Arz+Artış","Arz%23.8 · Artış%11.6","#a8d8f0")]:
+        for col,baslik,deger,c_renk in [(sc1,"Simüle Edilen Skor",f"{sim_skor:.1f}",sim_renk),(sc2,"Risk Sınıfı",sim_sinif_ico,sim_renk),(sc3,"Ağırlıklı Hesap","Talep %31.6 · Kayıp %33.0","#a8d8f0"),(sc4,"Arz+Artış","Arz%23.8 · Artış%11.6","#a8d8f0")]:
             with col:
                 st.markdown(f"""
                 <div style="background:rgba(255,255,255,0.06);border:1px solid {c_renk}44;border-top:3px solid {c_renk};border-radius:10px;padding:0.8rem;text-align:center;">
@@ -1500,7 +1507,7 @@ if data_loaded:
             frames_anim.append(go.Frame(data=[go.Bar(x=ilceler_s,y=skorlar_s,marker=dict(color=colors_y,opacity=0.85),text=[f"{s:.1f}" for s in skorlar_s],textposition="outside",textfont=dict(color="white",size=10))],name=str(yil)))
         fig_anim.frames=frames_anim
         st.plotly_chart(fig_anim, use_container_width=True, key="risk_anim")
-        st.caption("🔬 = Bootstrap simülasyonu (2010–2019) · ✅ = İZSU Gerçek Verisi (2020–2023)")
+        st.caption("🔬 Bootstrap simülasyonu (2010–2019) · ✅ İZSU Gerçek Verisi (2020–2023)")
 
         sec_baslik("04 · DEĞİŞİM HESAPLAYICI", "İki İlçeyi Yıllar İçinde Karşılaştır")
         st.caption("İki ilçeyi seç, yıl aralığını belirle — puan farkını gör")
