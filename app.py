@@ -2107,84 +2107,20 @@ if data_loaded:
         gauge_data = [("BORNOVA",67.0,-1.0),("ÇİĞLİ",62.5,-1.0),("BAYRAKLI",60.0,-2.0)]
         gauge_col1, gauge_col2, gauge_col3 = st.columns(3)
         for col, (ilce_adi, skor, delta_val) in zip([gauge_col1,gauge_col2,gauge_col3], gauge_data):
-            # Animasyon için ara değerler — ease-out (yavaşlayarak hedefe varan)
-            n_steps = 30
-            steps_pct = [(1 - (1 - i/n_steps)**2.4) for i in range(n_steps + 1)]  # ease-out quad-ish
-            anim_vals = [skor * p for p in steps_pct]
-
-            def _make_indicator(v, show_delta=True):
-                ind = dict(
-                    mode = "gauge+number+delta" if show_delta else "gauge+number",
-                    value = v,
-                    number = {"font":{"size":32,"color":"white"},"valueformat":".1f"},
-                    title = {"text":f"<b style='font-size:15px'>{ilce_adi}</b><br><span style='font-size:11px;color:#d62728'>{t('risk_high')}</span>",
-                             "font":{"size":14,"color":"white"}},
-                    gauge = {"axis":{"range":[0,100],"tickwidth":1,"tickcolor":"rgba(255,255,255,0.3)",
-                                     "tickfont":{"color":"rgba(255,255,255,0.5)","size":9}},
-                             "bar":{"color":"#d62728","thickness":0.3},
-                             "bgcolor":"rgba(255,255,255,0.03)","borderwidth":1,"bordercolor":"rgba(255,255,255,0.15)",
-                             "steps":[{"range":[0,60],"color":"rgba(44,160,44,0.15)"},
-                                      {"range":[60,80],"color":"rgba(214,39,40,0.20)"},
-                                      {"range":[80,100],"color":"rgba(139,0,0,0.25)"}],
-                             "threshold":{"line":{"color":"white","width":2},"thickness":0.75,"value":v}},
-                )
-                if show_delta:
-                    ind["delta"] = {"reference":skor-delta_val,"valueformat":".1f",
-                                    "increasing":{"color":"#d62728"},"decreasing":{"color":"#2ca02c"}}
-                return go.Indicator(**ind)
-
-            # Başlangıçta 0'dan başla, frames ile hareket etsin
-            fig_gauge = go.Figure(
-                data = [_make_indicator(0, show_delta=False)],
-                frames = [go.Frame(data=[_make_indicator(v, show_delta=False)], name=str(i))
-                          for i, v in enumerate(anim_vals[1:-1], 1)] +
-                         [go.Frame(data=[_make_indicator(skor, show_delta=True)], name="final")]
-            )
-            fig_gauge.update_layout(
-                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                height=240, margin=dict(t=70,b=10,l=20,r=20), font=dict(color="white"),
-                updatemenus = [dict(
-                    type="buttons", showactive=False, visible=False,  # buton görünmesin
-                    buttons=[dict(label="Play", method="animate",
-                                  args=[None, {"frame":{"duration":35, "redraw":True},
-                                               "fromcurrent":True, "transition":{"duration":0},
-                                               "mode":"immediate"}])]
-                )]
-            )
+            fig_gauge = go.Figure(go.Indicator(
+                mode="gauge+number+delta", value=skor,
+                delta={"reference":skor-delta_val,"valueformat":".1f","increasing":{"color":"#d62728"},"decreasing":{"color":"#2ca02c"}},
+                number={"font":{"size":32,"color":"white"},"valueformat":".1f"},
+                title={"text":f"<b style='font-size:15px'>{ilce_adi}</b><br><span style='font-size:11px;color:#d62728'>{t('risk_high')}</span>","font":{"size":14,"color":"white"}},
+                gauge={"axis":{"range":[0,100],"tickwidth":1,"tickcolor":"rgba(255,255,255,0.3)","tickfont":{"color":"rgba(255,255,255,0.5)","size":9}},
+                       "bar":{"color":"#d62728","thickness":0.3},
+                       "bgcolor":"rgba(255,255,255,0.03)","borderwidth":1,"bordercolor":"rgba(255,255,255,0.15)",
+                       "steps":[{"range":[0,60],"color":"rgba(44,160,44,0.15)"},{"range":[60,80],"color":"rgba(214,39,40,0.20)"},{"range":[80,100],"color":"rgba(139,0,0,0.25)"}],
+                       "threshold":{"line":{"color":"white","width":2},"thickness":0.75,"value":skor}},
+            ))
+            fig_gauge.update_layout(paper_bgcolor="rgba(0,0,0,0)",plot_bgcolor="rgba(0,0,0,0)",height=240,margin=dict(t=70,b=10,l=20,r=20),font=dict(color="white"))
             with col:
-                # Otomatik oynat — JS ile gerçek hareket
                 st.plotly_chart(fig_gauge, use_container_width=True, key=f"gauge_{ilce_adi}")
-
-        # Otomatik animasyonu tetiklemek için JS
-        st.markdown("""
-        <script>
-        (function() {
-            function startGauges() {
-                const charts = document.querySelectorAll('.js-plotly-plot');
-                charts.forEach(ch => {
-                    if (ch.dataset.animStarted) return;
-                    if (ch.id && ch.id.indexOf('gauge') === -1 && !ch.querySelector('.angularaxis')) {
-                        // gauge değil, atla — angularaxis varlığı gauge'larda olur
-                    }
-                    // Plotly varlığı kontrol
-                    if (window.Plotly && ch.layout && ch.layout.updatemenus) {
-                        try {
-                            window.Plotly.animate(ch, null, {
-                                frame: {duration: 35, redraw: true},
-                                transition: {duration: 0},
-                                mode: 'immediate'
-                            });
-                            ch.dataset.animStarted = "true";
-                        } catch(e) {}
-                    }
-                });
-            }
-            // Sayfa yüklendiğinde + biraz gecikme ile dene
-            setTimeout(startGauges, 600);
-            setTimeout(startGauges, 1400);
-        })();
-        </script>
-        """, unsafe_allow_html=True)
 
         st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
 
