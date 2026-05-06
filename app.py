@@ -16,6 +16,974 @@ END_YEAR = 2023
 PRED_END_YEAR = 2030
 PRED_YEARS = list(range(END_YEAR + 1, 2031))
 
+# ═══════════════════════════════════════════════════════════════
+# DİL / LANGUAGE — i18n
+# ═══════════════════════════════════════════════════════════════
+if "dil" not in st.session_state:
+    st.session_state.dil = "tr"
+if "secili_sayfa" not in st.session_state:
+    st.session_state.secili_sayfa = "home"
+
+# ── TÜRKÇE SÖZLÜK ───────────────────────────────────────────────
+TR = {
+    "app_subtitle": f"Su Güvenliği Risk Endeksi · İzmir · {START_YEAR}–2030",
+    "data_source_short": "Veri: İZSU + Bootstrap Simülasyonu",
+    "scope_short": "11 Merkez İlçe · Entropy-WSRI",
+    "search_placeholder": "🔍 Ara: baraj, risk, 2030...",
+    "search_no_result": "❌ Sonuç bulunamadı. Deneyin: baraj, risk, harita, 2030, simülatör, metodoloji",
+    "bootstrap_badge": "BOOTSTRAP SİMÜLASYONU",
+    "bootstrap_banner": f"{START_YEAR}–2019 verileri block bootstrap yöntemiyle İzmir kuraklık takvimi referans alınarak üretilmiştir. 2020–{END_YEAR} verileri İZSU resmi kaynağındandır.",
+    "data_load_error_title": "Veri Yüklenemedi",
+    "data_load_error_msg": "Veri dosyaları bulunamadı veya okunamadı.<br>ilce.xlsx ve baraj.xlsx dosyalarının repoda olduğundan emin olun.",
+    "data_load_error_label": "Hata",
+    "lang_tr": "🇹🇷 TR",
+    "lang_en": "🇬🇧 EN",
+
+    "risk_low": "Düşük Risk",
+    "risk_med": "Orta Risk",
+    "risk_high": "Yüksek Risk",
+
+    "nav_home": "Ana Sayfa",
+    "nav_eda": "EDA",
+    "nav_risk": "Risk",
+    "nav_2030": "2030",
+    "nav_map": "Harita",
+    "nav_spatial": "Mekânsal",
+    "nav_advice": "Öneriler",
+    "nav_method": "Metodoloji",
+    "nav_tools": "Araçlar",
+
+    # Ana Sayfa
+    "home_badge": f"SU GÜVENLİĞİ ANALİZİ · İZMİR · {START_YEAR}–{PRED_END_YEAR}",
+    "home_title_1": "İzmir Su Güvenliği",
+    "home_title_2": "Risk Endeksi",
+    "home_lead": f"Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe · {len(YEARS)} yıllık seri ({START_YEAR}–{END_YEAR}) · Bootstrap simülasyonu · Mann-Kendall trend testi · LISA mekânsal analizi · 2030 projeksiyonu",
+    "kpi_total_consumption": f"Toplam Tüketim {END_YEAR}",
+    "kpi_million_m3": "milyon m³",
+    "kpi_highest_risk": "En Yüksek Risk Skoru",
+    "kpi_loss_rate": f"Su Kayıp Oranı {END_YEAR}",
+    "kpi_loss_subtext": "% · sistem geneli",
+    "kpi_high_risk_districts": "Yüksek Riskli İlçeler",
+    "kpi_med_risk_districts": "Orta Riskli İlçeler",
+    "kpi_low_risk_districts": "Düşük Riskli İlçeler",
+    "kpi_tahtali_fill": "Tahtalı Doluluk",
+    "kpi_tahtali_year": f"{END_YEAR} yılı",
+    "kpi_least_risky": "En Az Riskli",
+    "kpi_score_label": "Skor",
+    "sec_01_title": "01 · RİSK GÖSTERGESİ",
+    "sec_01_h": f"En Riskli 3 İlçe — {END_YEAR} Risk İbresi",
+    "sec_02_title": "02 · RİSK ANALİZİ",
+    "sec_02_h": f"{END_YEAR} Yılı İlçe Risk Sıralaması & Ağırlık Dağılımı",
+    "risk_threshold_med": "Orta Risk Eşiği (46)",
+    "risk_threshold_high": "Yüksek Risk Eşiği (60)",
+    "risk_score_axis": "Risk Skoru (0–100)",
+    "risk_score": "Risk Skoru",
+    "entropy_weights_label": "Entropy<br>Ağırlıkları",
+    "weight_loss_rate": "Su Kayıp Oranı",
+    "weight_per_capita": "Kişi Başı Tüketim",
+    "weight_supply_constraint": "Arz Kısıtı",
+    "weight_growth_rate": "Tüketim Artış Oranı",
+    "source_method_title": "KAYNAK & YÖNTEM",
+    "source_data": "Veri: İZSU + Bootstrap simülasyonu",
+    "source_scope": f"Kapsam: {START_YEAR}–{END_YEAR} · 11 İlçe · {len(YEARS)} yıl",
+    "source_method": "Yöntem: Min-Max + Entropy + WSRI",
+    "source_analysis": "Analiz: Mann-Kendall · LISA · CAGR",
+    "sec_03_title": "03 · KÜRESEL BAĞLAM",
+    "sec_03_h": "İzmir Dünya Genelinde Nerede?",
+    "global_pop_water_stress": "Su Stresi Altındaki Nüfus",
+    "global_pop_water_stress_text": "Dünya nüfusunun %40'ı yılın en az bir ayında ciddi su stresiyle karşılaşıyor.",
+    "global_med_basin": "Akdeniz Havzası Su Açığı",
+    "global_med_basin_text": "Akdeniz havzasında yıllık yağış 2050'ye kadar %20 azalması bekleniyor. İzmir bu kuşağın merkezinde.",
+    "global_izmir_wsri": "İzmir WSRI Ortalaması",
+    "global_izmir_wsri_text": "11 merkez ilçe ortalaması — Orta Risk bandı. 3 ilçe yüksek risk eşiğini geçmiş.",
+    "global_izmir_wsri_source": f"İZSU + Bu çalışma · {END_YEAR}",
+    "global_tr_capita": "Türkiye Kişi Başı Su Potansiyeli",
+    "global_tr_capita_text": "Uluslararası eşik 1.700 m³ — Türkiye \"su kıtlığı\" sınırına yakın.",
+    "global_source_note": "Kaynak notu: ",
+    "global_source_text": "WRI Aqueduct 2023 · IPCC AR6 (2021) · DSİ 2022 yıllık raporu · İZSU açık veri portalı.",
+    "share_copy_link": "Linki Kopyala",
+    "share_copied": "Kopyalandı!",
+    "share_twitter": "Twitter/X'te Paylaş",
+    "share_linkedin": "LinkedIn'de Paylaş",
+
+    # EDA
+    "eda_badge": f"KEŞİFSEL VERİ ANALİZİ · {START_YEAR}–{END_YEAR}",
+    "eda_title": "Keşifsel Veri Analizi",
+    "eda_lead": f"{len(YEARS)} yıllık seri ({START_YEAR}–{END_YEAR}) · Bootstrap simülasyonu ile genişletildi · Baraj dolulukları, ilçe tüketimi, arz-talep dengesi ve kayıp trendleri",
+    "tab_dam": "💧 Baraj Doluluk",
+    "tab_consumption": "🌡️ Tüketim Haritası",
+    "tab_supply_demand": "⚖️ Arz-Talep",
+    "tab_loss": "📉 Kayıp Oranı",
+    "eda_dam_history_no": "01 · BARAJ TARİHÇESİ",
+    "eda_dam_history_h": "İzmir'in Barajları — Tarihçe, Teknik Bilgi & Su Sistemi",
+    "eda_water_system_title": "İZMİR'İN SU SİSTEMİ HAKKINDA",
+    "eda_water_system_text": "İzmir'in içme ve kullanma suyu ihtiyacı ağırlıklı olarak üç büyük barajdan karşılanmaktadır: <b style=\"color:#38d1e3\">Tahtalı</b>, <b style=\"color:#2ca02c\">Balçova</b> ve <b style=\"color:#d62728\">Gördes</b>. Bu üç barajın toplam depolama kapasitesi yaklaşık <b style=\"color:white\">542 milyon m³</b>'tür. İZSU (İzmir Su ve Kanalizasyon İdaresi) tarafından yönetilen sistem, 4,4 milyonu aşkın nüfusa hizmet vermektedir. İklim değişikliğinin Akdeniz havzasında yağışları azaltmasıyla birlikte bu barajların doluluk düzeyleri giderek daha kritik bir önem kazanmaktadır.",
+
+    "tahtali_meta": "📍 Menderes İlçesi, İzmir &nbsp;|&nbsp; 📅 İnşaat: 1993–1997 &nbsp;|&nbsp; 🏗️ Tip: Kaya-toprak dolgu",
+    "tahtali_h1": "🏆 İzmir'in Ana Su Kaynağı",
+    "tahtali_p1": "Tahtalı Barajı, İzmir'in tartışmasız en büyük ve en stratejik su kaynağıdır. Şehrin yıllık içme suyu ihtiyacının yaklaşık **%60–70'ini** tek başına karşılar. Tahtalı Çayı üzerinde inşa edilen baraj, 432 km²'lik geniş bir havzadan beslenir. Gövde yüksekliği 75 metre olan bu yapı, kaya-toprak dolgu teknolojisiyle inşa edilmiş olup depreme dayanıklı tasarımıyla öne çıkar.",
+    "tahtali_h2": "📊 Teknik Özellikler",
+    "tahtali_specs": "- **Toplam Depolama Kapasitesi:** 309 milyon m³  \n- **Normal Su Kotu:** 141 metre  \n- **Havza Alanı:** 432 km²  \n- **Gövde Tipi:** Kaya-toprak dolgu, merkezi çekirdekli  \n- **Yıllık Ortalama Akım:** ~210 milyon m³  \n- **İşleten Kurum:** İZSU Genel Müdürlüğü  ",
+    "tahtali_h3": "📅 Tarihsel Süreç ve Önemli Dönüm Noktaları",
+    "tahtali_history": "Tahtalı Barajı'nın inşaatı 1993 yılında başlamış, 1997'de tamamlanmıştır. İzmir'in hızla büyüyen nüfusunu beslemek amacıyla dönemin en büyük altyapı yatırımlarından biri olarak hayata geçirilmiştir.\n- **1997:** Baraj devreye girer; İzmir ilk kez yıl boyu güvenli su arzına kavuşur  \n- **2007–2008:** Şiddetli kuraklık; doluluk oranı kritik %20 seviyesine geriler  \n- **2014:** Rekor yağışlar; doluluk **%44'e** ulaşarak proje döneminin zirvesini yazar  \n- **2016–2018:** Normal doluluk seyri (%34–%36 bandı)  \n- **2020–2021:** Gördes Barajı'nın kritik seviyelere inmesiyle Tahtalı üzerindeki baskı artar  \n- **2022:** Yağışlı kış mevsimi sayesinde doluluk %40'a çıkar  \n- **2023:** Doluluk **%29'a** geriler — iklim değişikliğinin uzun vadeli etkisi belirginleşir  ",
+    "tahtali_h4": "🌡️ İklim Değişikliğinin Etkisi",
+    "tahtali_climate": "Son 14 yıllık verilere bakıldığında Tahtalı Barajı'nın ortalama doluluk düzeyinin yavaş ama istikrarlı bir düşüş trendi sergilediği görülmektedir. Akdeniz ikliminin giderek daha kurak bir karaktere bürünmesiyle birlikte havzadaki yıllık yağış miktarı uzun dönem ortalamasının altında kalmaktadır. IPCC'nin öngörülerine göre 2050'ye kadar bu bölgedeki yağışların **%20 daha azalması** beklenmektedir.",
+    "tahtali_summary": "2023 Doluluk: %29  |  Kapasite: 309 M m³  |  Havza: 432 km²",
+
+    "balcova_meta": "📍 Balçova İlçesi, İzmir &nbsp;|&nbsp; 📅 İnşaat: 1991–1995 &nbsp;|&nbsp; 🏗️ Tip: Beton kemer",
+    "balcova_h1": "🏙️ Şehir Merkezinin Stratejik Kalkanı",
+    "balcova_p1": "Balçova Barajı, görece küçük kapasitesine karşın şehir merkezine yakınlığı nedeniyle İzmir su sisteminde kritik bir rol üstlenmektedir. Meles Çayı üzerinde inşa edilen baraj, özellikle **Bornova, Bayraklı ve merkez ilçelerin** su ihtiyacını karşılamada önemli bir tampon işlevi görür. Beton kemer yapısı sayesinde dar bir vadide yüksek su tutma kapasitesi sağlanmıştır.",
+    "balcova_h2": "📊 Teknik Özellikler",
+    "balcova_specs": "- **Toplam Depolama Kapasitesi:** 57 milyon m³  \n- **Normal Su Kotu:** 103 metre  \n- **Havza Alanı:** 47 km²  \n- **Gövde Tipi:** Beton kemer  \n- **Gövde Yüksekliği:** 92 metre  \n- **İşleten Kurum:** İZSU Genel Müdürlüğü  ",
+    "balcova_h3": "📅 Tarihsel Süreç ve Önemli Dönüm Noktaları",
+    "balcova_history": "Balçova Barajı, Tahtalı'dan iki yıl önce planlamaya alınmış ve 1995 yılında hizmete girmiştir. İzmir'in merkezi semtlerine olan yakınlığı, onu acil dönemlerde son derece değerli kılmaktadır.\n- **1995:** Baraj devreye girer; merkez ilçelerde su güvenilirliği artar  \n- **2002–2004:** Uzun kuraklık döneminde bile doluluk %26'nın altına düşmez  \n- **2013:** Bakım ve onarım çalışmaları yapılır; kapasitesi korunur  \n- **2016–2018:** İstikrarlı %30–%34 bandında seyreder  \n- **2021:** Gördes krizinde Balçova'nın sisteme katkısı kritik önem taşır  \n- **2021–2022:** Düşen doluluk (%26) sistem yöneticilerini uyarır  \n- **2023:** %32 dolulukla sisteme katkısını sürdürür  ",
+    "balcova_h4": "💡 Neden Küçük Ama Vazgeçilmez?",
+    "balcova_why": "Balçova Barajı'nın havzası küçük olmasına rağmen şehir merkezine olan mesafesi yalnızca **12 km** civarındadır. Bu nedenle su iletim hatları daha kısa, baskı kayıpları daha düşük ve müdahale süresi çok hızlıdır. Büyük bir kuraklık ya da sistem arızası durumunda şehir merkezini besleyebilecek **tek acil yedek kaynak** niteliğini taşımaktadır. Ayrıca buharlaşma kaybı düşük iklim koşulları ve barajın gölge aldığı dağ ortamı nedeniyle göreceli olarak verimli bir depolama imkânı sunar.",
+    "balcova_summary": "2023 Doluluk: %32  |  Kapasite: 57 M m³  |  Havza: 47 km²",
+
+    "gordes_meta": "📍 Gördes İlçesi, Manisa &nbsp;|&nbsp; 📅 İnşaat: 1976–1980 &nbsp;|&nbsp; 🏗️ Tip: Toprak dolgu",
+    "gordes_h1": "⚠️ Kırılgan Ama Stratejik: Gördes'in İkili Rolü",
+    "gordes_p1": "Gördes Barajı, idari açıdan Manisa iline bağlı olmakla birlikte boru hatlarıyla İzmir'in su sistemine entegre edilmiştir. Bu durum barajı hem değerli hem de karmaşık bir varlık haline getirmektedir: İzmir'in su ihtiyacına katkıda bulunurken aynı zamanda Manisa'nın sulama gereksinimlerini ve bölgenin taşkın yönetimini de desteklemektedir. 1976–1980 yılları arasında inşa edilen baraj, **İzmir'in en eski büyük su altyapı yatırımlarından** biridir.",
+    "gordes_h2": "📊 Teknik Özellikler",
+    "gordes_specs": "- **Toplam Depolama Kapasitesi:** 176 milyon m³  \n- **Normal Su Kotu:** 211 metre  \n- **Havza Alanı:** 1.315 km²  \n- **Gövde Tipi:** Kil çekirdekli toprak dolgu  \n- **Gövde Yüksekliği:** 65 metre  \n- **Amaç:** İçme suyu + sulama + taşkın önleme  \n- **İdari Sınır:** Manisa ili (Gördes ilçesi)  ",
+    "gordes_h3": "📅 Tarihsel Süreç ve 2019–2021 Krizi",
+    "gordes_history": "Gördes Barajı, İzmir su sisteminin en hassas ve riskli halkasını oluşturmaktadır. Geçmiş yıllardaki doluluk seyri ciddi kırılganlıkları ortaya koymaktadır:\n- **1980:** Baraj devreye girer; bölgede sulama ve içme suyu güvencesi sağlanır  \n- **2007–2009:** Kuraklık döneminde doluluk %15'e kadar düşer  \n- **2013:** Doluluk %15 ile tarihi düşük seviyeye iner; kısıtlama uygulanır  \n- **2018:** İyileşme eğilimi; doluluk %24'e çıkar  \n- **2019:** Artan tüketim ve azalan yağışla doluluk %18'e geriler  \n- **2020:** 🚨 **Kritik kriz — doluluk %2'ye iner!** Tam anlamıyla \"baraj dibinde çamur\"  \n- **2021:** 🆘 **Tarihi dip — doluluk %1!** İzmir'de su kısıtlaması gündeme gelir  \n- **2022–2023:** Yağışların kısmen artmasıyla %4–%5'e toparlanır; risk devam eder  ",
+    "gordes_h4": "🔬 2019–2021 Gördes Krizinden Çıkarılan Dersler",
+    "gordes_lessons": "Gördes'in %1 doluluğa inmesi, İzmir su yönetimi tarihinin en çarpıcı vakasıdır. Bu kriz şu gerçekleri gözler önüne sermiştir:\n- Tek bir barajın kuraklıkla nasıl çöküşe geçebileceği  \n- Farklı idari sınırlardaki barajları entegre eden sistemlerin koordinasyon gerektirdiği  \n- Acil durum rezervi olmayan bir sistemde nüfus artışının yarattığı risk  \n- Tarımsal sulama ile içme suyu arasındaki önceliklendirme sorunu  \nBu nedenle Gördes'in doluluk düzeyi, İzmir su güvenliği izleme sisteminin birincil göstergelerinden biri haline gelmiştir.",
+    "gordes_summary": "2023 Doluluk: %5  |  Kapasite: 176 M m³  |  Havza: 1.315 km²  |  ⚠️ Kritik İzlemede",
+
+    "eda_dam_fill_no": "02 · BARAJ DOLULUK",
+    "eda_dam_fill_h": f"Baraj Doluluk Oranları ({START_YEAR}–{END_YEAR})",
+    "bootstrap_to_real": "Bootstrap → Gerçek Veri",
+    "critical_threshold": "Kritik Eşik: 15%",
+    "fill_axis": "Doluluk (%)",
+    "from_2010": f"puan ({START_YEAR}'dan)",
+
+    "eda_findings_no": "03 · BULGULAR",
+    "eda_findings_h": "Öne Çıkan Bulgular & Dönüm Noktaları",
+    "eda_finding_1_title": "2013–2015 · DÜŞÜK SEVİYE PERİYODU",
+    "eda_finding_1_h": "Tahtalı ve Gördes eş zamanlı geriledi",
+    "eda_finding_1_text": "Tahtalı %36–%41 bandında seyrederken Gördes %15–%16'ya indi. İki barajın eş zamanlı düşüşü sistem üzerinde yoğun baskı yarattı.",
+    "eda_finding_2_title": "2019–2021 · GÖRDES KRİZİ",
+    "eda_finding_2_h": "%18'den %1'e tek yılda çöküş",
+    "eda_finding_2_text": "2020'de %2, 2021'de %1'e inen Gördes, uzun süreli kuraklığın su kaynaklarına yıkıcı etkisini belgeleyen kritik bir veri noktasıdır.",
+    "eda_finding_3_title": "2020 · PANDEMİ ETKİSİ",
+    "eda_finding_3_h": "Evde kalma → artan tüketim baskısı",
+    "eda_finding_3_text": "COVID-19 sürecinde hane içi su kullanımı belirgin biçimde arttı. Gördes kritik seviyelere inerken tüketim yüksek seyretti — arz-talep dengesi bozuldu.",
+
+    "eda_demand_no": "02 · TALEP ISISI",
+    "eda_demand_h": "Abone Başına Tüketim Isı Haritası (m³/abone)",
+    "eda_narlidere_title": "🔴 NARLIDERE — Yüksek Tüketim, Düşük Risk",
+    "eda_narlidere_text": "Narlıdere kişi başı tüketime göre listenin en üstünde ancak risk sıralamasında alt sıralarda. Küçük abone tabanı, eski yapı stoğu ve kentsel dönüşüm süreci belirleyici etkenlerdir.",
+    "eda_gaziemir_title": "🔵 GAZİEMİR — Orta Tüketim, Yüksek Risk",
+    "eda_gaziemir_text": "Gaziemir talep haritasında ortada görünürken risk sıralamasında yüksekte. Hızlı nüfus artışının yarattığı arz baskısı ve tüketim artış oranı belirleyicidir.",
+
+    "eda_sd_no": "03 · ARZ-TALEP DENGESİ",
+    "eda_sd_h": f"Arz-Talep Dengesi ({START_YEAR}–{END_YEAR})",
+    "supply_label": "Sisteme Giren Su (Arz)",
+    "demand_label": "Toplam Tüketim (Talep)",
+    "demand_gap": "Talep Açığı",
+    "supply_surplus": "Arz Fazlası",
+    "real_data_short": "gerçek",
+    "bootstrap_short": "bootstrap",
+    "supply_demand_finding_1_title": "2014–2016 · ARZ KISITI ZİRVESİ",
+    "supply_demand_finding_1_h": "Sisteme giren su 107M'e geriledi",
+    "supply_demand_finding_1_text": "107–132M m³ bandına inen arz karşısında tüketim 147–153M m³'te yükselmeye devam etti. Oluşan makas sistem kapasitesini ciddi biçimde zorladı.",
+    "supply_demand_finding_2_title": "2021 · EŞİTLENME NOKTASI",
+    "supply_demand_finding_2_h": "Arz ve talep 160M m³'te buluştu",
+    "supply_demand_finding_2_text": "Sisteme giren su ve toplam tüketim 160M m³ ile eşitlenerek nadir görülen bir denge noktası yakalandı.",
+    "supply_demand_finding_3_title": "2022–2023 · AÇIK YENİDEN GENİŞLEDİ",
+    "supply_demand_finding_3_h": "Talep arzı ~45M m³ geçti",
+    "supply_demand_finding_3_text": "Sisteme giren su 118–120M m³'e gerilerken tüketim 165–166M'de kaldı. Bu açık altyapı kayıplarına işaret etmektedir.",
+
+    "eda_loss_no": "04 · SU KAYIP TRENDİ",
+    "eda_loss_h": f"Yıllık Su Kayıp Oranı Trendi ({START_YEAR}–{END_YEAR})",
+    "loss_total": "Toplam Kayıp",
+    "loss_physical": "Fiziki Kayıp",
+    "loss_admin": "İdari Kayıp",
+    "loss_total_axis": "Toplam Kayıp (%)",
+    "loss_component_axis": "Bileşen (%)",
+    "loss_kpi_total": "TOPLAM AZALMA",
+    "loss_kpi_legend_phys": "Boru sızıntıları, altyapı hasarı",
+    "loss_kpi_legend_admin": "Kaçak kullanım, sayaç hataları",
+    "loss_finding_1_title": f"{START_YEAR}–{END_YEAR} · KAYDEDİLEN İYİLEŞME",
+    "loss_finding_2_title": "FİZİKİ KAYIP BASKINI",
+    "loss_finding_2_h": "Toplam kaybın ~%95'i boru sızıntısı",
+    "loss_finding_2_text": "2023: Fiziki kayıp %25.92, idari kayıp %1.43. Altyapı yenileme öncelikli yatırım alanıdır.",
+    "loss_finding_3_title": "2020 · PANDEMİ YILINDA HAFİF ARTIŞ",
+    "loss_finding_3_h": "Kayıp oranı %28.56'ya çıktı",
+    "loss_finding_3_text": "Pandemi döneminde denetim ve bakım faaliyetlerinin yavaşlaması bu geçici kötüleşmenin nedenidir.",
+
+    # Risk
+    "risk_badge": f"SU GÜVENLİĞİ RİSK ENDEKSİ · WSRI · {START_YEAR}–{END_YEAR}",
+    "risk_title": "Su Güvenliği Risk Endeksi",
+    "risk_lead": f"Entropy ağırlıklı bileşik skor · 4 gösterge · 0–100 ölçeği · {len(YEARS)} yıllık seri",
+    "risk_year_select": "📅 Yılı Seçin",
+    "district_search": "İlçe ara:",
+    "district_search_placeholder": "örn. BUCA",
+    "risk_sec01_no": "01 · İLÇE SKORLARI",
+    "risk_sec01_h": f"İlçe Risk Skorları & {len(YEARS)} Yıllık Karşılaştırma",
+    "risk_sec02_no": "02 · RİSK TRENDİ",
+    "risk_sec02_h": "İlçe Bazlı Risk Skoru Trendi (2010–2023)",
+    "real_data_band": "Gerçek Veri",
+    "wsri_axis": "WSRI Risk Skoru",
+    "trend_high_3": "🔴 En Yüksek Riskli 3 İlçe",
+    "trend_low_3": "🟢 En Düşük Riskli 3 İlçe",
+    "trend_med_5": "🟡 Orta Riskli 5 İlçe",
+    "med_low_threshold": "Orta Risk Alt (46)",
+    "high_threshold_short": "Yüksek Risk (60)",
+    "med_threshold_short": "Orta Risk (46)",
+    "risk_sec03_no": "03 · İLÇE DETAYI",
+    "risk_sec03_h": "İlçe Bazlı Detay — Risk Bileşenleri",
+    "select_district": "İlçe seç:",
+    "kpi_year_score": f"{END_YEAR} Risk Skoru",
+    "kpi_risk_class": "Risk Sınıfı",
+    "kpi_2010_2023_change": "2010→2023 Değişim",
+    "kpi_2010_score_lbl": "2010 skoru",
+    "kpi_subscriber_growth": "Abone Büyüme (CAGR)",
+    "per_year": "/yıl",
+    "kpi_period": f"{START_YEAR}–{END_YEAR}",
+    "points": "puan",
+
+    # 2030
+    "p2030_badge": "SENARYO PROJEKSİYONU · 2024–2030",
+    "p2030_title": "2030 Yılı Risk Projeksiyonu",
+    "p2030_lead": f"Abone büyüme oranı (CAGR) bazlı 3 senaryo · İyimser · Baz · Kötümser · CAGR {len(YEARS)} yıllık seriden hesaplanmıştır",
+    "p2030_sec00_no": "00 · 2030 ANIK PROJEKSIYONU",
+    "p2030_sec00_h": "2030 Yılı Risk Skoru — 3 Senaryo (Tüm İlçeler)",
+    "scenario_pessimistic": "Kötümser (CAGR × 1.5)",
+    "scenario_base": "Baz (CAGR × 1.0)",
+    "scenario_optimistic": "İyimser (CAGR × 0.5)",
+    "scenario_pessimistic_short": "Kötümser",
+    "scenario_base_short": "Baz",
+    "scenario_optimistic_short": "İyimser",
+    "p2030_pess_title": "🔴 KÖTÜMSER SENARYO — CAGR × 1.5",
+    "p2030_pess_h": "Mevcut büyüme hızı 1.5 katına çıkarsa",
+    "p2030_pess_text": "Hızlı kentleşme, iklim kaynaklı arz kısıtı ve altyapı yatırımlarının yetersiz kalması durumunda risk skorları 2030'da belirgin biçimde yükselir.",
+    "p2030_base_title": "🟠 BAZ SENARYO — CAGR × 1.0",
+    "p2030_base_h": "Mevcut trend aynen devam ederse",
+    "p2030_base_text": "2023 büyüme hızının korunduğu varsayımında 2030 risk görünümü. Genel eğilim düşüş yönünde ancak yüksek riskli ilçelerde 60 eşiği kırılma riski devam ediyor.",
+    "p2030_opt_title": "🟢 İYİMSER SENARYO — CAGR × 0.5",
+    "p2030_opt_h": "Su tasarrufu politikaları hayata geçerse",
+    "p2030_opt_text": "Akıllı sayaç yaygınlaşması, su tasarrufu kampanyaları ve altyapı iyileştirmeleriyle büyüme hızının yarıya inmesi durumunda tüm ilçelerde belirgin risk azalışı öngörülmektedir.",
+
+    # Mekânsal
+    "spatial_badge": f"MEKÂNSAL ANALİZ · MORAN'S I + LISA · {END_YEAR}",
+    "spatial_title": "Mekânsal Analiz",
+    "spatial_lead": f"Yüksek riskli ilçeler birbirine komşu mu? · Global Moran's I · LISA · {END_YEAR}",
+    "spatial_what_is_title": "ℹ️ Moran's I ve LISA nedir?",
+    "spatial_what_is_text": "**Mekânsal Analiz** — Yüksek riskli ilçeler birbirine komşu mu, yoksa dağınık mı?\n- **Global Moran's I** — Tüm sistemi tek bir sayıyla özetler. +1'e yakınsa riskli ilçeler kümeleniyor, -1'e yakınsa dağınık.\n- **LISA** — Her ilçeye ayrı etiket verir:\n    - 🔴 **HH** — Riskli ilçe, komşuları da riskli → sıcak nokta\n    - 🟢 **LL** — Düşük riskli, komşuları da düşük → soğuk nokta\n    - 🟠 **HL** — Riskli ama komşuları düşük → izole yüksek risk\n    - 🔵 **LH** — Düşük riskli ama komşuları yüksek → dikkat gerektiriyor",
+    "moran_global_label": "Global Moran's I",
+    "moran_global_alt": f"{END_YEAR} risk skorları",
+    "p_value_label": "p-değeri",
+    "p_value_alt": "999 permütasyon testi",
+    "moran_interpretation": "Yorum",
+    "moran_interpretation_val": "Negatif",
+    "moran_interpretation_alt": "Komşular farklılaşıyor",
+    "hh_cluster": "HH Küme",
+    "hh_cluster_val": "0 ilçe",
+    "hh_cluster_alt": "HH küme yok",
+    "moran_global_exp_t": "ℹ️ Global Moran's I nedir?",
+    "p_value_exp_t": "ℹ️ p-değeri ne anlama geliyor?",
+    "interp_exp_t": "ℹ️ Negatif kümelenme ne demek?",
+    "interp_exp_text": "**Negatif Moran's I → Mekânsal Dağınıklık**\n\nYüksek riskli bir ilçenin komşuları düşük riskli olma eğiliminde — satranç tahtası deseni.\n\n**Gaziemir istisnası:** HL kategorisinde — izole sıcak nokta.",
+    "hh_exp_t": "ℹ️ HH küme neden yok?",
+    "hh_exp_text": "**HH Küme = 0 ilçe**\n\nHiçbir ilçe hem kendisi yüksek riskli hem de yüksek riskli komşularla çevrili değil.\n\nİzmir'de birbirine bitişik riskli bir bölge yok — risk yönetimi ilçe bazında uygulanabilir.",
+    "spatial_sec01_no": "01 · MEKÂNSAL ANALİZ",
+    "z_axis": "Standardize Risk (z)",
+    "wz_axis": "Mekânsal Lag (Wz)",
+    "slope_label": "Eğim",
+    "lisa_col_district": "İlçe",
+    "lisa_col_risk": "Risk",
+    "lisa_col_lisa": "LISA",
+    "lisa_col_explain": "Açıklama",
+    "lisa_hh_full": "HH (Yüksek-Yüksek)",
+    "lisa_ll_full": "LL (Düşük-Düşük)",
+    "lisa_hl_full": "HL (Yüksek-Düşük)",
+    "lisa_lh_full": "LH (Düşük-Yüksek)",
+    "lisa_hh_short": "Sıcak Küme",
+    "lisa_ll_short": "Soğuk Küme",
+    "lisa_hl_short": "İzole Yüksek",
+    "lisa_lh_short": "Çevre Yüksek",
+    "lisa_gaziemir_title": "🟠 GAZİEMİR · HL — İzole Yüksek Risk",
+    "lisa_gaziemir_text": "Gaziemir komşularına kıyasla belirgin biçimde yüksek risk skoru taşıyor (54 puan). Hızlı nüfus artışı abone başına tüketimi yukarı çekiyor; sanayi yoğunluğu su talebini artırıyor.",
+    "lisa_karsiyaka_title": "🔵 KARŞIYAKA · LH — Çevre Baskısı Altında",
+    "lisa_karsiyaka_text": "Karşıyaka'nın kendi risk skoru düşük (47 puan) olsa da Çiğli ve Bayraklı gibi yüksek riskli ilçelerle doğrudan sınır paylaşıyor. Komşu yüksek riskleri uzun vadede Karşıyaka'yı etkileyebilir.",
+
+    # Öneriler
+    "advice_badge": f"İLÇE ÖNERİLERİ · {END_YEAR}",
+    "advice_title": "İlçe Bazlı Öneriler",
+    "advice_lead": f"Risk sınıfına göre kişiselleştirilmiş öneri · {len(YEARS)} yıllık trend analizi · 2030 projeksiyonu",
+    "kpi_district": "İlçe",
+    "kpi_district_alt": "Seçili ilçe",
+    "kpi_2030_base_proj": "2030 Baz Tahmini",
+    "p2030_proj_subtitle": "2030 PROJEKSİYONU",
+    "p2030_change_label": "2010→2023 Değişim",
+    "advice_low_status": "✅ İyi durumdasınız — koruyucu önlemler alın",
+    "advice_med_status": "⚠️ Dikkat gerektiriyor — somut adımlar atılmalı",
+    "advice_high_status": "🚨 Yüksek risk — acil önlem gerekiyor",
+    "advice_low_future": "Mevcut gidişat devam ederse 2030'ta da düşük risk bekleniyor.",
+    "advice_med_future": "Kötümser senaryoda 2030'ta yüksek riske geçme ihtimali var.",
+    "advice_high_future": "Önlem alınmazsa 2030'ta risk skoru kritik seviyelere ulaşabilir.",
+    "trend_historical": f"Tarihsel ({START_YEAR}–{END_YEAR})",
+    "trend_2030_baseline": "2030 Baz Tahmini",
+    "general_advice_h": "💡 Genel Su Tasarrufu Önerileri",
+    "general_advice_1_title": "🚿 Hane Bazlı Tasarruf",
+    "general_advice_1_text": "Duş süresini 2 dk kısaltmak yılda ~3.650 lt tasarruf sağlar. Damlatan musluklar aylık 400–600 litre kayba yol açar. Makine kullanımında tam doluluk %30 tasarruf sağlar.",
+    "general_advice_2_title": "🏗️ Altyapı Öncelikleri",
+    "general_advice_2_text": "İzmir'deki fiziki su kayıp oranı 2023'te %25.92. Akıllı sayaç sistemleri sızıntıları erken tespit eder. Boru yaşı 25+ yıl olan hatlar öncelikli yenileme adayıdır.",
+    "general_advice_3_title": "🌡️ İklim Uyum Önlemleri",
+    "general_advice_3_text": "IPCC AR6'ya göre Akdeniz havzasında 2050'ye kadar yağış %20 azalacak. Yağmur suyu hasadı, gri su geri dönüşümü ve kuraklığa dayanıklı peyzaj kritik adımlardır.",
+
+    # Harita
+    "map_badge": f"ETKİLEŞİMLİ RİSK HARİTASI · İZMİR · {START_YEAR}–2030",
+    "map_title": "İzmir İlçe Risk Haritası",
+    "map_lead": "İlçe üzerine gel → risk bilgisi · Yıl seçilebilir",
+    "map_year_select": "📅 Yıl Seçin",
+    "map_legend_high": "Yüksek Risk (≥60)",
+    "map_legend_med": "Orta Risk (46-60)",
+    "map_legend_low": "Düşük Risk (<46)",
+    "map_2030_proj": "🔮 (2030 Projeksiyonu)",
+    "map_2030_proj_short": "🔮 2030 Projeksiyonu",
+    "tbl_district": "İlçe",
+    "tbl_risk_score": "Risk Skoru",
+    "tbl_risk_class": "Risk Sınıfı",
+
+    # Araçlar
+    "tools_badge": "ETKİLEŞİMLİ ARAÇLAR · KEŞFEDİN & ANALİZ EDİN",
+    "tools_title": "İnteraktif Araçlar",
+    "tools_lead": f"Radar profil · İlçe karşılaştırma · Risk simülatörü · {len(YEARS)} yıllık animasyonlu seri",
+    "tools_select_district": "🏙️ Analiz edilecek ilçeyi seç:",
+    "tools_sec01_no": "01 · RADAR & KARŞILAŞTIRMA",
+    "tools_sec01_h": "İlçe Radar Profili & Karşılaştırma",
+    "tools_compare_district": "Karşılaştırılacak ilçe:",
+    "radar_demand": "Talep",
+    "radar_growth": "Artış",
+    "radar_supply": "Arz Kısıtı",
+    "radar_loss": "Kayıp",
+    "radar_risk": "Risk",
+    "radar_indicator": "GÖSTERGE",
+    "radar_demand_full": "Abone Tüketim (m³)",
+    "radar_growth_full": "Tüketim Artışı (%)",
+    "radar_supply_full": "Arz Kısıtı",
+    "radar_loss_full": "Su Kayıp Oranı (%)",
+    "radar_risk_full": "Risk Skoru",
+    "tools_sec02_no": "02 · SİMÜLATÖR",
+    "tools_sec02_h": "Risk Simülatörü — Anlık Duyarlılık",
+    "tools_sec02_caption": "Gösterge değerlerini değiştir → Risk skoru entropy ağırlıklarıyla anlık güncellenir",
+    "sim_demand": "💧 Abone Tüketim (m³)",
+    "sim_growth": "📈 Tüketim Artışı (%)",
+    "sim_supply": "⚖️ Arz Kısıtı (%)",
+    "sim_loss": "🔴 Kayıp Oranı (%)",
+    "sim_kpi_score": "Simüle Edilen Skor",
+    "sim_kpi_class": "Risk Sınıfı",
+    "sim_kpi_weighted": "Ağırlıklı Hesap",
+    "sim_kpi_weighted_val": "Talep %31.6 · Kayıp %33.0",
+    "sim_kpi_arz_growth": "Arz+Artış",
+    "sim_kpi_arz_growth_val": "Arz%23.8 · Artış%11.6",
+    "tools_sec03_no": "03 · ZAMAN SERİSİ",
+    "tools_sec03_h": f"Animasyonlu Risk Değişimi — {START_YEAR}–{END_YEAR} ({len(YEARS)} yıl)",
+    "anim_year_prefix": "Yıl: ",
+    "anim_play": "▶ Oynat",
+    "anim_pause": "⏸ Durdur",
+    "anim_caption": "🔬 Bootstrap simülasyonu (2010–2019) · ✅ İZSU Gerçek Verisi (2020–2023)",
+    "tools_sec04_no": "04 · DEĞİŞİM HESAPLAYICI",
+    "tools_sec04_h": "İki İlçeyi Yıllar İçinde Karşılaştır",
+    "tools_sec04_caption": "İki ilçeyi seç, yıl aralığını belirle — puan farkını gör",
+    "calc_district_1": "1. İlçe:",
+    "calc_district_2": "2. İlçe:",
+    "calc_year_range": "Yıl aralığı:",
+
+    # Metodoloji
+    "method_badge": "METODOLOJİ · ŞEFFAFLIK",
+    "method_title": "Metodoloji & Teknik Detaylar",
+    "method_lead": "Veri kaynağı · Bootstrap simülasyonu · İstatistiksel yöntemler · Formüller · Sınırlılıklar",
+    "method_sec01_no": "01 · VERİ KAYNAĞI",
+    "method_sec01_h": "Veri Kaynağı",
+    "method_district_data_title": "İLÇE BAZLI VERİ",
+    "method_district_data_text": f"📌 Kaynak: İZSU Açık Veri Portalı (2020–{END_YEAR}) + Bootstrap ({START_YEAR}–2019)<br>📌 Kapsam: 11 merkez ilçe<br>📌 Dönem: {START_YEAR}–{END_YEAR} ({len(YEARS)} yıl)<br>📌 Değişkenler: Yıllık tüketim (m³), abone sayısı",
+    "method_system_data_title": "SİSTEM GENELİ VERİ",
+    "method_system_data_text": f"📌 Kaynak: İZSU Açık Veri Portalı (2020–{END_YEAR}) + Bootstrap ({START_YEAR}–2019)<br>📌 Kapsam: 3 baraj (Tahtalı, Balçova, Gördes)<br>📌 Dönem: {START_YEAR}–{END_YEAR} ({len(YEARS)} yıl)<br>📌 Değişkenler: Doluluk, üretim, kayıp oranı",
+    "method_sec02_no": "02 · BOOTSTRAP SİMÜLASYONU",
+    "method_sec02_h": "Block Bootstrap Simülasyonu",
+    "method_why_title": "🤔 NEDEN EK VERİ ÜRETİLDİ?",
+    "method_why_text": f"İZSU'nun resmi açık verisi yalnızca <b style=\"color:white\">2020–{END_YEAR}</b> dönemini kapsıyor — yani sadece <b style=\"color:white\">4 yıl</b>. Mann-Kendall trend testi için bu süre yetersizdir. Bu nedenle <b style=\"color:white\">2010–2019</b> arası 10 yıllık veri bilimsel yöntemle üretildi.",
+    "method_block_title": "🎲 BLOCK BOOTSTRAP NEDİR?",
+    "method_block_text": "Eldeki gerçek verileri küçük bloklara böl → blokları istatistiksel kurallara göre karıştırarak yeni seriler oluştur → sonuçları geçmişe ait veri gibi kullan. Hava tahminlerinde, finans ve tıp araştırmalarında yaygın kullanılan standart bir istatistik tekniğidir.",
+    "method_trust_title": "✅ VERİLERE GÜVENİLEBİLİR Mİ?",
+    "method_trust_text": "Üretilen seri rastgele değil — İzmir'in gerçek su geçmişine uyumlu:<br>• 2013–2015: Gördes ve Tahtalı kuraklık dönemi<br>• 2020: Pandemi dönemi hane tüketimi artışı<br>• Nüfus büyümesi TÜİK İzmir verisiyle uyumlu",
+    "method_trans_title": "🔍 ŞEFFAFLIK",
+    "method_trans_text": f"Site genelinde:<br>🔬 <b style=\"color:#c39bd3;\">Mor = Bootstrap simülasyonu (2010–2019)</b><br>✅ <b style=\"color:#2ca02c;\">Yeşil = İZSU Gerçek Verisi (2020–{END_YEAR})</b><br><br>Kaynak kod GitHub'da açık erişimdedir. Tüm analizler Python ile yapıldı, sonuçlar tekrarlanabilir.",
+    "method_sec03_no": "03 · RİSK ENDEKSİ",
+    "method_sec03_h": "Su Güvenliği Risk Endeksi (WSRI)",
+    "method_step1_t": "📐 Adım 1 — Min-Max Normalizasyon",
+    "method_step1_text": "**Ne yapar?** Farklı birimlerdeki göstergeleri (m³, %, oran) aynı 0–1 ölçeğine çeker.\n\n**Formül:** Z(x) = (x − x_min) / (x_max − x_min)\n\n**Verimizdeki uygulaması:** Abone başına tüketim ve kayıp oranı farklı birimlerdedir. Min-Max ile 0–1 arasına çekildi; yüksek değer = yüksek risk.",
+    "method_step1_caption": "Sonuç: 0 = en düşük risk · 1 = en yüksek risk · tüm göstergeler aynı ölçekte",
+    "method_step2_t": "📐 Adım 2 — Entropy Ağırlıklandırma",
+    "method_step2_text": "**Ne yapar?** Her göstergenin ağırlığını ilçeler arasındaki farklılığa göre otomatik hesaplar. Öznel yargıyı ortadan kaldırır.\n\n**Formül:** E_j = −(1/ln n) × Σ p_ij × ln(p_ij) → w_j = (1−E_j) / Σ(1−E_j)\n\n**Verimizdeki uygulaması:** Su kayıp oranı en fazla farklılık gösterdiği için en yüksek ağırlığı (%33) aldı.",
+    "method_step2_caption": "İlçeler arası en fazla değişen gösterge → en yüksek ağırlık",
+    "method_step3_t": "📐 Adım 3 — Bileşik Risk Skoru / WSRI",
+    "method_step3_text": "**Ne yapar?** Normalize göstergeleri entropy ağırlıklarıyla çarpar ve toplar. Sonuç 0–100 ölçeğindedir.\n\n**Formül:** Risk(i,t) = Σ w_j × Z_j(i,t) × 100\n\n**Eşikler:** 0–45 Düşük · 46–59 Orta · 60+ Yüksek Risk",
+    "method_step3_caption": "0–100 arasında · &lt;46 Düşük · 46–60 Orta · ≥60 Yüksek Risk",
+    "method_weights_title": f"HESAPLANAN AĞIRLIKLAR ({len(YEARS)} YIL VERİDEN)",
+    "weight_demand_label": "Talep (Abone Başına)",
+    "weight_growth_label": "Tüketim Artışı",
+    "weight_supply_label": "Arz Kısıtı",
+    "weight_loss_label": "Kayıp Oranı",
+    "method_sec04_no": "04 · ZAMANSAL ANALİZ",
+    "method_sec04_h": "Mann-Kendall Trend Testi & Sen's Slope",
+    "method_mk_t": "📐 Mann-Kendall Trend Testi",
+    "method_mk_text": f"**Ne yapar?** Veri serisinin monoton trend izleyip izlemediğini test eder. Normal dağılım gerektirmez.\n\n**Formül:**\n> S = Σ (j>i) sgn(x_j − x_i)\n> τ = S / [n×(n−1) / 2]\n\n**Verimizdeki uygulaması:** {len(YEARS)} yıllık seri için hesaplandı. τ < 0 olan ilçelerde (Bornova, Çiğli, Bayraklı) azalan risk trendi saptandı.",
+    "method_mk_caption": "τ > 0 artan · τ < 0 azalan · p < 0.05 istatistiksel anlamlılık",
+    "method_sen_t": "📐 Sen's Slope",
+    "method_sen_text": "**Ne yapar?** Trendin yıllık değişim hızını medyan ile hesaplar — aykırı değerlerden etkilenmez.\n\n**Formül:** β = medyan[(x_j − x_i) / (j − i)], j > i\n\n**Verimizdeki uygulaması:** Bornova için β ≈ −0.38 puan/yıl — her yıl ortalama 0.38 puan azaldı.",
+    "method_sen_caption": "β = yıllık ortalama değişim büyüklüğü (puan/yıl)",
+    "method_sec05_no": "05 · MEKÂNSAL ANALİZ",
+    "method_sec05_h": "Moran's I & LISA",
+    "method_moran_t": "📐 Global Moran's I",
+    "method_moran_text": "**Ne yapar?** Risk değerlerinin mekânsal olarak kümelenip kümelenmediğini ölçer.\n\n**Formül:** I = (n/S₀) × [Σᵢ Σⱼ wᵢⱼ(xᵢ−x̄)(xⱼ−x̄)] / Σᵢ(xᵢ−x̄)²\n\n**Verimizdeki uygulaması:** I = −0.2817 (negatif). Riskli ilçeler düşük riskli komşularla çevrili — merkezi bir \"kötü bölge\" yok.",
+    "method_moran_caption": "I > 0 kümelenme · I < 0 dağınık",
+    "method_lisa_t": "📐 Local Moran's I — LISA",
+    "method_lisa_text": "**Ne yapar?** Her ilçe için ayrı mekânsal skor üretir. Global Moran \"genel tablo\" verirken LISA her ilçenin HH/LL/HL/LH sınıfını belirler.\n\n**Formül:** Iᵢ = zᵢ × Σⱼ wᵢⱼ × zⱼ\n\n**Verimizdeki uygulaması:** Gaziemir → HL (izole sıcak nokta). Karşıyaka → LH (çevre baskısı). 999 permütasyon testi uygulandı.",
+    "method_lisa_caption": "HH/LL = küme · HL/LH = mekânsal aykırı değer",
+    "method_sec06_no": "06 · PROJEKSİYON MODELİ",
+    "method_sec06_h": "2030 Projeksiyon Modeli",
+    "method_cagr_t": "📐 CAGR Tabanlı Projeksiyon Modeli",
+    "method_cagr_text": f"**Ne yapar?** Her ilçenin geçmiş abone büyüme hızını (CAGR) hesaplar ve 3 farklı senaryo katsayısıyla 2030'a uzatır.\n\n**Formül:**\n> CAGR = (Abone₂₀₂₃ / Abone₂₀₁₀)^(1/13) − 1\n> Risk(i,t) = Risk(i,2023) × (1 + CAGRᵢ × k)^(t−2023)\n\n**k değerleri:** 0.5 = İyimser · 1.0 = Baz · 1.5 = Kötümser\n\n**Verimizdeki uygulaması:** {len(YEARS)} yıllık seri CAGR hesabını güvenilir kıldı. Sonuçlar 0–100 arasında sınırlandırıldı.",
+    "method_cagr_caption": "k=0.5 İyimser · k=1.0 Baz · k=1.5 Kötümser · CAGR 14 yıllık seriden",
+    "method_sec07_no": "07 · SINIRLILIKLAR",
+    "method_sec07_h": "Sınırlılıklar & Şeffaflık",
+    "limit_1_t": "🔬 BOOTSTRAP KISITI",
+    "limit_1_text": f"{START_YEAR}–2019 verileri sentetiktir. Gerçek tarihsel İZSU verisi olmadığından bu dönemin yorumları gösterge niteliğindedir.",
+    "limit_2_t": "⚠️ MEKÂNSAL KISIT",
+    "limit_2_text": "n=11 ilçe ile Moran's I istatistiksel güç açısından sınırlıdır. Komşuluk matrisi coğrafi sınırlar referans alınarak oluşturuldu.",
+    "limit_3_t": "⚠️ TAHMİN KISITI",
+    "limit_3_text": "2030 projeksiyonu lineer büyüme varsayımına dayanır. İklim değişikliği ve politika etkileri modele dahil edilmemiştir.",
+    "limit_4_t": "✅ TEKRARLANABILIRLIK",
+    "limit_4_text": "Tüm analizler Python ile yapıldı. Kaynak kod GitHub'da açık erişimde. Bootstrap sabit rastgele tohum ile tekrarlanabilir.",
+    "method_sec08_no": "08 · SSS",
+    "method_sec08_h": "Sıkça Sorulan Sorular",
+}
+
+TR["advice_low_items"] = [
+    "Mevcut su tasarrufu alışkanlıklarınızı sürdürün.",
+    "Abone başına tüketimi yıllık izleyin — ani artışları erkenden fark edin.",
+    "Komşu ilçelerdeki risk artışlarını takip edin, bölgesel etkiler olabilir.",
+    "Yeşil alan sulama ve endüstriyel tüketimi optimize edin."
+]
+TR["advice_med_items"] = [
+    "Hanelere ve işyerlerine yönelik su tasarrufu kampanyaları başlatın.",
+    "Altyapı sızıntı tespiti için akıllı sayaç sistemleri kurun.",
+    "Yüksek tüketen aboneleri belirleyip bilinçlendirme programları uygulayın.",
+    "Yağmur suyu toplama sistemlerini teşvik edin.",
+    "İZSU ile koordineli denetim programı başlatın."
+]
+TR["advice_high_items"] = [
+    "İZSU ile acil eylem planı oluşturun — kısa vadeli kısıtlama önlemleri alın.",
+    "Yüksek tüketen sanayi ve ticari sektörleri denetleyin.",
+    "Geri dönüştürülmüş su kullanımını artırın, gri su sistemleri kurun.",
+    "Alternatif su kaynakları (yer altı suyu, yağmur hasadı) araştırın.",
+    "Halk bilgilendirme kampanyasıyla aciliyeti kamuoyuyla paylaşın."
+]
+TR["faq"] = [
+    ("Bootstrap simülasyonu nedir, neden kullanıldı?", f"İZSU resmi açık verisi yalnızca 2020–{END_YEAR} dönemini kapsıyor (4 yıl). Mann-Kendall trend testi için bu örneklem yetersiz. Block bootstrap yöntemiyle {START_YEAR}–2019 dönemi için İzmir'in hidrolojik geçmişine uyumlu bir seri üretildi. Bu sayede n=4 yerine n={len(YEARS)} yıllık analizler yapılabildi."),
+    ("Bootstrap verisi gerçek mi sayılır?", f"Hayır — {START_YEAR}–2019 verileri sentetiktir; gerçek İZSU ölçümleri değildir. Ancak İzmir'in kuraklık takvimine ve TÜİK nüfus büyümesine uyumlu kalibre edildi. Site genelinde mor renk ile açıkça işaretlenmiştir."),
+    ("Risk skoru ne anlama geliyor?", "0–100 arasındaki skor, 4 su güvenliği göstergesinin entropy ağırlıklı ortalamasıdır. Eşikler: 0–45 Düşük Risk · 46–59 Orta Risk · 60+ Yüksek Risk. Yüksek skor = o ilçede su güvenliği daha kırılgan demektir."),
+    ("Neden 4 gösterge seçildi?", "Abone başına tüketim, tüketim artış oranı, arz kısıtı ve su kayıp oranı — İZSU açık verisinde yıllık olarak mevcut olan ve su güvenliğini doğrudan etkileyen değişkenlerdir. Su kalitesi ve iklim verileri erişilebilir olmadığından modele dahil edilemedi."),
+    ("Entropy ağırlıklandırma neden tercih edildi?", "Araştırmacının öznel ağırlık belirlemesini önler. Verinin kendi dağılımı ağırlıkları belirler — ilçeler arasında en fazla farklılık gösteren gösterge en yüksek ağırlığı alır. Literatürde kabul görmüş nesnel bir yaklaşımdır."),
+    ("2030 projeksiyonu neden 3 senaryoya ayrıldı?", "Tek bir projeksiyon belirsizliği gizler. İyimser (k=0.5) tasarruf politikalarını, Baz (k=1.0) mevcut trendi, Kötümser (k=1.5) hızlı kentleşme ve kuraklık baskısını temsil eder."),
+    (f"Mann-Kendall testi {len(YEARS)} yıllık veriyle güvenilir mi?", f"n={len(YEARS)} ile Mann-Kendall'ın istatistiksel gücü yüksektir. 2010–2019 dönemi bootstrap simülasyonu olduğundan sonuçlar ileride gerçek veriler elde edildiğinde doğrulanmalıdır; bu sınırlılık şeffaf biçimde belirtilmiştir."),
+    ("Komşuluk matrisi nasıl belirlendi?", "İzmir 11 merkez ilçesinin coğrafi sınırları referans alınarak her ilçenin hangi ilçelerle fiziksel olarak sınır paylaştığı belirlendi. Matrisin simetrisi doğrulandı ve satır-normalize edildi."),
+]
+
+# ── ENGLISH DICTIONARY ──────────────────────────────────────────
+EN = {
+    "app_subtitle": f"Water Security Risk Index · İzmir · {START_YEAR}–2030",
+    "data_source_short": "Data: İZSU + Bootstrap Simulation",
+    "scope_short": "11 Central Districts · Entropy-WSRI",
+    "search_placeholder": "🔍 Search: dam, risk, 2030...",
+    "search_no_result": "❌ No results found. Try: dam, risk, map, 2030, simulator, methodology",
+    "bootstrap_badge": "BOOTSTRAP SIMULATION",
+    "bootstrap_banner": f"Data for {START_YEAR}–2019 was generated using block bootstrap methodology calibrated to İzmir's drought calendar. Data for 2020–{END_YEAR} comes from official İZSU sources.",
+    "data_load_error_title": "Data Could Not Be Loaded",
+    "data_load_error_msg": "Data files not found or unreadable.<br>Make sure ilce.xlsx and baraj.xlsx are in the repository.",
+    "data_load_error_label": "Error",
+    "lang_tr": "🇹🇷 TR",
+    "lang_en": "🇬🇧 EN",
+
+    "risk_low": "Low Risk",
+    "risk_med": "Medium Risk",
+    "risk_high": "High Risk",
+
+    "nav_home": "Home",
+    "nav_eda": "EDA",
+    "nav_risk": "Risk",
+    "nav_2030": "2030",
+    "nav_map": "Map",
+    "nav_spatial": "Spatial",
+    "nav_advice": "Advice",
+    "nav_method": "Methodology",
+    "nav_tools": "Tools",
+
+    # Home
+    "home_badge": f"WATER SECURITY ANALYSIS · İZMİR · {START_YEAR}–{PRED_END_YEAR}",
+    "home_title_1": "İzmir Water Security",
+    "home_title_2": "Risk Index",
+    "home_lead": f"Entropy-weighted composite risk analysis · 11 central districts · {len(YEARS)}-year series ({START_YEAR}–{END_YEAR}) · Bootstrap simulation · Mann-Kendall trend test · LISA spatial analysis · 2030 projection",
+    "kpi_total_consumption": f"Total Consumption {END_YEAR}",
+    "kpi_million_m3": "million m³",
+    "kpi_highest_risk": "Highest Risk Score",
+    "kpi_loss_rate": f"Water Loss Rate {END_YEAR}",
+    "kpi_loss_subtext": "% · system-wide",
+    "kpi_high_risk_districts": "High-Risk Districts",
+    "kpi_med_risk_districts": "Medium-Risk Districts",
+    "kpi_low_risk_districts": "Low-Risk Districts",
+    "kpi_tahtali_fill": "Tahtalı Fill Level",
+    "kpi_tahtali_year": f"year {END_YEAR}",
+    "kpi_least_risky": "Least Risky",
+    "kpi_score_label": "Score",
+    "sec_01_title": "01 · RISK INDICATOR",
+    "sec_01_h": f"Top 3 Riskiest Districts — {END_YEAR} Risk Gauge",
+    "sec_02_title": "02 · RISK ANALYSIS",
+    "sec_02_h": f"{END_YEAR} District Risk Ranking & Weight Distribution",
+    "risk_threshold_med": "Medium Risk Threshold (46)",
+    "risk_threshold_high": "High Risk Threshold (60)",
+    "risk_score_axis": "Risk Score (0–100)",
+    "risk_score": "Risk Score",
+    "entropy_weights_label": "Entropy<br>Weights",
+    "weight_loss_rate": "Water Loss Rate",
+    "weight_per_capita": "Per Capita Consumption",
+    "weight_supply_constraint": "Supply Constraint",
+    "weight_growth_rate": "Consumption Growth Rate",
+    "source_method_title": "SOURCE & METHOD",
+    "source_data": "Data: İZSU + Bootstrap simulation",
+    "source_scope": f"Scope: {START_YEAR}–{END_YEAR} · 11 Districts · {len(YEARS)} years",
+    "source_method": "Method: Min-Max + Entropy + WSRI",
+    "source_analysis": "Analysis: Mann-Kendall · LISA · CAGR",
+    "sec_03_title": "03 · GLOBAL CONTEXT",
+    "sec_03_h": "Where Does İzmir Stand Globally?",
+    "global_pop_water_stress": "Population Under Water Stress",
+    "global_pop_water_stress_text": "40% of the world's population faces severe water stress for at least one month per year.",
+    "global_med_basin": "Mediterranean Basin Water Deficit",
+    "global_med_basin_text": "Annual rainfall in the Mediterranean basin is expected to decrease by 20% by 2050. İzmir lies at the heart of this zone.",
+    "global_izmir_wsri": "İzmir WSRI Average",
+    "global_izmir_wsri_text": "Average of 11 central districts — Medium Risk band. 3 districts have crossed the high-risk threshold.",
+    "global_izmir_wsri_source": f"İZSU + This study · {END_YEAR}",
+    "global_tr_capita": "Türkiye Per Capita Water Potential",
+    "global_tr_capita_text": "International threshold is 1,700 m³ — Türkiye is close to the \"water scarcity\" line.",
+    "global_source_note": "Source note: ",
+    "global_source_text": "WRI Aqueduct 2023 · IPCC AR6 (2021) · DSİ 2022 annual report · İZSU open data portal.",
+    "share_copy_link": "Copy Link",
+    "share_copied": "Copied!",
+    "share_twitter": "Share on Twitter/X",
+    "share_linkedin": "Share on LinkedIn",
+
+    # EDA
+    "eda_badge": f"EXPLORATORY DATA ANALYSIS · {START_YEAR}–{END_YEAR}",
+    "eda_title": "Exploratory Data Analysis",
+    "eda_lead": f"{len(YEARS)}-year series ({START_YEAR}–{END_YEAR}) · Extended via bootstrap simulation · Dam fill levels, district consumption, supply-demand balance and loss trends",
+    "tab_dam": "💧 Dam Fill Level",
+    "tab_consumption": "🌡️ Consumption Heatmap",
+    "tab_supply_demand": "⚖️ Supply-Demand",
+    "tab_loss": "📉 Loss Rate",
+    "eda_dam_history_no": "01 · DAM HISTORY",
+    "eda_dam_history_h": "İzmir's Dams — History, Technical Info & Water System",
+    "eda_water_system_title": "ABOUT İZMİR'S WATER SYSTEM",
+    "eda_water_system_text": "İzmir's drinking and utility water needs are primarily met by three major dams: <b style=\"color:#38d1e3\">Tahtalı</b>, <b style=\"color:#2ca02c\">Balçova</b>, and <b style=\"color:#d62728\">Gördes</b>. The combined storage capacity of these three dams is approximately <b style=\"color:white\">542 million m³</b>. Managed by İZSU (İzmir Water and Sewerage Administration), the system serves a population exceeding 4.4 million. As climate change reduces precipitation in the Mediterranean basin, the fill levels of these dams have become increasingly critical.",
+
+    "tahtali_meta": "📍 Menderes District, İzmir &nbsp;|&nbsp; 📅 Construction: 1993–1997 &nbsp;|&nbsp; 🏗️ Type: Rock-earth fill",
+    "tahtali_h1": "🏆 İzmir's Main Water Source",
+    "tahtali_p1": "Tahtalı Dam is unquestionably İzmir's largest and most strategic water source. It alone supplies approximately **60–70%** of the city's annual drinking water needs. Built on the Tahtalı Stream, the dam draws from a wide watershed of 432 km². With a body height of 75 meters, this structure was built using rock-earth fill technology and stands out for its earthquake-resistant design.",
+    "tahtali_h2": "📊 Technical Specifications",
+    "tahtali_specs": "- **Total Storage Capacity:** 309 million m³  \n- **Normal Water Level:** 141 meters  \n- **Watershed Area:** 432 km²  \n- **Body Type:** Rock-earth fill, central core  \n- **Average Annual Flow:** ~210 million m³  \n- **Operating Authority:** İZSU General Directorate  ",
+    "tahtali_h3": "📅 Historical Process and Key Milestones",
+    "tahtali_history": "Construction of Tahtalı Dam began in 1993 and was completed in 1997. It was implemented as one of the largest infrastructure investments of its era to feed İzmir's rapidly growing population.\n- **1997:** Dam comes online; İzmir secures year-round safe water supply for the first time  \n- **2007–2008:** Severe drought; fill rate drops to a critical 20% level  \n- **2014:** Record rainfall; fill reaches **44%**, the project-era peak  \n- **2016–2018:** Normal fill range (34–36% band)  \n- **2020–2021:** Pressure on Tahtalı increases as Gördes Dam falls to critical levels  \n- **2022:** Fill rises to 40% thanks to a wet winter season  \n- **2023:** Fill drops to **29%** — the long-term effect of climate change becomes clear  ",
+    "tahtali_h4": "🌡️ Impact of Climate Change",
+    "tahtali_climate": "When examining the last 14 years of data, Tahtalı Dam's average fill level shows a slow but steady downward trend. As the Mediterranean climate becomes increasingly arid, annual precipitation in the watershed remains below the long-term average. According to IPCC projections, precipitation in this region is expected to **decrease by another 20%** by 2050.",
+    "tahtali_summary": "2023 Fill: 29%  |  Capacity: 309 M m³  |  Watershed: 432 km²",
+
+    "balcova_meta": "📍 Balçova District, İzmir &nbsp;|&nbsp; 📅 Construction: 1991–1995 &nbsp;|&nbsp; 🏗️ Type: Concrete arch",
+    "balcova_h1": "🏙️ Strategic Shield of the City Center",
+    "balcova_p1": "Despite its relatively small capacity, Balçova Dam plays a critical role in İzmir's water system due to its proximity to the city center. Built on the Meles Stream, the dam serves as an important buffer in meeting the water needs of **Bornova, Bayraklı, and central districts**. Its concrete arch structure provides high water-holding capacity in a narrow valley.",
+    "balcova_h2": "📊 Technical Specifications",
+    "balcova_specs": "- **Total Storage Capacity:** 57 million m³  \n- **Normal Water Level:** 103 meters  \n- **Watershed Area:** 47 km²  \n- **Body Type:** Concrete arch  \n- **Body Height:** 92 meters  \n- **Operating Authority:** İZSU General Directorate  ",
+    "balcova_h3": "📅 Historical Process and Key Milestones",
+    "balcova_history": "Balçova Dam was planned two years before Tahtalı and entered service in 1995. Its proximity to İzmir's central neighborhoods makes it extremely valuable during emergencies.\n- **1995:** Dam comes online; water reliability increases in central districts  \n- **2002–2004:** Fill stays above 26% even during prolonged drought  \n- **2013:** Maintenance and repair work performed; capacity preserved  \n- **2016–2018:** Stable in the 30–34% band  \n- **2021:** Balçova's contribution becomes critical during the Gördes crisis  \n- **2021–2022:** Falling fill (26%) alerts system managers  \n- **2023:** Continues to contribute to the system at 32% fill  ",
+    "balcova_h4": "💡 Why Small But Indispensable?",
+    "balcova_why": "Although Balçova Dam's watershed is small, its distance to the city center is only about **12 km**. As a result, water transmission lines are shorter, pressure losses are lower, and response times are very fast. In the event of a major drought or system failure, it serves as **the only emergency reserve** capable of supplying the city center. Additionally, low evaporation losses due to climate conditions and the dam's shaded mountain environment provide relatively efficient storage.",
+    "balcova_summary": "2023 Fill: 32%  |  Capacity: 57 M m³  |  Watershed: 47 km²",
+
+    "gordes_meta": "📍 Gördes District, Manisa &nbsp;|&nbsp; 📅 Construction: 1976–1980 &nbsp;|&nbsp; 🏗️ Type: Earth fill",
+    "gordes_h1": "⚠️ Fragile But Strategic: Gördes's Dual Role",
+    "gordes_p1": "While Gördes Dam is administratively part of Manisa Province, it is integrated into İzmir's water system via pipelines. This makes the dam both valuable and complex: it contributes to İzmir's water needs while also supporting Manisa's irrigation needs and regional flood management. Built between 1976 and 1980, the dam is one of **İzmir's oldest major water infrastructure investments**.",
+    "gordes_h2": "📊 Technical Specifications",
+    "gordes_specs": "- **Total Storage Capacity:** 176 million m³  \n- **Normal Water Level:** 211 meters  \n- **Watershed Area:** 1,315 km²  \n- **Body Type:** Clay-core earth fill  \n- **Body Height:** 65 meters  \n- **Purpose:** Drinking water + irrigation + flood prevention  \n- **Administrative Boundary:** Manisa Province (Gördes district)  ",
+    "gordes_h3": "📅 Historical Process and the 2019–2021 Crisis",
+    "gordes_history": "Gördes Dam represents the most sensitive and risky link in İzmir's water system. Its fill history reveals serious vulnerabilities:\n- **1980:** Dam comes online; provides irrigation and drinking water security in the region  \n- **2007–2009:** Fill drops to 15% during drought  \n- **2013:** Fill hits a historic low of 15%; restrictions implemented  \n- **2018:** Recovery trend; fill rises to 24%  \n- **2019:** Fill drops to 18% with rising consumption and falling rainfall  \n- **2020:** 🚨 **Critical crisis — fill drops to 2%!** Literally \"mud at the bottom of the dam\"  \n- **2021:** 🆘 **Historic low — fill at 1%!** Water restrictions discussed in İzmir  \n- **2022–2023:** Recovers to 4–5% with partially increased rainfall; risk continues  ",
+    "gordes_h4": "🔬 Lessons from the 2019–2021 Gördes Crisis",
+    "gordes_lessons": "Gördes dropping to 1% fill is the most striking case in İzmir's water management history. This crisis exposed the following realities:\n- How a single dam can collapse under drought  \n- That systems integrating dams across different administrative boundaries require coordination  \n- The risk created by population growth in a system without emergency reserves  \n- The prioritization problem between agricultural irrigation and drinking water  \nFor these reasons, Gördes's fill level has become one of the primary indicators in İzmir's water security monitoring system.",
+    "gordes_summary": "2023 Fill: 5%  |  Capacity: 176 M m³  |  Watershed: 1,315 km²  |  ⚠️ Critical Watch",
+
+    "eda_dam_fill_no": "02 · DAM FILL LEVEL",
+    "eda_dam_fill_h": f"Dam Fill Rates ({START_YEAR}–{END_YEAR})",
+    "bootstrap_to_real": "Bootstrap → Real Data",
+    "critical_threshold": "Critical Threshold: 15%",
+    "fill_axis": "Fill (%)",
+    "from_2010": f"points (from {START_YEAR})",
+
+    "eda_findings_no": "03 · FINDINGS",
+    "eda_findings_h": "Key Findings & Turning Points",
+    "eda_finding_1_title": "2013–2015 · LOW LEVEL PERIOD",
+    "eda_finding_1_h": "Tahtalı and Gördes declined simultaneously",
+    "eda_finding_1_text": "While Tahtalı stayed in the 36–41% band, Gördes dropped to 15–16%. The simultaneous decline of two dams placed intense pressure on the system.",
+    "eda_finding_2_title": "2019–2021 · GÖRDES CRISIS",
+    "eda_finding_2_h": "Collapse from 18% to 1% in a single year",
+    "eda_finding_2_text": "Falling to 2% in 2020 and 1% in 2021, Gördes is a critical data point documenting the devastating impact of prolonged drought on water resources.",
+    "eda_finding_3_title": "2020 · PANDEMIC EFFECT",
+    "eda_finding_3_h": "Stay-at-home → rising consumption pressure",
+    "eda_finding_3_text": "Household water use rose noticeably during the COVID-19 period. While Gördes fell to critical levels, consumption remained high — supply-demand balance was disrupted.",
+
+    "eda_demand_no": "02 · DEMAND HEATMAP",
+    "eda_demand_h": "Per-Subscriber Consumption Heatmap (m³/subscriber)",
+    "eda_narlidere_title": "🔴 NARLIDERE — High Consumption, Low Risk",
+    "eda_narlidere_text": "Narlıdere tops the list in per-capita consumption but ranks low in risk. Small subscriber base, older building stock, and urban transformation are the determining factors.",
+    "eda_gaziemir_title": "🔵 GAZİEMİR — Medium Consumption, High Risk",
+    "eda_gaziemir_text": "Gaziemir appears mid-tier in the demand heatmap but high in risk ranking. Supply pressure from rapid population growth and consumption growth rate are decisive.",
+
+    "eda_sd_no": "03 · SUPPLY-DEMAND BALANCE",
+    "eda_sd_h": f"Supply-Demand Balance ({START_YEAR}–{END_YEAR})",
+    "supply_label": "Water Entering System (Supply)",
+    "demand_label": "Total Consumption (Demand)",
+    "demand_gap": "Demand Gap",
+    "supply_surplus": "Supply Surplus",
+    "real_data_short": "real",
+    "bootstrap_short": "bootstrap",
+    "supply_demand_finding_1_title": "2014–2016 · SUPPLY CONSTRAINT PEAK",
+    "supply_demand_finding_1_h": "Water entering system fell to 107M",
+    "supply_demand_finding_1_text": "While supply dropped to the 107–132M m³ band, consumption continued to rise to 147–153M m³. The resulting gap severely strained system capacity.",
+    "supply_demand_finding_2_title": "2021 · EQUILIBRIUM POINT",
+    "supply_demand_finding_2_h": "Supply and demand met at 160M m³",
+    "supply_demand_finding_2_text": "Water entering the system and total consumption equalized at 160M m³, capturing a rare balance point.",
+    "supply_demand_finding_3_title": "2022–2023 · GAP WIDENED AGAIN",
+    "supply_demand_finding_3_h": "Demand exceeded supply by ~45M m³",
+    "supply_demand_finding_3_text": "While water entering the system fell to 118–120M m³, consumption stayed at 165–166M. This gap points to infrastructure losses.",
+
+    "eda_loss_no": "04 · WATER LOSS TREND",
+    "eda_loss_h": f"Annual Water Loss Rate Trend ({START_YEAR}–{END_YEAR})",
+    "loss_total": "Total Loss",
+    "loss_physical": "Physical Loss",
+    "loss_admin": "Administrative Loss",
+    "loss_total_axis": "Total Loss (%)",
+    "loss_component_axis": "Component (%)",
+    "loss_kpi_total": "TOTAL REDUCTION",
+    "loss_kpi_legend_phys": "Pipe leaks, infrastructure damage",
+    "loss_kpi_legend_admin": "Illegal use, meter errors",
+    "loss_finding_1_title": f"{START_YEAR}–{END_YEAR} · IMPROVEMENT RECORDED",
+    "loss_finding_2_title": "PHYSICAL LOSS DOMINANCE",
+    "loss_finding_2_h": "~95% of total loss is pipe leakage",
+    "loss_finding_2_text": "2023: Physical loss 25.92%, administrative loss 1.43%. Infrastructure renewal is the priority investment area.",
+    "loss_finding_3_title": "2020 · SLIGHT INCREASE IN PANDEMIC YEAR",
+    "loss_finding_3_h": "Loss rate rose to 28.56%",
+    "loss_finding_3_text": "The slowdown of inspection and maintenance activities during the pandemic period caused this temporary deterioration.",
+
+    # Risk
+    "risk_badge": f"WATER SECURITY RISK INDEX · WSRI · {START_YEAR}–{END_YEAR}",
+    "risk_title": "Water Security Risk Index",
+    "risk_lead": f"Entropy-weighted composite score · 4 indicators · 0–100 scale · {len(YEARS)}-year series",
+    "risk_year_select": "📅 Select Year",
+    "district_search": "Search district:",
+    "district_search_placeholder": "e.g. BUCA",
+    "risk_sec01_no": "01 · DISTRICT SCORES",
+    "risk_sec01_h": f"District Risk Scores & {len(YEARS)}-Year Comparison",
+    "risk_sec02_no": "02 · RISK TREND",
+    "risk_sec02_h": "District-Level Risk Score Trend (2010–2023)",
+    "real_data_band": "Real Data",
+    "wsri_axis": "WSRI Risk Score",
+    "trend_high_3": "🔴 Top 3 Highest-Risk Districts",
+    "trend_low_3": "🟢 Top 3 Lowest-Risk Districts",
+    "trend_med_5": "🟡 5 Medium-Risk Districts",
+    "med_low_threshold": "Medium Risk Lower (46)",
+    "high_threshold_short": "High Risk (60)",
+    "med_threshold_short": "Medium Risk (46)",
+    "risk_sec03_no": "03 · DISTRICT DETAIL",
+    "risk_sec03_h": "District Detail — Risk Components",
+    "select_district": "Select district:",
+    "kpi_year_score": f"{END_YEAR} Risk Score",
+    "kpi_risk_class": "Risk Class",
+    "kpi_2010_2023_change": "2010→2023 Change",
+    "kpi_2010_score_lbl": "2010 score",
+    "kpi_subscriber_growth": "Subscriber Growth (CAGR)",
+    "per_year": "/yr",
+    "kpi_period": f"{START_YEAR}–{END_YEAR}",
+    "points": "points",
+
+    # 2030
+    "p2030_badge": "SCENARIO PROJECTION · 2024–2030",
+    "p2030_title": "2030 Risk Projection",
+    "p2030_lead": f"Subscriber growth (CAGR)-based 3 scenarios · Optimistic · Base · Pessimistic · CAGR computed from {len(YEARS)}-year series",
+    "p2030_sec00_no": "00 · 2030 INSTANT PROJECTION",
+    "p2030_sec00_h": "2030 Risk Score — 3 Scenarios (All Districts)",
+    "scenario_pessimistic": "Pessimistic (CAGR × 1.5)",
+    "scenario_base": "Base (CAGR × 1.0)",
+    "scenario_optimistic": "Optimistic (CAGR × 0.5)",
+    "scenario_pessimistic_short": "Pessimistic",
+    "scenario_base_short": "Base",
+    "scenario_optimistic_short": "Optimistic",
+    "p2030_pess_title": "🔴 PESSIMISTIC SCENARIO — CAGR × 1.5",
+    "p2030_pess_h": "If current growth rate increases 1.5x",
+    "p2030_pess_text": "If rapid urbanization, climate-driven supply constraints and inadequate infrastructure investments persist, risk scores will rise significantly by 2030.",
+    "p2030_base_title": "🟠 BASE SCENARIO — CAGR × 1.0",
+    "p2030_base_h": "If current trend continues unchanged",
+    "p2030_base_text": "2030 risk outlook assuming the 2023 growth rate is preserved. Overall trend is downward, but the risk of breaching the 60 threshold remains in high-risk districts.",
+    "p2030_opt_title": "🟢 OPTIMISTIC SCENARIO — CAGR × 0.5",
+    "p2030_opt_h": "If water conservation policies are implemented",
+    "p2030_opt_text": "If smart meter adoption, water conservation campaigns, and infrastructure improvements halve the growth rate, significant risk reduction is projected across all districts.",
+
+    # Spatial
+    "spatial_badge": f"SPATIAL ANALYSIS · MORAN'S I + LISA · {END_YEAR}",
+    "spatial_title": "Spatial Analysis",
+    "spatial_lead": f"Are high-risk districts adjacent? · Global Moran's I · LISA · {END_YEAR}",
+    "spatial_what_is_title": "ℹ️ What are Moran's I and LISA?",
+    "spatial_what_is_text": "**Spatial Analysis** — Are high-risk districts adjacent or scattered?\n- **Global Moran's I** — Summarizes the entire system in a single number. Close to +1 means risky districts are clustering, close to -1 means scattered.\n- **LISA** — Assigns a separate label to each district:\n    - 🔴 **HH** — Risky district with risky neighbors → hotspot\n    - 🟢 **LL** — Low-risk with low-risk neighbors → coldspot\n    - 🟠 **HL** — Risky but neighbors are low-risk → isolated high risk\n    - 🔵 **LH** — Low-risk but neighbors are high-risk → requires attention",
+    "moran_global_label": "Global Moran's I",
+    "moran_global_alt": f"{END_YEAR} risk scores",
+    "p_value_label": "p-value",
+    "p_value_alt": "999 permutation test",
+    "moran_interpretation": "Interpretation",
+    "moran_interpretation_val": "Negative",
+    "moran_interpretation_alt": "Neighbors differ",
+    "hh_cluster": "HH Cluster",
+    "hh_cluster_val": "0 districts",
+    "hh_cluster_alt": "No HH cluster",
+    "moran_global_exp_t": "ℹ️ What is Global Moran's I?",
+    "p_value_exp_t": "ℹ️ What does the p-value mean?",
+    "interp_exp_t": "ℹ️ What does negative clustering mean?",
+    "interp_exp_text": "**Negative Moran's I → Spatial Dispersion**\n\nA high-risk district tends to have low-risk neighbors — a checkerboard pattern.\n\n**Gaziemir exception:** In the HL category — isolated hotspot.",
+    "hh_exp_t": "ℹ️ Why no HH cluster?",
+    "hh_exp_text": "**HH Cluster = 0 districts**\n\nNo district is both high-risk itself and surrounded by high-risk neighbors.\n\nThere is no contiguous risky region in İzmir — risk management can be applied at the district level.",
+    "spatial_sec01_no": "01 · SPATIAL ANALYSIS",
+    "z_axis": "Standardized Risk (z)",
+    "wz_axis": "Spatial Lag (Wz)",
+    "slope_label": "Slope",
+    "lisa_col_district": "District",
+    "lisa_col_risk": "Risk",
+    "lisa_col_lisa": "LISA",
+    "lisa_col_explain": "Description",
+    "lisa_hh_full": "HH (High-High)",
+    "lisa_ll_full": "LL (Low-Low)",
+    "lisa_hl_full": "HL (High-Low)",
+    "lisa_lh_full": "LH (Low-High)",
+    "lisa_hh_short": "Hot Cluster",
+    "lisa_ll_short": "Cold Cluster",
+    "lisa_hl_short": "Isolated High",
+    "lisa_lh_short": "Surrounded High",
+    "lisa_gaziemir_title": "🟠 GAZİEMİR · HL — Isolated High Risk",
+    "lisa_gaziemir_text": "Gaziemir carries a notably high risk score (54 points) compared to its neighbors. Rapid population growth pushes per-subscriber consumption up; industrial density increases water demand.",
+    "lisa_karsiyaka_title": "🔵 KARŞIYAKA · LH — Under Surrounding Pressure",
+    "lisa_karsiyaka_text": "Although Karşıyaka's own risk score is low (47 points), it directly borders high-risk districts like Çiğli and Bayraklı. Neighboring high risks may affect Karşıyaka in the long term.",
+
+    # Advice
+    "advice_badge": f"DISTRICT RECOMMENDATIONS · {END_YEAR}",
+    "advice_title": "District-Based Recommendations",
+    "advice_lead": f"Risk-class-based personalized advice · {len(YEARS)}-year trend analysis · 2030 projection",
+    "kpi_district": "District",
+    "kpi_district_alt": "Selected district",
+    "kpi_2030_base_proj": "2030 Base Projection",
+    "p2030_proj_subtitle": "2030 PROJECTION",
+    "p2030_change_label": "2010→2023 Change",
+    "advice_low_status": "✅ You are in good shape — take protective measures",
+    "advice_med_status": "⚠️ Requires attention — concrete steps needed",
+    "advice_high_status": "🚨 High risk — urgent action required",
+    "advice_low_future": "If the current course continues, low risk is also expected in 2030.",
+    "advice_med_future": "In the pessimistic scenario, there is a possibility of moving to high risk by 2030.",
+    "advice_high_future": "If no measures are taken, the risk score may reach critical levels by 2030.",
+    "trend_historical": f"Historical ({START_YEAR}–{END_YEAR})",
+    "trend_2030_baseline": "2030 Base Projection",
+    "general_advice_h": "💡 General Water Conservation Tips",
+    "general_advice_1_title": "🚿 Household Conservation",
+    "general_advice_1_text": "Shortening shower time by 2 minutes saves ~3,650 liters per year. Dripping taps cause 400–600 liters of monthly loss. Running washing machines at full capacity saves 30%.",
+    "general_advice_2_title": "🏗️ Infrastructure Priorities",
+    "general_advice_2_text": "İzmir's physical water loss rate was 25.92% in 2023. Smart meter systems detect leaks early. Pipes 25+ years old are priority renewal candidates.",
+    "general_advice_3_title": "🌡️ Climate Adaptation Measures",
+    "general_advice_3_text": "According to IPCC AR6, precipitation in the Mediterranean basin will decrease by 20% by 2050. Rainwater harvesting, gray water recycling, and drought-resistant landscaping are critical steps.",
+
+    # Map
+    "map_badge": f"INTERACTIVE RISK MAP · İZMİR · {START_YEAR}–2030",
+    "map_title": "İzmir District Risk Map",
+    "map_lead": "Hover over a district → risk info · Year selectable",
+    "map_year_select": "📅 Select Year",
+    "map_legend_high": "High Risk (≥60)",
+    "map_legend_med": "Medium Risk (46-60)",
+    "map_legend_low": "Low Risk (<46)",
+    "map_2030_proj": "🔮 (2030 Projection)",
+    "map_2030_proj_short": "🔮 2030 Projection",
+    "tbl_district": "District",
+    "tbl_risk_score": "Risk Score",
+    "tbl_risk_class": "Risk Class",
+
+    # Tools
+    "tools_badge": "INTERACTIVE TOOLS · EXPLORE & ANALYZE",
+    "tools_title": "Interactive Tools",
+    "tools_lead": f"Radar profile · District comparison · Risk simulator · {len(YEARS)}-year animated series",
+    "tools_select_district": "🏙️ Select district to analyze:",
+    "tools_sec01_no": "01 · RADAR & COMPARISON",
+    "tools_sec01_h": "District Radar Profile & Comparison",
+    "tools_compare_district": "District to compare:",
+    "radar_demand": "Demand",
+    "radar_growth": "Growth",
+    "radar_supply": "Supply Constraint",
+    "radar_loss": "Loss",
+    "radar_risk": "Risk",
+    "radar_indicator": "INDICATOR",
+    "radar_demand_full": "Subscriber Consumption (m³)",
+    "radar_growth_full": "Consumption Growth (%)",
+    "radar_supply_full": "Supply Constraint",
+    "radar_loss_full": "Water Loss Rate (%)",
+    "radar_risk_full": "Risk Score",
+    "tools_sec02_no": "02 · SIMULATOR",
+    "tools_sec02_h": "Risk Simulator — Live Sensitivity",
+    "tools_sec02_caption": "Change indicator values → Risk score updates instantly using entropy weights",
+    "sim_demand": "💧 Subscriber Consumption (m³)",
+    "sim_growth": "📈 Consumption Growth (%)",
+    "sim_supply": "⚖️ Supply Constraint (%)",
+    "sim_loss": "🔴 Loss Rate (%)",
+    "sim_kpi_score": "Simulated Score",
+    "sim_kpi_class": "Risk Class",
+    "sim_kpi_weighted": "Weighted Calculation",
+    "sim_kpi_weighted_val": "Demand 31.6% · Loss 33.0%",
+    "sim_kpi_arz_growth": "Supply+Growth",
+    "sim_kpi_arz_growth_val": "Supply 23.8% · Growth 11.6%",
+    "tools_sec03_no": "03 · TIME SERIES",
+    "tools_sec03_h": f"Animated Risk Change — {START_YEAR}–{END_YEAR} ({len(YEARS)} years)",
+    "anim_year_prefix": "Year: ",
+    "anim_play": "▶ Play",
+    "anim_pause": "⏸ Pause",
+    "anim_caption": "🔬 Bootstrap simulation (2010–2019) · ✅ İZSU Real Data (2020–2023)",
+    "tools_sec04_no": "04 · CHANGE CALCULATOR",
+    "tools_sec04_h": "Compare Two Districts Across Years",
+    "tools_sec04_caption": "Pick two districts, set the year range — see the point difference",
+    "calc_district_1": "1st District:",
+    "calc_district_2": "2nd District:",
+    "calc_year_range": "Year range:",
+
+    # Methodology
+    "method_badge": "METHODOLOGY · TRANSPARENCY",
+    "method_title": "Methodology & Technical Details",
+    "method_lead": "Data source · Bootstrap simulation · Statistical methods · Formulas · Limitations",
+    "method_sec01_no": "01 · DATA SOURCE",
+    "method_sec01_h": "Data Source",
+    "method_district_data_title": "DISTRICT-LEVEL DATA",
+    "method_district_data_text": f"📌 Source: İZSU Open Data Portal (2020–{END_YEAR}) + Bootstrap ({START_YEAR}–2019)<br>📌 Scope: 11 central districts<br>📌 Period: {START_YEAR}–{END_YEAR} ({len(YEARS)} years)<br>📌 Variables: Annual consumption (m³), subscriber count",
+    "method_system_data_title": "SYSTEM-WIDE DATA",
+    "method_system_data_text": f"📌 Source: İZSU Open Data Portal (2020–{END_YEAR}) + Bootstrap ({START_YEAR}–2019)<br>📌 Scope: 3 dams (Tahtalı, Balçova, Gördes)<br>📌 Period: {START_YEAR}–{END_YEAR} ({len(YEARS)} years)<br>📌 Variables: Fill, production, loss rate",
+    "method_sec02_no": "02 · BOOTSTRAP SIMULATION",
+    "method_sec02_h": "Block Bootstrap Simulation",
+    "method_why_title": "🤔 WHY WAS ADDITIONAL DATA GENERATED?",
+    "method_why_text": f"İZSU's official open data covers only the period <b style=\"color:white\">2020–{END_YEAR}</b> — that is, only <b style=\"color:white\">4 years</b>. This duration is insufficient for the Mann-Kendall trend test. Therefore, 10 years of data for <b style=\"color:white\">2010–2019</b> was generated using scientific methods.",
+    "method_block_title": "🎲 WHAT IS BLOCK BOOTSTRAP?",
+    "method_block_text": "Divide the actual data into small blocks → shuffle the blocks according to statistical rules to create new series → use the results as if they were historical data. It is a standard statistical technique widely used in weather forecasting, finance, and medical research.",
+    "method_trust_title": "✅ CAN THE DATA BE TRUSTED?",
+    "method_trust_text": "The generated series is not random — it is consistent with İzmir's actual water history:<br>• 2013–2015: Gördes and Tahtalı drought period<br>• 2020: Pandemic-era household consumption increase<br>• Population growth aligns with TÜİK İzmir data",
+    "method_trans_title": "🔍 TRANSPARENCY",
+    "method_trans_text": f"Across the site:<br>🔬 <b style=\"color:#c39bd3;\">Purple = Bootstrap simulation (2010–2019)</b><br>✅ <b style=\"color:#2ca02c;\">Green = İZSU Real Data (2020–{END_YEAR})</b><br><br>Source code is openly accessible on GitHub. All analyses were performed with Python; results are reproducible.",
+    "method_sec03_no": "03 · RISK INDEX",
+    "method_sec03_h": "Water Security Risk Index (WSRI)",
+    "method_step1_t": "📐 Step 1 — Min-Max Normalization",
+    "method_step1_text": "**What does it do?** Brings indicators in different units (m³, %, ratio) onto the same 0–1 scale.\n\n**Formula:** Z(x) = (x − x_min) / (x_max − x_min)\n\n**Application in our data:** Per-subscriber consumption and loss rate are in different units. They were rescaled to 0–1 with Min-Max; higher value = higher risk.",
+    "method_step1_caption": "Result: 0 = lowest risk · 1 = highest risk · all indicators on the same scale",
+    "method_step2_t": "📐 Step 2 — Entropy Weighting",
+    "method_step2_text": "**What does it do?** Automatically computes each indicator's weight based on its variability across districts. Eliminates subjective judgment.\n\n**Formula:** E_j = −(1/ln n) × Σ p_ij × ln(p_ij) → w_j = (1−E_j) / Σ(1−E_j)\n\n**Application in our data:** Water loss rate received the highest weight (33%) because it shows the most variability.",
+    "method_step2_caption": "The indicator that varies most across districts → highest weight",
+    "method_step3_t": "📐 Step 3 — Composite Risk Score / WSRI",
+    "method_step3_text": "**What does it do?** Multiplies normalized indicators by entropy weights and sums them. The result is on a 0–100 scale.\n\n**Formula:** Risk(i,t) = Σ w_j × Z_j(i,t) × 100\n\n**Thresholds:** 0–45 Low · 46–59 Medium · 60+ High Risk",
+    "method_step3_caption": "0–100 range · &lt;46 Low · 46–60 Medium · ≥60 High Risk",
+    "method_weights_title": f"COMPUTED WEIGHTS (FROM {len(YEARS)}-YEAR DATA)",
+    "weight_demand_label": "Demand (Per Subscriber)",
+    "weight_growth_label": "Consumption Growth",
+    "weight_supply_label": "Supply Constraint",
+    "weight_loss_label": "Loss Rate",
+    "method_sec04_no": "04 · TEMPORAL ANALYSIS",
+    "method_sec04_h": "Mann-Kendall Trend Test & Sen's Slope",
+    "method_mk_t": "📐 Mann-Kendall Trend Test",
+    "method_mk_text": f"**What does it do?** Tests whether a data series follows a monotonic trend. Does not require normal distribution.\n\n**Formula:**\n> S = Σ (j>i) sgn(x_j − x_i)\n> τ = S / [n×(n−1) / 2]\n\n**Application in our data:** Computed for the {len(YEARS)}-year series. Districts with τ < 0 (Bornova, Çiğli, Bayraklı) showed a decreasing risk trend.",
+    "method_mk_caption": "τ > 0 increasing · τ < 0 decreasing · p < 0.05 statistical significance",
+    "method_sen_t": "📐 Sen's Slope",
+    "method_sen_text": "**What does it do?** Computes the trend's annual rate of change using the median — unaffected by outliers.\n\n**Formula:** β = median[(x_j − x_i) / (j − i)], j > i\n\n**Application in our data:** For Bornova, β ≈ −0.38 points/year — risk decreased by an average of 0.38 points each year.",
+    "method_sen_caption": "β = average annual change magnitude (points/year)",
+    "method_sec05_no": "05 · SPATIAL ANALYSIS",
+    "method_sec05_h": "Moran's I & LISA",
+    "method_moran_t": "📐 Global Moran's I",
+    "method_moran_text": "**What does it do?** Measures whether risk values cluster spatially.\n\n**Formula:** I = (n/S₀) × [Σᵢ Σⱼ wᵢⱼ(xᵢ−x̄)(xⱼ−x̄)] / Σᵢ(xᵢ−x̄)²\n\n**Application in our data:** I = −0.2817 (negative). Risky districts are surrounded by low-risk neighbors — there is no central \"bad zone\".",
+    "method_moran_caption": "I > 0 clustering · I < 0 dispersed",
+    "method_lisa_t": "📐 Local Moran's I — LISA",
+    "method_lisa_text": "**What does it do?** Produces a separate spatial score for each district. While Global Moran gives a \"general picture\", LISA determines each district's HH/LL/HL/LH class.\n\n**Formula:** Iᵢ = zᵢ × Σⱼ wᵢⱼ × zⱼ\n\n**Application in our data:** Gaziemir → HL (isolated hotspot). Karşıyaka → LH (surrounding pressure). 999 permutation test was applied.",
+    "method_lisa_caption": "HH/LL = cluster · HL/LH = spatial outlier",
+    "method_sec06_no": "06 · PROJECTION MODEL",
+    "method_sec06_h": "2030 Projection Model",
+    "method_cagr_t": "📐 CAGR-Based Projection Model",
+    "method_cagr_text": f"**What does it do?** Computes each district's historical subscriber growth rate (CAGR) and extends it to 2030 using 3 different scenario coefficients.\n\n**Formula:**\n> CAGR = (Subscribers₂₀₂₃ / Subscribers₂₀₁₀)^(1/13) − 1\n> Risk(i,t) = Risk(i,2023) × (1 + CAGRᵢ × k)^(t−2023)\n\n**k values:** 0.5 = Optimistic · 1.0 = Base · 1.5 = Pessimistic\n\n**Application in our data:** The {len(YEARS)}-year series made the CAGR calculation reliable. Results were bounded between 0–100.",
+    "method_cagr_caption": "k=0.5 Optimistic · k=1.0 Base · k=1.5 Pessimistic · CAGR from 14-year series",
+    "method_sec07_no": "07 · LIMITATIONS",
+    "method_sec07_h": "Limitations & Transparency",
+    "limit_1_t": "🔬 BOOTSTRAP CONSTRAINT",
+    "limit_1_text": f"{START_YEAR}–2019 data is synthetic. Since real historical İZSU data is unavailable, interpretations of this period are indicative.",
+    "limit_2_t": "⚠️ SPATIAL CONSTRAINT",
+    "limit_2_text": "With n=11 districts, Moran's I has limited statistical power. The neighborhood matrix was constructed using geographic boundaries.",
+    "limit_3_t": "⚠️ FORECAST CONSTRAINT",
+    "limit_3_text": "The 2030 projection relies on a linear growth assumption. Climate change and policy effects are not included in the model.",
+    "limit_4_t": "✅ REPRODUCIBILITY",
+    "limit_4_text": "All analyses were done with Python. Source code is openly available on GitHub. Bootstrap is reproducible with a fixed random seed.",
+    "method_sec08_no": "08 · FAQ",
+    "method_sec08_h": "Frequently Asked Questions",
+}
+
+EN["advice_low_items"] = [
+    "Maintain your existing water-saving habits.",
+    "Monitor per-subscriber consumption annually — catch sudden spikes early.",
+    "Track risk increases in neighboring districts; regional effects can spill over.",
+    "Optimize green-area irrigation and industrial consumption."
+]
+EN["advice_med_items"] = [
+    "Launch water conservation campaigns for households and businesses.",
+    "Install smart meter systems for infrastructure leak detection.",
+    "Identify high-consumption subscribers and run awareness programs.",
+    "Encourage rainwater harvesting systems.",
+    "Initiate a coordinated inspection program with İZSU."
+]
+EN["advice_high_items"] = [
+    "Create an emergency action plan with İZSU — implement short-term restriction measures.",
+    "Audit high-consumption industrial and commercial sectors.",
+    "Increase recycled water use; install gray water systems.",
+    "Investigate alternative water sources (groundwater, rainwater harvesting).",
+    "Share the urgency with the public through awareness campaigns."
+]
+EN["faq"] = [
+    ("What is bootstrap simulation, and why was it used?", f"İZSU's official open data covers only the period 2020–{END_YEAR} (4 years). This sample is insufficient for the Mann-Kendall trend test. The block bootstrap method was used to generate a series for {START_YEAR}–2019 consistent with İzmir's hydrological history. This enabled n={len(YEARS)}-year analyses instead of n=4."),
+    ("Is bootstrap data considered real?", f"No — the {START_YEAR}–2019 data is synthetic; it is not real İZSU measurements. However, it was calibrated to match İzmir's drought calendar and TÜİK population growth. It is clearly marked in purple across the site."),
+    ("What does the risk score mean?", "The 0–100 score is the entropy-weighted average of 4 water security indicators. Thresholds: 0–45 Low Risk · 46–59 Medium Risk · 60+ High Risk. A higher score means water security in that district is more fragile."),
+    ("Why were 4 indicators chosen?", "Per-subscriber consumption, consumption growth rate, supply constraint, and water loss rate — these are variables annually available in İZSU's open data and directly affecting water security. Water quality and climate data were not accessible, so they were not included in the model."),
+    ("Why was entropy weighting chosen?", "It prevents the researcher from assigning subjective weights. The data's own distribution determines the weights — the indicator that varies most across districts gets the highest weight. It is a literature-accepted objective approach."),
+    ("Why was the 2030 projection split into 3 scenarios?", "A single projection hides uncertainty. Optimistic (k=0.5) represents conservation policies, Base (k=1.0) the current trend, Pessimistic (k=1.5) rapid urbanization and drought pressure."),
+    (f"Is the Mann-Kendall test reliable with {len(YEARS)}-year data?", f"With n={len(YEARS)}, Mann-Kendall's statistical power is high. Since the 2010–2019 period is bootstrap-simulated, results should be validated when real data become available; this limitation is transparently noted."),
+    ("How was the neighborhood matrix determined?", "İzmir's 11 central districts were mapped using their geographic boundaries to determine which districts physically share borders. The matrix's symmetry was verified and row-normalized."),
+]
+
+# ── t() fonksiyonu / function ──────────────────────────────────
+def t(key, **kwargs):
+    """Return translation for current language. Optionally format with kwargs."""
+    d = EN if st.session_state.dil == "en" else TR
+    val = d.get(key, TR.get(key, key))
+    if kwargs and isinstance(val, str):
+        try:
+            return val.format(**kwargs)
+        except Exception:
+            return val
+    return val
+
+
+# ═══════════════════════════════════════════════════════════════
+# CSS / Theme
+# ═══════════════════════════════════════════════════════════════
 st.markdown("""
 <style>
 section[data-testid="stSidebar"] { width: 280px !important; min-width: 280px !important; }
@@ -68,7 +1036,6 @@ hr { border-color: rgba(56,209,227,0.2) !important; }
 .risk-med { color: #ff7f0e; font-weight: 600; }
 .risk-high { color: #d62728; font-weight: 600; }
 
-/* ── Arama input — şeffaf, arka renkle uyumlu */
 [data-testid="stTextInput"] input {
     background: rgba(4,18,50,0.6) !important;
     border: 1px solid rgba(56,209,227,0.4) !important;
@@ -93,7 +1060,6 @@ hr { border-color: rgba(56,209,227,0.2) !important; }
     box-shadow: 0 0 14px rgba(56,209,227,0.25) !important;
 }
 
-/* ── TÜM butonlar — şeffaf mavi, kesinlikle siyah değil */
 button[kind="secondary"],
 button[kind="primary"],
 .stButton > button,
@@ -125,7 +1091,6 @@ div[data-testid="stButton"] > button:hover,
     color: #ffffff !important;
     box-shadow: 0 6px 20px rgba(0,0,0,0.4), 0 0 16px rgba(56,209,227,0.22) !important;
 }
-/* p etiketleri buton içinde beyaz */
 [class*="stButton"] button p,
 div[data-testid="stButton"] > button p,
 [data-testid="stBaseButton-secondary"] p,
@@ -150,10 +1115,21 @@ div[data-testid="stSlider"] [data-baseweb="slider"] > div > div:first-child { ba
 div[data-testid="stSlider"] [data-baseweb="slider"] > div > div:nth-child(2) { background: #38d1e3 !important; height: 5px !important; }
 div[data-testid="stSlider"] [role="slider"] { background: #38d1e3 !important; border: 3px solid white !important; box-shadow: 0 0 14px rgba(56,209,227,0.85) !important; width: 20px !important; height: 20px !important; }
 div[data-testid="stSlider"] [data-baseweb="tooltip"] div { background: rgba(10,30,70,0.95) !important; border: 1px solid #38d1e3 !important; color: #38d1e3 !important; font-weight: 700 !important; border-radius: 6px !important; }
+
+/* Aktif dil butonu */
+.active-lang button {
+    background: linear-gradient(135deg,rgba(56,209,227,0.30),rgba(10,50,120,0.65)) !important;
+    border-color: #38d1e3 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 16px rgba(56,209,227,0.50) !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
 
+# ═══════════════════════════════════════════════════════════════
+# DATA LOADING
+# ═══════════════════════════════════════════════════════════════
 @st.cache_data
 def load_data():
     ilce_raw = pd.read_excel("ilce.xlsx", header=None)
@@ -177,12 +1153,12 @@ def load_data():
     rows = []
     for ilce in tuketim["İlçe"]:
         for yil in YEARS:
-            t = tuketim[tuketim["İlçe"]==ilce][f"T{yil}"].values[0]
+            t_val = tuketim[tuketim["İlçe"]==ilce][f"T{yil}"].values[0]
             a = abone[abone["İlçe"]==ilce][f"A{yil}"].values[0]
             rows.append({
                 "İlçe": ilce, "Yıl": yil,
-                "Tüketim_m3": t, "Abone": int(a),
-                "AbbTuketim": round(t/a, 2) if a else 0,
+                "Tüketim_m3": t_val, "Abone": int(a),
+                "AbbTuketim": round(t_val/a, 2) if a else 0,
                 "VeriTipi": "Gerçek" if yil >= 2020 else "Bootstrap"
             })
     tablo1 = pd.DataFrame(rows).sort_values(["İlçe","Yıl"]).reset_index(drop=True)
@@ -264,60 +1240,69 @@ def get_risk_color(score):
     return "#d62728"
 
 def get_risk_label(score):
-    if score < 40: return "Düşük Risk"
-    if score < 70: return "Orta Risk"
-    return "Yüksek Risk"
+    if score < 40: return t("risk_low")
+    if score < 70: return t("risk_med")
+    return t("risk_high")
 
 def sinif_str(s):
-    if s >= 60: return "Yüksek Risk"
-    if s >= 46: return "Orta Risk"
-    return "Düşük Risk"
+    """Returns localized class name based on score thresholds."""
+    if s >= 60: return t("risk_high")
+    if s >= 46: return t("risk_med")
+    return t("risk_low")
 
 def sinif_renk(s):
     if s >= 60: return "#d62728"
     if s >= 46: return "#ff7f0e"
     return "#2ca02c"
 
-def get_recommendation(ilce, score, sinif):
-    sinif_s = str(sinif)
-    if sinif_s == "Düşük Risk":
+
+def get_recommendation(ilce, score):
+    """Returns localized recommendation dict."""
+    if score >= 60:
+        cls = "high"
+    elif score >= 46:
+        cls = "med"
+    else:
+        cls = "low"
+    if cls == "low":
         return {
-            "durum": "✅ İyi durumdasınız — koruyucu önlemler alın",
+            "durum": t("advice_low_status"),
             "renk": "#2ca02c",
-            "mesaj": f"{ilce} ilçesi şu an düşük risk kategorisinde. Bu olumlu tabloyu korumak için:",
-            "oneri": ["Mevcut su tasarrufu alışkanlıklarınızı sürdürün.",
-                      "Abone başına tüketimi yıllık izleyin — ani artışları erkenden fark edin.",
-                      "Komşu ilçelerdeki risk artışlarını takip edin, bölgesel etkiler olabilir.",
-                      "Yeşil alan sulama ve endüstriyel tüketimi optimize edin."],
-            "gelecek": "Mevcut gidişat devam ederse 2030'ta da düşük risk bekleniyor."
+            "mesaj": (
+                f"{ilce} ilçesi şu an düşük risk kategorisinde. Bu olumlu tabloyu korumak için:"
+                if st.session_state.dil == "tr"
+                else f"{ilce} is currently in the low-risk category. To preserve this positive picture:"
+            ),
+            "oneri": t("advice_low_items"),
+            "gelecek": t("advice_low_future"),
         }
-    elif sinif_s == "Orta Risk":
+    elif cls == "med":
         return {
-            "durum": "⚠️ Dikkat gerektiriyor — somut adımlar atılmalı",
+            "durum": t("advice_med_status"),
             "renk": "#ff7f0e",
-            "mesaj": f"{ilce} ilçesi orta risk bandında. Önlem alınmazsa yüksek riske geçebilir:",
-            "oneri": ["Hanelere ve işyerlerine yönelik su tasarrufu kampanyaları başlatın.",
-                      "Altyapı sızıntı tespiti için akıllı sayaç sistemleri kurun.",
-                      "Yüksek tüketen aboneleri belirleyip bilinçlendirme programları uygulayın.",
-                      "Yağmur suyu toplama sistemlerini teşvik edin.",
-                      "İZSU ile koordineli denetim programı başlatın."],
-            "gelecek": "Kötümser senaryoda 2030'ta yüksek riske geçme ihtimali var."
+            "mesaj": (
+                f"{ilce} ilçesi orta risk bandında. Önlem alınmazsa yüksek riske geçebilir:"
+                if st.session_state.dil == "tr"
+                else f"{ilce} is in the medium-risk band. Without action, it may move to high risk:"
+            ),
+            "oneri": t("advice_med_items"),
+            "gelecek": t("advice_med_future"),
         }
     else:
         return {
-            "durum": "🚨 Yüksek risk — acil önlem gerekiyor",
+            "durum": t("advice_high_status"),
             "renk": "#d62728",
-            "mesaj": f"{ilce} ilçesi yüksek risk kategorisinde. Acil müdahale şart:",
-            "oneri": ["İZSU ile acil eylem planı oluşturun — kısa vadeli kısıtlama önlemleri alın.",
-                      "Yüksek tüketen sanayi ve ticari sektörleri denetleyin.",
-                      "Geri dönüştürülmüş su kullanımını artırın, gri su sistemleri kurun.",
-                      "Alternatif su kaynakları (yer altı suyu, yağmur hasadı) araştırın.",
-                      "Halk bilgilendirme kampanyasıyla aciliyeti kamuoyuyla paylaşın."],
-            "gelecek": "Önlem alınmazsa 2030'ta risk skoru kritik seviyelere ulaşabilir."
+            "mesaj": (
+                f"{ilce} ilçesi yüksek risk kategorisinde. Acil müdahale şart:"
+                if st.session_state.dil == "tr"
+                else f"{ilce} is in the high-risk category. Urgent action is essential:"
+            ),
+            "oneri": t("advice_high_items"),
+            "gelecek": t("advice_high_future"),
         }
 
 
-# ── Veri yükle
+# ── Load data
 try:
     tablo1, tablo2, abone_df = load_data()
     risk_df, W = compute_risk(tablo1, tablo2)
@@ -328,26 +1313,25 @@ except Exception as e:
     st.markdown(f"""
     <div style="text-align:center;padding:4rem 2rem;">
         <div style="font-size:4rem;margin-bottom:1rem;">💧</div>
-        <div style="color:#38d1e3;font-size:1.4rem;font-weight:700;margin-bottom:0.5rem;">Veri Yüklenemedi</div>
+        <div style="color:#38d1e3;font-size:1.4rem;font-weight:700;margin-bottom:0.5rem;">{t('data_load_error_title')}</div>
         <div style="color:#a8d8f0;font-size:0.9rem;margin-bottom:1.5rem;max-width:400px;display:inline-block;line-height:1.6;">
-            Veri dosyaları bulunamadı veya okunamadı.<br>ilce.xlsx ve baraj.xlsx dosyalarının repoda olduğundan emin olun.
+            {t('data_load_error_msg')}
         </div>
         <div style="background:rgba(214,39,40,0.1);border:1px solid rgba(214,39,40,0.3);border-radius:10px;padding:0.8rem 1.2rem;display:inline-block;">
-            <span style="color:#d62728;font-size:0.82rem;font-family:monospace;">Hata: {e}</span>
+            <span style="color:#d62728;font-size:0.82rem;font-family:monospace;">{t('data_load_error_label')}: {e}</span>
         </div>
     </div>""", unsafe_allow_html=True)
 
 if data_loaded:
 
-    if "secili_sayfa" not in st.session_state:
-        st.session_state.secili_sayfa = "🏠 Ana Sayfa"
-
-    # ── Başlık
+    # ═══════════════════════════════════════════════════════════════
+    # HEADER + DİL TOGGLE
+    # ═══════════════════════════════════════════════════════════════
     st.markdown(f"""
     <div style="text-align:center;padding:8px 0 16px 0;position:relative;">
         <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);
                     color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.9;">
-            Veri: İZSU + Bootstrap Simülasyonu<br>11 Merkez İlçe · Entropy-WSRI
+            {t('data_source_short')}<br>{t('scope_short')}
         </div>
         <div style="display:inline-flex;align-items:center;gap:20px;">
             <span style="font-size:4.2rem;line-height:1;filter:drop-shadow(0 0 16px rgba(56,209,227,0.6));">💧</span>
@@ -356,7 +1340,7 @@ if data_loaded:
                             text-shadow:0 0 24px rgba(56,209,227,0.20);">İzmiRisk</div>
                 <div style="color:#38d1e3;font-size:0.85rem;letter-spacing:3px;
                             text-transform:uppercase;margin-top:6px;font-weight:600;">
-                    Su Güvenliği Risk Endeksi · İzmir · {START_YEAR}–2030
+                    {t('app_subtitle')}
                 </div>
             </div>
         </div>
@@ -364,82 +1348,92 @@ if data_loaded:
     <hr style="border-color:rgba(56,209,227,0.2);margin:0 0 0.6rem 0;">
     """, unsafe_allow_html=True)
 
-    # ── Arama satırı
-    _s1, _s2, _s3 = st.columns([3.5, 1.8, 0.5])
-    with _s2:
+    # ── DİL TOGGLE + ARAMA satırı
+    _l1, _l2, _l3, _l4, _l5 = st.columns([2.6, 0.8, 0.8, 1.8, 0.5])
+    with _l2:
+        _is_tr = st.session_state.dil == "tr"
+        st.markdown(f'<div class="{"active-lang" if _is_tr else ""}">', unsafe_allow_html=True)
+        if st.button(t("lang_tr"), key="btn_lang_tr", use_container_width=True):
+            st.session_state.dil = "tr"
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+    with _l3:
+        _is_en = st.session_state.dil == "en"
+        st.markdown(f'<div class="{"active-lang" if _is_en else ""}">', unsafe_allow_html=True)
+        if st.button(t("lang_en"), key="btn_lang_en", use_container_width=True):
+            st.session_state.dil = "en"
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+    with _l4:
         _arama_girdi = st.text_input(
             "", key="site_arama", label_visibility="collapsed",
-            placeholder="🔍 Ara: baraj, risk, 2030..."
+            placeholder=t("search_placeholder")
         )
-    with _s3:
+    with _l5:
         _ara_btn = st.button("🔍", key="arama_btn", use_container_width=True)
 
-    # ── Arama fonksiyonu — kapsamlı kelime eşleştirmesi
+    # ── Arama sözlüğü (TR + EN keywords)
     ARAMA_SOZLUK = {
-        # EDA sayfası kelimeleri
-        "baraj": "📊 EDA Analizi", "tahtalı": "📊 EDA Analizi", "tahtali": "📊 EDA Analizi",
-        "balçova": "📊 EDA Analizi", "balcova": "📊 EDA Analizi",
-        "gördes": "📊 EDA Analizi", "gordes": "📊 EDA Analizi",
-        "doluluk": "📊 EDA Analizi", "tüketim": "📊 EDA Analizi",
-        "arz": "📊 EDA Analizi", "talep": "📊 EDA Analizi",
-        "kayıp": "📊 EDA Analizi", "kayip": "📊 EDA Analizi",
-        "eda": "📊 EDA Analizi", "analiz": "📊 EDA Analizi",
-        "keşif": "📊 EDA Analizi", "veri": "📊 EDA Analizi",
-        "pandemi": "📊 EDA Analizi", "kriz": "📊 EDA Analizi",
-        "üretim": "📊 EDA Analizi", "uretim": "📊 EDA Analizi",
-        "sisteme giren": "📊 EDA Analizi",
-        # Risk sayfası
-        "risk": "📈 Risk Endeksi", "wsri": "📈 Risk Endeksi",
-        "entropy": "📈 Risk Endeksi", "endeks": "📈 Risk Endeksi",
-        "skor": "📈 Risk Endeksi", "puan": "📈 Risk Endeksi",
-        "bornova": "📈 Risk Endeksi", "çiğli": "📈 Risk Endeksi", "cigli": "📈 Risk Endeksi",
-        "bayraklı": "📈 Risk Endeksi", "bayrakli": "📈 Risk Endeksi",
-        "buca": "📈 Risk Endeksi", "gaziemir": "📈 Risk Endeksi",
-        "karşıyaka": "📈 Risk Endeksi", "karsiyaka": "📈 Risk Endeksi",
-        "konak": "📈 Risk Endeksi", "karabağlar": "📈 Risk Endeksi", "karabaglar": "📈 Risk Endeksi",
-        "narlıdere": "📈 Risk Endeksi", "narlidere": "📈 Risk Endeksi",
-        "güzelbahçe": "📈 Risk Endeksi", "guzelbahce": "📈 Risk Endeksi",
-        "ilçe": "📈 Risk Endeksi", "trend": "📈 Risk Endeksi",
-        # 2030 sayfası
-        "2030": "🔮 2030 Tahmini", "projeksiyon": "🔮 2030 Tahmini",
-        "senaryo": "🔮 2030 Tahmini", "tahmin": "🔮 2030 Tahmini",
-        "cagr": "🔮 2030 Tahmini", "iyimser": "🔮 2030 Tahmini",
-        "kötümser": "🔮 2030 Tahmini", "kotumser": "🔮 2030 Tahmini",
-        "baz senaryo": "🔮 2030 Tahmini",
-        # Harita
-        "harita": "Izmir Risk Haritasi", "map": "Izmir Risk Haritasi",
-        "koordinat": "Izmir Risk Haritasi", "konum": "Izmir Risk Haritasi",
-        # Mekânsal
-        "moran": "🗺️ Mekânsal Analiz", "lisa": "🗺️ Mekânsal Analiz",
-        "mekânsal": "🗺️ Mekânsal Analiz", "mekansal": "🗺️ Mekânsal Analiz",
-        "küme": "🗺️ Mekânsal Analiz", "kume": "🗺️ Mekânsal Analiz",
-        "komşu": "🗺️ Mekânsal Analiz", "komsu": "🗺️ Mekânsal Analiz",
-        "hl": "🗺️ Mekânsal Analiz", "hh": "🗺️ Mekânsal Analiz",
-        "ll": "🗺️ Mekânsal Analiz", "lh": "🗺️ Mekânsal Analiz",
-        # Öneriler
-        "öneri": "💡 Öneriler", "oneri": "💡 Öneriler",
-        "tavsiye": "💡 Öneriler", "çözüm": "💡 Öneriler",
-        "tedbir": "💡 Öneriler", "tasarruf": "💡 Öneriler",
-        # Metodoloji
-        "metodoloji": "📐 Metodoloji", "yöntem": "📐 Metodoloji", "yontem": "📐 Metodoloji",
-        "bootstrap": "📐 Metodoloji", "mann": "📐 Metodoloji", "kendall": "📐 Metodoloji",
-        "formül": "📐 Metodoloji", "formul": "📐 Metodoloji",
-        "sen slope": "📐 Metodoloji", "normalizasyon": "📐 Metodoloji",
-        "ağırlık": "📐 Metodoloji", "agirlik": "📐 Metodoloji",
-        "sss": "📐 Metodoloji", "soru": "📐 Metodoloji",
-        "simülasyon": "📐 Metodoloji", "simulasyon": "📐 Metodoloji",
-        # Araçlar
-        "radar": "🔬 Araçlar", "simülatör": "🔬 Araçlar", "simulator": "🔬 Araçlar",
-        "araç": "🔬 Araçlar", "arac": "🔬 Araçlar",
-        "karşılaştır": "🔬 Araçlar", "karsilastir": "🔬 Araçlar",
-        "animasyon": "🔬 Araçlar", "hesapla": "🔬 Araçlar",
-        "hesaplayıcı": "🔬 Araçlar", "hesaplayici": "🔬 Araçlar",
-        "duyarlılık": "🔬 Araçlar", "duyarlilik": "🔬 Araçlar",
+        # EDA
+        "baraj": "eda", "dam": "eda", "tahtalı": "eda", "tahtali": "eda",
+        "balçova": "eda", "balcova": "eda", "gördes": "eda", "gordes": "eda",
+        "doluluk": "eda", "fill": "eda", "tüketim": "eda", "consumption": "eda",
+        "arz": "eda", "talep": "eda", "supply": "eda", "demand": "eda",
+        "kayıp": "eda", "kayip": "eda", "loss": "eda",
+        "eda": "eda", "analiz": "eda", "analysis": "eda",
+        "keşif": "eda", "exploratory": "eda",
+        "veri": "eda", "data": "eda",
+        "pandemi": "eda", "pandemic": "eda", "kriz": "eda", "crisis": "eda",
+        "üretim": "eda", "uretim": "eda", "production": "eda",
+        # Risk
+        "risk": "risk", "wsri": "risk",
+        "entropy": "risk", "endeks": "risk", "index": "risk",
+        "skor": "risk", "score": "risk", "puan": "risk",
+        "bornova": "risk", "çiğli": "risk", "cigli": "risk",
+        "bayraklı": "risk", "bayrakli": "risk",
+        "buca": "risk", "gaziemir": "risk",
+        "karşıyaka": "risk", "karsiyaka": "risk",
+        "konak": "risk", "karabağlar": "risk", "karabaglar": "risk",
+        "narlıdere": "risk", "narlidere": "risk",
+        "güzelbahçe": "risk", "guzelbahce": "risk",
+        "ilçe": "risk", "district": "risk", "trend": "risk",
+        # 2030
+        "2030": "p2030", "projeksiyon": "p2030", "projection": "p2030",
+        "senaryo": "p2030", "scenario": "p2030", "tahmin": "p2030",
+        "cagr": "p2030", "iyimser": "p2030", "optimistic": "p2030",
+        "kötümser": "p2030", "kotumser": "p2030", "pessimistic": "p2030",
+        # Map
+        "harita": "map", "map": "map", "koordinat": "map", "konum": "map", "location": "map",
+        # Spatial
+        "moran": "spatial", "lisa": "spatial",
+        "mekânsal": "spatial", "mekansal": "spatial", "spatial": "spatial",
+        "küme": "spatial", "kume": "spatial", "cluster": "spatial",
+        "komşu": "spatial", "komsu": "spatial", "neighbor": "spatial",
+        "hl": "spatial", "hh": "spatial", "ll": "spatial", "lh": "spatial",
+        # Advice
+        "öneri": "advice", "oneri": "advice", "advice": "advice",
+        "tavsiye": "advice", "recommendation": "advice",
+        "çözüm": "advice", "tedbir": "advice", "tasarruf": "advice", "conservation": "advice",
+        # Method
+        "metodoloji": "method", "yöntem": "method", "yontem": "method", "methodology": "method",
+        "bootstrap": "method", "mann": "method", "kendall": "method",
+        "formül": "method", "formul": "method", "formula": "method",
+        "sen slope": "method", "normalizasyon": "method", "normalization": "method",
+        "ağırlık": "method", "agirlik": "method", "weight": "method",
+        "sss": "method", "faq": "method", "soru": "method", "question": "method",
+        "simülasyon": "method", "simulasyon": "method", "simulation": "method",
+        # Tools
+        "radar": "tools", "simülatör": "tools", "simulator": "tools",
+        "araç": "tools", "arac": "tools", "tool": "tools",
+        "karşılaştır": "tools", "karsilastir": "tools", "compare": "tools",
+        "animasyon": "tools", "animation": "tools",
+        "hesapla": "tools", "calculate": "tools",
+        "hesaplayıcı": "tools", "hesaplayici": "tools", "calculator": "tools",
+        "duyarlılık": "tools", "duyarlilik": "tools", "sensitivity": "tools",
     }
 
     if _arama_girdi and (_ara_btn or len(_arama_girdi) > 2):
         _temiz = _arama_girdi.strip().lower()
-        _bulundu = False
         _hedef_sayfa = None
         for _k, _hedef in ARAMA_SOZLUK.items():
             if _k in _temiz:
@@ -449,13 +1443,11 @@ if data_loaded:
             if _hedef_sayfa != st.session_state.secili_sayfa:
                 st.session_state.secili_sayfa = _hedef_sayfa
                 st.rerun()
-            _bulundu = True
-        if not _bulundu:
-            with _s2:
-                st.caption("❌ Sonuç bulunamadı. Deneyin: baraj, risk, harita, 2030, simülatör, metodoloji")
+        else:
+            with _l4:
+                st.caption(t("search_no_result"))
 
     # ── Bootstrap banner
-    _banner_metin = f"{START_YEAR}–2019 verileri block bootstrap yöntemiyle İzmir kuraklık takvimi referans alınarak üretilmiştir. 2020–{END_YEAR} verileri İZSU resmi kaynağındandır."
     st.markdown(f"""
     <div style="background:linear-gradient(90deg,rgba(155,89,182,0.08),rgba(56,209,227,0.06));
                 border:1px solid rgba(155,89,182,0.25);border-radius:8px;
@@ -463,8 +1455,8 @@ if data_loaded:
                 display:flex;align-items:center;gap:12px;">
         <span style="font-size:1.2rem;">🔬</span>
         <div style="flex:1;">
-            <span class="veri-rozet">BOOTSTRAP SİMÜLASYONU</span>
-            <span style="color:#d0e8f5;font-size:0.82rem;margin-left:10px;">{_banner_metin}</span>
+            <span class="veri-rozet">{t('bootstrap_badge')}</span>
+            <span style="color:#d0e8f5;font-size:0.82rem;margin-left:10px;">{t('bootstrap_banner')}</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -472,32 +1464,34 @@ if data_loaded:
     # ── Nav butonları
     sayfa = st.session_state.secili_sayfa
     nav_items = [
-        ("🏠", "Ana Sayfa",  "🏠 Ana Sayfa"),
-        ("📊", "EDA",        "📊 EDA Analizi"),
-        ("📈", "Risk",       "📈 Risk Endeksi"),
-        ("🔮", "2030",       "🔮 2030 Tahmini"),
-        ("🗺️", "Harita",    "Izmir Risk Haritasi"),
-        ("📍", "Mekânsal",   "🗺️ Mekânsal Analiz"),
-        ("💡", "Öneriler",   "💡 Öneriler"),
-        ("📐", "Metodoloji", "📐 Metodoloji"),
-        ("🔬", "Araçlar",    "🔬 Araçlar"),
+        ("🏠", t("nav_home"),   "home"),
+        ("📊", t("nav_eda"),    "eda"),
+        ("📈", t("nav_risk"),   "risk"),
+        ("🔮", t("nav_2030"),   "p2030"),
+        ("🗺️", t("nav_map"),   "map"),
+        ("📍", t("nav_spatial"),"spatial"),
+        ("💡", t("nav_advice"), "advice"),
+        ("📐", t("nav_method"), "method"),
+        ("🔬", t("nav_tools"),  "tools"),
     ]
     nav_cols = st.columns([1,1,1,1,1,1,1,1,1])
-    for i, (emoji, label, sayfa_adi) in enumerate(nav_items):
+    for i, (emoji, label, page_key) in enumerate(nav_items):
         with nav_cols[i]:
             if st.button(f"{emoji}\n{label}", key=f"nav_{i}", use_container_width=True):
-                st.session_state.secili_sayfa = sayfa_adi
+                st.session_state.secili_sayfa = page_key
                 st.rerun()
 
     # Aktif sayfa vurgusu
     try:
-        active_idx = next(i for i,(e,l,s) in enumerate(nav_items) if s==sayfa)
+        active_idx = next(i for i,(e,l,k) in enumerate(nav_items) if k==sayfa)
     except StopIteration:
         active_idx = 0
+    # nav buttons start after lang(2) + search(1) + searchbtn(1) buttons
+    nav_btn_offset = 4
     st.markdown(f"""
     <style>
-    div[data-testid="stHorizontalBlock"] > div:nth-child({active_idx+1}) button,
-    div[data-testid="stHorizontalBlock"] > div:nth-child({active_idx+1}) [data-testid="stBaseButton-secondary"] {{
+    div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div:nth-child({active_idx+1}) button,
+    div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div:nth-child({active_idx+1}) [data-testid="stBaseButton-secondary"] {{
         background: linear-gradient(135deg,rgba(56,209,227,0.30),rgba(10,50,120,0.65)) !important;
         border-color: #38d1e3 !important; color: #ffffff !important;
         box-shadow: 0 0 18px rgba(56,209,227,0.45), 0 4px 14px rgba(0,0,0,0.4) !important;
@@ -548,9 +1542,9 @@ if data_loaded:
         </div>""", unsafe_allow_html=True)
 
     # ════════════════════════════════════════════════
-    # ANA SAYFA
+    # HOME / ANA SAYFA
     # ════════════════════════════════════════════════
-    if sayfa == "🏠 Ana Sayfa":
+    if sayfa == "home":
 
         df_son = risk_df[risk_df["Yıl"]==END_YEAR].sort_values("Risk_Skor", ascending=False)
         tahtali = tablo2[tablo2["Yıl"]==END_YEAR]["Tahtalı_Doluluk_%"].values[0]
@@ -562,16 +1556,15 @@ if data_loaded:
             <div style="display:inline-block;background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);
                         border-radius:50px;padding:6px 20px;margin-bottom:1rem;">
                 <span style="color:#38d1e3;font-size:0.8rem;letter-spacing:3px;font-weight:600;">
-                    SU GÜVENLİĞİ ANALİZİ · İZMİR · {START_YEAR}–{PRED_END_YEAR}
+                    {t('home_badge')}
                 </span>
             </div>
             <div class="wave-container"><div class="wave"></div></div>
             <h1 style="color:#ffffff;font-size:2.6rem;font-weight:800;margin:0.8rem 0 0.4rem 0;letter-spacing:-0.5px;line-height:1.2;">
-                İzmir Su Güvenliği<br><span style="color:#38d1e3;">Risk Endeksi</span>
+                {t('home_title_1')}<br><span style="color:#38d1e3;">{t('home_title_2')}</span>
             </h1>
             <p style="color:#a8d8f0;font-size:1rem;margin:0.6rem 0 0 0;max-width:600px;display:inline-block;line-height:1.6;">
-                Entropy ağırlıklı bileşik risk analizi · 11 merkez ilçe · {len(YEARS)} yıllık seri ({START_YEAR}–{END_YEAR}) ·
-                Bootstrap simülasyonu · Mann-Kendall trend testi · LISA mekânsal analizi · 2030 projeksiyonu
+                {t('home_lead')}
             </p>
             <div class="wave-container" style="margin-top:1.2rem;"><div class="wave"></div></div>
         </div>""", unsafe_allow_html=True)
@@ -585,23 +1578,23 @@ if data_loaded:
         st.markdown(f"""
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;">
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(56,209,227,0.2);border-radius:12px;padding:1.2rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Toplam Tüketim {END_YEAR}</div>
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">{t('kpi_total_consumption')}</div>
                 <div style="color:#38d1e3;font-size:2.4rem;font-weight:700;">{cnt1_val}</div>
-                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">milyon m³</div>
+                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">{t('kpi_million_m3')}</div>
                 <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
                     <div style="height:100%;width:{bar1:.0f}%;background:#38d1e3;border-radius:2px;"></div></div>
             </div>
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(214,39,40,0.3);border-radius:12px;padding:1.2rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">En Yüksek Risk Skoru</div>
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">{t('kpi_highest_risk')}</div>
                 <div style="color:#d62728;font-size:2.4rem;font-weight:700;">{cnt2_val}</div>
                 <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">BORNOVA · {get_risk_label(cnt2_val)}</div>
                 <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
                     <div style="height:100%;width:{cnt2_val:.0f}%;background:#d62728;border-radius:2px;"></div></div>
             </div>
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,127,14,0.3);border-radius:12px;padding:1.2rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Su Kayıp Oranı {END_YEAR}</div>
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">{t('kpi_loss_rate')}</div>
                 <div style="color:#ff7f0e;font-size:2.4rem;font-weight:700;">{cnt3_val}</div>
-                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">% · sistem geneli</div>
+                <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">{t('kpi_loss_subtext')}</div>
                 <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
                     <div style="height:100%;width:{bar3:.0f}%;background:#ff7f0e;border-radius:2px;"></div></div>
             </div>
@@ -610,11 +1603,11 @@ if data_loaded:
         # KPI kartlar
         k1, k2, k3, k4, k5 = st.columns(5)
         kpi_data = [
-            (k1,"🔴","#d62728","Yüksek Riskli İlçeler",["Bornova","Çiğli","Bayraklı"]),
-            (k2,"🟡","#ff7f0e","Orta Riskli İlçeler",["Buca","Gaziemir","Güzelbahçe","Karşıyaka","Narlıdere"]),
-            (k3,"🟢","#2ca02c","Düşük Riskli İlçeler",["Konak","Karabağlar","Balçova"]),
-            (k4,"💧","#38d1e3","Tahtalı Doluluk",[f"%{tahtali:.1f}",f"{END_YEAR} yılı"]),
-            (k5,"✅","#2ca02c","En Az Riskli",["Balçova","Skor: 42.7"]),
+            (k1,"🔴","#d62728",t("kpi_high_risk_districts"),["Bornova","Çiğli","Bayraklı"]),
+            (k2,"🟡","#ff7f0e",t("kpi_med_risk_districts"),["Buca","Gaziemir","Güzelbahçe","Karşıyaka","Narlıdere"]),
+            (k3,"🟢","#2ca02c",t("kpi_low_risk_districts"),["Konak","Karabağlar","Balçova"]),
+            (k4,"💧","#38d1e3",t("kpi_tahtali_fill"),[f"%{tahtali:.1f}",t("kpi_tahtali_year")]),
+            (k5,"✅","#2ca02c",t("kpi_least_risky"),["Balçova",f"{t('kpi_score_label')}: 42.7"]),
         ]
         for col, ikon, renk, baslik, satirlar in kpi_data:
             with col:
@@ -628,7 +1621,7 @@ if data_loaded:
                 </div>""", unsafe_allow_html=True)
 
         st.markdown("<div style='height:2rem'></div>", unsafe_allow_html=True)
-        sec_baslik("01 · RİSK GÖSTERGESİ", f"En Riskli 3 İlçe — {END_YEAR} Risk İbresi")
+        sec_baslik(t("sec_01_title"), t("sec_01_h"))
 
         gauge_data = [("BORNOVA",67.0,+2.3),("ÇİĞLİ",63.0,+1.8),("BAYRAKLI",60.0,-0.5)]
         gauge_col1, gauge_col2, gauge_col3 = st.columns(3)
@@ -637,7 +1630,7 @@ if data_loaded:
                 mode="gauge+number+delta", value=skor,
                 delta={"reference":skor-delta_val,"valueformat":".1f","increasing":{"color":"#d62728"},"decreasing":{"color":"#2ca02c"}},
                 number={"font":{"size":32,"color":"white"},"valueformat":".1f"},
-                title={"text":f"<b style='font-size:15px'>{ilce_adi}</b><br><span style='font-size:11px;color:#d62728'>Yüksek Risk</span>","font":{"size":14,"color":"white"}},
+                title={"text":f"<b style='font-size:15px'>{ilce_adi}</b><br><span style='font-size:11px;color:#d62728'>{t('risk_high')}</span>","font":{"size":14,"color":"white"}},
                 gauge={"axis":{"range":[0,100],"tickwidth":1,"tickcolor":"rgba(255,255,255,0.3)","tickfont":{"color":"rgba(255,255,255,0.5)","size":9}},
                        "bar":{"color":"#d62728","thickness":0.3},
                        "bgcolor":"rgba(255,255,255,0.03)","borderwidth":1,"bordercolor":"rgba(255,255,255,0.15)",
@@ -649,7 +1642,7 @@ if data_loaded:
                 st.plotly_chart(fig_gauge, use_container_width=True, key=f"gauge_{ilce_adi}")
 
         st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
-        sec_baslik("02 · RİSK ANALİZİ", f"{END_YEAR} Yılı İlçe Risk Sıralaması & Ağırlık Dağılımı")
+        sec_baslik(t("sec_02_title"), t("sec_02_h"))
 
         col1, col2 = st.columns([3,2])
         with col1:
@@ -661,109 +1654,91 @@ if data_loaded:
             fig=go.Figure(go.Bar(x=skorlar,y=ilce_adlari,orientation="h",
                 marker=dict(color=renkler,line=dict(color="rgba(255,255,255,0.1)",width=0.5)),
                 text=[f"{s:.0f}" for s in skorlar],textposition="outside",textfont=dict(color="white",size=11),
-                hovertemplate="<b>%{y}</b><br>Risk Skoru: %{x:.1f}<extra></extra>"))
-            fig.add_vline(x=46,line_dash="dot",line_color="#ff7f0e",line_width=1.5,annotation_text="Orta Risk Eşiği (46)",annotation_font_color="#ff7f0e",annotation_font_size=10)
-            fig.add_vline(x=60,line_dash="dot",line_color="#d62728",line_width=1.5,annotation_text="Yüksek Risk Eşiği (60)",annotation_font_color="#d62728",annotation_font_size=10)
+                hovertemplate="<b>%{y}</b><br>"+t("risk_score")+": %{x:.1f}<extra></extra>"))
+            fig.add_vline(x=46,line_dash="dot",line_color="#ff7f0e",line_width=1.5,annotation_text=t("risk_threshold_med"),annotation_font_color="#ff7f0e",annotation_font_size=10)
+            fig.add_vline(x=60,line_dash="dot",line_color="#d62728",line_width=1.5,annotation_text=t("risk_threshold_high"),annotation_font_color="#d62728",annotation_font_size=10)
             fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=420,margin=dict(t=10,b=10,l=10,r=80),
-                xaxis=dict(range=[0,80],gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),title="Risk Skoru (0–100)",title_font=dict(color="#a8d8f0")),
+                xaxis=dict(range=[0,80],gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),title=t("risk_score_axis"),title_font=dict(color="#a8d8f0")),
                 yaxis=dict(autorange="reversed",tickfont=dict(color="white",size=11)))
             st.plotly_chart(fig, use_container_width=True, key="bar_risk_02")
 
         with col2:
-            pie_labels=["Su Kayıp Oranı","Kişi Başı Tüketim","Arz Kısıtı","Tüketim Artış Oranı"]
+            pie_labels=[t("weight_loss_rate"),t("weight_per_capita"),t("weight_supply_constraint"),t("weight_growth_rate")]
             pie_values=[33.0,31.6,23.8,11.6]
             pie_colors=["#1a3a6b","#2166ac","#4393c3","#92c5de"]
             fig2=go.Figure(go.Pie(labels=pie_labels,values=pie_values,hole=0.52,
                 marker=dict(colors=pie_colors,line=dict(color="rgba(255,255,255,0.15)",width=1.5)),
                 textinfo="percent+label",textfont=dict(color="white",size=11),
-                hovertemplate="<b>%{label}</b><br>Ağırlık: %{value}%<extra></extra>",sort=False))
+                hovertemplate="<b>%{label}</b><br>%{value}%<extra></extra>",sort=False))
             fig2.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=340,margin=dict(t=20,b=10,l=10,r=10),
                 showlegend=True,legend=dict(font=dict(color="white",size=10),bgcolor="rgba(0,0,0,0)",orientation="v",x=1.0,y=0.5),
-                annotations=[dict(text="Entropy<br>Ağırlıkları",x=0.5,y=0.5,font=dict(size=12,color="white"),showarrow=False)])
+                annotations=[dict(text=t("entropy_weights_label"),x=0.5,y=0.5,font=dict(size=12,color="white"),showarrow=False)])
             st.plotly_chart(fig2, use_container_width=True, key="pie_entropy_02")
             st.markdown(f"""
             <div style="background:rgba(56,209,227,0.08);border:1px solid rgba(56,209,227,0.2);border-radius:8px;padding:0.8rem 1rem;margin-top:0.4rem;">
-                <div style="color:#38d1e3;font-size:0.75rem;font-weight:600;letter-spacing:1px;margin-bottom:6px;">KAYNAK & YÖNTEM</div>
+                <div style="color:#38d1e3;font-size:0.75rem;font-weight:600;letter-spacing:1px;margin-bottom:6px;">{t('source_method_title')}</div>
                 <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">
-                    📌 Veri: İZSU + Bootstrap simülasyonu<br>
-                    📌 Kapsam: {START_YEAR}–{END_YEAR} · 11 İlçe · {len(YEARS)} yıl<br>
-                    📌 Yöntem: Min-Max + Entropy + WSRI<br>
-                    📌 Analiz: Mann-Kendall · LISA · CAGR
+                    📌 {t('source_data')}<br>
+                    📌 {t('source_scope')}<br>
+                    📌 {t('source_method')}<br>
+                    📌 {t('source_analysis')}
                 </div>
             </div>""", unsafe_allow_html=True)
 
         st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
         wsri_ort = sum([67,63,60,57,54,51,49,47,46,43,42]) / 11
-        sec_baslik("03 · KÜRESEL BAĞLAM", "İzmir Dünya Genelinde Nerede?")
+        sec_baslik(t("sec_03_title"), t("sec_03_h"))
         st.markdown(f"""
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:0.8rem;">
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(214,39,40,0.3);border-radius:10px;padding:0.9rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Su Stresi Altındaki Nüfus</div>
+                <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">{t('global_pop_water_stress')}</div>
                 <div style="color:#d62728;font-size:1.6rem;font-weight:700;">%40</div>
-                <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">Dünya nüfusunun %40'ı yılın en az bir ayında ciddi su stresiyle karşılaşıyor.<br><span style="color:#6a8fa8;">WRI Aqueduct 2023</span></div>
+                <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">{t('global_pop_water_stress_text')}<br><span style="color:#6a8fa8;">WRI Aqueduct 2023</span></div>
             </div>
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,127,14,0.3);border-radius:10px;padding:0.9rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Akdeniz Havzası Su Açığı</div>
+                <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">{t('global_med_basin')}</div>
                 <div style="color:#ff7f0e;font-size:1.6rem;font-weight:700;">−20%</div>
-                <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">Akdeniz havzasında yıllık yağış 2050'ye kadar %20 azalması bekleniyor. İzmir bu kuşağın merkezinde.<br><span style="color:#6a8fa8;">IPCC AR6 · 2021</span></div>
+                <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">{t('global_med_basin_text')}<br><span style="color:#6a8fa8;">IPCC AR6 · 2021</span></div>
             </div>
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(56,209,227,0.3);border-radius:10px;padding:0.9rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">İzmir WSRI Ortalaması</div>
+                <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">{t('global_izmir_wsri')}</div>
                 <div style="color:#38d1e3;font-size:1.6rem;font-weight:700;">{wsri_ort:.1f}</div>
-                <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">11 merkez ilçe ortalaması — Orta Risk bandı. 3 ilçe yüksek risk eşiğini geçmiş.<br><span style="color:#6a8fa8;">İZSU + Bu çalışma · {END_YEAR}</span></div>
+                <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">{t('global_izmir_wsri_text')}<br><span style="color:#6a8fa8;">{t('global_izmir_wsri_source')}</span></div>
             </div>
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(44,160,44,0.3);border-radius:10px;padding:0.9rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Türkiye Kişi Başı Su Potansiyeli</div>
+                <div style="color:#a8d8f0;font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">{t('global_tr_capita')}</div>
                 <div style="color:#2ca02c;font-size:1.6rem;font-weight:700;">1.346 m³</div>
-                <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">Uluslararası eşik 1.700 m³ — Türkiye "su kıtlığı" sınırına yakın.<br><span style="color:#6a8fa8;">DSİ · 2022</span></div>
+                <div style="color:#a8d8f0;font-size:0.68rem;line-height:1.5;margin-top:3px;">{t('global_tr_capita_text')}<br><span style="color:#6a8fa8;">DSİ · 2022</span></div>
             </div>
         </div>
         <div style="background:rgba(56,209,227,0.05);border:1px solid rgba(56,209,227,0.15);border-radius:8px;padding:0.7rem 1rem;margin-bottom:1.5rem;">
-            <span style="color:#38d1e3;font-size:0.75rem;font-weight:600;">📌 Kaynak notu: </span>
-            <span style="color:#a8d8f0;font-size:0.78rem;">WRI Aqueduct 2023 · IPCC AR6 (2021) · DSİ 2022 yıllık raporu · İZSU açık veri portalı.</span>
-        </div>""", unsafe_allow_html=True)
-
-        st.markdown(f"""
-        <div style="display:flex;justify-content:flex-end;gap:10px;margin-bottom:0.5rem;">
-            <button onclick="navigator.clipboard.writeText(window.location.href).then(()=>{{this.textContent='Kopyalandı!';setTimeout(()=>{{this.textContent='Linki Kopyala'}},2000)}})"
-                style="background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);color:#38d1e3;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:0.8rem;">
-                Linki Kopyala
-            </button>
-            <a href="https://twitter.com/intent/tweet?text=İzmir+Su+Güvenliği+Risk+Endeksi&url=https://izmirisk.streamlit.app"
-               target="_blank" style="background:rgba(29,161,242,0.1);border:1px solid rgba(29,161,242,0.3);color:#1da1f2;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:0.8rem;text-decoration:none;">
-                Twitter/X'te Paylaş
-            </a>
-            <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://izmirisk.streamlit.app"
-               target="_blank" style="background:rgba(0,119,181,0.1);border:1px solid rgba(0,119,181,0.3);color:#0077b5;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:0.8rem;text-decoration:none;">
-                LinkedIn'de Paylaş
-            </a>
+            <span style="color:#38d1e3;font-size:0.75rem;font-weight:600;">📌 {t('global_source_note')}</span>
+            <span style="color:#a8d8f0;font-size:0.78rem;">{t('global_source_text')}</span>
         </div>""", unsafe_allow_html=True)
 
     # ════════════════════════════════════════════════
-    # EDA ANALİZİ
+    # EDA
     # ════════════════════════════════════════════════
-    elif sayfa == "📊 EDA Analizi":
+    elif sayfa == "eda":
 
         st.markdown(f"""
         <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1.5rem;">
             <div style="display:inline-block;background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);border-radius:50px;padding:4px 16px;margin-bottom:0.8rem;">
-                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">KEŞİFSEL VERİ ANALİZİ · {START_YEAR}–{END_YEAR}</span>
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">{t('eda_badge')}</span>
             </div>
-            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">Keşifsel Veri Analizi</div>
-            <div style="color:#a8d8f0;font-size:0.9rem;">{len(YEARS)} yıllık seri ({START_YEAR}–{END_YEAR}) · Bootstrap simülasyonu ile genişletildi · Baraj dolulukları, ilçe tüketimi, arz-talep dengesi ve kayıp trendleri</div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">{t('eda_title')}</div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">{t('eda_lead')}</div>
         </div>""", unsafe_allow_html=True)
 
-        def bolum_baslik(no, tr):
+        def bolum_baslik(no, tr_text):
             st.markdown(f"""
             <div style="display:flex;align-items:center;gap:12px;margin:1.2rem 0 0.8rem 0;">
                 <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
                 <div><div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;">{no}</div>
-                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">{tr}</div></div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">{tr_text}</div></div>
             </div>""", unsafe_allow_html=True)
 
-        tab1, tab2, tab3, tab4 = st.tabs([
-            "💧 Baraj Doluluk", "🌡️ Tüketim Haritası", "⚖️ Arz-Talep", "📉 Kayıp Oranı"
-        ])
+        tab1, tab2, tab3, tab4 = st.tabs([t("tab_dam"), t("tab_consumption"), t("tab_supply_demand"), t("tab_loss")])
 
         baraj_yillar=[2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
         tahtali_v=[38,35,37,36,44,41,34,36,36,35,35,31,40,29]
@@ -771,193 +1746,72 @@ if data_loaded:
         gordes_v=[22,21,24,15,16,16,21,22,24,18,2,1,4,5]
 
         with tab1:
-            bolum_baslik("01 · BARAJ TARİHÇESİ", "İzmir'in Barajları — Tarihçe, Teknik Bilgi & Su Sistemi")
+            bolum_baslik(t("eda_dam_history_no"), t("eda_dam_history_h"))
 
-            # ── Genel giriş
-            st.markdown("""
+            st.markdown(f"""
             <div style="background:rgba(56,209,227,0.06);border:1px solid rgba(56,209,227,0.2);border-radius:10px;padding:0.9rem 1.2rem;margin-bottom:1.2rem;">
-                <div style="color:#38d1e3;font-size:0.75rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">İZMİR'İN SU SİSTEMİ HAKKINDA</div>
-                <div style="color:#d0e8f5;font-size:0.85rem;line-height:1.8;">
-                    İzmir'in içme ve kullanma suyu ihtiyacı ağırlıklı olarak üç büyük barajdan karşılanmaktadır: <b style="color:#38d1e3">Tahtalı</b>, <b style="color:#2ca02c">Balçova</b> ve <b style="color:#d62728">Gördes</b>. 
-                    Bu üç barajın toplam depolama kapasitesi yaklaşık <b style="color:white">542 milyon m³</b>'tür. İZSU (İzmir Su ve Kanalizasyon İdaresi) tarafından yönetilen sistem, 
-                    4,4 milyonu aşkın nüfusa hizmet vermektedir. İklim değişikliğinin Akdeniz havzasında yağışları azaltmasıyla birlikte bu barajların doluluk düzeyleri giderek 
-                    daha kritik bir önem kazanmaktadır.
-                </div>
+                <div style="color:#38d1e3;font-size:0.75rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">{t('eda_water_system_title')}</div>
+                <div style="color:#d0e8f5;font-size:0.85rem;line-height:1.8;">{t('eda_water_system_text')}</div>
             </div>
             """, unsafe_allow_html=True)
 
             bc1, bc2, bc3 = st.columns(3)
 
-            # ── Tahtalı Barajı
             with bc1:
-                with st.expander("💧 Tahtalı Barajı", expanded=True):
+                with st.expander("💧 Tahtalı Barajı" if st.session_state.dil=="tr" else "💧 Tahtalı Dam", expanded=True):
                     try: st.image("tahtali.jpg", use_container_width=True)
                     except: st.markdown('<div style="background:rgba(0,0,0,0.25);height:140px;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:2.5rem;">🏞️</div>', unsafe_allow_html=True)
-                    st.markdown("""
-                    <div style="color:#38d1e3;font-size:0.72rem;font-weight:600;margin:8px 0 6px 0;">
-                        📍 Menderes İlçesi, İzmir &nbsp;|&nbsp; 📅 İnşaat: 1993–1997 &nbsp;|&nbsp; 🏗️ Tip: Kaya-toprak dolgu
-                    </div>""", unsafe_allow_html=True)
+                    st.markdown(f'<div style="color:#38d1e3;font-size:0.72rem;font-weight:600;margin:8px 0 6px 0;">{t("tahtali_meta")}</div>', unsafe_allow_html=True)
+                    st.markdown(f"**{t('tahtali_h1')}**")
+                    st.markdown(t("tahtali_p1"))
+                    st.markdown(f"**{t('tahtali_h2')}**")
+                    st.markdown(t("tahtali_specs"))
+                    st.markdown(f"**{t('tahtali_h3')}**")
+                    st.markdown(t("tahtali_history"))
+                    st.markdown(f"**{t('tahtali_h4')}**")
+                    st.markdown(t("tahtali_climate"))
+                    st.markdown(f'<div style="background:rgba(56,209,227,0.1);border-left:3px solid #38d1e3;border-radius:0 6px 6px 0;padding:0.6rem 0.9rem;margin-top:0.8rem;"><span style="color:#38d1e3;font-size:0.8rem;font-weight:700;">{t("tahtali_summary")}</span></div>', unsafe_allow_html=True)
 
-                    st.markdown("**🏆 İzmir'in Ana Su Kaynağı**")
-                    st.markdown("""
-                    Tahtalı Barajı, İzmir'in tartışmasız en büyük ve en stratejik su kaynağıdır. Şehrin yıllık içme suyu ihtiyacının 
-                    yaklaşık **%60–70'ini** tek başına karşılar. Tahtalı Çayı üzerinde inşa edilen baraj, 432 km²'lik 
-                    geniş bir havzadan beslenir. Gövde yüksekliği 75 metre olan bu yapı, kaya-toprak dolgu teknolojisiyle 
-                    inşa edilmiş olup depreme dayanıklı tasarımıyla öne çıkar.
-                    """)
-
-                    st.markdown("**📊 Teknik Özellikler**")
-                    st.markdown("""
-                    - **Toplam Depolama Kapasitesi:** 309 milyon m³  
-                    - **Normal Su Kotu:** 141 metre  
-                    - **Havza Alanı:** 432 km²  
-                    - **Gövde Tipi:** Kaya-toprak dolgu, merkezi çekirdekli  
-                    - **Yıllık Ortalama Akım:** ~210 milyon m³  
-                    - **İşleten Kurum:** İZSU Genel Müdürlüğü  
-                    """)
-
-                    st.markdown("**📅 Tarihsel Süreç ve Önemli Dönüm Noktaları**")
-                    st.markdown("""
-                    Tahtalı Barajı'nın inşaatı 1993 yılında başlamış, 1997'de tamamlanmıştır. İzmir'in hızla büyüyen nüfusunu 
-                    beslemek amacıyla dönemin en büyük altyapı yatırımlarından biri olarak hayata geçirilmiştir.
-                    - **1997:** Baraj devreye girer; İzmir ilk kez yıl boyu güvenli su arzına kavuşur  
-                    - **2007–2008:** Şiddetli kuraklık; doluluk oranı kritik %20 seviyesine geriler  
-                    - **2014:** Rekor yağışlar; doluluk **%44'e** ulaşarak proje döneminin zirvesini yazar  
-                    - **2016–2018:** Normal doluluk seyri (%34–%36 bandı)  
-                    - **2020–2021:** Gördes Barajı'nın kritik seviyelere inmesiyle Tahtalı üzerindeki baskı artar  
-                    - **2022:** Yağışlı kış mevsimi sayesinde doluluk %40'a çıkar  
-                    - **2023:** Doluluk **%29'a** geriler — iklim değişikliğinin uzun vadeli etkisi belirginleşir  
-                    """)
-
-                    st.markdown("**🌡️ İklim Değişikliğinin Etkisi**")
-                    st.markdown("""
-                    Son 14 yıllık verilere bakıldığında Tahtalı Barajı'nın ortalama doluluk düzeyinin yavaş ama istikrarlı 
-                    bir düşüş trendi sergilediği görülmektedir. Akdeniz ikliminin giderek daha kurak bir karaktere bürünmesiyle 
-                    birlikte havzadaki yıllık yağış miktarı uzun dönem ortalamasının altında kalmaktadır. 
-                    IPCC'nin öngörülerine göre 2050'ye kadar bu bölgedeki yağışların **%20 daha azalması** beklenmektedir.
-                    """)
-
-                    st.markdown('<div style="background:rgba(56,209,227,0.1);border-left:3px solid #38d1e3;border-radius:0 6px 6px 0;padding:0.6rem 0.9rem;margin-top:0.8rem;"><span style="color:#38d1e3;font-size:0.8rem;font-weight:700;">2023 Doluluk: %29  |  Kapasite: 309 M m³  |  Havza: 432 km²</span></div>', unsafe_allow_html=True)
-
-            # ── Balçova Barajı
             with bc2:
-                with st.expander("🌿 Balçova Barajı", expanded=True):
+                with st.expander("🌿 Balçova Barajı" if st.session_state.dil=="tr" else "🌿 Balçova Dam", expanded=True):
                     try: st.image("balcova.jpg", use_container_width=True)
                     except: st.markdown('<div style="background:rgba(0,0,0,0.25);height:140px;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:2.5rem;">🏞️</div>', unsafe_allow_html=True)
-                    st.markdown("""
-                    <div style="color:#2ca02c;font-size:0.72rem;font-weight:600;margin:8px 0 6px 0;">
-                        📍 Balçova İlçesi, İzmir &nbsp;|&nbsp; 📅 İnşaat: 1991–1995 &nbsp;|&nbsp; 🏗️ Tip: Beton kemer
-                    </div>""", unsafe_allow_html=True)
+                    st.markdown(f'<div style="color:#2ca02c;font-size:0.72rem;font-weight:600;margin:8px 0 6px 0;">{t("balcova_meta")}</div>', unsafe_allow_html=True)
+                    st.markdown(f"**{t('balcova_h1')}**")
+                    st.markdown(t("balcova_p1"))
+                    st.markdown(f"**{t('balcova_h2')}**")
+                    st.markdown(t("balcova_specs"))
+                    st.markdown(f"**{t('balcova_h3')}**")
+                    st.markdown(t("balcova_history"))
+                    st.markdown(f"**{t('balcova_h4')}**")
+                    st.markdown(t("balcova_why"))
+                    st.markdown(f'<div style="background:rgba(44,160,44,0.1);border-left:3px solid #2ca02c;border-radius:0 6px 6px 0;padding:0.6rem 0.9rem;margin-top:0.8rem;"><span style="color:#2ca02c;font-size:0.8rem;font-weight:700;">{t("balcova_summary")}</span></div>', unsafe_allow_html=True)
 
-                    st.markdown("**🏙️ Şehir Merkezinin Stratejik Kalkanı**")
-                    st.markdown("""
-                    Balçova Barajı, görece küçük kapasitesine karşın şehir merkezine yakınlığı nedeniyle İzmir su sisteminde 
-                    kritik bir rol üstlenmektedir. Meles Çayı üzerinde inşa edilen baraj, özellikle **Bornova, Bayraklı ve 
-                    merkez ilçelerin** su ihtiyacını karşılamada önemli bir tampon işlevi görür. 
-                    Beton kemer yapısı sayesinde dar bir vadide yüksek su tutma kapasitesi sağlanmıştır.
-                    """)
-
-                    st.markdown("**📊 Teknik Özellikler**")
-                    st.markdown("""
-                    - **Toplam Depolama Kapasitesi:** 57 milyon m³  
-                    - **Normal Su Kotu:** 103 metre  
-                    - **Havza Alanı:** 47 km²  
-                    - **Gövde Tipi:** Beton kemer  
-                    - **Gövde Yüksekliği:** 92 metre  
-                    - **İşleten Kurum:** İZSU Genel Müdürlüğü  
-                    """)
-
-                    st.markdown("**📅 Tarihsel Süreç ve Önemli Dönüm Noktaları**")
-                    st.markdown("""
-                    Balçova Barajı, Tahtalı'dan iki yıl önce planlamaya alınmış ve 1995 yılında hizmete girmiştir. 
-                    İzmir'in merkezi semtlerine olan yakınlığı, onu acil dönemlerde son derece değerli kılmaktadır.
-                    - **1995:** Baraj devreye girer; merkez ilçelerde su güvenilirliği artar  
-                    - **2002–2004:** Uzun kuraklık döneminde bile doluluk %26'nın altına düşmez  
-                    - **2013:** Bakım ve onarım çalışmaları yapılır; kapasitesi korunur  
-                    - **2016–2018:** İstikrarlı %30–%34 bandında seyreder  
-                    - **2021:** Gördes krizinde Balçova'nın sisteme katkısı kritik önem taşır  
-                    - **2021–2022:** Düşen doluluk (%26) sistem yöneticilerini uyarır  
-                    - **2023:** %32 dolulukla sisteme katkısını sürdürür  
-                    """)
-
-                    st.markdown("**💡 Neden Küçük Ama Vazgeçilmez?**")
-                    st.markdown("""
-                    Balçova Barajı'nın havzası küçük olmasına rağmen şehir merkezine olan mesafesi yalnızca **12 km** 
-                    civarındadır. Bu nedenle su iletim hatları daha kısa, baskı kayıpları daha düşük ve müdahale süresi 
-                    çok hızlıdır. Büyük bir kuraklık ya da sistem arızası durumunda şehir merkezini besleyebilecek 
-                    **tek acil yedek kaynak** niteliğini taşımaktadır. Ayrıca buharlaşma kaybı düşük iklim koşulları 
-                    ve barajın gölge aldığı dağ ortamı nedeniyle göreceli olarak verimli bir depolama imkânı sunar.
-                    """)
-
-                    st.markdown('<div style="background:rgba(44,160,44,0.1);border-left:3px solid #2ca02c;border-radius:0 6px 6px 0;padding:0.6rem 0.9rem;margin-top:0.8rem;"><span style="color:#2ca02c;font-size:0.8rem;font-weight:700;">2023 Doluluk: %32  |  Kapasite: 57 M m³  |  Havza: 47 km²</span></div>', unsafe_allow_html=True)
-
-            # ── Gördes Barajı
             with bc3:
-                with st.expander("🚨 Gördes Barajı", expanded=True):
+                with st.expander("🚨 Gördes Barajı" if st.session_state.dil=="tr" else "🚨 Gördes Dam", expanded=True):
                     try: st.image("gordes.jpg", use_container_width=True)
                     except: st.markdown('<div style="background:rgba(0,0,0,0.25);height:140px;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:2.5rem;">🏞️</div>', unsafe_allow_html=True)
-                    st.markdown("""
-                    <div style="color:#d62728;font-size:0.72rem;font-weight:600;margin:8px 0 6px 0;">
-                        📍 Gördes İlçesi, Manisa &nbsp;|&nbsp; 📅 İnşaat: 1976–1980 &nbsp;|&nbsp; 🏗️ Tip: Toprak dolgu
-                    </div>""", unsafe_allow_html=True)
-
-                    st.markdown("**⚠️ Kırılgan Ama Stratejik: Gördes'in İkili Rolü**")
-                    st.markdown("""
-                    Gördes Barajı, idari açıdan Manisa iline bağlı olmakla birlikte boru hatlarıyla İzmir'in su sistemine 
-                    entegre edilmiştir. Bu durum barajı hem değerli hem de karmaşık bir varlık haline getirmektedir: 
-                    İzmir'in su ihtiyacına katkıda bulunurken aynı zamanda Manisa'nın sulama gereksinimlerini ve bölgenin 
-                    taşkın yönetimini de desteklemektedir. 1976–1980 yılları arasında inşa edilen baraj, **İzmir'in en eski 
-                    büyük su altyapı yatırımlarından** biridir.
-                    """)
-
-                    st.markdown("**📊 Teknik Özellikler**")
-                    st.markdown("""
-                    - **Toplam Depolama Kapasitesi:** 176 milyon m³  
-                    - **Normal Su Kotu:** 211 metre  
-                    - **Havza Alanı:** 1.315 km²  
-                    - **Gövde Tipi:** Kil çekirdekli toprak dolgu  
-                    - **Gövde Yüksekliği:** 65 metre  
-                    - **Amaç:** İçme suyu + sulama + taşkın önleme  
-                    - **İdari Sınır:** Manisa ili (Gördes ilçesi)  
-                    """)
-
-                    st.markdown("**📅 Tarihsel Süreç ve 2019–2021 Krizi**")
-                    st.markdown("""
-                    Gördes Barajı, İzmir su sisteminin en hassas ve riskli halkasını oluşturmaktadır. 
-                    Geçmiş yıllardaki doluluk seyri ciddi kırılganlıkları ortaya koymaktadır:
-                    - **1980:** Baraj devreye girer; bölgede sulama ve içme suyu güvencesi sağlanır  
-                    - **2007–2009:** Kuraklık döneminde doluluk %15'e kadar düşer  
-                    - **2013:** Doluluk %15 ile tarihi düşük seviyeye iner; kısıtlama uygulanır  
-                    - **2018:** İyileşme eğilimi; doluluk %24'e çıkar  
-                    - **2019:** Artan tüketim ve azalan yağışla doluluk %18'e geriler  
-                    - **2020:** 🚨 **Kritik kriz — doluluk %2'ye iner!** Tam anlamıyla "baraj dibinde çamur"  
-                    - **2021:** 🆘 **Tarihi dip — doluluk %1!** İzmir'de su kısıtlaması gündeme gelir  
-                    - **2022–2023:** Yağışların kısmen artmasıyla %4–%5'e toparlanır; risk devam eder  
-                    """)
-
-                    st.markdown("**🔬 2019–2021 Gördes Krizinden Çıkarılan Dersler**")
-                    st.markdown("""
-                    Gördes'in %1 doluluğa inmesi, İzmir su yönetimi tarihinin en çarpıcı vakasıdır. 
-                    Bu kriz şu gerçekleri gözler önüne sermiştir:
-                    - Tek bir barajın kuraklıkla nasıl çöküşe geçebileceği  
-                    - Farklı idari sınırlardaki barajları entegre eden sistemlerin koordinasyon gerektirdiği  
-                    - Acil durum rezervi olmayan bir sistemde nüfus artışının yarattığı risk  
-                    - Tarımsal sulama ile içme suyu arasındaki önceliklendirme sorunu  
-                    Bu nedenle Gördes'in doluluk düzeyi, İzmir su güvenliği izleme sisteminin birincil göstergelerinden biri haline gelmiştir.
-                    """)
-
-                    st.markdown('<div style="background:rgba(214,39,40,0.1);border-left:3px solid #d62728;border-radius:0 6px 6px 0;padding:0.6rem 0.9rem;margin-top:0.8rem;"><span style="color:#d62728;font-size:0.8rem;font-weight:700;">2023 Doluluk: %5  |  Kapasite: 176 M m³  |  Havza: 1.315 km²  |  ⚠️ Kritik İzlemede</span></div>', unsafe_allow_html=True)
+                    st.markdown(f'<div style="color:#d62728;font-size:0.72rem;font-weight:600;margin:8px 0 6px 0;">{t("gordes_meta")}</div>', unsafe_allow_html=True)
+                    st.markdown(f"**{t('gordes_h1')}**")
+                    st.markdown(t("gordes_p1"))
+                    st.markdown(f"**{t('gordes_h2')}**")
+                    st.markdown(t("gordes_specs"))
+                    st.markdown(f"**{t('gordes_h3')}**")
+                    st.markdown(t("gordes_history"))
+                    st.markdown(f"**{t('gordes_h4')}**")
+                    st.markdown(t("gordes_lessons"))
+                    st.markdown(f'<div style="background:rgba(214,39,40,0.1);border-left:3px solid #d62728;border-radius:0 6px 6px 0;padding:0.6rem 0.9rem;margin-top:0.8rem;"><span style="color:#d62728;font-size:0.8rem;font-weight:700;">{t("gordes_summary")}</span></div>', unsafe_allow_html=True)
 
             st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
-            bolum_baslik("02 · BARAJ DOLULUK", f"Baraj Doluluk Oranları ({START_YEAR}–{END_YEAR})")
+            bolum_baslik(t("eda_dam_fill_no"), t("eda_dam_fill_h"))
             col1, col2 = st.columns([3,1])
             with col1:
                 fig=go.Figure()
                 for isim, renk, sembol, degerler in [("Tahtalı","#38d1e3","circle",tahtali_v),("Balçova","#2ca02c","square",balcova_v),("Gördes","#d62728","diamond",gordes_v)]:
                     fig.add_trace(go.Scatter(x=baraj_yillar,y=degerler,mode="lines+markers",name=isim,line=dict(color=renk,width=2.5),marker=dict(size=10,symbol=sembol),hovertemplate=f"<b>{isim}</b>: %{{y:.0f}}%<extra></extra>"))
-                fig.add_vline(x=2019.5,line_dash="dash",line_color="rgba(155,89,182,0.6)",line_width=1.5,annotation_text="Bootstrap → Gerçek Veri",annotation_font_color="#c39bd3",annotation_font_size=9)
-                fig.add_hline(y=15,line_dash="dash",line_color="#ff7f0e",line_width=1.5,annotation_text="Kritik Eşik: 15%",annotation_font_color="#ff7f0e",annotation_font_size=10)
-                fig.update_layout(**layout_base,height=420,yaxis=dict(title="Doluluk (%)",range=[0,55],gridcolor="rgba(255,255,255,0.1)",tickfont=dict(color="white")))
+                fig.add_vline(x=2019.5,line_dash="dash",line_color="rgba(155,89,182,0.6)",line_width=1.5,annotation_text=t("bootstrap_to_real"),annotation_font_color="#c39bd3",annotation_font_size=9)
+                fig.add_hline(y=15,line_dash="dash",line_color="#ff7f0e",line_width=1.5,annotation_text=t("critical_threshold"),annotation_font_color="#ff7f0e",annotation_font_size=10)
+                fig.update_layout(**layout_base,height=420,yaxis=dict(title=t("fill_axis"),range=[0,55],gridcolor="rgba(255,255,255,0.1)",tickfont=dict(color="white")))
                 st.plotly_chart(fig, use_container_width=True)
             with col2:
                 for isim, renk, son_val, ilk_val in [("Tahtalı","#38d1e3",29,38),("Balçova","#2ca02c",32,33),("Gördes","#d62728",5,22)]:
@@ -966,98 +1820,98 @@ if data_loaded:
                     <div style="background:rgba(255,255,255,0.05);border:1px solid {renk}44;border-left:3px solid {renk};border-radius:8px;padding:0.6rem 0.8rem;margin-bottom:0.5rem;">
                         <div style="color:{renk};font-size:0.75rem;font-weight:600;">{isim}</div>
                         <div style="color:white;font-size:1.1rem;font-weight:700;">%{son_val}</div>
-                        <div style="color:{ok_renk};font-size:0.78rem;">{ok} {abs(degisim)} puan ({START_YEAR}'dan)</div>
+                        <div style="color:{ok_renk};font-size:0.78rem;">{ok} {abs(degisim)} {t('from_2010')}</div>
                     </div>""", unsafe_allow_html=True)
 
-            st.markdown("""
+            st.markdown(f"""
             <div style="display:flex;align-items:center;gap:12px;margin:1.2rem 0 0.8rem 0;">
                 <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
-                <div><div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;">03 · BULGULAR</div>
-                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">Öne Çıkan Bulgular & Dönüm Noktaları</div></div>
+                <div><div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;">{t('eda_findings_no')}</div>
+                <div style="color:#ffffff;font-size:1.05rem;font-weight:600;">{t('eda_findings_h')}</div></div>
             </div>
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
                 <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);border-radius:8px;padding:0.8rem 1rem;">
-                    <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">2013–2015 · DÜŞÜK SEVİYE PERİYODU</div>
-                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Tahtalı ve Gördes eş zamanlı geriledi</div>
-                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">Tahtalı %36–%41 bandında seyrederken Gördes %15–%16'ya indi. İki barajın eş zamanlı düşüşü sistem üzerinde yoğun baskı yarattı.</div>
+                    <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">{t('eda_finding_1_title')}</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">{t('eda_finding_1_h')}</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">{t('eda_finding_1_text')}</div>
                 </div>
                 <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);border-radius:8px;padding:0.8rem 1rem;">
-                    <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">2019–2021 · GÖRDES KRİZİ</div>
-                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">%18'den %1'e tek yılda çöküş</div>
-                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">2020'de %2, 2021'de %1'e inen Gördes, uzun süreli kuraklığın su kaynaklarına yıkıcı etkisini belgeleyen kritik bir veri noktasıdır.</div>
+                    <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">{t('eda_finding_2_title')}</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">{t('eda_finding_2_h')}</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">{t('eda_finding_2_text')}</div>
                 </div>
                 <div style="background:rgba(255,127,14,0.07);border:1px solid rgba(255,127,14,0.25);border-radius:8px;padding:0.8rem 1rem;">
-                    <div style="color:#ff7f0e;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">2020 · PANDEMİ ETKİSİ</div>
-                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Evde kalma → artan tüketim baskısı</div>
-                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">COVID-19 sürecinde hane içi su kullanımı belirgin biçimde arttı. Gördes kritik seviyelere inerken tüketim yüksek seyretti — arz-talep dengesi bozuldu.</div>
+                    <div style="color:#ff7f0e;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">{t('eda_finding_3_title')}</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">{t('eda_finding_3_h')}</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">{t('eda_finding_3_text')}</div>
                 </div>
             </div>""", unsafe_allow_html=True)
 
         with tab2:
-            bolum_baslik("02 · TALEP ISISI", "Abone Başına Tüketim Isı Haritası (m³/abone)")
+            bolum_baslik(t("eda_demand_no"), t("eda_demand_h"))
             heatmap_data={"NARLIDERE":[198,201,196,194,200,203,197,199,202,198,185,170,175,178],"BORNOVA":[193,190,186,183,188,186,183,185,187,184,180,178,181,179],"BAYRAKLI":[178,176,173,170,174,172,169,171,173,170,167,165,168,166],"KARŞIYAKA":[171,169,166,163,167,165,162,164,166,163,160,158,161,159],"BUCA":[162,160,157,154,158,156,153,155,157,154,151,149,152,150],"ÇİĞLİ":[158,156,153,150,154,152,150,152,154,151,148,146,149,147],"GAZİEMİR":[152,150,148,145,149,147,145,147,149,146,150,155,158,162],"GÜZELBAHÇE":[148,146,144,142,145,143,141,143,145,142,139,137,140,138],"KONAK":[132,130,128,126,129,127,125,127,129,126,123,121,124,122],"BALÇOVA":[118,116,114,112,115,113,111,113,115,112,109,107,110,108],"KARABAĞLAR":[112,110,108,106,109,107,105,107,109,106,103,101,104,102]}
             ilce_sirali=list(heatmap_data.keys()); yillar_str=[str(y) for y in YEARS]; z_vals=[heatmap_data[i] for i in ilce_sirali]
-            fig=go.Figure(go.Heatmap(z=z_vals,x=yillar_str,y=ilce_sirali,colorscale=[[0,"#2ca02c"],[0.35,"#aacc44"],[0.6,"#ff7f0e"],[1,"#d62728"]],zmin=100,zmax=210,text=[[str(v) for v in row] for row in z_vals],texttemplate="%{text}",textfont=dict(size=9,color="white"),hovertemplate="<b>%{y}</b> · %{x}<br>%{z} m³/abone<extra></extra>",colorbar=dict(title="m³/abone",tickfont=dict(color="white"),len=0.9,thickness=14)))
+            fig=go.Figure(go.Heatmap(z=z_vals,x=yillar_str,y=ilce_sirali,colorscale=[[0,"#2ca02c"],[0.35,"#aacc44"],[0.6,"#ff7f0e"],[1,"#d62728"]],zmin=100,zmax=210,text=[[str(v) for v in row] for row in z_vals],texttemplate="%{text}",textfont=dict(size=9,color="white"),hovertemplate="<b>%{y}</b> · %{x}<br>%{z} m³<extra></extra>",colorbar=dict(title="m³",tickfont=dict(color="white"),len=0.9,thickness=14)))
             fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=480,margin=dict(t=10,b=40,l=130,r=30),xaxis=dict(tickmode="array",tickvals=yillar_str,ticktext=yillar_str,tickfont=dict(color="white",size=10),tickangle=-45),yaxis=dict(tickfont=dict(color="white",size=11),autorange="reversed"))
             st.plotly_chart(fig, use_container_width=True)
-            st.markdown("""
+            st.markdown(f"""
             <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:1rem;">
                 <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);border-radius:8px;padding:0.8rem 1rem;">
-                    <div style="color:#d62728;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:5px;">🔴 NARLIDERE — Yüksek Tüketim, Düşük Risk</div>
-                    <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">Narlıdere kişi başı tüketime göre listenin en üstünde ancak risk sıralamasında alt sıralarda. Küçük abone tabanı, eski yapı stoğu ve kentsel dönüşüm süreci belirleyici etkenlerdir.</div>
+                    <div style="color:#d62728;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:5px;">{t('eda_narlidere_title')}</div>
+                    <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">{t('eda_narlidere_text')}</div>
                 </div>
                 <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.22);border-radius:8px;padding:0.8rem 1rem;">
-                    <div style="color:#38d1e3;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:5px;">🔵 GAZİEMİR — Orta Tüketim, Yüksek Risk</div>
-                    <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">Gaziemir talep haritasında ortada görünürken risk sıralamasında yüksekte. Hızlı nüfus artışının yarattığı arz baskısı ve tüketim artış oranı belirleyicidir.</div>
+                    <div style="color:#38d1e3;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:5px;">{t('eda_gaziemir_title')}</div>
+                    <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.6;">{t('eda_gaziemir_text')}</div>
                 </div>
             </div>""", unsafe_allow_html=True)
 
         with tab3:
-            bolum_baslik("03 · ARZ-TALEP DENGESİ", f"Arz-Talep Dengesi ({START_YEAR}–{END_YEAR})")
+            bolum_baslik(t("eda_sd_no"), t("eda_sd_h"))
             at_yillar=[2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
             sisteme_v=[118,148,138,132,110,112,107,150,138,145,133,160,118,120]
             tuketim_v=[136,139,141,145,147,150,153,156,159,162,166,160,166,165]
             col1, col2 = st.columns([2,1])
             with col1:
                 fig=go.Figure()
-                fig.add_trace(go.Bar(x=at_yillar,y=sisteme_v,name="Sisteme Giren Su (Arz)",marker=dict(color="#38d1e3",opacity=0.85,line=dict(color="rgba(255,255,255,0.2)",width=1)),hovertemplate="Sisteme Giren: %{y}M m³<extra></extra>"))
-                fig.add_trace(go.Bar(x=at_yillar,y=tuketim_v,name="Toplam Tüketim (Talep)",marker=dict(color="#2ca02c",opacity=0.85,line=dict(color="rgba(255,255,255,0.2)",width=1)),hovertemplate="Toplam Tüketim: %{y}M m³<extra></extra>"))
-                fig.add_vline(x=2019.5,line_dash="dash",line_color="rgba(155,89,182,0.6)",line_width=1.5,annotation_text="Bootstrap → Gerçek Veri",annotation_font_color="#c39bd3",annotation_font_size=9)
-                fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",barmode="group",height=420,font=dict(color="white"),hovermode="x unified",xaxis=dict(tickvals=at_yillar,tickfont=dict(color="white"),gridcolor="rgba(255,255,255,0.1)"),yaxis=dict(title="Milyon m³",range=[0,200],gridcolor="rgba(255,255,255,0.1)",tickfont=dict(color="white")),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)"),margin=dict(t=30,b=40,l=60,r=30))
+                fig.add_trace(go.Bar(x=at_yillar,y=sisteme_v,name=t("supply_label"),marker=dict(color="#38d1e3",opacity=0.85,line=dict(color="rgba(255,255,255,0.2)",width=1)),hovertemplate=t("supply_label")+": %{y}M m³<extra></extra>"))
+                fig.add_trace(go.Bar(x=at_yillar,y=tuketim_v,name=t("demand_label"),marker=dict(color="#2ca02c",opacity=0.85,line=dict(color="rgba(255,255,255,0.2)",width=1)),hovertemplate=t("demand_label")+": %{y}M m³<extra></extra>"))
+                fig.add_vline(x=2019.5,line_dash="dash",line_color="rgba(155,89,182,0.6)",line_width=1.5,annotation_text=t("bootstrap_to_real"),annotation_font_color="#c39bd3",annotation_font_size=9)
+                fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",barmode="group",height=420,font=dict(color="white"),hovermode="x unified",xaxis=dict(tickvals=at_yillar,tickfont=dict(color="white"),gridcolor="rgba(255,255,255,0.1)"),yaxis=dict(title="Milyon m³" if st.session_state.dil=="tr" else "Million m³",range=[0,200],gridcolor="rgba(255,255,255,0.1)",tickfont=dict(color="white")),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)"),margin=dict(t=30,b=40,l=60,r=30))
                 st.plotly_chart(fig, use_container_width=True)
             with col2:
                 st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
                 for yil, sg, tt in [(2020,133,166),(2021,160,160),(2022,118,166),(2023,120,165)]:
                     fark=tt-sg; fark_renk="#d62728" if fark>0 else "#2ca02c"
-                    fark_yazi=f"Talep Açığı: {fark}M m³" if fark>0 else f"Arz Fazlası: {abs(fark)}M m³"
-                    gercek_mi = "· gerçek" if yil >= 2020 else "· bootstrap"
+                    fark_yazi=f"{t('demand_gap')}: {fark}M m³" if fark>0 else f"{t('supply_surplus')}: {abs(fark)}M m³"
+                    gercek_mi = f"· {t('real_data_short')}" if yil >= 2020 else f"· {t('bootstrap_short')}"
                     st.markdown(f"""
                     <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:0.6rem 0.8rem;margin-bottom:0.5rem;border-left:3px solid {fark_renk};">
                         <div style="color:#a8d8f0;font-size:0.72rem;">{yil} <span style="color:#2ca02c;">{gercek_mi}</span></div>
                         <div style="color:{fark_renk};font-size:0.95rem;font-weight:700;">{fark_yazi}</div>
-                        <div style="color:#a8d8f0;font-size:0.72rem;">Arz: {sg}M · Talep: {tt}M</div>
+                        <div style="color:#a8d8f0;font-size:0.72rem;">{t('supply_label').split('(')[0].strip()}: {sg}M · {t('demand_label').split('(')[0].strip()}: {tt}M</div>
                     </div>""", unsafe_allow_html=True)
-            st.markdown("""
+            st.markdown(f"""
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:1rem;">
                 <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);border-radius:8px;padding:0.8rem 1rem;">
-                    <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">2014–2016 · ARZ KISITI ZİRVESİ</div>
-                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Sisteme giren su 107M'e geriledi</div>
-                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">107–132M m³ bandına inen arz karşısında tüketim 147–153M m³'te yükselmeye devam etti. Oluşan makas sistem kapasitesini ciddi biçimde zorladı.</div>
+                    <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">{t('supply_demand_finding_1_title')}</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">{t('supply_demand_finding_1_h')}</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">{t('supply_demand_finding_1_text')}</div>
                 </div>
                 <div style="background:rgba(255,127,14,0.07);border:1px solid rgba(255,127,14,0.25);border-radius:8px;padding:0.8rem 1rem;">
-                    <div style="color:#ff7f0e;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">2021 · EŞİTLENME NOKTASI</div>
-                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Arz ve talep 160M m³'te buluştu</div>
-                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">Sisteme giren su ve toplam tüketim 160M m³ ile eşitlenerek nadir görülen bir denge noktası yakalandı.</div>
+                    <div style="color:#ff7f0e;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">{t('supply_demand_finding_2_title')}</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">{t('supply_demand_finding_2_h')}</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">{t('supply_demand_finding_2_text')}</div>
                 </div>
                 <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.25);border-radius:8px;padding:0.8rem 1rem;">
-                    <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">2022–2023 · AÇIK YENİDEN GENİŞLEDİ</div>
-                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Talep arzı ~45M m³ geçti</div>
-                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">Sisteme giren su 118–120M m³'e gerilerken tüketim 165–166M'de kaldı. Bu açık altyapı kayıplarına işaret etmektedir.</div>
+                    <div style="color:#d62728;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">{t('supply_demand_finding_3_title')}</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">{t('supply_demand_finding_3_h')}</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">{t('supply_demand_finding_3_text')}</div>
                 </div>
             </div>""", unsafe_allow_html=True)
 
         with tab4:
-            bolum_baslik("04 · SU KAYIP TRENDİ", f"Yıllık Su Kayıp Oranı Trendi ({START_YEAR}–{END_YEAR})")
+            bolum_baslik(t("eda_loss_no"), t("eda_loss_h"))
             kayip_yillar=[2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
             kayip_toplam=[32.5,31.8,31.2,30.6,30.0,29.5,29.0,28.5,28.0,27.5,28.56,28.04,27.95,27.36]
             fiziki_k=[29.0,28.4,27.9,27.3,26.8,26.3,25.9,25.5,25.1,24.7,27.45,26.53,26.50,25.92]
@@ -1066,39 +1920,48 @@ if data_loaded:
             col1, col2 = st.columns([3,1])
             with col1:
                 fig=go.Figure()
-                fig.add_trace(go.Scatter(x=kayip_yillar,y=kayip_toplam,mode="lines+markers+text",fill="tozeroy",fillcolor="rgba(214,39,40,0.1)",line=dict(color="#d62728",width=3),marker=dict(size=10,color="#d62728",line=dict(color="white",width=2)),text=[f"%{v:.1f}" for v in kayip_toplam],textposition="top center",textfont=dict(color="white",size=9),name="Toplam Kayıp",hovertemplate="<b>%{x}</b><br>Kayıp: %{y:.2f}%<extra></extra>"))
-                fig.add_trace(go.Bar(x=kayip_yillar,y=fiziki_k,name="Fiziki Kayıp",marker_color="rgba(214,39,40,0.4)",yaxis="y2"))
-                fig.add_trace(go.Bar(x=kayip_yillar,y=idari_k,name="İdari Kayıp",marker_color="rgba(255,127,14,0.4)",yaxis="y2"))
-                fig.add_vline(x=2019.5,line_dash="dash",line_color="rgba(155,89,182,0.6)",line_width=1.5,annotation_text="Bootstrap → Gerçek Veri",annotation_font_color="#c39bd3",annotation_font_size=9)
-                fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=420,hovermode="x unified",font=dict(color="white"),xaxis=dict(tickvals=kayip_yillar,gridcolor="rgba(255,255,255,0.1)",tickfont=dict(color="white"),tickangle=-45),yaxis=dict(title="Toplam Kayıp (%)",range=[min(kayip_toplam)-1,max(kayip_toplam)+1],gridcolor="rgba(255,255,255,0.1)",tickfont=dict(color="white")),yaxis2=dict(title="Bileşen (%)",overlaying="y",side="right",tickfont=dict(color="white"),range=[0,40]),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)"),barmode="stack",margin=dict(t=30,b=50,l=60,r=60))
+                fig.add_trace(go.Scatter(x=kayip_yillar,y=kayip_toplam,mode="lines+markers+text",fill="tozeroy",fillcolor="rgba(214,39,40,0.1)",line=dict(color="#d62728",width=3),marker=dict(size=10,color="#d62728",line=dict(color="white",width=2)),text=[f"%{v:.1f}" for v in kayip_toplam],textposition="top center",textfont=dict(color="white",size=9),name=t("loss_total"),hovertemplate="<b>%{x}</b><br>%{y:.2f}%<extra></extra>"))
+                fig.add_trace(go.Bar(x=kayip_yillar,y=fiziki_k,name=t("loss_physical"),marker_color="rgba(214,39,40,0.4)",yaxis="y2"))
+                fig.add_trace(go.Bar(x=kayip_yillar,y=idari_k,name=t("loss_admin"),marker_color="rgba(255,127,14,0.4)",yaxis="y2"))
+                fig.add_vline(x=2019.5,line_dash="dash",line_color="rgba(155,89,182,0.6)",line_width=1.5,annotation_text=t("bootstrap_to_real"),annotation_font_color="#c39bd3",annotation_font_size=9)
+                fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=420,hovermode="x unified",font=dict(color="white"),xaxis=dict(tickvals=kayip_yillar,gridcolor="rgba(255,255,255,0.1)",tickfont=dict(color="white"),tickangle=-45),yaxis=dict(title=t("loss_total_axis"),range=[min(kayip_toplam)-1,max(kayip_toplam)+1],gridcolor="rgba(255,255,255,0.1)",tickfont=dict(color="white")),yaxis2=dict(title=t("loss_component_axis"),overlaying="y",side="right",tickfont=dict(color="white"),range=[0,40]),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)"),barmode="stack",margin=dict(t=30,b=50,l=60,r=60))
                 st.plotly_chart(fig, use_container_width=True)
             with col2:
                 st.markdown(f"""
                 <div style="background:rgba(44,160,44,0.1);border:1px solid #2ca02c44;border-top:3px solid #2ca02c;border-radius:8px;padding:1rem;text-align:center;margin-bottom:1rem;">
-                    <div style="color:#2ca02c;font-size:0.75rem;letter-spacing:1px;">TOPLAM AZALMA</div>
+                    <div style="color:#2ca02c;font-size:0.75rem;letter-spacing:1px;">{t('loss_kpi_total')}</div>
                     <div style="color:white;font-size:2rem;font-weight:700;">▼ {azalma:.1f}%</div>
                     <div style="color:#a8d8f0;font-size:0.8rem;">{START_YEAR} → {END_YEAR}</div>
                 </div>
                 <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:0.8rem;font-size:0.82rem;color:#a8d8f0;line-height:1.6;">
-                    🔵 <b style="color:white">Fiziki Kayıp</b><br>Boru sızıntıları, altyapı hasarı<br>2023: %{fiziki_k[-1]:.2f}<br><br>
-                    🟠 <b style="color:white">İdari Kayıp</b><br>Kaçak kullanım, sayaç hataları<br>2023: %{idari_k[-1]:.2f}
+                    🔵 <b style="color:white">{t('loss_physical')}</b><br>{t('loss_kpi_legend_phys')}<br>2023: %{fiziki_k[-1]:.2f}<br><br>
+                    🟠 <b style="color:white">{t('loss_admin')}</b><br>{t('loss_kpi_legend_admin')}<br>2023: %{idari_k[-1]:.2f}
                 </div>""", unsafe_allow_html=True)
+
+            # Loss findings — handle TR vs EN h/text dynamically
+            if st.session_state.dil == "tr":
+                fnd1_h = f"%{ilk_kayip:.1f}'den %{son_kayip:.2f}'ye geriledi"
+                fnd1_text = f"{azalma:.1f} puan azalma kaydedildi. Ancak %27 Avrupa ortalamasının (~%15–20) hâlâ üzerinde."
+            else:
+                fnd1_h = f"Reduced from {ilk_kayip:.1f}% to {son_kayip:.2f}%"
+                fnd1_text = f"{azalma:.1f} points reduction recorded. Still above European average (~15–20%)."
+
             st.markdown(f"""
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:1rem;">
                 <div style="background:rgba(44,160,44,0.08);border:1px solid rgba(44,160,44,0.28);border-radius:8px;padding:0.8rem 1rem;">
-                    <div style="color:#2ca02c;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">{START_YEAR}–{END_YEAR} · KAYDEDİLEN İYİLEŞME</div>
-                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">%{ilk_kayip:.1f}'den %{son_kayip:.2f}'ye geriledi</div>
-                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">{azalma:.1f} puan azalma kaydedildi. Ancak %27 Avrupa ortalamasının (~%15–20) hâlâ üzerinde.</div>
+                    <div style="color:#2ca02c;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">{t('loss_finding_1_title')}</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">{fnd1_h}</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">{fnd1_text}</div>
                 </div>
                 <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.22);border-radius:8px;padding:0.8rem 1rem;">
-                    <div style="color:#38d1e3;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">FİZİKİ KAYIP BASKINI</div>
-                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Toplam kaybın ~%95'i boru sızıntısı</div>
-                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">2023: Fiziki kayıp %25.92, idari kayıp %1.43. Altyapı yenileme öncelikli yatırım alanıdır.</div>
+                    <div style="color:#38d1e3;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">{t('loss_finding_2_title')}</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">{t('loss_finding_2_h')}</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">{t('loss_finding_2_text')}</div>
                 </div>
                 <div style="background:rgba(255,127,14,0.07);border:1px solid rgba(255,127,14,0.25);border-radius:8px;padding:0.8rem 1rem;">
-                    <div style="color:#ff7f0e;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">2020 · PANDEMİ YILINDA HAFİF ARTIŞ</div>
-                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Kayıp oranı %28.56'ya çıktı</div>
-                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">Pandemi döneminde denetim ve bakım faaliyetlerinin yavaşlaması bu geçici kötüleşmenin nedenidir.</div>
+                    <div style="color:#ff7f0e;font-size:0.7rem;font-weight:600;letter-spacing:1px;margin-bottom:5px;">{t('loss_finding_3_title')}</div>
+                    <div style="color:#ffffff;font-size:0.82rem;font-weight:600;margin-bottom:4px;">{t('loss_finding_3_h')}</div>
+                    <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">{t('loss_finding_3_text')}</div>
                 </div>
             </div>""", unsafe_allow_html=True)
 
@@ -1107,20 +1970,20 @@ if data_loaded:
     # ════════════════════════════════════════════════
     # RİSK ENDEKSİ
     # ════════════════════════════════════════════════
-    elif sayfa == "📈 Risk Endeksi":
+    elif sayfa == "risk":
 
         st.markdown(f"""
         <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1.5rem;">
             <div style="display:inline-block;background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);border-radius:50px;padding:4px 16px;margin-bottom:0.8rem;">
-                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">SU GÜVENLİĞİ RİSK ENDEKSİ · WSRI · {START_YEAR}–{END_YEAR}</span>
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">{t('risk_badge')}</span>
             </div>
-            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">Su Güvenliği Risk Endeksi</div>
-            <div style="color:#a8d8f0;font-size:0.9rem;">Entropy ağırlıklı bileşik skor · 4 gösterge · 0–100 ölçeği · {len(YEARS)} yıllık seri</div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">{t('risk_title')}</div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">{t('risk_lead')}</div>
         </div>""", unsafe_allow_html=True)
 
         col_f1, col_f2 = st.columns([5,1])
         with col_f1:
-            yil_sec = st.slider("📅 Yılı Seçin", min_value=START_YEAR, max_value=END_YEAR, value=END_YEAR, step=1, format="%d")
+            yil_sec = st.slider(t("risk_year_select"), min_value=START_YEAR, max_value=END_YEAR, value=END_YEAR, step=1, format="%d")
             nokta_html = '<div style="display:flex;justify-content:space-between;margin-top:4px;padding:0 4px;">'
             for y in range(START_YEAR, END_YEAR+1):
                 secili=(y==yil_sec); gecmis=y<yil_sec
@@ -1137,7 +2000,7 @@ if data_loaded:
             nokta_html+='</div>'
             st.markdown(nokta_html, unsafe_allow_html=True)
         with col_f2:
-            arama = st.text_input("İlçe ara:", placeholder="örn. BUCA", key="ilce_ara_risk")
+            arama = st.text_input(t("district_search"), placeholder=t("district_search_placeholder"), key="ilce_ara_risk")
 
         yil_idx = YEARS.index(yil_sec)
         bar_data = [(ilce, veriler[yil_idx]) for ilce, veriler in manuel_risk_global.items()]
@@ -1146,24 +2009,24 @@ if data_loaded:
             bar_data = [(i,s) for i,s in bar_data if arama.upper() in i]
         bar_ilceler=[x[0] for x in bar_data]; bar_skorlar=[x[1] for x in bar_data]
 
-        sec_baslik("01 · İLÇE SKORLARI", f"İlçe Risk Skorları & {len(YEARS)} Yıllık Karşılaştırma")
+        sec_baslik(t("risk_sec01_no"), t("risk_sec01_h"))
 
         col1, col2 = st.columns([3,2])
         with col1:
             colors=[sinif_renk(s) for s in bar_skorlar]
-            fig=go.Figure(go.Bar(x=bar_ilceler,y=bar_skorlar,marker=dict(color=colors,opacity=0.85,line=dict(color="rgba(255,255,255,0.1)",width=0.5)),text=[f"{s:.1f}" for s in bar_skorlar],textposition="outside",textfont=dict(color="white",size=11),hovertemplate="<b>%{x}</b><br>Risk Skoru: %{y:.1f}<extra></extra>"))
-            fig.add_hline(y=46,line_dash="dot",line_color="#ff7f0e",line_width=1.5,annotation_text="Orta Risk Eşiği (46)",annotation_font_color="#ff7f0e",annotation_font_size=10)
-            fig.add_hline(y=60,line_dash="dot",line_color="#d62728",line_width=1.5,annotation_text="Yüksek Risk Eşiği (60)",annotation_font_color="#d62728",annotation_font_size=10)
+            fig=go.Figure(go.Bar(x=bar_ilceler,y=bar_skorlar,marker=dict(color=colors,opacity=0.85,line=dict(color="rgba(255,255,255,0.1)",width=0.5)),text=[f"{s:.1f}" for s in bar_skorlar],textposition="outside",textfont=dict(color="white",size=11),hovertemplate="<b>%{x}</b><br>"+t("risk_score")+": %{y:.1f}<extra></extra>"))
+            fig.add_hline(y=46,line_dash="dot",line_color="#ff7f0e",line_width=1.5,annotation_text=t("risk_threshold_med"),annotation_font_color="#ff7f0e",annotation_font_size=10)
+            fig.add_hline(y=60,line_dash="dot",line_color="#d62728",line_width=1.5,annotation_text=t("risk_threshold_high"),annotation_font_color="#d62728",annotation_font_size=10)
             fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=380,font=dict(color="white"),xaxis=dict(tickangle=30,gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),yaxis=dict(range=[0,100],gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),margin=dict(t=30,b=60,l=40,r=60))
             st.plotly_chart(fig, use_container_width=True, key="risk_bar")
         with col2:
             ilce_sirali=list(manuel_risk_global.keys())
             z_heat=[[manuel_risk_global[ilce][i] for i in range(len(YEARS))] for ilce in ilce_sirali]
-            fig2=go.Figure(go.Heatmap(z=z_heat,x=[str(y) for y in YEARS],y=ilce_sirali,colorscale=[[0,"#2ca02c"],[0.35,"#ff7f0e"],[0.6,"#d62728"],[1,"#8b0000"]],zmin=40,zmax=75,text=[[f"{v:.0f}" for v in row] for row in z_heat],texttemplate="%{text}",textfont=dict(size=9,color="white"),hovertemplate="<b>%{y}</b> · %{x}<br>Risk: %{z:.1f}<extra></extra>",colorbar=dict(title="Risk Skoru",tickfont=dict(color="white"))))
+            fig2=go.Figure(go.Heatmap(z=z_heat,x=[str(y) for y in YEARS],y=ilce_sirali,colorscale=[[0,"#2ca02c"],[0.35,"#ff7f0e"],[0.6,"#d62728"],[1,"#8b0000"]],zmin=40,zmax=75,text=[[f"{v:.0f}" for v in row] for row in z_heat],texttemplate="%{text}",textfont=dict(size=9,color="white"),hovertemplate="<b>%{y}</b> · %{x}<br>"+t("risk_score")+": %{z:.1f}<extra></extra>",colorbar=dict(title=t("risk_score"),tickfont=dict(color="white"))))
             fig2.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=380,font=dict(color="white"),xaxis=dict(tickfont=dict(color="white"),tickangle=-45),yaxis=dict(tickfont=dict(color="white")),margin=dict(t=10,b=40,l=110,r=30))
             st.plotly_chart(fig2, use_container_width=True, key="risk_heat")
 
-        sec_baslik("02 · RİSK TRENDİ", "İlçe Bazlı Risk Skoru Trendi (2010–2023)")
+        sec_baslik(t("risk_sec02_no"), t("risk_sec02_h"))
         trend_yillar=list(range(2010,2024))
         yuksek_risk={"BORNOVA":[72,73,72,71,71.5,70,69.5,67.5,68,66,66,67.5,68,67],"ÇİĞLİ":[70,71,69,70,68,69,67,66,65,64,63,64,63.5,62.5],"BAYRAKLI":[69,71,70,68,66,67,65,64,63,62,61,62.5,62,60]}
         orta_risk={"BUCA":[59,57,58,56,55,57,54,55,53,52,54,52,53,51],"GAZİEMİR":[57,58,55,56,57,54,55,53,54,52,53,55,54,54],"GÜZELBAHÇE":[55,54,56,53,54,52,53,51,52,50,49,51,50,49],"KARŞIYAKA":[53,52,54,51,52,50,51,50,49,48,47,49,48,47],"NARLIDERE":[51,52,50,51,49,50,48,49,47,47,48,47,47,47]}
@@ -1171,36 +2034,36 @@ if data_loaded:
 
         col_t1, col_t2 = st.columns(2)
         with col_t1:
-            st.markdown('<div style="color:#d62728;font-size:0.75rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">🔴 En Yüksek Riskli 3 İlçe</div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="color:#d62728;font-size:0.75rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">{t("trend_high_3")}</div>', unsafe_allow_html=True)
             fig_y=go.Figure()
             for (ilce,veriler),renk in zip(yuksek_risk.items(),["#d62728","#ff7f0e","#ffdd57"]):
                 fig_y.add_trace(go.Scatter(x=trend_yillar,y=veriler,mode="lines+markers",name=ilce,line=dict(color=renk,width=2.5),marker=dict(size=7,color=renk),hovertemplate=f"<b>{ilce}</b> %{{x}}: %{{y:.0f}}<extra></extra>"))
-            fig_y.add_hline(y=60,line_dash="dot",line_color="#d62728",line_width=1.5,annotation_text="Yüksek Risk Eşiği (60)",annotation_font_color="#d62728",annotation_font_size=9)
-            fig_y.add_vrect(x0=2019.5,x1=2023.5,fillcolor="rgba(44,160,44,0.06)",layer="below",line_width=1,line_dash="dash",line_color="rgba(44,160,44,0.4)",annotation_text="Gerçek Veri",annotation_font_color="#2ca02c",annotation_font_size=9)
-            fig_y.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=340,font=dict(color="white"),hovermode="x unified",xaxis=dict(tickvals=trend_yillar,gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),tickangle=-45),yaxis=dict(title="WSRI Risk Skoru",range=[50,80],gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)",orientation="h",y=-0.25),margin=dict(t=20,b=70,l=50,r=20))
+            fig_y.add_hline(y=60,line_dash="dot",line_color="#d62728",line_width=1.5,annotation_text=t("risk_threshold_high"),annotation_font_color="#d62728",annotation_font_size=9)
+            fig_y.add_vrect(x0=2019.5,x1=2023.5,fillcolor="rgba(44,160,44,0.06)",layer="below",line_width=1,line_dash="dash",line_color="rgba(44,160,44,0.4)",annotation_text=t("real_data_band"),annotation_font_color="#2ca02c",annotation_font_size=9)
+            fig_y.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=340,font=dict(color="white"),hovermode="x unified",xaxis=dict(tickvals=trend_yillar,gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),tickangle=-45),yaxis=dict(title=t("wsri_axis"),range=[50,80],gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)",orientation="h",y=-0.25),margin=dict(t=20,b=70,l=50,r=20))
             st.plotly_chart(fig_y, use_container_width=True, key="trend_yuksek")
         with col_t2:
-            st.markdown('<div style="color:#2ca02c;font-size:0.75rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">🟢 En Düşük Riskli 3 İlçe</div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="color:#2ca02c;font-size:0.75rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">{t("trend_low_3")}</div>', unsafe_allow_html=True)
             fig_d=go.Figure()
             for (ilce,veriler),renk in zip(dusuk_risk.items(),["#2ca02c","#1a78c2","#9467bd"]):
                 fig_d.add_trace(go.Scatter(x=trend_yillar,y=veriler,mode="lines+markers",name=ilce,line=dict(color=renk,width=2.5),marker=dict(size=7,color=renk),hovertemplate=f"<b>{ilce}</b> %{{x}}: %{{y:.0f}}<extra></extra>"))
-            fig_d.add_hline(y=46,line_dash="dot",line_color="#ff7f0e",line_width=1.5,annotation_text="Orta Risk Eşiği (46)",annotation_font_color="#ff7f0e",annotation_font_size=9)
-            fig_d.add_vrect(x0=2019.5,x1=2023.5,fillcolor="rgba(44,160,44,0.06)",layer="below",line_width=1,line_dash="dash",line_color="rgba(44,160,44,0.4)",annotation_text="Gerçek Veri",annotation_font_color="#2ca02c",annotation_font_size=9)
-            fig_d.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=340,font=dict(color="white"),hovermode="x unified",xaxis=dict(tickvals=trend_yillar,gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),tickangle=-45),yaxis=dict(title="WSRI Risk Skoru",range=[35,58],gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)",orientation="h",y=-0.25),margin=dict(t=20,b=70,l=50,r=20))
+            fig_d.add_hline(y=46,line_dash="dot",line_color="#ff7f0e",line_width=1.5,annotation_text=t("risk_threshold_med"),annotation_font_color="#ff7f0e",annotation_font_size=9)
+            fig_d.add_vrect(x0=2019.5,x1=2023.5,fillcolor="rgba(44,160,44,0.06)",layer="below",line_width=1,line_dash="dash",line_color="rgba(44,160,44,0.4)",annotation_text=t("real_data_band"),annotation_font_color="#2ca02c",annotation_font_size=9)
+            fig_d.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=340,font=dict(color="white"),hovermode="x unified",xaxis=dict(tickvals=trend_yillar,gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),tickangle=-45),yaxis=dict(title=t("wsri_axis"),range=[35,58],gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)",orientation="h",y=-0.25),margin=dict(t=20,b=70,l=50,r=20))
             st.plotly_chart(fig_d, use_container_width=True, key="trend_dusuk")
 
-        st.markdown('<div style="color:#ff7f0e;font-size:0.75rem;font-weight:700;letter-spacing:1px;margin:0.8rem 0 6px 0;">🟡 Orta Riskli 5 İlçe</div>', unsafe_allow_html=True)
+        st.markdown(f'<div style="color:#ff7f0e;font-size:0.75rem;font-weight:700;letter-spacing:1px;margin:0.8rem 0 6px 0;">{t("trend_med_5")}</div>', unsafe_allow_html=True)
         fig_o=go.Figure()
         for (ilce,veriler),renk in zip(orta_risk.items(),["#e67e22","#e74c3c","#8e44ad","#16a085","#2980b9"]):
             fig_o.add_trace(go.Scatter(x=trend_yillar,y=veriler,mode="lines+markers",name=ilce,line=dict(color=renk,width=2),marker=dict(size=6,color=renk),hovertemplate=f"<b>{ilce}</b> %{{x}}: %{{y:.0f}}<extra></extra>"))
-        fig_o.add_hline(y=60,line_dash="dot",line_color="#d62728",line_width=1,annotation_text="Yüksek Risk (60)",annotation_font_color="#d62728",annotation_font_size=9)
-        fig_o.add_hline(y=46,line_dash="dot",line_color="#2ca02c",line_width=1,annotation_text="Orta Risk Alt (46)",annotation_font_color="#2ca02c",annotation_font_size=9)
+        fig_o.add_hline(y=60,line_dash="dot",line_color="#d62728",line_width=1,annotation_text=t("high_threshold_short"),annotation_font_color="#d62728",annotation_font_size=9)
+        fig_o.add_hline(y=46,line_dash="dot",line_color="#2ca02c",line_width=1,annotation_text=t("med_low_threshold"),annotation_font_color="#2ca02c",annotation_font_size=9)
         fig_o.add_vrect(x0=2019.5,x1=2023.5,fillcolor="rgba(44,160,44,0.06)",layer="below",line_width=1,line_dash="dash",line_color="rgba(44,160,44,0.4)")
-        fig_o.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=300,font=dict(color="white"),hovermode="x unified",xaxis=dict(tickvals=trend_yillar,gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),tickangle=-45),yaxis=dict(title="WSRI Risk Skoru",range=[40,65],gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)",orientation="h",y=-0.3),margin=dict(t=10,b=80,l=50,r=20))
+        fig_o.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=300,font=dict(color="white"),hovermode="x unified",xaxis=dict(tickvals=trend_yillar,gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),tickangle=-45),yaxis=dict(title=t("wsri_axis"),range=[40,65],gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)",orientation="h",y=-0.3),margin=dict(t=10,b=80,l=50,r=20))
         st.plotly_chart(fig_o, use_container_width=True, key="trend_orta")
 
-        sec_baslik("03 · İLÇE DETAYI", "İlçe Bazlı Detay — Risk Bileşenleri")
-        ilce_sec = st.selectbox("İlçe seç:", sorted(risk_df["İlçe"].unique()), key="risk_det_ilce")
+        sec_baslik(t("risk_sec03_no"), t("risk_sec03_h"))
+        ilce_sec = st.selectbox(t("select_district"), sorted(risk_df["İlçe"].unique()), key="risk_det_ilce")
         skor_son=manuel_skor_2023.get(ilce_sec,50.0); sinif_son=sinif_str(skor_son)
         renk_son=sinif_renk(skor_son); cagr_val=cagr_dict.get(ilce_sec,0)*100
         all_trend={**yuksek_risk,**orta_risk,**dusuk_risk}
@@ -1209,10 +2072,10 @@ if data_loaded:
 
         k1,k2,k3,k4=st.columns(4)
         for col,baslik,deger,alt,renk in [
-            (k1,f"{END_YEAR} Risk Skoru",f"{skor_son:.1f}",sinif_son,renk_son),
-            (k2,"Risk Sınıfı",sinif_son,"",renk_son),
-            (k3,"2010→2023 Değişim",f"{degisim_ok} {abs(degisim):.1f} puan",f"2010 skoru: {skor_2010:.1f}",degisim_renk),
-            (k4,"Abone Büyüme (CAGR)",f"%{cagr_val:.2f}/yıl",f"{START_YEAR}–{END_YEAR}","#38d1e3"),
+            (k1,t("kpi_year_score"),f"{skor_son:.1f}",sinif_son,renk_son),
+            (k2,t("kpi_risk_class"),sinif_son,"",renk_son),
+            (k3,t("kpi_2010_2023_change"),f"{degisim_ok} {abs(degisim):.1f} {t('points')}",f"{t('kpi_2010_score_lbl')}: {skor_2010:.1f}",degisim_renk),
+            (k4,t("kpi_subscriber_growth"),f"%{cagr_val:.2f}{t('per_year')}",t("kpi_period"),"#38d1e3"),
         ]:
             with col:
                 st.markdown(f"""
@@ -1225,15 +2088,15 @@ if data_loaded:
     # ════════════════════════════════════════════════
     # 2030 TAHMİN
     # ════════════════════════════════════════════════
-    elif sayfa == "🔮 2030 Tahmini":
+    elif sayfa == "p2030":
 
         st.markdown(f"""
         <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1.5rem;">
             <div style="display:inline-block;background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);border-radius:50px;padding:4px 16px;margin-bottom:0.8rem;">
-                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">SENARYO PROJEKSİYONU · 2024–2030</span>
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">{t('p2030_badge')}</span>
             </div>
-            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">2030 Yılı Risk Projeksiyonu</div>
-            <div style="color:#a8d8f0;font-size:0.9rem;">Abone büyüme oranı (CAGR) bazlı 3 senaryo · İyimser · Baz · Kötümser · CAGR {len(YEARS)} yıllık seriden hesaplanmıştır</div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">{t('p2030_title')}</div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">{t('p2030_lead')}</div>
         </div>""", unsafe_allow_html=True)
 
         ilceler_sirali=['BORNOVA','GAZİEMİR','ÇİĞLİ','BUCA','BAYRAKLI','KONAK','GÜZELBAHÇE','BALÇOVA','KARABAĞLAR','KARŞIYAKA','NARLIDERE']
@@ -1241,33 +2104,33 @@ if data_loaded:
         baz_2030=[53,50,49,46,44,42,41,39,37,35,34]
         iyi_2030=[48,45,44,41,40,38,36,34,33,32,30]
 
-        sec_baslik("00 · 2030 ANİK PROJEKSİYONU", "2030 Yılı Risk Skoru — 3 Senaryo (Tüm İlçeler)")
+        sec_baslik(t("p2030_sec00_no"), t("p2030_sec00_h"))
 
         fig_2030=go.Figure()
-        fig_2030.add_trace(go.Bar(name='Kötümser (CAGR × 1.5)',x=ilceler_sirali,y=pes_2030,marker=dict(color="#d62728",opacity=0.85),text=[f"{v}" for v in pes_2030],textposition="outside",textfont=dict(color="white",size=10),hovertemplate="<b>%{x}</b> · Kötümser: %{y}<extra></extra>"))
-        fig_2030.add_trace(go.Bar(name='Baz (CAGR × 1.0)',x=ilceler_sirali,y=baz_2030,marker=dict(color="#ff7f0e",opacity=0.85),text=[f"{v}" for v in baz_2030],textposition="outside",textfont=dict(color="white",size=10),hovertemplate="<b>%{x}</b> · Baz: %{y}<extra></extra>"))
-        fig_2030.add_trace(go.Bar(name='İyimser (CAGR × 0.5)',x=ilceler_sirali,y=iyi_2030,marker=dict(color="#2ca02c",opacity=0.85),text=[f"{v}" for v in iyi_2030],textposition="outside",textfont=dict(color="white",size=10),hovertemplate="<b>%{x}</b> · İyimser: %{y}<extra></extra>"))
-        fig_2030.add_hline(y=60,line_dash="dot",line_color="#d62728",line_width=1.5,annotation_text="Yüksek Risk Eşiği (60)",annotation_font_color="#d62728",annotation_font_size=10)
-        fig_2030.add_hline(y=46,line_dash="dot",line_color="#ff7f0e",line_width=1.5,annotation_text="Orta Risk Alt Eşiği (46)",annotation_font_color="#ff7f0e",annotation_font_size=10)
-        fig_2030.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",barmode="group",height=420,font=dict(color="white"),xaxis=dict(tickangle=30,gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),yaxis=dict(range=[0,100],gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),title="Risk Skoru (0–100)"),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)",orientation="h",y=1.08),margin=dict(t=50,b=70,l=50,r=30))
+        fig_2030.add_trace(go.Bar(name=t("scenario_pessimistic"),x=ilceler_sirali,y=pes_2030,marker=dict(color="#d62728",opacity=0.85),text=[f"{v}" for v in pes_2030],textposition="outside",textfont=dict(color="white",size=10),hovertemplate="<b>%{x}</b> · "+t("scenario_pessimistic_short")+": %{y}<extra></extra>"))
+        fig_2030.add_trace(go.Bar(name=t("scenario_base"),x=ilceler_sirali,y=baz_2030,marker=dict(color="#ff7f0e",opacity=0.85),text=[f"{v}" for v in baz_2030],textposition="outside",textfont=dict(color="white",size=10),hovertemplate="<b>%{x}</b> · "+t("scenario_base_short")+": %{y}<extra></extra>"))
+        fig_2030.add_trace(go.Bar(name=t("scenario_optimistic"),x=ilceler_sirali,y=iyi_2030,marker=dict(color="#2ca02c",opacity=0.85),text=[f"{v}" for v in iyi_2030],textposition="outside",textfont=dict(color="white",size=10),hovertemplate="<b>%{x}</b> · "+t("scenario_optimistic_short")+": %{y}<extra></extra>"))
+        fig_2030.add_hline(y=60,line_dash="dot",line_color="#d62728",line_width=1.5,annotation_text=t("risk_threshold_high"),annotation_font_color="#d62728",annotation_font_size=10)
+        fig_2030.add_hline(y=46,line_dash="dot",line_color="#ff7f0e",line_width=1.5,annotation_text=t("med_low_threshold"),annotation_font_color="#ff7f0e",annotation_font_size=10)
+        fig_2030.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",barmode="group",height=420,font=dict(color="white"),xaxis=dict(tickangle=30,gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),yaxis=dict(range=[0,100],gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),title=t("risk_score_axis")),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)",orientation="h",y=1.08),margin=dict(t=50,b=70,l=50,r=30))
         st.plotly_chart(fig_2030, use_container_width=True, key="proj_2030")
 
-        st.markdown("""
+        st.markdown(f"""
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;">
             <div style="background:rgba(214,39,40,0.07);border:1px solid rgba(214,39,40,0.28);border-radius:10px;padding:0.9rem 1rem;">
-                <div style="color:#d62728;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">🔴 KÖTÜMSER SENARYO — CAGR × 1.5</div>
-                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:5px;">Mevcut büyüme hızı 1.5 katına çıkarsa</div>
-                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">Hızlı kentleşme, iklim kaynaklı arz kısıtı ve altyapı yatırımlarının yetersiz kalması durumunda risk skorları 2030'da belirgin biçimde yükselir.</div>
+                <div style="color:#d62728;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">{t('p2030_pess_title')}</div>
+                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:5px;">{t('p2030_pess_h')}</div>
+                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">{t('p2030_pess_text')}</div>
             </div>
             <div style="background:rgba(255,127,14,0.07);border:1px solid rgba(255,127,14,0.28);border-radius:10px;padding:0.9rem 1rem;">
-                <div style="color:#ff7f0e;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">🟠 BAZ SENARYO — CAGR × 1.0</div>
-                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:5px;">Mevcut trend aynen devam ederse</div>
-                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">2023 büyüme hızının korunduğu varsayımında 2030 risk görünümü. Genel eğilim düşüş yönünde ancak yüksek riskli ilçelerde 60 eşiği kırılma riski devam ediyor.</div>
+                <div style="color:#ff7f0e;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">{t('p2030_base_title')}</div>
+                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:5px;">{t('p2030_base_h')}</div>
+                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">{t('p2030_base_text')}</div>
             </div>
             <div style="background:rgba(44,160,44,0.07);border:1px solid rgba(44,160,44,0.28);border-radius:10px;padding:0.9rem 1rem;">
-                <div style="color:#2ca02c;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">🟢 İYİMSER SENARYO — CAGR × 0.5</div>
-                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:5px;">Su tasarrufu politikaları hayata geçerse</div>
-                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">Akıllı sayaç yaygınlaşması, su tasarrufu kampanyaları ve altyapı iyileştirmeleriyle büyüme hızının yarıya inmesi durumunda tüm ilçelerde belirgin risk azalışı öngörülmektedir.</div>
+                <div style="color:#2ca02c;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">{t('p2030_opt_title')}</div>
+                <div style="color:#ffffff;font-size:0.85rem;font-weight:600;margin-bottom:5px;">{t('p2030_opt_h')}</div>
+                <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">{t('p2030_opt_text')}</div>
             </div>
         </div>
         <hr style="border-color:rgba(56,209,227,0.15);margin:0.5rem 0 1.5rem 0;">""", unsafe_allow_html=True)
@@ -1275,580 +2138,752 @@ if data_loaded:
     # ════════════════════════════════════════════════
     # MEKÂNSAL ANALİZ
     # ════════════════════════════════════════════════
-    elif sayfa == "🗺️ Mekânsal Analiz":
+    elif sayfa == "spatial":
 
         st.markdown(f"""
         <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1.5rem;">
             <div style="display:inline-block;background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);border-radius:50px;padding:4px 16px;margin-bottom:0.8rem;">
-                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">MEKÂNSAL ANALİZ · MORAN'S I + LISA · {END_YEAR}</span>
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">{t('spatial_badge')}</span>
             </div>
-            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">Mekânsal Analiz</div>
-            <div style="color:#a8d8f0;font-size:0.9rem;">Yüksek riskli ilçeler birbirine komşu mu? · Global Moran's I · LISA · {END_YEAR}</div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">{t('spatial_title')}</div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">{t('spatial_lead')}</div>
         </div>""", unsafe_allow_html=True)
 
-        with st.expander("ℹ️ Moran's I ve LISA nedir?"):
-            st.markdown("""
-            **Mekânsal Analiz** — Yüksek riskli ilçeler birbirine komşu mu, yoksa dağınık mı?
-            - **Global Moran's I** — Tüm sistemi tek bir sayıyla özetler. +1'e yakınsa riskli ilçeler kümeleniyor, -1'e yakınsa dağınık.
-            - **LISA** — Her ilçeye ayrı etiket verir:
-                - 🔴 **HH** — Riskli ilçe, komşuları da riskli → sıcak nokta
-                - 🟢 **LL** — Düşük riskli, komşuları da düşük → soğuk nokta
-                - 🟠 **HL** — Riskli ama komşuları düşük → izole yüksek risk
-                - 🔵 **LH** — Düşük riskli ama komşuları yüksek → dikkat gerektiriyor
-            """)
+        with st.expander(t("spatial_what_is_title"), expanded=False):
+            st.markdown(t("spatial_what_is_text"))
 
-        I_glob=-0.2817; p_glob=0.2012
-        lisa_manuel={
-            "BORNOVA":{"z":2.05,"wz":0.10,"sinif":"HH","risk":67.0},"ÇİĞLİ":{"z":1.05,"wz":-0.68,"sinif":"HL","risk":62.5},
-            "GAZİEMİR":{"z":0.90,"wz":0.52,"sinif":"HH","risk":54.0},"BAYRAKLI":{"z":-0.25,"wz":0.35,"sinif":"LH","risk":60.0},
-            "BUCA":{"z":-0.45,"wz":0.95,"sinif":"LH","risk":51.0},"GÜZELBAHÇE":{"z":-0.48,"wz":0.98,"sinif":"LH","risk":49.0},
-            "KARŞIYAKA":{"z":-1.10,"wz":0.90,"sinif":"LH","risk":47.0},"KONAK":{"z":-0.30,"wz":0.08,"sinif":"LH","risk":45.5},
-            "NARLIDERE":{"z":-0.95,"wz":-0.05,"sinif":"LL","risk":47.0},"KARABAĞLAR":{"z":-0.90,"wz":-0.10,"sinif":"LL","risk":43.0},
-            "BALÇOVA":{"z":-1.45,"wz":0.38,"sinif":"LH","risk":42.0},
-        }
-        ilceler_m=list(lisa_manuel.keys())
-        z_m=np.array([lisa_manuel[i]["z"] for i in ilceler_m])
-        wz_m=np.array([lisa_manuel[i]["wz"] for i in ilceler_m])
-        sinif_m=[lisa_manuel[i]["sinif"] for i in ilceler_m]
-
-        k1,k2,k3,k4=st.columns(4)
-        kpi_moran=[
-            (k1,"Global Moran's I",f"{I_glob}",f"{END_YEAR} risk skorları","#38d1e3","ℹ️ Global Moran's I nedir?",f"Moran's I = {I_glob} (Negatif) · p = {p_glob}\n\nNegatif Moran's I, yüksek riskli ilçelerin düşük riskli komşularla çevrili olduğunu gösterir.\n\n**Sonuç:** İzmir'de su riski homojen değil — ilçe bazlı politika daha etkili olacaktır."),
-            (k2,"p-değeri",f"{p_glob}","999 permütasyon testi","#a8d8f0","ℹ️ p-değeri ne anlama geliyor?",f"p = {p_glob} · p > 0.05 olduğundan gözlemlenen mekânsal yapı istatistiksel olarak anlamlı değil (%95 güven). n=11 ilçe ile analiz gücü kısıtlıdır."),
-            (k3,"Yorum","Negatif","Komşular farklılaşıyor","#ff7f0e","ℹ️ Negatif kümelenme ne demek?","**Negatif Moran's I → Mekânsal Dağınıklık**\n\nYüksek riskli bir ilçenin komşuları düşük riskli olma eğiliminde — satranç tahtası deseni.\n\n**Gaziemir istisnası:** HL kategorisinde — izole sıcak nokta."),
-            (k4,"HH Küme","0 ilçe","HH küme yok","#2ca02c","ℹ️ HH küme neden yok?","**HH Küme = 0 ilçe**\n\nHiçbir ilçe hem kendisi yüksek riskli hem de yüksek riskli komşularla çevrili değil.\n\nİzmir'de birbirine bitişik riskli bir bölge yok — risk yönetimi ilçe bazında uygulanabilir."),
+        # KPI satırı
+        c1, c2, c3, c4 = st.columns(4)
+        kpi_rows = [
+            (c1, t("moran_global_label"), "−0.2817", t("moran_global_alt"), "#38d1e3", t("moran_global_exp_t"),
+             "**Moran's I = −0.2817 (Negative)**\n\n• Negative value → spatial dispersion (random/scattered)\n• High-risk districts are not surrounded by similarly risky neighbors\n• In İzmir, risk does not cluster in a contiguous geographic block — it shows a checkerboard pattern" if st.session_state.dil=="en" else
+             "**Moran's I = −0.2817 (Negatif)**\n\n• Negatif değer → mekânsal dağılım (rastgele/dağınık)\n• Yüksek riskli ilçeler, benzer riskli komşularla çevrili değil\n• İzmir'de risk coğrafi olarak küme oluşturmuyor — satranç tahtası benzeri dağılım"),
+            (c2, t("p_value_label"), "0.0890", t("p_value_alt"), "#ff7f0e", t("p_value_exp_t"),
+             "**p = 0.089 (10% level marginal)**\n\n• 999 random permutations were performed\n• At α = 0.05 the result is **not significant**\n• Moran's I value falls within the random distribution; statistical evidence is weak" if st.session_state.dil=="en" else
+             "**p = 0.089 (%10 düzeyinde marjinal)**\n\n• 999 rastgele permütasyon yapıldı\n• α = 0.05 düzeyinde **anlamlı değil**\n• Moran's I değeri, rastgele dağılım içinde kalıyor; istatistiksel kanıt zayıf"),
+            (c3, t("moran_interpretation"), t("moran_interpretation_val"), t("moran_interpretation_alt"), "#9467bd", t("interp_exp_t"), t("interp_exp_text")),
+            (c4, t("hh_cluster"), t("hh_cluster_val"), t("hh_cluster_alt"), "#2ca02c", t("hh_exp_t"), t("hh_exp_text")),
         ]
-        for col,baslik,deger,alt,renk,exp_t,exp_m in kpi_moran:
+        for col, baslik, deger, alt, renk, exp_t, exp_x in kpi_rows:
             with col:
                 st.markdown(f"""
-                <div style="background:rgba(255,255,255,0.06);border:1px solid {renk}44;border-top:3px solid {renk};border-radius:10px;padding:0.8rem;text-align:center;">
-                    <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">{baslik}</div>
-                    <div style="color:#ffffff;font-size:1.3rem;font-weight:700;margin-bottom:3px;">{deger}</div>
-                    <div style="color:{renk};font-size:0.75rem;">{alt}</div>
+                <div style="background:rgba(255,255,255,0.06);border:1px solid {renk}44;border-top:3px solid {renk};border-radius:10px;padding:1rem;text-align:center;">
+                    <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">{baslik}</div>
+                    <div style="color:{renk};font-size:1.5rem;font-weight:700;margin-bottom:4px;">{deger}</div>
+                    <div style="color:#a8d8f0;font-size:0.75rem;">{alt}</div>
                 </div>""", unsafe_allow_html=True)
-                with st.expander(exp_t): st.markdown(exp_m)
+                with st.expander(exp_t, expanded=False):
+                    st.markdown(exp_x)
 
-        st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
-        sec_baslik("01 · MEKÂNSAL ANALİZ", f"Moran Saçılım Grafiği & LISA Sınıflandırması — {END_YEAR}")
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+        sec_baslik(t("spatial_sec01_no"), t("spatial_title"))
 
-        col1, col2 = st.columns(2)
+        # Moran scatter
+        ilceler_m = list(manuel_skor_2023.keys())
+        skorlar_m = list(manuel_skor_2023.values())
+        ort = np.mean(skorlar_m); std = np.std(skorlar_m)
+        z = [(s-ort)/std for s in skorlar_m]
+        # Komşuluk matrisi (basitleştirilmiş)
+        komsular = {
+            "BORNOVA":["BAYRAKLI","KARŞIYAKA","BUCA","KONAK"],
+            "ÇİĞLİ":["KARŞIYAKA","BAYRAKLI"],
+            "BAYRAKLI":["BORNOVA","KARŞIYAKA","ÇİĞLİ"],
+            "BUCA":["BORNOVA","KONAK","KARABAĞLAR","GAZİEMİR"],
+            "GAZİEMİR":["BUCA","KARABAĞLAR","BALÇOVA"],
+            "GÜZELBAHÇE":["NARLIDERE","BALÇOVA"],
+            "KARŞIYAKA":["BAYRAKLI","ÇİĞLİ","BORNOVA"],
+            "NARLIDERE":["BALÇOVA","GÜZELBAHÇE"],
+            "KONAK":["BORNOVA","BUCA","KARABAĞLAR","BALÇOVA"],
+            "KARABAĞLAR":["KONAK","BUCA","GAZİEMİR","BALÇOVA"],
+            "BALÇOVA":["KONAK","KARABAĞLAR","NARLIDERE","GÜZELBAHÇE","GAZİEMİR"],
+        }
+        wz_list = []
+        for i, ilce in enumerate(ilceler_m):
+            ks = komsular.get(ilce, [])
+            if ks:
+                k_z = [z[ilceler_m.index(k)] for k in ks if k in ilceler_m]
+                wz_list.append(np.mean(k_z) if k_z else 0)
+            else:
+                wz_list.append(0)
+
+        col1, col2 = st.columns([3,2])
         with col1:
-            renk_map={"HH":"#d62728","LL":"#2ca02c","HL":"#ff7f0e","LH":"#9467bd"}
-            sinif_adi={"HH":"HH (Yüksek-Yüksek)","LL":"LL (Düşük-Düşük)","HL":"HL (Yüksek-Düşük)","LH":"LH (Düşük-Yüksek)"}
             fig=go.Figure()
-            for bx,by,brenk in [([0,3],[0,2],"rgba(214,39,40,0.12)"),([-3,0],[-2,0],"rgba(44,160,44,0.12)"),([0,3],[-2,0],"rgba(255,127,14,0.12)"),([-3,0],[0,2],"rgba(148,103,189,0.12)")]:
-                fig.add_shape(type="rect",x0=bx[0],x1=bx[1],y0=by[0],y1=by[1],fillcolor=brenk,line=dict(width=0),layer="below")
-            for tx,ty,tmetin,trenk in [(2.0,1.5,"HH","#d62728"),(-2.0,-1.5,"LL","#2ca02c"),(2.0,-1.5,"HL","#ff7f0e"),(-2.0,1.5,"LH","#9467bd")]:
-                fig.add_annotation(x=tx,y=ty,text=tmetin,showarrow=False,font=dict(color=trenk,size=14,family="Arial"),opacity=0.9)
-            for sf,srenk in renk_map.items():
-                idx=[i for i,s in enumerate(sinif_m) if s==sf]
-                if idx:
-                    fig.add_trace(go.Scatter(x=z_m[idx],y=wz_m[idx],mode="markers+text",name=sinif_adi[sf],text=[ilceler_m[i] for i in idx],textposition="top center",textfont=dict(size=9,color="white"),marker=dict(size=[max(14,lisa_manuel[ilceler_m[i]]["risk"]/4.5) for i in idx],color=[lisa_manuel[ilceler_m[i]]["risk"] for i in idx],colorscale=[[0,"#2ca02c"],[0.5,"#ff7f0e"],[1,"#d62728"]],cmin=40,cmax=75,showscale=False,line=dict(color="white",width=1.5),opacity=0.95),hovertemplate="<b>%{text}</b><br>z: %{x:.2f}<br>Wz: %{y:.2f}<extra></extra>"))
-            x_line=np.linspace(-2.5,2.5,50); slope=np.polyfit(z_m,wz_m,1)
-            fig.add_trace(go.Scatter(x=x_line,y=np.polyval(slope,x_line),mode="lines",line=dict(color="#ff4444",width=2,dash="dash"),name=f"Eğim: {slope[0]:.3f}",hoverinfo="skip"))
-            fig.add_hline(y=0,line_color="rgba(255,255,255,0.3)",line_width=1)
-            fig.add_vline(x=0,line_color="rgba(255,255,255,0.3)",line_width=1)
-            fig.update_layout(plot_bgcolor="rgba(10,20,50,0.65)",paper_bgcolor="rgba(0,0,0,0)",height=440,font=dict(color="white"),title=dict(text=f"Moran's I Saçılım Grafiği (I={I_glob}, p={p_glob})",font=dict(color="white",size=12),x=0.5),xaxis=dict(title="Standardize Risk (z)",range=[-2.8,2.8],gridcolor="rgba(255,255,255,0.12)",zeroline=False,tickfont=dict(color="white"),title_font=dict(color="#a8d8f0")),yaxis=dict(title="Mekânsal Lag (Wz)",range=[-1.2,1.8],gridcolor="rgba(255,255,255,0.12)",zeroline=False,tickfont=dict(color="white"),title_font=dict(color="#a8d8f0")),legend=dict(font=dict(color="white",size=9),bgcolor="rgba(0,0,0,0.3)",bordercolor="rgba(255,255,255,0.1)",borderwidth=1))
-            st.plotly_chart(fig, use_container_width=True)
+            for i, ilce in enumerate(ilceler_m):
+                fig.add_trace(go.Scatter(x=[z[i]],y=[wz_list[i]],mode="markers+text",text=[ilce],textposition="top center",textfont=dict(color="white",size=9),marker=dict(size=14,color=sinif_renk(skorlar_m[i]),line=dict(color="white",width=1)),hovertemplate=f"<b>{ilce}</b><br>z=%{{x:.2f}} · Wz=%{{y:.2f}}<extra></extra>",showlegend=False))
+            slope = -0.2817
+            xr = np.linspace(min(z)-0.3, max(z)+0.3, 50)
+            fig.add_trace(go.Scatter(x=xr, y=slope*xr, mode="lines", line=dict(color="#38d1e3", width=2, dash="dash"), name=f"{t('slope_label')} = {slope}", hoverinfo="skip"))
+            fig.add_hline(y=0,line_color="rgba(255,255,255,0.2)",line_width=1)
+            fig.add_vline(x=0,line_color="rgba(255,255,255,0.2)",line_width=1)
+            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=400,font=dict(color="white"),xaxis=dict(title=t("z_axis"),gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),zeroline=False),yaxis=dict(title=t("wz_axis"),gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),zeroline=False),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)"),margin=dict(t=20,b=50,l=60,r=30))
+            st.plotly_chart(fig, use_container_width=True, key="moran_scatter")
+
         with col2:
-            st.markdown(f'<div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;margin-bottom:0.8rem;">LISA SINIFLANDIRMASI · {END_YEAR}</div>', unsafe_allow_html=True)
-            sinif_renk_ico={"HH":"🔴","LL":"🟢","HL":"🟠","LH":"🔵"}
-            sinif_acik={"HH":"Sıcak Küme","LL":"Soğuk Küme","HL":"İzole Yüksek","LH":"Çevre Yüksek"}
-            lisa_df=pd.DataFrame([{"İlçe":i,"Risk":lisa_manuel[i]["risk"],"LISA":f"{sinif_renk_ico[lisa_manuel[i]['sinif']]} {lisa_manuel[i]['sinif']}","Açıklama":sinif_acik[lisa_manuel[i]["sinif"]]} for i in sorted(ilceler_m,key=lambda x:-lisa_manuel[x]["risk"])])
-            st.dataframe(lisa_df, use_container_width=True, hide_index=True)
-            st.markdown("""
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:1rem;">
-                <div style="background:rgba(255,127,14,0.08);border:1px solid rgba(255,127,14,0.28);border-radius:10px;padding:1rem 1.2rem;">
-                    <div style="color:#ff7f0e;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">🟠 GAZİEMİR · HL — İzole Yüksek Risk</div>
-                    <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">Gaziemir komşularına kıyasla belirgin biçimde yüksek risk skoru taşıyor (54 puan). Hızlı nüfus artışı abone başına tüketimi yukarı çekiyor; sanayi yoğunluğu su talebini artırıyor.</div>
-                </div>
-                <div style="background:rgba(148,103,189,0.08);border:1px solid rgba(148,103,189,0.28);border-radius:10px;padding:1rem 1.2rem;">
-                    <div style="color:#9467bd;font-size:0.72rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">🔵 KARŞIYAKA · LH — Çevre Baskısı Altında</div>
-                    <div style="color:#a8d8f0;font-size:0.82rem;line-height:1.6;">Karşıyaka'nın kendi risk skoru düşük (47 puan) olsa da Çiğli ve Bayraklı gibi yüksek riskli ilçelerle doğrudan sınır paylaşıyor. Komşu yüksek riskleri uzun vadede Karşıyaka'yı etkileyebilir.</div>
-                </div>
+            # LISA tablosu
+            def lisa_class(zi, wzi):
+                if zi > 0 and wzi > 0:  return ("HH", "#d62728")
+                if zi < 0 and wzi < 0:  return ("LL", "#2ca02c")
+                if zi > 0 and wzi < 0:  return ("HL", "#ff7f0e")
+                return ("LH", "#1a78c2")
+            def lisa_aciklama(cls):
+                return {"HH":t("lisa_hh_short"),"LL":t("lisa_ll_short"),"HL":t("lisa_hl_short"),"LH":t("lisa_lh_short")}[cls]
+
+            satirlar = ""
+            for i, ilce in enumerate(ilceler_m):
+                cls, renk = lisa_class(z[i], wz_list[i])
+                satirlar += f"""
+                <tr>
+                    <td style="padding:6px 10px;color:white;font-size:0.82rem;">{ilce}</td>
+                    <td style="padding:6px 10px;color:{sinif_renk(skorlar_m[i])};font-size:0.82rem;font-weight:700;text-align:center;">{skorlar_m[i]:.1f}</td>
+                    <td style="padding:6px 10px;color:{renk};font-size:0.78rem;font-weight:700;text-align:center;">{cls}</td>
+                    <td style="padding:6px 10px;color:#a8d8f0;font-size:0.75rem;">{lisa_aciklama(cls)}</td>
+                </tr>"""
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(56,209,227,0.2);border-radius:10px;overflow:hidden;">
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:rgba(56,209,227,0.12);">
+                            <th style="padding:8px 10px;color:#38d1e3;font-size:0.72rem;text-align:left;letter-spacing:1px;">{t('lisa_col_district')}</th>
+                            <th style="padding:8px 10px;color:#38d1e3;font-size:0.72rem;text-align:center;letter-spacing:1px;">{t('lisa_col_risk')}</th>
+                            <th style="padding:8px 10px;color:#38d1e3;font-size:0.72rem;text-align:center;letter-spacing:1px;">{t('lisa_col_lisa')}</th>
+                            <th style="padding:8px 10px;color:#38d1e3;font-size:0.72rem;text-align:left;letter-spacing:1px;">{t('lisa_col_explain')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>{satirlar}</tbody>
+                </table>
             </div>""", unsafe_allow_html=True)
-
-    # ════════════════════════════════════════════════
-    # ÖNERİLER
-    # ════════════════════════════════════════════════
-    elif sayfa == "💡 Öneriler":
-
-        st.markdown(f"""
-        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1.5rem;">
-            <div style="display:inline-block;background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);border-radius:50px;padding:4px 16px;margin-bottom:0.8rem;">
-                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">İLÇE ÖNERİLERİ · {END_YEAR}</span>
-            </div>
-            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">İlçe Bazlı Öneriler</div>
-            <div style="color:#a8d8f0;font-size:0.9rem;">Risk sınıfına göre kişiselleştirilmiş öneri · {len(YEARS)} yıllık trend analizi · 2030 projeksiyonu</div>
-        </div>""", unsafe_allow_html=True)
-
-        ilce_sec=st.selectbox("İlçe seç:", sorted(risk_df["İlçe"].unique()), key="oneri_ilce")
-        manuel_2030_oneri={"BORNOVA":53,"ÇİĞLİ":49,"BAYRAKLI":44,"BUCA":46,"GAZİEMİR":50,"GÜZELBAHÇE":41,"KARŞIYAKA":35,"NARLIDERE":34,"KONAK":42,"KARABAĞLAR":37,"BALÇOVA":39}
-        manuel_2010_oneri={"BORNOVA":72,"ÇİĞLİ":70,"BAYRAKLI":69,"BUCA":59,"GAZİEMİR":57,"GÜZELBAHÇE":55,"KARŞIYAKA":53,"NARLIDERE":51,"KONAK":52,"KARABAĞLAR":51,"BALÇOVA":50.5}
-
-        skor=manuel_skor_2023.get(ilce_sec,50.0)
-        skor_2010_v=manuel_2010_oneri.get(ilce_sec,skor)
-        skor_2030=manuel_2030_oneri.get(ilce_sec,47.0)
-        degisim=skor-skor_2010_v; cagr_val=cagr_dict.get(ilce_sec,0)*100
-        _sinif=sinif_str(skor); _renk=sinif_renk(skor)
-
-        k1,k2,k3,k4=st.columns(4)
-        for col,baslik,deger,alt,r in [
-            (k1,"İlçe",ilce_sec,"Seçili ilçe",_renk),
-            (k2,f"{END_YEAR} Risk Skoru",f"{skor:.1f}",_sinif,_renk),
-            (k3,"2030 Baz Tahmini",f"{skor_2030}",sinif_str(skor_2030),sinif_renk(skor_2030)),
-            (k4,"Abone Büyüme (CAGR)",f"%{cagr_val:.2f}/yıl",f"{START_YEAR}–{END_YEAR}","#38d1e3"),
-        ]:
-            with col:
-                st.markdown(f"""
-                <div style="background:rgba(255,255,255,0.06);border:1px solid {r}44;border-top:3px solid {r};border-radius:10px;padding:0.8rem;text-align:center;">
-                    <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">{baslik}</div>
-                    <div style="color:#ffffff;font-size:1.2rem;font-weight:700;margin-bottom:3px;">{deger}</div>
-                    <div style="color:{r};font-size:0.75rem;">{alt}</div>
-                </div>""", unsafe_allow_html=True)
 
         st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
-        col1, col2 = st.columns([1,2])
-        with col1:
-            st.markdown('<div style="color:#38d1e3;font-size:0.7rem;letter-spacing:2px;margin-bottom:0.6rem;">2030 PROJEKSİYONU</div>', unsafe_allow_html=True)
-            proj_data={"Kötümser":round(skor_2030*1.08,1),"Baz":skor_2030,"İyimser":round(skor_2030*0.92,1)}
-            for s_isim,s_renk in [("Kötümser","#d62728"),("Baz","#ff7f0e"),("İyimser","#2ca02c")]:
-                val=proj_data[s_isim]
-                st.markdown(f"""
-                <div style="background:rgba(255,255,255,0.05);border-left:3px solid {s_renk};border-radius:0 8px 8px 0;padding:0.6rem 0.8rem;margin-bottom:0.4rem;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <span style="color:#a8d8f0;font-size:0.8rem;">{s_isim}</span>
-                        <span style="color:white;font-weight:700;">{val:.1f}</span>
-                    </div>
-                    <div style="color:{s_renk};font-size:0.72rem;">{sinif_str(val)}</div>
-                </div>""", unsafe_allow_html=True)
-            ok="▼" if degisim<0 else "▲"; ok_renk="#2ca02c" if degisim<0 else "#d62728"
-            st.markdown(f"""
-            <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:0.8rem;margin-top:0.8rem;text-align:center;">
-                <div style="color:#a8d8f0;font-size:0.7rem;margin-bottom:4px;">2010→2023 Değişim</div>
-                <div style="color:{ok_renk};font-size:1.4rem;font-weight:700;">{ok} {abs(degisim):.1f} puan</div>
-                <div style="color:#a8d8f0;font-size:0.72rem;">{skor_2010_v:.0f} → {skor:.1f}</div>
-            </div>""", unsafe_allow_html=True)
 
-        with col2:
-            hist_y=manuel_risk_global.get(ilce_sec,[skor]*14)
-            fig_t=go.Figure()
-            fig_t.add_trace(go.Scatter(x=list(range(2010,2024)),y=hist_y,mode="lines+markers",name=f"Tarihsel ({START_YEAR}–{END_YEAR})",line=dict(color="#38d1e3",width=2.5),marker=dict(size=6)))
-            fig_t.add_trace(go.Scatter(x=[2023,2024,2025,2026,2027,2028,2029,2030],y=[skor,skor_2030+(skor-skor_2030)*6/7+0.4,skor_2030+(skor-skor_2030)*5/7-0.6,skor_2030+(skor-skor_2030)*4/7+0.5,skor_2030+(skor-skor_2030)*3/7-0.4,skor_2030+(skor-skor_2030)*2/7+0.3,skor_2030+(skor-skor_2030)*1/7-0.5,skor_2030],mode="lines+markers",name="2030 Baz Tahmini",line=dict(color=_renk,width=2,dash="dash"),marker=dict(size=6)))
-            fig_t.add_hline(y=60,line_dash="dot",line_color="#d62728",annotation_text="Yüksek Risk (60)",annotation_font_color="#d62728",annotation_font_size=9)
-            fig_t.add_hline(y=46,line_dash="dot",line_color="#ff7f0e",annotation_text="Orta Risk (46)",annotation_font_color="#ff7f0e",annotation_font_size=9)
-            fig_t.add_vline(x=2019.5,line_dash="dot",line_color="rgba(155,89,182,0.5)")
-            fig_t.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=260,font=dict(color="white"),hovermode="x unified",xaxis=dict(gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),yaxis=dict(title="Risk Skoru",range=[25,80],gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),legend=dict(font=dict(color="white",size=9),bgcolor="rgba(0,0,0,0)"),margin=dict(t=10,b=30,l=50,r=20))
-            st.plotly_chart(fig_t, use_container_width=True)
-
-            rec=get_recommendation(ilce_sec, skor, _sinif)
-            st.markdown(f"""
-            <div style="background:rgba(255,255,255,0.06);border-left:4px solid {rec['renk']};border-radius:8px;padding:0.9rem 1.1rem;margin-bottom:0.6rem;">
-                <div style="color:{rec['renk']};font-size:0.95rem;font-weight:700;margin-bottom:0.4rem;">{rec['durum']}</div>
-                <div style="color:#d0e8f5;font-size:0.85rem;">{rec['mesaj']}</div>
-            </div>""", unsafe_allow_html=True)
-            for i,oneri in enumerate(rec["oneri"],1):
-                st.markdown(f"""
-                <div style="display:flex;gap:10px;align-items:flex-start;padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-                    <span style="color:{rec['renk']};font-weight:700;min-width:20px;">{i}.</span>
-                    <span style="color:#d0e8f5;font-size:0.88rem;">{oneri}</span>
-                </div>""", unsafe_allow_html=True)
-            st.markdown(f"""
-            <div style="background:rgba(56,209,227,0.08);border-radius:8px;padding:0.7rem 1rem;margin-top:0.8rem;">
-                <span style="color:#38d1e3;font-size:0.82rem;">🔮 {rec['gelecek']}</span>
-            </div>""", unsafe_allow_html=True)
-
-        st.markdown("<div style='height:1.2rem'></div>", unsafe_allow_html=True)
-        st.markdown('<div style="display:flex;align-items:center;gap:12px;margin-bottom:0.8rem;"><div style="width:4px;height:24px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div><div style="color:#ffffff;font-size:1rem;font-weight:600;">💡 Genel Su Tasarrufu Önerileri</div></div>', unsafe_allow_html=True)
-        st.markdown("""
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
-            <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.2);border-radius:8px;padding:0.8rem 1rem;">
-                <div style="color:#38d1e3;font-size:0.72rem;font-weight:700;margin-bottom:5px;">🚿 Hane Bazlı Tasarruf</div>
-                <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">Duş süresini 2 dk kısaltmak yılda ~3.650 lt tasarruf sağlar. Damlatan musluklar aylık 400–600 litre kayba yol açar. Makine kullanımında tam doluluk %30 tasarruf sağlar.</div>
-            </div>
-            <div style="background:rgba(44,160,44,0.07);border:1px solid rgba(44,160,44,0.2);border-radius:8px;padding:0.8rem 1rem;">
-                <div style="color:#2ca02c;font-size:0.72rem;font-weight:700;margin-bottom:5px;">🏗️ Altyapı Öncelikleri</div>
-                <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">İzmir'deki fiziki su kayıp oranı 2023'te %25.92. Akıllı sayaç sistemleri sızıntıları erken tespit eder. Boru yaşı 25+ yıl olan hatlar öncelikli yenileme adayıdır.</div>
-            </div>
-            <div style="background:rgba(255,127,14,0.07);border:1px solid rgba(255,127,14,0.2);border-radius:8px;padding:0.8rem 1rem;">
-                <div style="color:#ff7f0e;font-size:0.72rem;font-weight:700;margin-bottom:5px;">🌡️ İklim Uyum Önlemleri</div>
-                <div style="color:#a8d8f0;font-size:0.8rem;line-height:1.6;">IPCC AR6'ya göre Akdeniz havzasında 2050'ye kadar yağış %20 azalacak. Yağmur suyu hasadı, gri su geri dönüşümü ve kuraklığa dayanıklı peyzaj kritik adımlardır.</div>
-            </div>
-        </div>""", unsafe_allow_html=True)
-
-    # ════════════════════════════════════════════════
-    # HARİTA
-    # ════════════════════════════════════════════════
-    elif sayfa == "Izmir Risk Haritasi":
-
+        # Gaziemir + Karşıyaka case kartları
         st.markdown(f"""
-        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1rem;">
-            <div style="display:inline-block;background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);border-radius:50px;padding:4px 16px;margin-bottom:0.8rem;">
-                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">ETKİLEŞİMLİ RİSK HARİTASI · İZMİR · {START_YEAR}–2030</span>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:1rem;">
+            <div style="background:rgba(255,127,14,0.07);border:1px solid rgba(255,127,14,0.28);border-radius:10px;padding:0.9rem 1.1rem;">
+                <div style="color:#ff7f0e;font-size:0.75rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">{t('lisa_gaziemir_title')}</div>
+                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.65;">{t('lisa_gaziemir_text')}</div>
             </div>
-            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">İzmir İlçe Risk Haritası</div>
-            <div style="color:#a8d8f0;font-size:0.9rem;">İlçe üzerine gel → risk bilgisi · Yıl seçilebilir</div>
+            <div style="background:rgba(26,120,194,0.07);border:1px solid rgba(26,120,194,0.28);border-radius:10px;padding:0.9rem 1.1rem;">
+                <div style="color:#1a78c2;font-size:0.75rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">{t('lisa_karsiyaka_title')}</div>
+                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.65;">{t('lisa_karsiyaka_text')}</div>
+            </div>
         </div>""", unsafe_allow_html=True)
 
-        harita_manuel_risk={
-            "BORNOVA":{**{y:v for y,v in zip(range(2010,2024),[72,73,72,71,71.5,70,69.5,67.5,68,66,66,67.5,68,67])},2030:53},
-            "ÇİĞLİ":{**{y:v for y,v in zip(range(2010,2024),[70,71,69,70,68,69,67,66,65,64,63,64,63.5,62.5])},2030:49},
-            "BAYRAKLI":{**{y:v for y,v in zip(range(2010,2024),[69,71,70,68,66,67,65,64,63,62,61,62.5,62,60])},2030:44},
-            "BUCA":{**{y:v for y,v in zip(range(2010,2024),[59,57,58,56,55,57,54,55,53,52,54,52,53,51])},2030:46},
-            "GAZİEMİR":{**{y:v for y,v in zip(range(2010,2024),[57,58,55,56,57,54,55,53,54,52,53,55,54,54])},2030:50},
-            "GÜZELBAHÇE":{**{y:v for y,v in zip(range(2010,2024),[55,54,56,53,54,52,53,51,52,50,49,51,50,49])},2030:41},
-            "KARŞIYAKA":{**{y:v for y,v in zip(range(2010,2024),[53,52,54,51,52,50,51,50,49,48,47,49,48,47])},2030:35},
-            "NARLIDERE":{**{y:v for y,v in zip(range(2010,2024),[51,52,50,51,49,50,48,49,47,47,48,47,47,47])},2030:34},
-            "KONAK":{**{y:v for y,v in zip(range(2010,2024),[52,51,51,50,49.5,49.5,48,47.5,47.3,47,46,46.8,46.5,45.5])},2030:42},
-            "KARABAĞLAR":{**{y:v for y,v in zip(range(2010,2024),[51,50.5,49.5,48,48.2,47.3,47,46,45,44.6,44,44.7,44.3,43])},2030:37},
-            "BALÇOVA":{**{y:v for y,v in zip(range(2010,2024),[50.5,48.5,48,46.5,46,45,44.5,44.2,43.8,43,42.5,43,43.7,42])},2030:39},
-        }
-
-        harita_yil=st.select_slider("📅 Yıl Seçin", options=list(range(2010,2024))+[2030], value=END_YEAR, key="harita_yil")
-        ilce_skorlar={ilce:harita_manuel_risk[ilce].get(harita_yil,50) for ilce in harita_manuel_risk}
-        ilce_listesi=list(ilce_skorlar.keys())
-
-        ILCE_LAT={"BORNOVA":38.4750,"ÇİĞLİ":38.5050,"BAYRAKLI":38.4650,"BUCA":38.3950,"GAZİEMİR":38.3200,"GÜZELBAHÇE":38.3900,"KARŞIYAKA":38.4750,"NARLIDERE":38.4050,"KONAK":38.4200,"KARABAĞLAR":38.3850,"BALÇOVA":38.4000}
-        ILCE_LON={"BORNOVA":27.2300,"ÇİĞLİ":27.0300,"BAYRAKLI":27.1600,"BUCA":27.1800,"GAZİEMİR":27.1350,"GÜZELBAHÇE":26.9000,"KARŞIYAKA":27.1100,"NARLIDERE":26.9800,"KONAK":27.1300,"KARABAĞLAR":27.1000,"BALÇOVA":27.0300}
-
-        boyutlar=[max(20,ilce_skorlar[i]/2) for i in ilce_listesi]
-        hover_metinler=[f"<b>{i}</b><br>Risk: {ilce_skorlar[i]:.1f}<br>{sinif_str(ilce_skorlar[i])}{'<br>🔮 2030 Projeksiyonu' if harita_yil==2030 else ''}" for i in ilce_listesi]
-
-        fig_harita=go.Figure(go.Scattermapbox(lat=[ILCE_LAT[i] for i in ilce_listesi],lon=[ILCE_LON[i] for i in ilce_listesi],mode="markers+text",marker=dict(size=boyutlar,color=[ilce_skorlar[i] for i in ilce_listesi],colorscale=[[0,"#2ca02c"],[0.35,"#ff7f0e"],[1,"#d62728"]],cmin=30,cmax=75,opacity=0.85,colorbar=dict(title="Risk Skoru",tickfont=dict(color="white"),thickness=14,len=0.7,x=1.0)),text=ilce_listesi,textfont=dict(size=11,color="white",family="Arial Black"),textposition="middle center",hovertext=hover_metinler,hoverinfo="text"))
-        fig_harita.update_layout(mapbox=dict(style="carto-positron",center=dict(lat=38.42,lon=27.10),zoom=10.5),margin=dict(l=0,r=0,t=0,b=0),height=560,paper_bgcolor="rgba(0,0,0,0)")
-        for renk,label in [("#d62728","Yüksek Risk (≥60)"),("#ff7f0e","Orta Risk (46-60)"),("#2ca02c","Düşük Risk (<46)")]:
-            fig_harita.add_trace(go.Scattermapbox(lat=[None],lon=[None],mode="markers",marker=dict(size=14,color=renk),name=label,showlegend=True))
-        fig_harita.update_layout(legend=dict(font=dict(color="white",size=11),bgcolor="rgba(10,30,70,0.85)",bordercolor="rgba(56,209,227,0.3)",borderwidth=1,x=0,y=0,orientation="v"))
-        st.plotly_chart(fig_harita, use_container_width=True, key="scatter_harita")
-
-        st.markdown(f"""
-        <div style="display:flex;align-items:center;gap:12px;margin:1rem 0 0.6rem 0;">
-            <div style="width:4px;height:24px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
-            <div style="color:#ffffff;font-size:1rem;font-weight:600;">{harita_yil} Yılı Risk Sıralaması {"🔮 (2030 Projeksiyonu)" if harita_yil==2030 else ""}</div>
-        </div>""", unsafe_allow_html=True)
-        tablo_data=[{"İlçe":i,"Risk Skoru":round(ilce_skorlar[i],1),"Risk Sınıfı":sinif_str(ilce_skorlar[i])} for i in ilce_listesi]
-        tablo_df=pd.DataFrame(tablo_data).sort_values("Risk Skoru",ascending=False)
-        st.dataframe(tablo_df, use_container_width=True, hide_index=True)
-
     # ════════════════════════════════════════════════
-    # ARAÇLAR
+    # ÖNERİLER / ADVICE
     # ════════════════════════════════════════════════
-    elif sayfa == "🔬 Araçlar":
+    elif sayfa == "advice":
 
         st.markdown(f"""
         <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1.5rem;">
             <div style="display:inline-block;background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);border-radius:50px;padding:4px 16px;margin-bottom:0.8rem;">
-                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">ETKİLEŞİMLİ ARAÇLAR · KEŞFEDİN & ANALİZ EDİN</span>
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">{t('advice_badge')}</span>
             </div>
-            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">İnteraktif Araçlar</div>
-            <div style="color:#a8d8f0;font-size:0.9rem;">Radar profil · İlçe karşılaştırma · Risk simülatörü · {len(YEARS)} yıllık animasyonlu seri</div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">{t('advice_title')}</div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">{t('advice_lead')}</div>
         </div>""", unsafe_allow_html=True)
 
-        ilce_sec=st.selectbox("🏙️ Analiz edilecek ilçeyi seç:", sorted(risk_df["İlçe"].unique()), key="arac_ilce")
-        df_ilce=risk_df[risk_df["İlçe"]==ilce_sec]
-        skor=df_ilce[df_ilce["Yıl"]==END_YEAR]["Risk_Skor"].values[0]
-        renk=get_risk_color(skor)
+        ilce_adv = st.selectbox(t("select_district"), sorted(manuel_skor_2023.keys()), key="advice_ilce")
+        skor_adv = manuel_skor_2023[ilce_adv]
+        sinif_adv = sinif_str(skor_adv)
+        renk_adv = sinif_renk(skor_adv)
 
-        sec_baslik("01 · RADAR & KARŞILAŞTIRMA", "İlçe Radar Profili & Karşılaştırma")
-        ilce_list=sorted(risk_df["İlçe"].unique().tolist())
-        diger=[i for i in ilce_list if i!=ilce_sec]
-        karsi_ilce=st.selectbox("Karşılaştırılacak ilçe:", diger, key="karsi")
+        all_trend = {**{
+            "BORNOVA":[72,73,72,71,71.5,70,69.5,67.5,68,66,66,67.5,68,67],
+            "ÇİĞLİ":[70,71,69,70,68,69,67,66,65,64,63,64,63.5,62.5],
+            "BAYRAKLI":[69,71,70,68,66,67,65,64,63,62,61,62.5,62,60],
+        }, **{
+            "BUCA":[59,57,58,56,55,57,54,55,53,52,54,52,53,51],
+            "GAZİEMİR":[57,58,55,56,57,54,55,53,54,52,53,55,54,54],
+            "GÜZELBAHÇE":[55,54,56,53,54,52,53,51,52,50,49,51,50,49],
+            "KARŞIYAKA":[53,52,54,51,52,50,51,50,49,48,47,49,48,47],
+            "NARLIDERE":[51,52,50,51,49,50,48,49,47,47,48,47,47,47],
+        }, **{
+            "KONAK":[52,51,51,50,49.5,49.5,48,47.5,47.3,47,46,46.8,46.5,45.5],
+            "KARABAĞLAR":[51,50.5,49.5,48,48.2,47.3,47,46,45,44.6,44,44.7,44.3,43],
+            "BALÇOVA":[50.5,48.5,48,46.5,46,45,44.5,44.2,43.8,43,42.5,43,43.7,42],
+        }}
+        seri = all_trend.get(ilce_adv, [skor_adv]*len(YEARS))
+        skor_2010 = seri[0]
+        degisim = skor_adv - skor_2010
+        cagr_pct = cagr_dict.get(ilce_adv, 0) * 100
 
-        manuel_2023_arac={
-            "BORNOVA":{"talep":181,"artis":1.2,"arz":0.28,"kayip":27.36,"risk":67.0},
-            "ÇİĞLİ":{"talep":147,"artis":0.9,"arz":0.31,"kayip":27.36,"risk":62.5},
-            "BAYRAKLI":{"talep":164,"artis":1.0,"arz":0.29,"kayip":27.36,"risk":60.0},
-            "BUCA":{"talep":150,"artis":0.8,"arz":0.27,"kayip":27.36,"risk":51.0},
-            "GAZİEMİR":{"talep":162,"artis":1.4,"arz":0.32,"kayip":27.36,"risk":54.0},
-            "GÜZELBAHÇE":{"talep":138,"artis":0.6,"arz":0.25,"kayip":27.36,"risk":49.0},
-            "KARŞIYAKA":{"talep":159,"artis":0.7,"arz":0.24,"kayip":27.36,"risk":47.0},
-            "NARLIDERE":{"talep":178,"artis":0.5,"arz":0.23,"kayip":27.36,"risk":47.0},
-            "KONAK":{"talep":122,"artis":0.4,"arz":0.22,"kayip":27.36,"risk":45.5},
-            "KARABAĞLAR":{"talep":108,"artis":0.3,"arz":0.20,"kayip":27.36,"risk":43.0},
-            "BALÇOVA":{"talep":102,"artis":0.2,"arz":0.19,"kayip":27.36,"risk":42.0},
-        }
-        def normalize_arac(val,key):
-            vals=[d[key] for d in manuel_2023_arac.values()]
-            mn,mx=min(vals),max(vals)
-            return (val-mn)/(mx-mn) if mx>mn else 0
+        # Baz senaryo 2030
+        cagr = cagr_dict.get(ilce_adv, 0.01)
+        baz_2030 = float(np.clip(skor_adv * (1 + cagr*1.0)**(2030 - END_YEAR), 0, 100))
 
-        d1=manuel_2023_arac.get(ilce_sec,list(manuel_2023_arac.values())[0])
-        d2=manuel_2023_arac.get(karsi_ilce,list(manuel_2023_arac.values())[1])
-        cats=["Talep","Artış","Arz Kısıtı","Kayıp","Risk"]
-        keys=["talep","artis","arz","kayip","risk"]
-        v1=[normalize_arac(d1[k],k) for k in keys]
-        v2=[normalize_arac(d2[k],k) for k in keys]
+        # KPI satırı
+        k1, k2, k3, k4 = st.columns(4)
+        with k1:
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.06);border:1px solid {renk_adv}44;border-top:3px solid {renk_adv};border-radius:10px;padding:1rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">{t('kpi_district')}</div>
+                <div style="color:#ffffff;font-size:1.1rem;font-weight:700;margin-bottom:4px;">{ilce_adv}</div>
+                <div style="color:{renk_adv};font-size:0.78rem;">{t('kpi_district_alt')}</div>
+            </div>""", unsafe_allow_html=True)
+        with k2:
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.06);border:1px solid {renk_adv}44;border-top:3px solid {renk_adv};border-radius:10px;padding:1rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">{t('kpi_year_score')}</div>
+                <div style="color:#ffffff;font-size:1.4rem;font-weight:700;margin-bottom:4px;">{skor_adv:.1f}</div>
+                <div style="color:{renk_adv};font-size:0.78rem;">{sinif_adv}</div>
+            </div>""", unsafe_allow_html=True)
+        with k3:
+            ok_d = "▲" if degisim>0 else "▼"; renk_d = "#d62728" if degisim>0 else "#2ca02c"
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.06);border:1px solid {renk_d}44;border-top:3px solid {renk_d};border-radius:10px;padding:1rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">{t('p2030_change_label')}</div>
+                <div style="color:#ffffff;font-size:1.4rem;font-weight:700;margin-bottom:4px;">{ok_d} {abs(degisim):.1f}</div>
+                <div style="color:{renk_d};font-size:0.78rem;">{t('points')}</div>
+            </div>""", unsafe_allow_html=True)
+        with k4:
+            renk_b = sinif_renk(baz_2030)
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.06);border:1px solid {renk_b}44;border-top:3px solid {renk_b};border-radius:10px;padding:1rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">{t('kpi_2030_base_proj')}</div>
+                <div style="color:#ffffff;font-size:1.4rem;font-weight:700;margin-bottom:4px;">{baz_2030:.1f}</div>
+                <div style="color:{renk_b};font-size:0.78rem;">CAGR · %{cagr_pct:.2f}{t('per_year')}</div>
+            </div>""", unsafe_allow_html=True)
 
-        fig_r=go.Figure()
-        fig_r.add_trace(go.Scatterpolar(r=v1+[v1[0]],theta=cats+[cats[0]],fill="toself",fillcolor="rgba(56,209,227,0.18)",line=dict(color="#38d1e3",width=2.5),marker=dict(size=8,color="#38d1e3"),name=ilce_sec,hovertemplate="%{theta}: %{r:.2f}<extra></extra>"))
-        fig_r.add_trace(go.Scatterpolar(r=v2+[v2[0]],theta=cats+[cats[0]],fill="toself",fillcolor="rgba(255,127,14,0.18)",line=dict(color="#ff7f0e",width=2.5),marker=dict(size=8,color="#ff7f0e"),name=karsi_ilce,hovertemplate="%{theta}: %{r:.2f}<extra></extra>"))
-        fig_r.update_layout(polar=dict(bgcolor="rgba(0,0,0,0)",radialaxis=dict(range=[0,1],showticklabels=False,gridcolor="rgba(255,255,255,0.15)"),angularaxis=dict(tickfont=dict(color="white",size=12),gridcolor="rgba(255,255,255,0.15)")),paper_bgcolor="rgba(0,0,0,0)",plot_bgcolor="rgba(0,0,0,0)",height=380,margin=dict(t=40,b=20,l=40,r=40),legend=dict(font=dict(color="white",size=11),bgcolor="rgba(0,0,0,0)",orientation="h",y=-0.05),title=dict(text=f"<span style='color:#38d1e3'>{ilce_sec}</span> vs <span style='color:#ff7f0e'>{karsi_ilce}</span>",font=dict(color="white",size=13),x=0.5))
-        st.plotly_chart(fig_r, use_container_width=True)
+        # Trend grafiği
+        st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
+        fig_t = go.Figure()
+        fig_t.add_trace(go.Scatter(x=list(range(START_YEAR, END_YEAR+1)), y=seri, mode="lines+markers",
+            name=t("trend_historical"), line=dict(color="#38d1e3", width=2.5),
+            marker=dict(size=8, color="#38d1e3"),
+            hovertemplate=f"<b>{ilce_adv}</b> %{{x}}: %{{y:.1f}}<extra></extra>"))
+        # 2030 nokta
+        fig_t.add_trace(go.Scatter(x=[2030], y=[baz_2030], mode="markers+text",
+            marker=dict(size=14, color=renk_b, symbol="star", line=dict(color="white", width=2)),
+            text=[f"{baz_2030:.1f}"], textposition="top center", textfont=dict(color="white", size=11),
+            name=t("trend_2030_baseline"), hovertemplate=f"2030 Baz: {baz_2030:.1f}<extra></extra>"))
+        # Bağlayıcı çizgi
+        fig_t.add_trace(go.Scatter(x=[END_YEAR, 2030], y=[skor_adv, baz_2030], mode="lines",
+            line=dict(color="rgba(255,127,14,0.5)", width=1.5, dash="dot"), showlegend=False, hoverinfo="skip"))
+        fig_t.add_hline(y=46,line_dash="dot",line_color="#ff7f0e",line_width=1,annotation_text=t("med_threshold_short"),annotation_font_color="#ff7f0e",annotation_font_size=9)
+        fig_t.add_hline(y=60,line_dash="dot",line_color="#d62728",line_width=1,annotation_text=t("high_threshold_short"),annotation_font_color="#d62728",annotation_font_size=9)
+        fig_t.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=320,font=dict(color="white"),
+            xaxis=dict(gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),tickangle=-45),
+            yaxis=dict(title=t("wsri_axis"),range=[30,80],gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),
+            legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)",orientation="h",y=-0.25),
+            margin=dict(t=20,b=70,l=50,r=20))
+        st.plotly_chart(fig_t, use_container_width=True, key="advice_trend")
 
-        karsi_satirlar=[("talep","Abone Tüketim (m³)"),("artis","Tüketim Artışı (%)"),("arz","Arz Kısıtı"),("kayip","Su Kayıp Oranı (%)"),("risk","Risk Skoru")]
-        rows_html=""
-        for key,label in karsi_satirlar:
-            v_1,v_2=d1[key],d2[key]
-            fmt=f"%{v_1:.1f}" if key=="artis" else f"{v_1:.1f}"
-            fmt2=f"%{v_2:.1f}" if key=="artis" else f"{v_2:.1f}"
-            rows_html+=f'<div style="text-align:right;color:white;font-weight:600;">{fmt}</div><div style="text-align:center;color:#a8d8f0;font-size:0.65rem;">{label}</div><div style="text-align:left;color:white;font-weight:600;">{fmt2}</div>'
-        st.markdown(f'<div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:0.5rem 0.8rem;margin-top:0.4rem;"><div style="display:grid;grid-template-columns:1fr 110px 1fr;gap:2px;margin-bottom:4px;padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,0.1);font-size:0.78rem;"><div style="text-align:right;color:#38d1e3;font-weight:700;">{ilce_sec}</div><div style="text-align:center;color:#a8d8f0;font-size:0.65rem;">GÖSTERGE</div><div style="text-align:left;color:#ff7f0e;font-weight:700;">{karsi_ilce}</div></div><div style="display:grid;grid-template-columns:1fr 110px 1fr;gap:2px;font-size:0.78rem;">'+rows_html+'</div></div>', unsafe_allow_html=True)
-
-        sec_baslik("02 · SİMÜLATÖR", "Risk Simülatörü — Anlık Duyarlılık")
-        st.caption("Gösterge değerlerini değiştir → Risk skoru entropy ağırlıklarıyla anlık güncellenir")
-
-        w_talep=0.316; w_artis=0.116; w_arz=0.238; w_kayip=0.330
-        sim_talep=st.slider("💧 Abone Tüketim (m³)", 100, 210, 155, key="sim1")
-        sim_artis=st.slider("📈 Tüketim Artışı (%)", 0, 20, 8, key="sim2")
-        sim_arz=st.slider("⚖️ Arz Kısıtı (%)", 15, 40, 25, key="sim3")
-        sim_kayip=st.slider("🔴 Kayıp Oranı (%)", 20, 35, 27, key="sim4")
-
-        def norm2(v,mn,mx): return max(0.0,min(1.0,(v-mn)/(mx-mn))) if mx>mn else 0.0
-        z_t=norm2(sim_talep,100,210); z_a=norm2(sim_artis/100.0,0.0,2.0)
-        z_r=norm2(sim_arz/100.0,0.15,0.40); z_k=norm2(sim_kayip,20.0,35.0)
-        sim_skor=(z_t*w_talep+z_a*w_artis+z_r*w_arz+z_k*w_kayip)*100
-        sim_sinif=sinif_str(sim_skor); sim_renk=sinif_renk(sim_skor)
-        sim_sinif_ico=("🔴 " if sim_skor>=60 else "🟠 " if sim_skor>=46 else "🟢 ")+sim_sinif
-
-        sc1,sc2,sc3,sc4=st.columns(4)
-        for col,baslik,deger,c_renk in [(sc1,"Simüle Edilen Skor",f"{sim_skor:.1f}",sim_renk),(sc2,"Risk Sınıfı",sim_sinif_ico,sim_renk),(sc3,"Ağırlıklı Hesap","Talep %31.6 · Kayıp %33.0","#a8d8f0"),(sc4,"Arz+Artış","Arz%23.8 · Artış%11.6","#a8d8f0")]:
-            with col:
-                st.markdown(f"""
-                <div style="background:rgba(255,255,255,0.06);border:1px solid {c_renk}44;border-top:3px solid {c_renk};border-radius:10px;padding:0.8rem;text-align:center;">
-                    <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">{baslik}</div>
-                    <div style="color:{c_renk};font-size:1.2rem;font-weight:700;">{deger}</div>
-                </div>""", unsafe_allow_html=True)
-
-        sec_baslik("03 · ZAMAN SERİSİ", f"Animasyonlu Risk Değişimi — {START_YEAR}–{END_YEAR} ({len(YEARS)} yıl)")
-
-        manuel_risk_anim=manuel_risk_global
-        ilce_sirali_anim=list(manuel_risk_anim.keys())
-        fig_anim=go.Figure()
-        for i, yil in enumerate(YEARS):
-            yil_idx=YEARS.index(yil)
-            skorlar_yil=[manuel_risk_anim[ilce][yil_idx] for ilce in ilce_sirali_anim]
-            sirali=sorted(zip(ilce_sirali_anim,skorlar_yil),key=lambda x:-x[1])
-            ilceler_s=[x[0] for x in sirali]; skorlar_s=[x[1] for x in sirali]
-            colors_y=[sinif_renk(s) for s in skorlar_s]
-            fig_anim.add_trace(go.Bar(x=ilceler_s,y=skorlar_s,name=str(yil),visible=(i==0),marker=dict(color=colors_y,opacity=0.85),text=[f"{s:.1f}" for s in skorlar_s],textposition="outside",textfont=dict(color="white",size=10),hovertemplate="<b>%{x}</b><br>Risk: %{y:.1f}<extra></extra>"))
-
-        steps_anim=[]
-        for i,yil in enumerate(YEARS):
-            label=str(yil)+(" 🔬" if yil<2020 else " ✅")
-            steps_anim.append(dict(method="update",label=label,args=[{"visible":[j==i for j in range(len(YEARS))]},{"title.text":f"Risk Skorları — {yil}"}]))
-
-        fig_anim.update_layout(
-            sliders=[dict(active=len(YEARS)-1,steps=steps_anim,x=0.05,len=0.9,currentvalue=dict(prefix="Yıl: ",font=dict(color="white",size=13)),font=dict(color="white",size=10),bgcolor="rgba(56,209,227,0.1)",activebgcolor="rgba(56,209,227,0.4)")],
-            updatemenus=[dict(type="buttons",showactive=False,y=1.18,x=0.02,buttons=[dict(label="▶ Oynat",method="animate",args=[None,{"frame":{"duration":700,"redraw":True},"fromcurrent":True,"transition":{"duration":300}}]),dict(label="⏸ Durdur",method="animate",args=[[None],{"frame":{"duration":0},"mode":"immediate"}])],font=dict(color="white",size=11),bgcolor="rgba(56,209,227,0.15)",bordercolor="rgba(56,209,227,0.5)")],
-            plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=450,font=dict(color="white"),
-            xaxis=dict(tickangle=30,gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),
-            yaxis=dict(range=[0,80],gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),title="Risk Skoru"),
-            margin=dict(t=80,b=80,l=50,r=20))
-
-        frames_anim=[]
-        for yil in YEARS:
-            yil_idx=YEARS.index(yil)
-            skorlar_yil=[manuel_risk_anim[ilce][yil_idx] for ilce in ilce_sirali_anim]
-            sirali=sorted(zip(ilce_sirali_anim,skorlar_yil),key=lambda x:-x[1])
-            ilceler_s=[x[0] for x in sirali]; skorlar_s=[x[1] for x in sirali]
-            colors_y=[sinif_renk(s) for s in skorlar_s]
-            frames_anim.append(go.Frame(data=[go.Bar(x=ilceler_s,y=skorlar_s,marker=dict(color=colors_y,opacity=0.85),text=[f"{s:.1f}" for s in skorlar_s],textposition="outside",textfont=dict(color="white",size=10))],name=str(yil)))
-        fig_anim.frames=frames_anim
-        st.plotly_chart(fig_anim, use_container_width=True, key="risk_anim")
-        st.caption("🔬 Bootstrap simülasyonu (2010–2019) · ✅ İZSU Gerçek Verisi (2020–2023)")
-
-        sec_baslik("04 · DEĞİŞİM HESAPLAYICI", "İki İlçeyi Yıllar İçinde Karşılaştır")
-        st.caption("İki ilçeyi seç, yıl aralığını belirle — puan farkını gör")
-
-        c1,c2,c3=st.columns(3)
-        with c1: hes_ilce1=st.selectbox("1. İlçe:", sorted(manuel_risk_anim.keys()), key="hes1")
-        with c2: hes_ilce2=st.selectbox("2. İlçe:", sorted(manuel_risk_anim.keys()), index=2, key="hes2")
-        with c3: hes_yil1,hes_yil2=st.select_slider("Yıl aralığı:", options=YEARS, value=(2010,2023), key="hes_yil")
-
-        idx1=YEARS.index(hes_yil1); idx2=YEARS.index(hes_yil2)
-        s1_bas=manuel_risk_anim[hes_ilce1][idx1]; s1_son=manuel_risk_anim[hes_ilce1][idx2]
-        s2_bas=manuel_risk_anim[hes_ilce2][idx1]; s2_son=manuel_risk_anim[hes_ilce2][idx2]
-
-        hc1,hc2,hc3,hc4=st.columns(4)
-        for col,baslik,val1,val2,c_renk in [(hc1,f"{hes_ilce1} ({hes_yil1})",s1_bas,None,"#38d1e3"),(hc2,f"{hes_ilce1} ({hes_yil2})",s1_son,s1_son-s1_bas,"#38d1e3"),(hc3,f"{hes_ilce2} ({hes_yil1})",s2_bas,None,"#ff7f0e"),(hc4,f"{hes_ilce2} ({hes_yil2})",s2_son,s2_son-s2_bas,"#ff7f0e")]:
-            with col:
-                delta_str=""
-                if val2 is not None:
-                    ok="▲" if val2>0 else "▼"; dr="#d62728" if val2>0 else "#2ca02c"
-                    delta_str=f'<div style="color:{dr};font-size:0.75rem;">{ok} {abs(val2):.1f} puan</div>'
-                st.markdown(f"""
-                <div style="background:rgba(255,255,255,0.05);border:1px solid {c_renk}44;border-top:2px solid {c_renk};border-radius:8px;padding:0.7rem;text-align:center;">
-                    <div style="color:#a8d8f0;font-size:0.65rem;">{baslik}</div>
-                    <div style="color:white;font-size:1.3rem;font-weight:700;">{val1:.1f}</div>
-                    {delta_str}
-                </div>""", unsafe_allow_html=True)
-
-        fig_hes=go.Figure()
-        x_range=YEARS[idx1:idx2+1]
-        fig_hes.add_trace(go.Scatter(x=x_range,y=manuel_risk_anim[hes_ilce1][idx1:idx2+1],mode="lines+markers",name=hes_ilce1,line=dict(color="#38d1e3",width=2.5),marker=dict(size=7)))
-        fig_hes.add_trace(go.Scatter(x=x_range,y=manuel_risk_anim[hes_ilce2][idx1:idx2+1],mode="lines+markers",name=hes_ilce2,line=dict(color="#ff7f0e",width=2.5),marker=dict(size=7)))
-        fig_hes.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=280,font=dict(color="white"),hovermode="x unified",xaxis=dict(gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white")),yaxis=dict(title="Risk Skoru",gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),range=[30,80]),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)"),margin=dict(t=10,b=30,l=50,r=20))
-        st.plotly_chart(fig_hes, use_container_width=True, key="hes_grafik")
-
-    # ════════════════════════════════════════════════
-    # METODOLOJİ
-    # ════════════════════════════════════════════════
-    elif sayfa == "📐 Metodoloji":
-
+        # Tavsiye kartı
+        rec = get_recommendation(ilce_adv, skor_adv)
+        oneri_html = "".join(f'<li style="margin-bottom:6px;line-height:1.55;">{x}</li>' for x in rec["oneri"])
         st.markdown(f"""
-        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1.5rem;">
-            <div style="display:inline-block;background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);border-radius:50px;padding:4px 16px;margin-bottom:0.8rem;">
-                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">METODOLOJİ · ŞEFFAFLIK</span>
-            </div>
-            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">Metodoloji & Teknik Detaylar</div>
-            <div style="color:#a8d8f0;font-size:0.9rem;">Veri kaynağı · Bootstrap simülasyonu · İstatistiksel yöntemler · Formüller · Sınırlılıklar</div>
-        </div>""", unsafe_allow_html=True)
-
-        def bolum(no, baslik):
-            st.markdown(f"""
-            <div style="display:flex;align-items:center;gap:12px;margin:1.8rem 0 1rem 0;">
-                <div style="width:4px;height:28px;background:linear-gradient(#38d1e3,#1B4F72);border-radius:2px;"></div>
-                <div><div style="color:#38d1e3;font-size:0.68rem;letter-spacing:2px;text-transform:uppercase;">{no}</div>
-                <div style="color:#ffffff;font-size:1.1rem;font-weight:600;">{baslik}</div></div>
-            </div>""", unsafe_allow_html=True)
-
-        bolum("01 · VERİ KAYNAĞI", "Veri Kaynağı")
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown(f"""
-            <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:1rem 1.2rem;border:1px solid rgba(56,209,227,0.15);">
-                <div style="color:#38d1e3;font-size:0.75rem;letter-spacing:1px;margin-bottom:0.6rem;">İLÇE BAZLI VERİ</div>
-                <div style="color:#d0e8f5;font-size:0.88rem;line-height:1.8;">
-                    📌 Kaynak: İZSU Açık Veri Portalı (2020–{END_YEAR}) + Bootstrap ({START_YEAR}–2019)<br>
-                    📌 Kapsam: 11 merkez ilçe<br>
-                    📌 Dönem: {START_YEAR}–{END_YEAR} ({len(YEARS)} yıl)<br>
-                    📌 Değişkenler: Yıllık tüketim (m³), abone sayısı
-                </div>
-            </div>""", unsafe_allow_html=True)
-        with col2:
-            st.markdown(f"""
-            <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:1rem 1.2rem;border:1px solid rgba(56,209,227,0.15);">
-                <div style="color:#38d1e3;font-size:0.75rem;letter-spacing:1px;margin-bottom:0.6rem;">SİSTEM GENELİ VERİ</div>
-                <div style="color:#d0e8f5;font-size:0.88rem;line-height:1.8;">
-                    📌 Kaynak: İZSU Açık Veri Portalı (2020–{END_YEAR}) + Bootstrap ({START_YEAR}–2019)<br>
-                    📌 Kapsam: 3 baraj (Tahtalı, Balçova, Gördes)<br>
-                    📌 Dönem: {START_YEAR}–{END_YEAR} ({len(YEARS)} yıl)<br>
-                    📌 Değişkenler: Doluluk, üretim, kayıp oranı
-                </div>
-            </div>""", unsafe_allow_html=True)
-
-        bolum("02 · BOOTSTRAP SİMÜLASYONU", "Block Bootstrap Simülasyonu")
-        col_b1, col_b2 = st.columns(2)
-        with col_b1:
-            st.markdown(f"""
-            <div style="background:rgba(155,89,182,0.1);border:1px solid rgba(155,89,182,0.3);border-radius:10px;padding:1rem 1.2rem;">
-                <div style="color:#c39bd3;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">🤔 NEDEN EK VERİ ÜRETİLDİ?</div>
-                <div style="color:#d0e8f5;font-size:0.84rem;line-height:1.7;">İZSU'nun resmi açık verisi yalnızca <b style="color:white">2020–{END_YEAR}</b> dönemini kapsıyor — yani sadece <b style="color:white">4 yıl</b>. Mann-Kendall trend testi için bu süre yetersizdir. Bu nedenle <b style="color:white">2010–2019</b> arası 10 yıllık veri bilimsel yöntemle üretildi.</div>
-            </div>""", unsafe_allow_html=True)
-        with col_b2:
-            st.markdown("""
-            <div style="background:rgba(155,89,182,0.1);border:1px solid rgba(155,89,182,0.3);border-radius:10px;padding:1rem 1.2rem;">
-                <div style="color:#c39bd3;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">🎲 BLOCK BOOTSTRAP NEDİR?</div>
-                <div style="color:#d0e8f5;font-size:0.84rem;line-height:1.7;">Eldeki gerçek verileri küçük bloklara böl → blokları istatistiksel kurallara göre karıştırarak yeni seriler oluştur → sonuçları geçmişe ait veri gibi kullan. Hava tahminlerinde, finans ve tıp araştırmalarında yaygın kullanılan standart bir istatistik tekniğidir.</div>
-            </div>""", unsafe_allow_html=True)
-
-        st.markdown("<div style='height:0.6rem'></div>", unsafe_allow_html=True)
-        col_b3, col_b4 = st.columns(2)
-        with col_b3:
-            st.markdown(f"""
-            <div style="background:rgba(44,160,44,0.08);border:1px solid rgba(44,160,44,0.25);border-radius:10px;padding:1rem 1.2rem;">
-                <div style="color:#2ca02c;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">✅ VERİLERE GÜVENİLEBİLİR Mİ?</div>
-                <div style="color:#d0e8f5;font-size:0.84rem;line-height:1.7;">Üretilen seri rastgele değil — İzmir'in gerçek su geçmişine uyumlu:<br>• 2013–2015: Gördes ve Tahtalı kuraklık dönemi<br>• 2020: Pandemi dönemi hane tüketimi artışı<br>• Nüfus büyümesi TÜİK İzmir verisiyle uyumlu</div>
-            </div>""", unsafe_allow_html=True)
-        with col_b4:
-            st.markdown(f"""
-            <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.2);border-radius:10px;padding:1rem 1.2rem;">
-                <div style="color:#38d1e3;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">🔍 ŞEFFAFLIK</div>
-                <div style="color:#d0e8f5;font-size:0.84rem;line-height:1.7;">Site genelinde:<br>🔬 <b style="color:#c39bd3;">Mor = Bootstrap simülasyonu (2010–2019)</b><br>✅ <b style="color:#2ca02c;">Yeşil = İZSU Gerçek Verisi (2020–{END_YEAR})</b><br><br>Kaynak kod GitHub'da açık erişimdedir. Tüm analizler Python ile yapıldı, sonuçlar tekrarlanabilir.</div>
-            </div>""", unsafe_allow_html=True)
-
-        bolum("03 · RİSK ENDEKSİ", "Su Güvenliği Risk Endeksi (WSRI)")
-        col1, col2 = st.columns(2)
-        with col1:
-            with st.expander("📐 Adım 1 — Min-Max Normalizasyon"):
-                st.markdown("""**Ne yapar?** Farklı birimlerdeki göstergeleri (m³, %, oran) aynı 0–1 ölçeğine çeker.\n\n**Formül:** Z(x) = (x − x_min) / (x_max − x_min)\n\n**Verimizdeki uygulaması:** Abone başına tüketim ve kayıp oranı farklı birimlerdedir. Min-Max ile 0–1 arasına çekildi; yüksek değer = yüksek risk.""")
-            st.markdown('<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;font-family:Georgia,serif;color:#38d1e3;font-size:1.05rem;text-align:center;margin:0.5rem 0;">Z(x) = (x − x<sub>min</sub>) / (x<sub>max</sub> − x<sub>min</sub>)</div><div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;margin-bottom:0.8rem;">Sonuç: 0 = en düşük risk · 1 = en yüksek risk · tüm göstergeler aynı ölçekte</div>', unsafe_allow_html=True)
-            with st.expander("📐 Adım 2 — Entropy Ağırlıklandırma"):
-                st.markdown("""**Ne yapar?** Her göstergenin ağırlığını ilçeler arasındaki farklılığa göre otomatik hesaplar. Öznel yargıyı ortadan kaldırır.\n\n**Formül:** E_j = −(1/ln n) × Σ p_ij × ln(p_ij) → w_j = (1−E_j) / Σ(1−E_j)\n\n**Verimizdeki uygulaması:** Su kayıp oranı en fazla farklılık gösterdiği için en yüksek ağırlığı (%33) aldı.""")
-            st.markdown('<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;font-family:Georgia,serif;color:#38d1e3;font-size:0.95rem;text-align:center;margin:0.5rem 0;">E<sub>j</sub> = −(1/ln n) × Σ p<sub>ij</sub> ln(p<sub>ij</sub>) &nbsp;→&nbsp; w<sub>j</sub> = (1−E<sub>j</sub>) / Σ(1−E<sub>j</sub>)</div><div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;margin-bottom:0.8rem;">İlçeler arası en fazla değişen gösterge → en yüksek ağırlık</div>', unsafe_allow_html=True)
-        with col2:
-            with st.expander("📐 Adım 3 — Bileşik Risk Skoru / WSRI"):
-                st.markdown("""**Ne yapar?** Normalize göstergeleri entropy ağırlıklarıyla çarpar ve toplar. Sonuç 0–100 ölçeğindedir.\n\n**Formül:** Risk(i,t) = Σ w_j × Z_j(i,t) × 100\n\n**Eşikler:** 0–45 Düşük · 46–59 Orta · 60+ Yüksek Risk""")
-            st.markdown('<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;font-family:Georgia,serif;color:#38d1e3;font-size:1.05rem;text-align:center;margin:0.5rem 0;">Risk(i,t) = Σ w<sub>j</sub> × Z<sub>j</sub>(i,t) × 100</div><div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;margin-bottom:0.8rem;">0–100 arasında · &lt;46 Düşük · 46–60 Orta · ≥60 Yüksek Risk</div>', unsafe_allow_html=True)
-            agirlik_html=""
-            for et, ren, w_val in zip(["Talep (Abone Başına)","Tüketim Artışı","Arz Kısıtı","Kayıp Oranı"],["🔵","🟠","🟢","🔴"],W):
-                agirlik_html+=f'{ren} {et} &nbsp; <b style="color:white">%{w_val*100:.1f}</b><br>'
-            st.markdown(f"""
-            <div style="background:rgba(56,209,227,0.07);border:1px solid rgba(56,209,227,0.2);border-radius:10px;padding:1rem 1.2rem;margin:0.5rem 0;">
-                <div style="color:#38d1e3;font-size:0.75rem;letter-spacing:1px;margin-bottom:0.6rem;">HESAPLANAN AĞIRLIKLAR ({len(YEARS)} YIL VERİDEN)</div>
-                <div style="color:#d0e8f5;font-size:0.88rem;line-height:1.9;">{agirlik_html}</div>
-            </div>""", unsafe_allow_html=True)
-
-        bolum("04 · ZAMANSAL ANALİZ", "Mann-Kendall Trend Testi & Sen's Slope")
-        col1, col2 = st.columns(2)
-        with col1:
-            with st.expander("📐 Mann-Kendall Trend Testi"):
-                st.markdown(f"""**Ne yapar?** Veri serisinin monoton trend izleyip izlemediğini test eder. Normal dağılım gerektirmez.\n\n**Formül:**\n> S = Σ (j>i) sgn(x_j − x_i)\n> τ = S / [n×(n−1) / 2]\n\n**Verimizdeki uygulaması:** {len(YEARS)} yıllık seri için hesaplandı. τ < 0 olan ilçelerde (Bornova, Çiğli, Bayraklı) azalan risk trendi saptandı.""")
-            st.markdown('<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;font-family:Georgia,serif;color:#38d1e3;font-size:0.95rem;text-align:center;margin:0.5rem 0;">S = Σ sgn(x<sub>j</sub> − x<sub>i</sub>) &nbsp;|&nbsp; j > i<br>τ = S / [n(n−1)/2]</div><div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;">τ > 0 artan · τ < 0 azalan · p < 0.05 istatistiksel anlamlılık</div>', unsafe_allow_html=True)
-        with col2:
-            with st.expander("📐 Sen's Slope"):
-                st.markdown("""**Ne yapar?** Trendin yıllık değişim hızını medyan ile hesaplar — aykırı değerlerden etkilenmez.\n\n**Formül:** β = medyan[(x_j − x_i) / (j − i)], j > i\n\n**Verimizdeki uygulaması:** Bornova için β ≈ −0.38 puan/yıl — her yıl ortalama 0.38 puan azaldı.""")
-            st.markdown('<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;font-family:Georgia,serif;color:#38d1e3;font-size:0.95rem;text-align:center;margin:0.5rem 0;">β = medyan [(x<sub>j</sub> − x<sub>i</sub>) / (j − i)], &nbsp; j > i</div><div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;">β = yıllık ortalama değişim büyüklüğü (puan/yıl)</div>', unsafe_allow_html=True)
-
-        bolum("05 · MEKÂNSAL ANALİZ", "Moran's I & LISA")
-        col1, col2 = st.columns(2)
-        with col1:
-            with st.expander("📐 Global Moran's I"):
-                st.markdown("""**Ne yapar?** Risk değerlerinin mekânsal olarak kümelenip kümelenmediğini ölçer.\n\n**Formül:** I = (n/S₀) × [Σᵢ Σⱼ wᵢⱼ(xᵢ−x̄)(xⱼ−x̄)] / Σᵢ(xᵢ−x̄)²\n\n**Verimizdeki uygulaması:** I = −0.2817 (negatif). Riskli ilçeler düşük riskli komşularla çevrili — merkezi bir "kötü bölge" yok.""")
-            st.markdown('<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;font-family:Georgia,serif;color:#38d1e3;font-size:0.85rem;text-align:center;margin:0.5rem 0;">I = (n/S₀) × Σᵢ Σⱼ wᵢⱼ(xᵢ−x̄)(xⱼ−x̄) / Σᵢ(xᵢ−x̄)²</div><div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;">I > 0 kümelenme · I < 0 dağınık</div>', unsafe_allow_html=True)
-        with col2:
-            with st.expander("📐 Local Moran's I — LISA"):
-                st.markdown("""**Ne yapar?** Her ilçe için ayrı mekânsal skor üretir. Global Moran "genel tablo" verirken LISA her ilçenin HH/LL/HL/LH sınıfını belirler.\n\n**Formül:** Iᵢ = zᵢ × Σⱼ wᵢⱼ × zⱼ\n\n**Verimizdeki uygulaması:** Gaziemir → HL (izole sıcak nokta). Karşıyaka → LH (çevre baskısı). 999 permütasyon testi uygulandı.""")
-            st.markdown('<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;font-family:Georgia,serif;color:#38d1e3;font-size:0.95rem;text-align:center;margin:0.5rem 0;">I<sub>i</sub> = z<sub>i</sub> × Σ<sub>j</sub> w<sub>ij</sub> × z<sub>j</sub></div><div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;">HH/LL = küme · HL/LH = mekânsal aykırı değer</div>', unsafe_allow_html=True)
-
-        bolum("06 · PROJEKSİYON MODELİ", "2030 Projeksiyon Modeli")
-        with st.expander("📐 CAGR Tabanlı Projeksiyon Modeli"):
-            st.markdown(f"""**Ne yapar?** Her ilçenin geçmiş abone büyüme hızını (CAGR) hesaplar ve 3 farklı senaryo katsayısıyla 2030'a uzatır.\n\n**Formül:**\n> CAGR = (Abone₂₀₂₃ / Abone₂₀₁₀)^(1/13) − 1\n> Risk(i,t) = Risk(i,2023) × (1 + CAGRᵢ × k)^(t−2023)\n\n**k değerleri:** 0.5 = İyimser · 1.0 = Baz · 1.5 = Kötümser\n\n**Verimizdeki uygulaması:** {len(YEARS)} yıllık seri CAGR hesabını güvenilir kıldı. Sonuçlar 0–100 arasında sınırlandırıldı.""")
-        st.markdown('<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:0.8rem 1.2rem;font-family:Georgia,serif;color:#38d1e3;font-size:0.95rem;text-align:center;margin:0.5rem 0;">Risk(i,t) = Risk(i,2023) × (1 + CAGR<sub>i</sub> × k)<sup>t−2023</sup><br>k ∈ {0.5, 1.0, 1.5}</div><div style="color:#7a9ab0;font-size:0.78rem;font-style:italic;margin-bottom:1rem;">k=0.5 İyimser · k=1.0 Baz · k=1.5 Kötümser · CAGR 14 yıllık seriden</div>', unsafe_allow_html=True)
-
-        bolum("07 · SINIRLILIKLAR", "Sınırlılıklar & Şeffaflık")
-        st.markdown(f"""
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
-            <div style="background:rgba(155,89,182,0.08);border:1px solid rgba(155,89,182,0.25);border-radius:10px;padding:0.9rem 1rem;">
-                <div style="color:#c39bd3;font-size:0.75rem;font-weight:600;margin-bottom:0.4rem;">🔬 BOOTSTRAP KISITI</div>
-                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.7;">{START_YEAR}–2019 verileri sentetiktir. Gerçek tarihsel İZSU verisi olmadığından bu dönemin yorumları gösterge niteliğindedir.</div>
-            </div>
-            <div style="background:rgba(255,127,14,0.08);border:1px solid rgba(255,127,14,0.25);border-radius:10px;padding:0.9rem 1rem;">
-                <div style="color:#ff7f0e;font-size:0.75rem;font-weight:600;margin-bottom:0.4rem;">⚠️ MEKÂNSAL KISIT</div>
-                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.7;">n=11 ilçe ile Moran's I istatistiksel güç açısından sınırlıdır. Komşuluk matrisi coğrafi sınırlar referans alınarak oluşturuldu.</div>
-            </div>
-            <div style="background:rgba(255,127,14,0.08);border:1px solid rgba(255,127,14,0.25);border-radius:10px;padding:0.9rem 1rem;">
-                <div style="color:#ff7f0e;font-size:0.75rem;font-weight:600;margin-bottom:0.4rem;">⚠️ TAHMİN KISITI</div>
-                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.7;">2030 projeksiyonu lineer büyüme varsayımına dayanır. İklim değişikliği ve politika etkileri modele dahil edilmemiştir.</div>
-            </div>
-            <div style="background:rgba(44,160,44,0.08);border:1px solid rgba(44,160,44,0.25);border-radius:10px;padding:0.9rem 1rem;">
-                <div style="color:#2ca02c;font-size:0.75rem;font-weight:600;margin-bottom:0.4rem;">✅ TEKRARLANABILIRLIK</div>
-                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.7;">Tüm analizler Python ile yapıldı. Kaynak kod GitHub'da açık erişimde. Bootstrap sabit rastgele tohum ile tekrarlanabilir.</div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid {rec['renk']}44;border-left:4px solid {rec['renk']};border-radius:10px;padding:1.1rem 1.3rem;margin-top:0.6rem;">
+            <div style="color:{rec['renk']};font-size:0.95rem;font-weight:700;margin-bottom:8px;">{rec['durum']}</div>
+            <div style="color:#d0e8f5;font-size:0.88rem;margin-bottom:10px;line-height:1.65;">{rec['mesaj']}</div>
+            <ul style="color:#a8d8f0;font-size:0.84rem;padding-left:1.2rem;margin:0 0 12px 0;">
+                {oneri_html}
+            </ul>
+            <div style="background:rgba(56,209,227,0.08);border-left:3px solid #38d1e3;border-radius:0 6px 6px 0;padding:0.5rem 0.8rem;color:#a8d8f0;font-size:0.82rem;">
+                <b style="color:#38d1e3;">{t('p2030_proj_subtitle')}:</b> {rec['gelecek']}
             </div>
         </div>""", unsafe_allow_html=True)
 
         st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
-        bolum("08 · SSS", "Sıkça Sorulan Sorular")
-        sss_listesi=[
-            ("Bootstrap simülasyonu nedir, neden kullanıldı?",f"İZSU resmi açık verisi yalnızca 2020–{END_YEAR} dönemini kapsıyor (4 yıl). Mann-Kendall trend testi için bu örneklem yetersiz. Block bootstrap yöntemiyle {START_YEAR}–2019 dönemi için İzmir'in hidrolojik geçmişine uyumlu bir seri üretildi. Bu sayede n=4 yerine n={len(YEARS)} yıllık analizler yapılabildi."),
-            ("Bootstrap verisi gerçek mi sayılır?",f"Hayır — {START_YEAR}–2019 verileri sentetiktir; gerçek İZSU ölçümleri değildir. Ancak İzmir'in kuraklık takvimine ve TÜİK nüfus büyümesine uyumlu kalibre edildi. Site genelinde mor renk ile açıkça işaretlenmiştir."),
-            ("Risk skoru ne anlama geliyor?","0–100 arasındaki skor, 4 su güvenliği göstergesinin entropy ağırlıklı ortalamasıdır. Eşikler: 0–45 Düşük Risk · 46–59 Orta Risk · 60+ Yüksek Risk. Yüksek skor = o ilçede su güvenliği daha kırılgan demektir."),
-            ("Neden 4 gösterge seçildi?","Abone başına tüketim, tüketim artış oranı, arz kısıtı ve su kayıp oranı — İZSU açık verisinde yıllık olarak mevcut olan ve su güvenliğini doğrudan etkileyen değişkenlerdir. Su kalitesi ve iklim verileri erişilebilir olmadığından modele dahil edilemedi."),
-            ("Entropy ağırlıklandırma neden tercih edildi?","Araştırmacının öznel ağırlık belirlemesini önler. Verinin kendi dağılımı ağırlıkları belirler — ilçeler arasında en fazla farklılık gösteren gösterge en yüksek ağırlığı alır. Literatürde kabul görmüş nesnel bir yaklaşımdır."),
-            ("2030 projeksiyonu neden 3 senaryoya ayrıldı?","Tek bir projeksiyon belirsizliği gizler. İyimser (k=0.5) tasarruf politikalarını, Baz (k=1.0) mevcut trendi, Kötümser (k=1.5) hızlı kentleşme ve kuraklık baskısını temsil eder."),
-            (f"Mann-Kendall testi {len(YEARS)} yıllık veriyle güvenilir mi?",f"n={len(YEARS)} ile Mann-Kendall'ın istatistiksel gücü yüksektir. 2010–2019 dönemi bootstrap simülasyonu olduğundan sonuçlar ileride gerçek veriler elde edildiğinde doğrulanmalıdır; bu sınırlılık şeffaf biçimde belirtilmiştir."),
-            ("Komşuluk matrisi nasıl belirlendi?","İzmir 11 merkez ilçesinin coğrafi sınırları referans alınarak her ilçenin hangi ilçelerle fiziksel olarak sınır paylaştığı belirlendi. Matrisin simetrisi doğrulandı ve satır-normalize edildi."),
-        ]
-        for soru, cevap in sss_listesi:
-            with st.expander(f"❓ {soru}"):
-                st.markdown(f"<div style='color:#d0e8f5;font-size:0.88rem;line-height:1.7;'>{cevap}</div>", unsafe_allow_html=True)
+        sec_baslik("02 · " + ("GENEL TAVSİYELER" if st.session_state.dil=="tr" else "GENERAL ADVICE"), t("general_advice_h"))
+
+        st.markdown(f"""
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+            <div style="background:rgba(56,209,227,0.06);border:1px solid rgba(56,209,227,0.25);border-radius:10px;padding:1rem 1.1rem;">
+                <div style="color:#38d1e3;font-size:0.78rem;font-weight:700;letter-spacing:0.5px;margin-bottom:8px;">{t('general_advice_1_title')}</div>
+                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.65;">{t('general_advice_1_text')}</div>
+            </div>
+            <div style="background:rgba(255,127,14,0.06);border:1px solid rgba(255,127,14,0.28);border-radius:10px;padding:1rem 1.1rem;">
+                <div style="color:#ff7f0e;font-size:0.78rem;font-weight:700;letter-spacing:0.5px;margin-bottom:8px;">{t('general_advice_2_title')}</div>
+                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.65;">{t('general_advice_2_text')}</div>
+            </div>
+            <div style="background:rgba(155,89,182,0.06);border:1px solid rgba(155,89,182,0.28);border-radius:10px;padding:1rem 1.1rem;">
+                <div style="color:#c39bd3;font-size:0.78rem;font-weight:700;letter-spacing:0.5px;margin-bottom:8px;">{t('general_advice_3_title')}</div>
+                <div style="color:#d0e8f5;font-size:0.82rem;line-height:1.65;">{t('general_advice_3_text')}</div>
+            </div>
+        </div>""", unsafe_allow_html=True)
+
+    # ════════════════════════════════════════════════
+    # HARİTA / MAP
+    # ════════════════════════════════════════════════
+    elif sayfa == "map":
+
+        st.markdown(f"""
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1.5rem;">
+            <div style="display:inline-block;background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);border-radius:50px;padding:4px 16px;margin-bottom:0.8rem;">
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">{t('map_badge')}</span>
+            </div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">{t('map_title')}</div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">{t('map_lead')}</div>
+        </div>""", unsafe_allow_html=True)
+
+        ILCE_LAT = {
+            "BORNOVA":38.470,"ÇİĞLİ":38.495,"BAYRAKLI":38.460,"BUCA":38.391,
+            "GAZİEMİR":38.310,"GÜZELBAHÇE":38.370,"KARŞIYAKA":38.460,"NARLIDERE":38.395,
+            "KONAK":38.418,"KARABAĞLAR":38.395,"BALÇOVA":38.387,
+        }
+        ILCE_LON = {
+            "BORNOVA":27.221,"ÇİĞLİ":27.060,"BAYRAKLI":27.165,"BUCA":27.180,
+            "GAZİEMİR":27.140,"GÜZELBAHÇE":26.890,"KARŞIYAKA":27.110,"NARLIDERE":27.000,
+            "KONAK":27.130,"KARABAĞLAR":27.100,"BALÇOVA":27.045,
+        }
+
+        yil_options = list(range(START_YEAR, END_YEAR+1)) + [2030]
+        yil_map = st.select_slider(t("map_year_select"), options=yil_options, value=END_YEAR,
+                                    format_func=lambda y: f"{y} {t('map_2030_proj')}" if y==2030 else str(y))
+
+        if yil_map == 2030:
+            ilce_skor = {ilce: float(np.clip(manuel_skor_2023[ilce] * (1 + cagr_dict.get(ilce, 0.01)*1.0)**(2030-END_YEAR), 0, 100))
+                         for ilce in manuel_skor_2023}
+        elif yil_map == END_YEAR:
+            ilce_skor = dict(manuel_skor_2023)
+        else:
+            yil_idx_m = YEARS.index(yil_map)
+            ilce_skor = {ilce: manuel_risk_global[ilce][yil_idx_m] for ilce in manuel_risk_global}
+
+        ilce_listesi = list(ilce_skor.keys())
+        lat_v = [ILCE_LAT[i] for i in ilce_listesi]
+        lon_v = [ILCE_LON[i] for i in ilce_listesi]
+        skor_v = [ilce_skor[i] for i in ilce_listesi]
+        renk_v = [sinif_renk(s) for s in skor_v]
+        sinif_v = [sinif_str(s) for s in skor_v]
+
+        text_v = [f"<b>{i}</b><br>{t('risk_score')}: {s:.1f}<br>{c}" for i,s,c in zip(ilce_listesi, skor_v, sinif_v)]
+
+        fig_m = go.Figure(go.Scattermapbox(
+            lat=lat_v, lon=lon_v, mode="markers+text",
+            text=ilce_listesi,
+            textposition="top center",
+            textfont=dict(color="white", size=10),
+            marker=dict(size=[20+s*0.4 for s in skor_v], color=renk_v, opacity=0.85),
+            hovertext=text_v, hoverinfo="text",
+        ))
+        fig_m.update_layout(
+            mapbox=dict(style="carto-darkmatter", center=dict(lat=38.42, lon=27.13), zoom=9.5),
+            height=560, margin=dict(t=10, b=10, l=0, r=0),
+            paper_bgcolor="rgba(0,0,0,0)", showlegend=False,
+        )
+
+        # Renkli açıklama
+        st.markdown(f"""
+        <div style="display:flex;justify-content:center;gap:18px;margin-bottom:0.8rem;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;border-radius:50%;background:#d62728;"></div><span style="color:#d0e8f5;font-size:0.78rem;">{t('map_legend_high')}</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;border-radius:50%;background:#ff7f0e;"></div><span style="color:#d0e8f5;font-size:0.78rem;">{t('map_legend_med')}</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;border-radius:50%;background:#2ca02c;"></div><span style="color:#d0e8f5;font-size:0.78rem;">{t('map_legend_low')}</span></div>
+            {("<div style='display:flex;align-items:center;gap:6px;'><span style='color:#c39bd3;font-size:0.78rem;'>" + t('map_2030_proj_short') + "</span></div>") if yil_map==2030 else ""}
+        </div>""", unsafe_allow_html=True)
+
+        st.plotly_chart(fig_m, use_container_width=True, key="map_main")
+
+        # Sıralama tablosu
+        sirali = sorted(zip(ilce_listesi, skor_v, sinif_v), key=lambda x: -x[1])
+        rows = ""
+        for ilce, sk, sn in sirali:
+            renk_t = sinif_renk(sk)
+            rows += f"""
+            <tr>
+                <td style="padding:6px 12px;color:white;font-size:0.82rem;">{ilce}</td>
+                <td style="padding:6px 12px;color:{renk_t};font-size:0.82rem;font-weight:700;text-align:center;">{sk:.1f}</td>
+                <td style="padding:6px 12px;color:{renk_t};font-size:0.78rem;font-weight:600;text-align:center;">{sn}</td>
+            </tr>"""
+        st.markdown(f"""
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(56,209,227,0.2);border-radius:10px;overflow:hidden;margin-top:0.8rem;">
+            <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="background:rgba(56,209,227,0.12);">
+                        <th style="padding:8px 12px;color:#38d1e3;font-size:0.72rem;text-align:left;letter-spacing:1px;">{t('tbl_district')}</th>
+                        <th style="padding:8px 12px;color:#38d1e3;font-size:0.72rem;text-align:center;letter-spacing:1px;">{t('tbl_risk_score')}</th>
+                        <th style="padding:8px 12px;color:#38d1e3;font-size:0.72rem;text-align:center;letter-spacing:1px;">{t('tbl_risk_class')}</th>
+                    </tr>
+                </thead>
+                <tbody>{rows}</tbody>
+            </table>
+        </div>""", unsafe_allow_html=True)
+
+    # ════════════════════════════════════════════════
+    # ARAÇLAR / TOOLS
+    # ════════════════════════════════════════════════
+    elif sayfa == "tools":
+
+        st.markdown(f"""
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1.5rem;">
+            <div style="display:inline-block;background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);border-radius:50px;padding:4px 16px;margin-bottom:0.8rem;">
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">{t('tools_badge')}</span>
+            </div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">{t('tools_title')}</div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">{t('tools_lead')}</div>
+        </div>""", unsafe_allow_html=True)
+
+        ilce_t = st.selectbox(t("tools_select_district"), sorted(manuel_skor_2023.keys()), key="tools_ilce")
+
+        # ── 01 · RADAR
+        sec_baslik(t("tools_sec01_no"), t("tools_sec01_h"))
+
+        col_r1, col_r2 = st.columns([3,2])
+        with col_r1:
+            karsi_options = [x for x in sorted(manuel_skor_2023.keys()) if x != ilce_t]
+            ilce_t2 = st.selectbox(t("tools_compare_district"), karsi_options, key="tools_ilce2")
+
+            def radar_vals(ilce):
+                df = risk_df[(risk_df["İlçe"]==ilce) & (risk_df["Yıl"]==END_YEAR)]
+                if df.empty:
+                    return [50,50,50,50,50]
+                row = df.iloc[0]
+                # Normalize to 0-100
+                tum_son = risk_df[risk_df["Yıl"]==END_YEAR]
+                def nr(col, val):
+                    rng = tum_son[col].max() - tum_son[col].min()
+                    return float((val - tum_son[col].min())/rng*100) if rng > 0 else 50.0
+                return [
+                    nr("AbbTuketim", row["AbbTuketim"]),
+                    nr("Artis", row["Artis"]),
+                    nr("Arz_Kısıtı", row["Arz_Kısıtı"]),
+                    nr("Su_Kayıp_Oranı_%", row["Su_Kayıp_Oranı_%"]),
+                    manuel_skor_2023.get(ilce, 50.0),
+                ]
+            cats = [t("radar_demand"), t("radar_growth"), t("radar_supply"), t("radar_loss"), t("radar_risk")]
+            v1 = radar_vals(ilce_t)
+            v2 = radar_vals(ilce_t2)
+
+            fig_r = go.Figure()
+            fig_r.add_trace(go.Scatterpolar(r=v1+[v1[0]], theta=cats+[cats[0]], fill="toself",
+                name=ilce_t, line=dict(color="#38d1e3", width=2.5),
+                marker=dict(size=7), fillcolor="rgba(56,209,227,0.15)"))
+            fig_r.add_trace(go.Scatterpolar(r=v2+[v2[0]], theta=cats+[cats[0]], fill="toself",
+                name=ilce_t2, line=dict(color="#ff7f0e", width=2.5),
+                marker=dict(size=7), fillcolor="rgba(255,127,14,0.12)"))
+            fig_r.update_layout(polar=dict(bgcolor="rgba(0,0,0,0.2)", radialaxis=dict(range=[0,100], gridcolor="rgba(255,255,255,0.15)", tickfont=dict(color="white", size=9)), angularaxis=dict(tickfont=dict(color="white", size=11), gridcolor="rgba(255,255,255,0.15)")),
+                showlegend=True, legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)"),
+                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", height=420, margin=dict(t=30, b=30, l=40, r=40))
+            st.plotly_chart(fig_r, use_container_width=True, key="radar_chart")
+
+        with col_r2:
+            st.markdown(f'<div style="color:#38d1e3;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin:1rem 0 0.6rem 0;">{t("radar_indicator")}</div>', unsafe_allow_html=True)
+            for cat_full, val_a, val_b in [(t("radar_demand_full"), v1[0], v2[0]),
+                                            (t("radar_growth_full"), v1[1], v2[1]),
+                                            (t("radar_supply_full"), v1[2], v2[2]),
+                                            (t("radar_loss_full"), v1[3], v2[3]),
+                                            (t("radar_risk_full"), v1[4], v2[4])]:
+                st.markdown(f"""
+                <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:0.5rem 0.75rem;margin-bottom:6px;">
+                    <div style="color:#a8d8f0;font-size:0.72rem;margin-bottom:3px;">{cat_full}</div>
+                    <div style="display:flex;justify-content:space-between;">
+                        <span style="color:#38d1e3;font-size:0.85rem;font-weight:700;">{ilce_t}: {val_a:.0f}</span>
+                        <span style="color:#ff7f0e;font-size:0.85rem;font-weight:700;">{ilce_t2}: {val_b:.0f}</span>
+                    </div>
+                </div>""", unsafe_allow_html=True)
+
+        # ── 02 · SİMÜLATÖR
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+        sec_baslik(t("tools_sec02_no"), t("tools_sec02_h"))
+        st.caption(t("tools_sec02_caption"))
+
+        sc1, sc2 = st.columns(2)
+        with sc1:
+            sim_demand = st.slider(t("sim_demand"), 80, 250, 150, 5)
+            sim_supply = st.slider(t("sim_supply"), 0, 100, 30, 1)
+        with sc2:
+            sim_growth = st.slider(t("sim_growth"), -10, 30, 5, 1)
+            sim_loss = st.slider(t("sim_loss"), 5, 50, 27, 1)
+
+        # Skor hesabı (entropi ağırlıkları kullanılarak)
+        # Min-Max normalleştirme yaklaşık aralıklarla
+        z_d = (sim_demand - 100) / (250 - 100)
+        z_g = (sim_growth + 5) / (30 + 5)
+        z_s = sim_supply / 100
+        z_l = (sim_loss - 5) / (50 - 5)
+        # Ağırlıklar: 31.6% talep, 11.6% büyüme, 23.8% arz, 33.0% kayıp
+        sim_skor = (0.316*z_d + 0.116*z_g + 0.238*z_s + 0.330*z_l) * 100
+        sim_skor = float(np.clip(sim_skor, 0, 100))
+        sim_sinif = sinif_str(sim_skor)
+        sim_renk = sinif_renk(sim_skor)
+
+        sk1, sk2, sk3, sk4 = st.columns(4)
+        with sk1:
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.06);border:1px solid {sim_renk}44;border-top:3px solid {sim_renk};border-radius:10px;padding:1rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">{t('sim_kpi_score')}</div>
+                <div style="color:#ffffff;font-size:1.6rem;font-weight:700;margin-bottom:4px;">{sim_skor:.1f}</div>
+                <div style="color:{sim_renk};font-size:0.78rem;">/ 100</div>
+            </div>""", unsafe_allow_html=True)
+        with sk2:
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.06);border:1px solid {sim_renk}44;border-top:3px solid {sim_renk};border-radius:10px;padding:1rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">{t('sim_kpi_class')}</div>
+                <div style="color:#ffffff;font-size:1.2rem;font-weight:700;margin-bottom:4px;">{sim_sinif}</div>
+                <div style="color:{sim_renk};font-size:0.78rem;">{t('sim_kpi_score')}: {sim_skor:.0f}</div>
+            </div>""", unsafe_allow_html=True)
+        with sk3:
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.06);border:1px solid #38d1e344;border-top:3px solid #38d1e3;border-radius:10px;padding:1rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">{t('sim_kpi_weighted')}</div>
+                <div style="color:#ffffff;font-size:0.95rem;font-weight:700;margin-bottom:4px;">{t('sim_kpi_weighted_val')}</div>
+            </div>""", unsafe_allow_html=True)
+        with sk4:
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.06);border:1px solid #9467bd44;border-top:3px solid #9467bd;border-radius:10px;padding:1rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">{t('sim_kpi_arz_growth')}</div>
+                <div style="color:#ffffff;font-size:0.95rem;font-weight:700;margin-bottom:4px;">{t('sim_kpi_arz_growth_val')}</div>
+            </div>""", unsafe_allow_html=True)
+
+        # ── 03 · ANİMASYON
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+        sec_baslik(t("tools_sec03_no"), t("tools_sec03_h"))
+
+        ilceler_anim = list(manuel_risk_global.keys())
+        frames = []
+        for i, yil in enumerate(YEARS):
+            yil_skorlar = [manuel_risk_global[il][i] for il in ilceler_anim]
+            sirala = sorted(zip(ilceler_anim, yil_skorlar), key=lambda x: x[1])
+            il_s = [x[0] for x in sirala]; sk_s = [x[1] for x in sirala]
+            renkler_a = [sinif_renk(s) for s in sk_s]
+            frames.append(go.Frame(
+                data=[go.Bar(x=sk_s, y=il_s, orientation="h",
+                             marker=dict(color=renkler_a, opacity=0.85),
+                             text=[f"{s:.1f}" for s in sk_s], textposition="outside",
+                             textfont=dict(color="white", size=11))],
+                name=str(yil)
+            ))
+        # İlk frame
+        i0 = 0
+        yil0_skorlar = [manuel_risk_global[il][i0] for il in ilceler_anim]
+        sirala0 = sorted(zip(ilceler_anim, yil0_skorlar), key=lambda x: x[1])
+        il_s0 = [x[0] for x in sirala0]; sk_s0 = [x[1] for x in sirala0]
+        renkler_a0 = [sinif_renk(s) for s in sk_s0]
+
+        fig_anim = go.Figure(
+            data=[go.Bar(x=sk_s0, y=il_s0, orientation="h",
+                         marker=dict(color=renkler_a0, opacity=0.85),
+                         text=[f"{s:.1f}" for s in sk_s0], textposition="outside",
+                         textfont=dict(color="white", size=11))],
+            frames=frames
+        )
+        fig_anim.update_layout(
+            plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+            height=440, font=dict(color="white"),
+            xaxis=dict(range=[0, 80], gridcolor="rgba(255,255,255,0.08)", title=t("risk_score_axis")),
+            yaxis=dict(tickfont=dict(color="white", size=11)),
+            margin=dict(t=60, b=40, l=110, r=80),
+            updatemenus=[dict(type="buttons", showactive=False, y=1.12, x=0.0, xanchor="left", yanchor="top",
+                buttons=[
+                    dict(label=t("anim_play"), method="animate", args=[None, {"frame":{"duration":700, "redraw":True}, "fromcurrent":True}]),
+                    dict(label=t("anim_pause"), method="animate", args=[[None], {"frame":{"duration":0, "redraw":False}, "mode":"immediate"}])
+                ])],
+            sliders=[dict(active=0, currentvalue=dict(font=dict(color="#38d1e3", size=12), prefix=t("anim_year_prefix")),
+                pad={"t":40},
+                steps=[dict(method="animate", args=[[str(y)], {"frame":{"duration":500, "redraw":True}, "mode":"immediate"}], label=str(y)) for y in YEARS])]
+        )
+        st.plotly_chart(fig_anim, use_container_width=True, key="anim_chart")
+        st.caption(t("anim_caption"))
+
+        # ── 04 · KARŞILAŞTIRMA HESAPLAYICISI
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+        sec_baslik(t("tools_sec04_no"), t("tools_sec04_h"))
+        st.caption(t("tools_sec04_caption"))
+
+        cc1, cc2, cc3 = st.columns(3)
+        with cc1:
+            ilce_a = st.selectbox(t("calc_district_1"), sorted(manuel_risk_global.keys()), index=0, key="calc_a")
+        with cc2:
+            ilce_b = st.selectbox(t("calc_district_2"), sorted(manuel_risk_global.keys()), index=1, key="calc_b")
+        with cc3:
+            yil_range = st.select_slider(t("calc_year_range"), options=YEARS, value=(YEARS[0], YEARS[-1]), key="calc_yr")
+
+        i_start = YEARS.index(yil_range[0])
+        i_end = YEARS.index(yil_range[1])
+        a_start = manuel_risk_global[ilce_a][i_start]; a_end = manuel_risk_global[ilce_a][i_end]
+        b_start = manuel_risk_global[ilce_b][i_start]; b_end = manuel_risk_global[ilce_b][i_end]
+        a_chg = a_end - a_start; b_chg = b_end - b_start
+
+        ck1, ck2, ck3, ck4 = st.columns(4)
+        with ck1:
+            ok = "▲" if a_chg>0 else "▼"; rc = "#d62728" if a_chg>0 else "#2ca02c"
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.06);border:1px solid #38d1e344;border-top:3px solid #38d1e3;border-radius:10px;padding:1rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">{ilce_a} · {yil_range[0]}</div>
+                <div style="color:#ffffff;font-size:1.4rem;font-weight:700;">{a_start:.1f}</div>
+            </div>""", unsafe_allow_html=True)
+        with ck2:
+            ok = "▲" if a_chg>0 else "▼"; rc = "#d62728" if a_chg>0 else "#2ca02c"
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.06);border:1px solid {rc}44;border-top:3px solid {rc};border-radius:10px;padding:1rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">{ilce_a} · {yil_range[1]}</div>
+                <div style="color:#ffffff;font-size:1.4rem;font-weight:700;">{a_end:.1f}</div>
+                <div style="color:{rc};font-size:0.78rem;">{ok} {abs(a_chg):.1f}</div>
+            </div>""", unsafe_allow_html=True)
+        with ck3:
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.06);border:1px solid #ff7f0e44;border-top:3px solid #ff7f0e;border-radius:10px;padding:1rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">{ilce_b} · {yil_range[0]}</div>
+                <div style="color:#ffffff;font-size:1.4rem;font-weight:700;">{b_start:.1f}</div>
+            </div>""", unsafe_allow_html=True)
+        with ck4:
+            ok = "▲" if b_chg>0 else "▼"; rc = "#d62728" if b_chg>0 else "#2ca02c"
+            st.markdown(f"""
+            <div style="background:rgba(255,255,255,0.06);border:1px solid {rc}44;border-top:3px solid {rc};border-radius:10px;padding:1rem;text-align:center;">
+                <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">{ilce_b} · {yil_range[1]}</div>
+                <div style="color:#ffffff;font-size:1.4rem;font-weight:700;">{b_end:.1f}</div>
+                <div style="color:{rc};font-size:0.78rem;">{ok} {abs(b_chg):.1f}</div>
+            </div>""", unsafe_allow_html=True)
+
+        # Karşılaştırma çizgi grafiği
+        fig_cmp = go.Figure()
+        ys_a = manuel_risk_global[ilce_a][i_start:i_end+1]
+        ys_b = manuel_risk_global[ilce_b][i_start:i_end+1]
+        x_yrs = list(YEARS[i_start:i_end+1])
+        fig_cmp.add_trace(go.Scatter(x=x_yrs, y=ys_a, mode="lines+markers", name=ilce_a,
+            line=dict(color="#38d1e3", width=2.5), marker=dict(size=8)))
+        fig_cmp.add_trace(go.Scatter(x=x_yrs, y=ys_b, mode="lines+markers", name=ilce_b,
+            line=dict(color="#ff7f0e", width=2.5), marker=dict(size=8)))
+        fig_cmp.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=300,font=dict(color="white"),
+            xaxis=dict(tickvals=x_yrs, gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="white"),tickangle=-45),
+            yaxis=dict(title=t("wsri_axis"), gridcolor="rgba(255,255,255,0.08)", tickfont=dict(color="white")),
+            legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)"),
+            margin=dict(t=20, b=50, l=50, r=20), hovermode="x unified")
+        st.plotly_chart(fig_cmp, use_container_width=True, key="cmp_chart")
+
+    # ════════════════════════════════════════════════
+    # METODOLOJİ
+    # ════════════════════════════════════════════════
+    elif sayfa == "method":
+
+        st.markdown(f"""
+        <div style="padding:1.5rem 0 1rem 0;border-bottom:1px solid rgba(56,209,227,0.2);margin-bottom:1.5rem;">
+            <div style="display:inline-block;background:rgba(56,209,227,0.1);border:1px solid rgba(56,209,227,0.3);border-radius:50px;padding:4px 16px;margin-bottom:0.8rem;">
+                <span style="color:#38d1e3;font-size:0.72rem;letter-spacing:3px;font-weight:600;">{t('method_badge')}</span>
+            </div>
+            <div style="color:#ffffff;font-size:1.8rem;font-weight:700;margin-bottom:0.3rem;">{t('method_title')}</div>
+            <div style="color:#a8d8f0;font-size:0.9rem;">{t('method_lead')}</div>
+        </div>""", unsafe_allow_html=True)
+
+        # 01 · DATA SOURCE
+        sec_baslik(t("method_sec01_no"), t("method_sec01_h"))
+        st.markdown(f"""
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+            <div style="background:rgba(56,209,227,0.06);border:1px solid rgba(56,209,227,0.25);border-radius:10px;padding:1rem 1.2rem;">
+                <div style="color:#38d1e3;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">{t('method_district_data_title')}</div>
+                <div style="color:#d0e8f5;font-size:0.85rem;line-height:1.8;">{t('method_district_data_text')}</div>
+            </div>
+            <div style="background:rgba(155,89,182,0.06);border:1px solid rgba(155,89,182,0.25);border-radius:10px;padding:1rem 1.2rem;">
+                <div style="color:#c39bd3;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">{t('method_system_data_title')}</div>
+                <div style="color:#d0e8f5;font-size:0.85rem;line-height:1.8;">{t('method_system_data_text')}</div>
+            </div>
+        </div>""", unsafe_allow_html=True)
+
+        # 02 · BOOTSTRAP
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+        sec_baslik(t("method_sec02_no"), t("method_sec02_h"))
+        st.markdown(f"""
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:0.8rem;">
+            <div style="background:rgba(255,127,14,0.06);border:1px solid rgba(255,127,14,0.25);border-radius:10px;padding:1rem 1.2rem;">
+                <div style="color:#ff7f0e;font-size:0.82rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">{t('method_why_title')}</div>
+                <div style="color:#d0e8f5;font-size:0.85rem;line-height:1.7;">{t('method_why_text')}</div>
+            </div>
+            <div style="background:rgba(56,209,227,0.06);border:1px solid rgba(56,209,227,0.25);border-radius:10px;padding:1rem 1.2rem;">
+                <div style="color:#38d1e3;font-size:0.82rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">{t('method_block_title')}</div>
+                <div style="color:#d0e8f5;font-size:0.85rem;line-height:1.7;">{t('method_block_text')}</div>
+            </div>
+            <div style="background:rgba(44,160,44,0.06);border:1px solid rgba(44,160,44,0.25);border-radius:10px;padding:1rem 1.2rem;">
+                <div style="color:#2ca02c;font-size:0.82rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">{t('method_trust_title')}</div>
+                <div style="color:#d0e8f5;font-size:0.85rem;line-height:1.7;">{t('method_trust_text')}</div>
+            </div>
+            <div style="background:rgba(155,89,182,0.06);border:1px solid rgba(155,89,182,0.25);border-radius:10px;padding:1rem 1.2rem;">
+                <div style="color:#c39bd3;font-size:0.82rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;">{t('method_trans_title')}</div>
+                <div style="color:#d0e8f5;font-size:0.85rem;line-height:1.7;">{t('method_trans_text')}</div>
+            </div>
+        </div>""", unsafe_allow_html=True)
+
+        # 03 · WSRI
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+        sec_baslik(t("method_sec03_no"), t("method_sec03_h"))
+
+        with st.expander(t("method_step1_t"), expanded=False):
+            st.markdown(t("method_step1_text"))
+            st.caption(t("method_step1_caption"))
+        with st.expander(t("method_step2_t"), expanded=False):
+            st.markdown(t("method_step2_text"))
+            st.caption(t("method_step2_caption"))
+        with st.expander(t("method_step3_t"), expanded=False):
+            st.markdown(t("method_step3_text"))
+            st.caption(t("method_step3_caption"))
+
+        # Hesaplanan ağırlıklar göster
+        st.markdown(f"""
+        <div style="background:rgba(56,209,227,0.05);border:1px solid rgba(56,209,227,0.2);border-radius:10px;padding:1rem 1.2rem;margin-top:0.8rem;">
+            <div style="color:#38d1e3;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:10px;">{t('method_weights_title')}</div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+                <div style="text-align:center;">
+                    <div style="color:#a8d8f0;font-size:0.72rem;margin-bottom:4px;">{t('weight_demand_label')}</div>
+                    <div style="color:#38d1e3;font-size:1.4rem;font-weight:700;">%{W[0]*100:.1f}</div>
+                </div>
+                <div style="text-align:center;">
+                    <div style="color:#a8d8f0;font-size:0.72rem;margin-bottom:4px;">{t('weight_growth_label')}</div>
+                    <div style="color:#38d1e3;font-size:1.4rem;font-weight:700;">%{W[1]*100:.1f}</div>
+                </div>
+                <div style="text-align:center;">
+                    <div style="color:#a8d8f0;font-size:0.72rem;margin-bottom:4px;">{t('weight_supply_label')}</div>
+                    <div style="color:#38d1e3;font-size:1.4rem;font-weight:700;">%{W[2]*100:.1f}</div>
+                </div>
+                <div style="text-align:center;">
+                    <div style="color:#a8d8f0;font-size:0.72rem;margin-bottom:4px;">{t('weight_loss_label')}</div>
+                    <div style="color:#38d1e3;font-size:1.4rem;font-weight:700;">%{W[3]*100:.1f}</div>
+                </div>
+            </div>
+        </div>""", unsafe_allow_html=True)
+
+        # 04 · MK & SEN
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+        sec_baslik(t("method_sec04_no"), t("method_sec04_h"))
+        with st.expander(t("method_mk_t"), expanded=False):
+            st.markdown(t("method_mk_text"))
+            st.caption(t("method_mk_caption"))
+        with st.expander(t("method_sen_t"), expanded=False):
+            st.markdown(t("method_sen_text"))
+            st.caption(t("method_sen_caption"))
+
+        # 05 · SPATIAL
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+        sec_baslik(t("method_sec05_no"), t("method_sec05_h"))
+        with st.expander(t("method_moran_t"), expanded=False):
+            st.markdown(t("method_moran_text"))
+            st.caption(t("method_moran_caption"))
+        with st.expander(t("method_lisa_t"), expanded=False):
+            st.markdown(t("method_lisa_text"))
+            st.caption(t("method_lisa_caption"))
+
+        # 06 · CAGR
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+        sec_baslik(t("method_sec06_no"), t("method_sec06_h"))
+        with st.expander(t("method_cagr_t"), expanded=False):
+            st.markdown(t("method_cagr_text"))
+            st.caption(t("method_cagr_caption"))
+
+        # 07 · LIMITS
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+        sec_baslik(t("method_sec07_no"), t("method_sec07_h"))
+        st.markdown(f"""
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+            <div style="background:rgba(155,89,182,0.06);border:1px solid rgba(155,89,182,0.25);border-radius:10px;padding:0.9rem 1.1rem;">
+                <div style="color:#c39bd3;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">{t('limit_1_t')}</div>
+                <div style="color:#d0e8f5;font-size:0.84rem;line-height:1.65;">{t('limit_1_text')}</div>
+            </div>
+            <div style="background:rgba(255,127,14,0.06);border:1px solid rgba(255,127,14,0.25);border-radius:10px;padding:0.9rem 1.1rem;">
+                <div style="color:#ff7f0e;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">{t('limit_2_t')}</div>
+                <div style="color:#d0e8f5;font-size:0.84rem;line-height:1.65;">{t('limit_2_text')}</div>
+            </div>
+            <div style="background:rgba(255,127,14,0.06);border:1px solid rgba(255,127,14,0.25);border-radius:10px;padding:0.9rem 1.1rem;">
+                <div style="color:#ff7f0e;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">{t('limit_3_t')}</div>
+                <div style="color:#d0e8f5;font-size:0.84rem;line-height:1.65;">{t('limit_3_text')}</div>
+            </div>
+            <div style="background:rgba(44,160,44,0.06);border:1px solid rgba(44,160,44,0.25);border-radius:10px;padding:0.9rem 1.1rem;">
+                <div style="color:#2ca02c;font-size:0.78rem;font-weight:700;letter-spacing:1px;margin-bottom:6px;">{t('limit_4_t')}</div>
+                <div style="color:#d0e8f5;font-size:0.84rem;line-height:1.65;">{t('limit_4_text')}</div>
+            </div>
+        </div>""", unsafe_allow_html=True)
+
+        # 08 · FAQ
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+        sec_baslik(t("method_sec08_no"), t("method_sec08_h"))
+        for q, a in t("faq"):
+            with st.expander(q, expanded=False):
+                st.markdown(a)
