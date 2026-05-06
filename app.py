@@ -79,6 +79,20 @@ TR = {
     "kpi_score_label": "Skor",
     "sec_01_title": "01 · RİSK GÖSTERGESİ",
     "sec_01_h": f"En Riskli 3 İlçe — {END_YEAR} Risk İbresi",
+    # ── Risk skoru yorumlama (A1) ──
+    "score_meaning_h": "📐 67 Sayısı Ne Anlama Geliyor? Skor Nasıl Yorumlanır?",
+    "score_meaning_intro": "**WSRI (Su Güvenliği Risk Endeksi)** İzmir'in 11 merkez ilçesini **kendi içlerinde** karşılaştıran göreceli bir skordur. 0-100 arası standardize edilmiş entropi-ağırlıklı bileşik bir indekstir. **Mutlak bir uluslararası karşılaştırma değildir** — ulusal/küresel benchmark'lar için aşağıdaki referanslara bakın.",
+    "score_meaning_card1_t": "🇹🇷 Türkiye Karşılaştırması",
+    "score_meaning_card1_v": "DSİ 2023 raporlarına göre Türkiye ortalama su kayıp oranı **%37**. İzmir 2023'te **%27.4** ile ulusal ortalamanın altındadır. Yani İzmir genel olarak Türkiye'ye göre **daha iyi durumdadır** — ama şehir içi eşitsizlik mevcuttur.",
+    "score_meaning_card2_t": "🇪🇺 Avrupa Karşılaştırması",
+    "score_meaning_card2_v": "EurEau 2023 verilerine göre AB ortalama su kayıp oranı **%23**. İzmir, AB hedefinin **4.4 puan üzerindedir**. Hedef: 2030'a kadar AB ortalamasına yaklaşmak.",
+    "score_meaning_card3_t": "🌍 Küresel Bağlam",
+    "score_meaning_card3_v": "BM Su Stresi Endeksi'ne göre Türkiye **'orta-yüksek su stresi'** kategorisindedir (40-80% aralığı). Akdeniz havzasında **2050'ye kadar yağışların %20 azalması** bekleniyor (IPCC AR6).",
+    "score_meaning_thresholds": "🎯 Bu Çalışmadaki Eşikler",
+    "threshold_high": "**Yüksek Risk: ≥60**\nKentsel su sistemi üzerinde yapısal baskı. Acil müdahale gerektiren kayıp/talep dengesi.",
+    "threshold_med": "**Orta Risk: 46–60**\nDengeli ama izlenmesi gereken durum. Trend kötüleşirse hızlı dönüşüm gerekir.",
+    "threshold_low": "**Düşük Risk: <46**\nGöreceli olarak güvenli. Ancak iklim değişikliği nedeniyle bu kategori 2050'de daralabilir.",
+    "score_meaning_disclaimer": "⚠️ **Önemli:** Bu skorlar bir akademik çalışma çıktısıdır, resmi/yasal bir değerlendirme değildir. Mutlak risk seviyesi yerine **göreceli karşılaştırma + zaman içindeki trend** anlamlıdır.",
     "sec_02_title": "02 · RİSK ANALİZİ",
     "sec_02_h": f"{END_YEAR} Yılı İlçe Risk Sıralaması & Ağırlık Dağılımı",
     "risk_threshold_med": "Orta Risk Eşiği (46)",
@@ -551,6 +565,20 @@ EN = {
     "kpi_score_label": "Score",
     "sec_01_title": "01 · RISK INDICATOR",
     "sec_01_h": f"Top 3 Riskiest Districts — {END_YEAR} Risk Gauge",
+    # ── Risk score interpretation (A1) ──
+    "score_meaning_h": "📐 What Does the Number 67 Mean? How to Interpret the Score?",
+    "score_meaning_intro": "**WSRI (Water Security Risk Index)** is a relative score comparing İzmir's 11 central districts **among themselves**. It is a 0-100 standardized, entropy-weighted composite index. **It is not an absolute international comparison** — for national/global benchmarks, see the references below.",
+    "score_meaning_card1_t": "🇹🇷 Turkey Comparison",
+    "score_meaning_card1_v": "According to DSİ 2023 reports, Turkey's average water loss rate is **37%**. İzmir's 2023 rate of **27.4%** is below the national average. So İzmir is **better off than Turkey overall** — but intra-city inequality exists.",
+    "score_meaning_card2_t": "🇪🇺 Europe Comparison",
+    "score_meaning_card2_v": "According to EurEau 2023 data, the EU average water loss rate is **23%**. İzmir is **4.4 points above** the EU target. Goal: approach EU average by 2030.",
+    "score_meaning_card3_t": "🌍 Global Context",
+    "score_meaning_card3_v": "According to UN Water Stress Index, Turkey is in the **'medium-high water stress'** category (40-80% range). In the Mediterranean basin, **a 20% precipitation decline is expected by 2050** (IPCC AR6).",
+    "score_meaning_thresholds": "🎯 Thresholds Used in This Study",
+    "threshold_high": "**High Risk: ≥60**\nStructural pressure on urban water system. Loss/demand balance requires urgent intervention.",
+    "threshold_med": "**Medium Risk: 46–60**\nBalanced but requires monitoring. If trend worsens, rapid transformation needed.",
+    "threshold_low": "**Low Risk: <46**\nRelatively safe. However, this category may shrink by 2050 due to climate change.",
+    "score_meaning_disclaimer": "⚠️ **Important:** These scores are the output of an academic study, not an official/legal assessment. Rather than absolute risk level, the meaningful interpretation is **relative comparison + trend over time**.",
     "sec_02_title": "02 · RISK ANALYSIS",
     "sec_02_h": f"{END_YEAR} District Risk Ranking & Weight Distribution",
     "risk_threshold_med": "Medium Risk Threshold (46)",
@@ -2079,22 +2107,129 @@ if data_loaded:
         gauge_data = [("BORNOVA",67.0,-1.0),("ÇİĞLİ",62.5,-1.0),("BAYRAKLI",60.0,-2.0)]
         gauge_col1, gauge_col2, gauge_col3 = st.columns(3)
         for col, (ilce_adi, skor, delta_val) in zip([gauge_col1,gauge_col2,gauge_col3], gauge_data):
-            fig_gauge = go.Figure(go.Indicator(
-                mode="gauge+number+delta", value=skor,
-                delta={"reference":skor-delta_val,"valueformat":".1f","increasing":{"color":"#d62728"},"decreasing":{"color":"#2ca02c"}},
-                number={"font":{"size":32,"color":"white"},"valueformat":".1f"},
-                title={"text":f"<b style='font-size:15px'>{ilce_adi}</b><br><span style='font-size:11px;color:#d62728'>{t('risk_high')}</span>","font":{"size":14,"color":"white"}},
-                gauge={"axis":{"range":[0,100],"tickwidth":1,"tickcolor":"rgba(255,255,255,0.3)","tickfont":{"color":"rgba(255,255,255,0.5)","size":9}},
-                       "bar":{"color":"#d62728","thickness":0.3},
-                       "bgcolor":"rgba(255,255,255,0.03)","borderwidth":1,"bordercolor":"rgba(255,255,255,0.15)",
-                       "steps":[{"range":[0,60],"color":"rgba(44,160,44,0.15)"},{"range":[60,80],"color":"rgba(214,39,40,0.20)"},{"range":[80,100],"color":"rgba(139,0,0,0.25)"}],
-                       "threshold":{"line":{"color":"white","width":2},"thickness":0.75,"value":skor}},
-            ))
-            fig_gauge.update_layout(paper_bgcolor="rgba(0,0,0,0)",plot_bgcolor="rgba(0,0,0,0)",height=240,margin=dict(t=70,b=10,l=20,r=20),font=dict(color="white"))
+            # Animasyon için ara değerler — ease-out (yavaşlayarak hedefe varan)
+            n_steps = 30
+            steps_pct = [(1 - (1 - i/n_steps)**2.4) for i in range(n_steps + 1)]  # ease-out quad-ish
+            anim_vals = [skor * p for p in steps_pct]
+
+            def _make_indicator(v, show_delta=True):
+                ind = dict(
+                    mode = "gauge+number+delta" if show_delta else "gauge+number",
+                    value = v,
+                    number = {"font":{"size":32,"color":"white"},"valueformat":".1f"},
+                    title = {"text":f"<b style='font-size:15px'>{ilce_adi}</b><br><span style='font-size:11px;color:#d62728'>{t('risk_high')}</span>",
+                             "font":{"size":14,"color":"white"}},
+                    gauge = {"axis":{"range":[0,100],"tickwidth":1,"tickcolor":"rgba(255,255,255,0.3)",
+                                     "tickfont":{"color":"rgba(255,255,255,0.5)","size":9}},
+                             "bar":{"color":"#d62728","thickness":0.3},
+                             "bgcolor":"rgba(255,255,255,0.03)","borderwidth":1,"bordercolor":"rgba(255,255,255,0.15)",
+                             "steps":[{"range":[0,60],"color":"rgba(44,160,44,0.15)"},
+                                      {"range":[60,80],"color":"rgba(214,39,40,0.20)"},
+                                      {"range":[80,100],"color":"rgba(139,0,0,0.25)"}],
+                             "threshold":{"line":{"color":"white","width":2},"thickness":0.75,"value":v}},
+                )
+                if show_delta:
+                    ind["delta"] = {"reference":skor-delta_val,"valueformat":".1f",
+                                    "increasing":{"color":"#d62728"},"decreasing":{"color":"#2ca02c"}}
+                return go.Indicator(**ind)
+
+            # Başlangıçta 0'dan başla, frames ile hareket etsin
+            fig_gauge = go.Figure(
+                data = [_make_indicator(0, show_delta=False)],
+                frames = [go.Frame(data=[_make_indicator(v, show_delta=False)], name=str(i))
+                          for i, v in enumerate(anim_vals[1:-1], 1)] +
+                         [go.Frame(data=[_make_indicator(skor, show_delta=True)], name="final")]
+            )
+            fig_gauge.update_layout(
+                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                height=240, margin=dict(t=70,b=10,l=20,r=20), font=dict(color="white"),
+                updatemenus = [dict(
+                    type="buttons", showactive=False, visible=False,  # buton görünmesin
+                    buttons=[dict(label="Play", method="animate",
+                                  args=[None, {"frame":{"duration":35, "redraw":True},
+                                               "fromcurrent":True, "transition":{"duration":0},
+                                               "mode":"immediate"}])]
+                )]
+            )
             with col:
+                # Otomatik oynat — JS ile gerçek hareket
                 st.plotly_chart(fig_gauge, use_container_width=True, key=f"gauge_{ilce_adi}")
 
-        st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
+        # Otomatik animasyonu tetiklemek için JS
+        st.markdown("""
+        <script>
+        (function() {
+            function startGauges() {
+                const charts = document.querySelectorAll('.js-plotly-plot');
+                charts.forEach(ch => {
+                    if (ch.dataset.animStarted) return;
+                    if (ch.id && ch.id.indexOf('gauge') === -1 && !ch.querySelector('.angularaxis')) {
+                        // gauge değil, atla — angularaxis varlığı gauge'larda olur
+                    }
+                    // Plotly varlığı kontrol
+                    if (window.Plotly && ch.layout && ch.layout.updatemenus) {
+                        try {
+                            window.Plotly.animate(ch, null, {
+                                frame: {duration: 35, redraw: true},
+                                transition: {duration: 0},
+                                mode: 'immediate'
+                            });
+                            ch.dataset.animStarted = "true";
+                        } catch(e) {}
+                    }
+                });
+            }
+            // Sayfa yüklendiğinde + biraz gecikme ile dene
+            setTimeout(startGauges, 600);
+            setTimeout(startGauges, 1400);
+        })();
+        </script>
+        """, unsafe_allow_html=True)
+
+        st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
+
+        # ═══ Risk Skoru Yorumlama (A1) — "67 ne anlama geliyor?" ═══
+        st.markdown(f"""
+        <div style="background:linear-gradient(145deg,rgba(56,209,227,0.05),rgba(10,30,60,0.25));
+                    border:1px solid rgba(56,209,227,0.25);border-radius:14px;
+                    padding:1.4rem 1.6rem;margin:0.5rem 0 1.5rem 0;">
+            <div style="color:#38d1e3;font-size:1.05rem;font-weight:700;margin-bottom:0.7rem;
+                        letter-spacing:-0.2px;">{t('score_meaning_h')}</div>
+            <div style="color:#d0e8f5;font-size:0.88rem;line-height:1.65;margin-bottom:1.1rem;">
+                {t('score_meaning_intro')}
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1rem;">
+                <div style="background:rgba(214,39,40,0.08);border-left:3px solid #d62728;border-radius:0 8px 8px 0;padding:0.8rem 1rem;">
+                    <div style="color:#ff8a8a;font-size:0.78rem;font-weight:700;letter-spacing:0.5px;margin-bottom:6px;">{t('score_meaning_card1_t')}</div>
+                    <div style="color:#e8eef5;font-size:0.82rem;line-height:1.55;">{t('score_meaning_card1_v')}</div>
+                </div>
+                <div style="background:rgba(56,209,227,0.08);border-left:3px solid #38d1e3;border-radius:0 8px 8px 0;padding:0.8rem 1rem;">
+                    <div style="color:#7ddfee;font-size:0.78rem;font-weight:700;letter-spacing:0.5px;margin-bottom:6px;">{t('score_meaning_card2_t')}</div>
+                    <div style="color:#e8eef5;font-size:0.82rem;line-height:1.55;">{t('score_meaning_card2_v')}</div>
+                </div>
+                <div style="background:rgba(255,127,14,0.08);border-left:3px solid #ff7f0e;border-radius:0 8px 8px 0;padding:0.8rem 1rem;">
+                    <div style="color:#ffb070;font-size:0.78rem;font-weight:700;letter-spacing:0.5px;margin-bottom:6px;">{t('score_meaning_card3_t')}</div>
+                    <div style="color:#e8eef5;font-size:0.82rem;line-height:1.55;">{t('score_meaning_card3_v')}</div>
+                </div>
+            </div>
+            <div style="color:#a8d8f0;font-size:0.85rem;font-weight:700;margin:0.8rem 0 0.5rem 0;">{t('score_meaning_thresholds')}</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem;">
+                <div style="background:rgba(214,39,40,0.06);border:1px solid rgba(214,39,40,0.3);border-radius:8px;padding:0.7rem 0.9rem;">
+                    <div style="color:#e8eef5;font-size:0.8rem;line-height:1.5;white-space:pre-line;">{t('threshold_high')}</div>
+                </div>
+                <div style="background:rgba(255,127,14,0.06);border:1px solid rgba(255,127,14,0.3);border-radius:8px;padding:0.7rem 0.9rem;">
+                    <div style="color:#e8eef5;font-size:0.8rem;line-height:1.5;white-space:pre-line;">{t('threshold_med')}</div>
+                </div>
+                <div style="background:rgba(44,160,44,0.06);border:1px solid rgba(44,160,44,0.3);border-radius:8px;padding:0.7rem 0.9rem;">
+                    <div style="color:#e8eef5;font-size:0.8rem;line-height:1.5;white-space:pre-line;">{t('threshold_low')}</div>
+                </div>
+            </div>
+            <div style="background:rgba(255,255,255,0.04);border-left:3px solid rgba(255,255,255,0.3);border-radius:0 6px 6px 0;padding:0.6rem 0.9rem;">
+                <div style="color:#c5d8e8;font-size:0.78rem;line-height:1.55;font-style:italic;">{t('score_meaning_disclaimer')}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
         sec_baslik(t("sec_02_title"), t("sec_02_h"))
 
         col1, col2 = st.columns([3,2])
@@ -3778,8 +3913,8 @@ st.markdown("""
       </div>
     </div>
     <div style="color:rgba(255,255,255,0.7);font-size:0.82rem;text-align:center;">
-      Built with <span style="color:#ff6b9d;"></span> by
-      <a href="https://www.linkedin.com/in/serhatbalık/" target="_blank"
+      Built with <span style="color:#ff6b9d;">♥</span> by
+      <a href="https://www.linkedin.com/in/serhatbalik/" target="_blank"
          style="color:#38d1e3;text-decoration:none;font-weight:600;">Serhat Balık</a>
       · İzmir Ekonomi Üniversitesi
     </div>
@@ -3790,7 +3925,7 @@ st.markdown("""
                 transition:all 0.25s ease;display:inline-flex;align-items:center;gap:6px;">
         <span>⚡</span> GitHub
       </a>
-      <a href="https://www.linkedin.com/in/serhatbalık/" target="_blank"
+      <a href="https://www.linkedin.com/in/serhatbalik/" target="_blank"
          style="color:rgba(255,255,255,0.75);text-decoration:none;font-size:0.82rem;
                 padding:6px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;
                 transition:all 0.25s ease;display:inline-flex;align-items:center;gap:6px;">
