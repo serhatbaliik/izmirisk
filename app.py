@@ -1037,15 +1037,16 @@ hr { border-color: rgba(56,209,227,0.2) !important; }
 .risk-high { color: #d62728; font-weight: 600; }
 
 [data-testid="stTextInput"] input {
-    background: rgba(4,18,50,0.6) !important;
-    border: 1px solid rgba(56,209,227,0.4) !important;
-    border-radius: 20px !important;
-    color: #a8d8f0 !important;
-    font-size: 0.82rem !important;
-    height: 34px !important;
-    padding: 0 14px !important;
-    box-shadow: 0 0 10px rgba(56,209,227,0.1) !important;
-    backdrop-filter: blur(8px) !important;
+    background: rgba(56,209,227,0.08) !important;
+    border: 1px solid rgba(56,209,227,0.35) !important;
+    border-radius: 18px !important;
+    color: #d0e8f5 !important;
+    font-size: 0.78rem !important;
+    height: 30px !important;
+    padding: 0 12px !important;
+    box-shadow: 0 0 8px rgba(56,209,227,0.08) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
 }
 [data-testid="stTextInput"] > div,
 [data-testid="stTextInput"] > div > div {
@@ -1098,11 +1099,15 @@ div[data-testid="stButton"] > button p,
     color: inherit !important;
 }
 
-header[data-testid="stHeader"] { background: rgba(3,12,35,0.85) !important; border-bottom: 1px solid rgba(56,209,227,0.15) !important; }
-#MainMenu { visibility: hidden !important; }
-[data-testid="stToolbar"] { visibility: hidden !important; }
-footer { visibility: hidden !important; }
-[data-testid="stDecoration"] { display: none !important; }
+/* Streamlit header & üst şerit TAMAMEN GİZLE */
+header[data-testid="stHeader"],
+.stApp > header,
+[data-testid="stToolbar"],
+[data-testid="stDecoration"],
+[data-testid="stStatusWidget"],
+#MainMenu, footer, [data-testid="stMainMenu"] { display: none !important; height: 0 !important; visibility: hidden !important; }
+.stApp { margin-top: 0 !important; }
+.block-container { padding-top: 0.5rem !important; }
 
 .veri-rozet {
     display:inline-block; background:rgba(155,89,182,0.15);
@@ -1116,12 +1121,18 @@ div[data-testid="stSlider"] [data-baseweb="slider"] > div > div:nth-child(2) { b
 div[data-testid="stSlider"] [role="slider"] { background: #38d1e3 !important; border: 3px solid white !important; box-shadow: 0 0 14px rgba(56,209,227,0.85) !important; width: 20px !important; height: 20px !important; }
 div[data-testid="stSlider"] [data-baseweb="tooltip"] div { background: rgba(10,30,70,0.95) !important; border: 1px solid #38d1e3 !important; color: #38d1e3 !important; font-weight: 700 !important; border-radius: 6px !important; }
 
-/* Aktif dil butonu */
-.active-lang button {
+/* Aktif (primary) buton — dil & navigasyon vurgusu */
+button[kind="primary"],
+[data-testid="stBaseButton-primary"],
+.stButton > button[kind="primary"] {
     background: linear-gradient(135deg,rgba(56,209,227,0.30),rgba(10,50,120,0.65)) !important;
-    border-color: #38d1e3 !important;
+    border: 1.5px solid #38d1e3 !important;
     color: #ffffff !important;
-    box-shadow: 0 0 16px rgba(56,209,227,0.50) !important;
+    box-shadow: 0 0 18px rgba(56,209,227,0.50), 0 4px 14px rgba(0,0,0,0.4) !important;
+}
+button[kind="primary"]:hover {
+    background: linear-gradient(135deg,rgba(56,209,227,0.45),rgba(10,50,120,0.75)) !important;
+    box-shadow: 0 0 22px rgba(56,209,227,0.65) !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -1325,96 +1336,90 @@ except Exception as e:
 if data_loaded:
 
     # ═══════════════════════════════════════════════════════════════
-    # HEADER + DİL TOGGLE
+    # HEADER + DİL TOGGLE (sağ üstte küçük)
     # ═══════════════════════════════════════════════════════════════
-    st.markdown(f"""
-    <div style="text-align:center;padding:8px 0 16px 0;position:relative;">
-        <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);
-                    color:#a8d8f0;font-size:0.72rem;text-align:right;line-height:1.9;">
+
+    # Üst satır: solda boş, ortada boş, sağda TR/EN butonları + info
+    _topL, _topMid, _topR = st.columns([3, 4, 2])
+    with _topR:
+        _bcol1, _bcol2 = st.columns(2)
+        with _bcol1:
+            if st.button(t("lang_tr"), key="btn_lang_tr", use_container_width=True,
+                         type=("primary" if st.session_state.dil == "tr" else "secondary")):
+                st.session_state.dil = "tr"
+                st.rerun()
+        with _bcol2:
+            if st.button(t("lang_en"), key="btn_lang_en", use_container_width=True,
+                         type=("primary" if st.session_state.dil == "en" else "secondary")):
+                st.session_state.dil = "en"
+                st.rerun()
+        st.markdown(f"""
+        <div style="text-align:right;color:#a8d8f0;font-size:0.68rem;line-height:1.6;margin-top:6px;">
             {t('data_source_short')}<br>{t('scope_short')}
         </div>
-        <div style="display:inline-flex;align-items:center;gap:20px;">
-            <span style="font-size:4.2rem;line-height:1;filter:drop-shadow(0 0 16px rgba(56,209,227,0.6));">💧</span>
+        """, unsafe_allow_html=True)
+
+    # Logo + başlık (negatif margin ile yukarı çekilmiş, butonlarla aynı hizada)
+    st.markdown(f"""
+    <div style="text-align:center;margin-top:-110px;margin-bottom:0.4rem;padding:0;pointer-events:none;">
+        <div style="display:inline-flex;align-items:center;gap:18px;">
+            <span style="font-size:3.4rem;line-height:1;filter:drop-shadow(0 0 16px rgba(56,209,227,0.6));">💧</span>
             <div style="text-align:left;">
-                <div style="color:#ffffff;font-size:3.4rem;font-weight:900;letter-spacing:-1px;line-height:1;
+                <div style="color:#ffffff;font-size:2.8rem;font-weight:900;letter-spacing:-1px;line-height:1;
                             text-shadow:0 0 24px rgba(56,209,227,0.20);">İzmiRisk</div>
-                <div style="color:#38d1e3;font-size:0.85rem;letter-spacing:3px;
-                            text-transform:uppercase;margin-top:6px;font-weight:600;">
+                <div style="color:#38d1e3;font-size:0.78rem;letter-spacing:3px;
+                            text-transform:uppercase;margin-top:5px;font-weight:600;">
                     {t('app_subtitle')}
                 </div>
             </div>
         </div>
     </div>
-    <hr style="border-color:rgba(56,209,227,0.2);margin:0 0 0.6rem 0;">
+    <hr style="border-color:rgba(56,209,227,0.2);margin:0.4rem 0 0.6rem 0;">
     """, unsafe_allow_html=True)
 
-    # ── DİL TOGGLE + ARAMA satırı
-    _l1, _l2, _l3, _l4, _l5 = st.columns([2.6, 0.8, 0.8, 1.8, 0.5])
-    with _l2:
-        _is_tr = st.session_state.dil == "tr"
-        st.markdown(f'<div class="{"active-lang" if _is_tr else ""}">', unsafe_allow_html=True)
-        if st.button(t("lang_tr"), key="btn_lang_tr", use_container_width=True):
-            st.session_state.dil = "tr"
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
-    with _l3:
-        _is_en = st.session_state.dil == "en"
-        st.markdown(f'<div class="{"active-lang" if _is_en else ""}">', unsafe_allow_html=True)
-        if st.button(t("lang_en"), key="btn_lang_en", use_container_width=True):
-            st.session_state.dil = "en"
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
-    with _l4:
+    # ── ARAMA satırı (ortalanmış, küçük, şeffaf mavi)
+    _s1, _s2, _s3, _s4 = st.columns([2, 3, 0.5, 2])
+    with _s2:
         _arama_girdi = st.text_input(
             "", key="site_arama", label_visibility="collapsed",
             placeholder=t("search_placeholder")
         )
-    with _l5:
+    with _s3:
         _ara_btn = st.button("🔍", key="arama_btn", use_container_width=True)
 
     # ── Arama sözlüğü (TR + EN keywords)
     ARAMA_SOZLUK = {
-        # EDA
         "baraj": "eda", "dam": "eda", "tahtalı": "eda", "tahtali": "eda",
         "balçova": "eda", "balcova": "eda", "gördes": "eda", "gordes": "eda",
         "doluluk": "eda", "fill": "eda", "tüketim": "eda", "consumption": "eda",
         "arz": "eda", "talep": "eda", "supply": "eda", "demand": "eda",
         "kayıp": "eda", "kayip": "eda", "loss": "eda",
         "eda": "eda", "analiz": "eda", "analysis": "eda",
-        "keşif": "eda", "exploratory": "eda",
-        "veri": "eda", "data": "eda",
+        "keşif": "eda", "exploratory": "eda", "veri": "eda", "data": "eda",
         "pandemi": "eda", "pandemic": "eda", "kriz": "eda", "crisis": "eda",
         "üretim": "eda", "uretim": "eda", "production": "eda",
-        # Risk
-        "risk": "risk", "wsri": "risk",
-        "entropy": "risk", "endeks": "risk", "index": "risk",
-        "skor": "risk", "score": "risk", "puan": "risk",
+        "risk": "risk", "wsri": "risk", "entropy": "risk",
+        "endeks": "risk", "index": "risk", "skor": "risk", "score": "risk", "puan": "risk",
         "bornova": "risk", "çiğli": "risk", "cigli": "risk",
-        "bayraklı": "risk", "bayrakli": "risk",
-        "buca": "risk", "gaziemir": "risk",
-        "karşıyaka": "risk", "karsiyaka": "risk",
-        "konak": "risk", "karabağlar": "risk", "karabaglar": "risk",
+        "bayraklı": "risk", "bayrakli": "risk", "buca": "risk", "gaziemir": "risk",
+        "karşıyaka": "risk", "karsiyaka": "risk", "konak": "risk",
+        "karabağlar": "risk", "karabaglar": "risk",
         "narlıdere": "risk", "narlidere": "risk",
         "güzelbahçe": "risk", "guzelbahce": "risk",
         "ilçe": "risk", "district": "risk", "trend": "risk",
-        # 2030
         "2030": "p2030", "projeksiyon": "p2030", "projection": "p2030",
         "senaryo": "p2030", "scenario": "p2030", "tahmin": "p2030",
         "cagr": "p2030", "iyimser": "p2030", "optimistic": "p2030",
         "kötümser": "p2030", "kotumser": "p2030", "pessimistic": "p2030",
-        # Map
         "harita": "map", "map": "map", "koordinat": "map", "konum": "map", "location": "map",
-        # Spatial
         "moran": "spatial", "lisa": "spatial",
         "mekânsal": "spatial", "mekansal": "spatial", "spatial": "spatial",
         "küme": "spatial", "kume": "spatial", "cluster": "spatial",
         "komşu": "spatial", "komsu": "spatial", "neighbor": "spatial",
         "hl": "spatial", "hh": "spatial", "ll": "spatial", "lh": "spatial",
-        # Advice
         "öneri": "advice", "oneri": "advice", "advice": "advice",
         "tavsiye": "advice", "recommendation": "advice",
         "çözüm": "advice", "tedbir": "advice", "tasarruf": "advice", "conservation": "advice",
-        # Method
         "metodoloji": "method", "yöntem": "method", "yontem": "method", "methodology": "method",
         "bootstrap": "method", "mann": "method", "kendall": "method",
         "formül": "method", "formul": "method", "formula": "method",
@@ -1422,7 +1427,6 @@ if data_loaded:
         "ağırlık": "method", "agirlik": "method", "weight": "method",
         "sss": "method", "faq": "method", "soru": "method", "question": "method",
         "simülasyon": "method", "simulasyon": "method", "simulation": "method",
-        # Tools
         "radar": "tools", "simülatör": "tools", "simulator": "tools",
         "araç": "tools", "arac": "tools", "tool": "tools",
         "karşılaştır": "tools", "karsilastir": "tools", "compare": "tools",
@@ -1444,59 +1448,47 @@ if data_loaded:
                 st.session_state.secili_sayfa = _hedef_sayfa
                 st.rerun()
         else:
-            with _l4:
+            with _s2:
                 st.caption(t("search_no_result"))
 
     # ── Bootstrap banner
     st.markdown(f"""
     <div style="background:linear-gradient(90deg,rgba(155,89,182,0.08),rgba(56,209,227,0.06));
                 border:1px solid rgba(155,89,182,0.25);border-radius:8px;
-                padding:0.6rem 1rem;margin-bottom:0.8rem;
+                padding:0.55rem 1rem;margin:0.6rem 0 0.7rem 0;
                 display:flex;align-items:center;gap:12px;">
-        <span style="font-size:1.2rem;">🔬</span>
+        <span style="font-size:1.1rem;">🔬</span>
         <div style="flex:1;">
             <span class="veri-rozet">{t('bootstrap_badge')}</span>
-            <span style="color:#d0e8f5;font-size:0.82rem;margin-left:10px;">{t('bootstrap_banner')}</span>
+            <span style="color:#d0e8f5;font-size:0.8rem;margin-left:10px;">{t('bootstrap_banner')}</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Nav butonları
+    # ── NAV BUTONLARI — primary type ile aktif vurgu (DIV WRAPPER YOK)
     sayfa = st.session_state.secili_sayfa
     nav_items = [
-        ("🏠", t("nav_home"),   "home"),
-        ("📊", t("nav_eda"),    "eda"),
-        ("📈", t("nav_risk"),   "risk"),
-        ("🔮", t("nav_2030"),   "p2030"),
-        ("🗺️", t("nav_map"),   "map"),
-        ("📍", t("nav_spatial"),"spatial"),
-        ("💡", t("nav_advice"), "advice"),
-        ("📐", t("nav_method"), "method"),
-        ("🔬", t("nav_tools"),  "tools"),
+        ("🏠", t("nav_home"),    "home"),
+        ("📊", t("nav_eda"),     "eda"),
+        ("📈", t("nav_risk"),    "risk"),
+        ("🔮", t("nav_2030"),    "p2030"),
+        ("🗺️", t("nav_map"),    "map"),
+        ("📍", t("nav_spatial"), "spatial"),
+        ("💡", t("nav_advice"),  "advice"),
+        ("📐", t("nav_method"),  "method"),
+        ("🔬", t("nav_tools"),   "tools"),
     ]
-    nav_cols = st.columns([1,1,1,1,1,1,1,1,1])
+    nav_cols = st.columns(9)
     for i, (emoji, label, page_key) in enumerate(nav_items):
         with nav_cols[i]:
-            if st.button(f"{emoji}\n{label}", key=f"nav_{i}", use_container_width=True):
+            if st.button(
+                f"{emoji} {label}",
+                key=f"nav_{page_key}",
+                use_container_width=True,
+                type=("primary" if sayfa == page_key else "secondary"),
+            ):
                 st.session_state.secili_sayfa = page_key
                 st.rerun()
-
-    # Aktif sayfa vurgusu
-    try:
-        active_idx = next(i for i,(e,l,k) in enumerate(nav_items) if k==sayfa)
-    except StopIteration:
-        active_idx = 0
-    # nav buttons start after lang(2) + search(1) + searchbtn(1) buttons
-    nav_btn_offset = 4
-    st.markdown(f"""
-    <style>
-    div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div:nth-child({active_idx+1}) button,
-    div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div:nth-child({active_idx+1}) [data-testid="stBaseButton-secondary"] {{
-        background: linear-gradient(135deg,rgba(56,209,227,0.30),rgba(10,50,120,0.65)) !important;
-        border-color: #38d1e3 !important; color: #ffffff !important;
-        box-shadow: 0 0 18px rgba(56,209,227,0.45), 0 4px 14px rgba(0,0,0,0.4) !important;
-    }}
-    </style>""", unsafe_allow_html=True)
 
     sayfa = st.session_state.secili_sayfa
     st.markdown("<hr style='border-color:rgba(56,209,227,0.15);margin:0.5rem 0 1rem 0;'>", unsafe_allow_html=True)
