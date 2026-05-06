@@ -125,9 +125,9 @@ TR = {
     "tahtali_h2": "📊 Teknik Özellikler",
     "tahtali_specs": "- **Toplam Depolama Kapasitesi:** 309 milyon m³  \n- **Normal Su Kotu:** 141 metre  \n- **Havza Alanı:** 432 km²  \n- **Gövde Tipi:** Kaya-toprak dolgu, merkezi çekirdekli  \n- **Yıllık Ortalama Akım:** ~210 milyon m³  \n- **İşleten Kurum:** İZSU Genel Müdürlüğü  ",
     "tahtali_h3": "📅 Tarihsel Süreç ve Önemli Dönüm Noktaları",
-    "tahtali_history": "Tahtalı Barajı'nın inşaatı 1993 yılında başlamış, 1997'de tamamlanmıştır. İzmir'in hızla büyüyen nüfusunu beslemek amacıyla dönemin en büyük altyapı yatırımlarından biri olarak hayata geçirilmiştir.\n- **1997:** Baraj devreye girer; İzmir ilk kez yıl boyu güvenli su arzına kavuşur  \n- **2007–2008:** Şiddetli kuraklık; doluluk oranı kritik %20 seviyesine geriler  \n- **2014:** Rekor yağışlar; doluluk **%44'e** ulaşarak proje döneminin zirvesini yazar  \n- **2016–2018:** Normal doluluk seyri (%34–%36 bandı)  \n- **2020–2021:** Gördes Barajı'nın kritik seviyelere inmesiyle Tahtalı üzerindeki baskı artar  \n- **2022:** Yağışlı kış mevsimi sayesinde doluluk %40'a çıkar  \n- **2023:** Doluluk **%29'a** geriler — iklim değişikliğinin uzun vadeli etkisi belirginleşir  ",
+    "tahtali_history": "Tahtalı Barajı 1993-1997 yılları arasında inşa edilmiştir. Önemli dönüm noktaları:\n- **2007–2008:** Şiddetli kuraklık, doluluk %20'ye düşer  \n- **2014:** Rekor yağışlar, doluluk **%44**'le proje zirvesine ulaşır  \n- **2020–2021:** Gördes krizinde Tahtalı'ya baskı artar  \n- **2023:** Doluluk **%29** — uzun vadeli kuraklık etkisi belirgin  ",
     "tahtali_h4": "🌡️ İklim Değişikliğinin Etkisi",
-    "tahtali_climate": "Son 14 yıllık verilere bakıldığında Tahtalı Barajı'nın ortalama doluluk düzeyinin yavaş ama istikrarlı bir düşüş trendi sergilediği görülmektedir. Akdeniz ikliminin giderek daha kurak bir karaktere bürünmesiyle birlikte havzadaki yıllık yağış miktarı uzun dönem ortalamasının altında kalmaktadır. IPCC'nin öngörülerine göre 2050'ye kadar bu bölgedeki yağışların **%20 daha azalması** beklenmektedir.",
+    "tahtali_climate": "Son 14 yılda Tahtalı'nın ortalama doluluğu yavaş ama istikrarlı bir düşüş gösteriyor. IPCC öngörüsüne göre Akdeniz havzasında 2050'ye kadar yağışlar **%20 azalacak** — bu Tahtalı için ciddi bir uyarıdır.",
     "tahtali_summary": "2023 Doluluk: %29  |  Kapasite: 309 M m³  |  Havza: 432 km²",
 
     "balcova_meta": "📍 Balçova İlçesi, İzmir &nbsp;|&nbsp; 📅 İnşaat: 1991–1995 &nbsp;|&nbsp; 🏗️ Tip: Beton kemer",
@@ -136,9 +136,9 @@ TR = {
     "balcova_h2": "📊 Teknik Özellikler",
     "balcova_specs": "- **Toplam Depolama Kapasitesi:** 57 milyon m³  \n- **Normal Su Kotu:** 103 metre  \n- **Havza Alanı:** 47 km²  \n- **Gövde Tipi:** Beton kemer  \n- **Gövde Yüksekliği:** 92 metre  \n- **İşleten Kurum:** İZSU Genel Müdürlüğü  ",
     "balcova_h3": "📅 Tarihsel Süreç ve Önemli Dönüm Noktaları",
-    "balcova_history": "Balçova Barajı, Tahtalı'dan iki yıl önce planlamaya alınmış ve 1995 yılında hizmete girmiştir. İzmir'in merkezi semtlerine olan yakınlığı, onu acil dönemlerde son derece değerli kılmaktadır.\n- **1995:** Baraj devreye girer; merkez ilçelerde su güvenilirliği artar  \n- **2002–2004:** Uzun kuraklık döneminde bile doluluk %26'nın altına düşmez  \n- **2013:** Bakım ve onarım çalışmaları yapılır; kapasitesi korunur  \n- **2016–2018:** İstikrarlı %30–%34 bandında seyreder  \n- **2021:** Gördes krizinde Balçova'nın sisteme katkısı kritik önem taşır  \n- **2021–2022:** Düşen doluluk (%26) sistem yöneticilerini uyarır  \n- **2023:** %32 dolulukla sisteme katkısını sürdürür  ",
+    "balcova_history": "Balçova Barajı 1995'te hizmete girmiştir. Önemli dönemler:\n- **2002–2004:** Uzun kuraklıkta bile %26 üstünde kalır  \n- **2016–2018:** İstikrarlı %30–34 bandı  \n- **2021:** Gördes krizinde sisteme katkısı kritik önem kazanır  \n- **2023:** %32 doluluk ile sistemde aktif rol  ",
     "balcova_h4": "💡 Neden Küçük Ama Vazgeçilmez?",
-    "balcova_why": "Balçova Barajı'nın havzası küçük olmasına rağmen şehir merkezine olan mesafesi yalnızca **12 km** civarındadır. Bu nedenle su iletim hatları daha kısa, baskı kayıpları daha düşük ve müdahale süresi çok hızlıdır. Büyük bir kuraklık ya da sistem arızası durumunda şehir merkezini besleyebilecek **tek acil yedek kaynak** niteliğini taşımaktadır. Ayrıca buharlaşma kaybı düşük iklim koşulları ve barajın gölge aldığı dağ ortamı nedeniyle göreceli olarak verimli bir depolama imkânı sunar.",
+    "balcova_why": "Balçova havzası küçük olmasına rağmen şehir merkezine yalnızca **12 km** mesafededir. Bu sayede iletim hatları kısa, baskı kayıpları düşüktür. Büyük bir kuraklık ya da arıza durumunda merkez ilçeleri besleyebilecek **en hızlı yedek kaynaktır**.",
     "balcova_summary": "2023 Doluluk: %32  |  Kapasite: 57 M m³  |  Havza: 47 km²",
 
     "gordes_meta": "📍 Gördes İlçesi, Manisa &nbsp;|&nbsp; 📅 İnşaat: 1976–1980 &nbsp;|&nbsp; 🏗️ Tip: Toprak dolgu",
@@ -147,9 +147,9 @@ TR = {
     "gordes_h2": "📊 Teknik Özellikler",
     "gordes_specs": "- **Toplam Depolama Kapasitesi:** 176 milyon m³  \n- **Normal Su Kotu:** 211 metre  \n- **Havza Alanı:** 1.315 km²  \n- **Gövde Tipi:** Kil çekirdekli toprak dolgu  \n- **Gövde Yüksekliği:** 65 metre  \n- **Amaç:** İçme suyu + sulama + taşkın önleme  \n- **İdari Sınır:** Manisa ili (Gördes ilçesi)  ",
     "gordes_h3": "📅 Tarihsel Süreç ve 2019–2021 Krizi",
-    "gordes_history": "Gördes Barajı, İzmir su sisteminin en hassas ve riskli halkasını oluşturmaktadır. Geçmiş yıllardaki doluluk seyri ciddi kırılganlıkları ortaya koymaktadır:\n- **1980:** Baraj devreye girer; bölgede sulama ve içme suyu güvencesi sağlanır  \n- **2007–2009:** Kuraklık döneminde doluluk %15'e kadar düşer  \n- **2013:** Doluluk %15 ile tarihi düşük seviyeye iner; kısıtlama uygulanır  \n- **2018:** İyileşme eğilimi; doluluk %24'e çıkar  \n- **2019:** Artan tüketim ve azalan yağışla doluluk %18'e geriler  \n- **2020:** 🚨 **Kritik kriz — doluluk %2'ye iner!** Tam anlamıyla \"baraj dibinde çamur\"  \n- **2021:** 🆘 **Tarihi dip — doluluk %1!** İzmir'de su kısıtlaması gündeme gelir  \n- **2022–2023:** Yağışların kısmen artmasıyla %4–%5'e toparlanır; risk devam eder  ",
+    "gordes_history": "Gördes Barajı 1980'de devreye girmiştir. İzmir su sisteminin en kırılgan halkasıdır:\n- **2013:** Doluluk %15 ile tarihi düşük seviye  \n- **2019:** Yağış azalması ve tüketim artışıyla %18'e geriler  \n- **2020:** 🚨 **Kritik kriz — doluluk %2!**  \n- **2021:** 🆘 **Tarihi dip — doluluk %1!** İzmir'de su kısıtlama gündemi  \n- **2022–2023:** Kısmen toparlanma %4–5; risk sürüyor  ",
     "gordes_h4": "🔬 2019–2021 Gördes Krizinden Çıkarılan Dersler",
-    "gordes_lessons": "Gördes'in %1 doluluğa inmesi, İzmir su yönetimi tarihinin en çarpıcı vakasıdır. Bu kriz şu gerçekleri gözler önüne sermiştir:\n- Tek bir barajın kuraklıkla nasıl çöküşe geçebileceği  \n- Farklı idari sınırlardaki barajları entegre eden sistemlerin koordinasyon gerektirdiği  \n- Acil durum rezervi olmayan bir sistemde nüfus artışının yarattığı risk  \n- Tarımsal sulama ile içme suyu arasındaki önceliklendirme sorunu  \nBu nedenle Gördes'in doluluk düzeyi, İzmir su güvenliği izleme sisteminin birincil göstergelerinden biri haline gelmiştir.",
+    "gordes_lessons": "Gördes'in %1 doluluğa inmesi İzmir su yönetiminin en çarpıcı vakasıdır. Çıkarılan dersler:\n- Tek bir barajın kuraklıkla nasıl çöküşe geçebileceği  \n- Acil durum rezervi olmayan sistemlerde nüfus artış riski  \n- Tarımsal sulama ile içme suyu önceliklendirmesi sorunu  ",
     "gordes_summary": "2023 Doluluk: %5  |  Kapasite: 176 M m³  |  Havza: 1.315 km²  |  ⚠️ Kritik İzlemede",
 
     "eda_dam_fill_no": "02 · BARAJ DOLULUK",
@@ -597,9 +597,9 @@ EN = {
     "tahtali_h2": "📊 Technical Specifications",
     "tahtali_specs": "- **Total Storage Capacity:** 309 million m³  \n- **Normal Water Level:** 141 meters  \n- **Watershed Area:** 432 km²  \n- **Body Type:** Rock-earth fill, central core  \n- **Average Annual Flow:** ~210 million m³  \n- **Operating Authority:** İZSU General Directorate  ",
     "tahtali_h3": "📅 Historical Process and Key Milestones",
-    "tahtali_history": "Construction of Tahtalı Dam began in 1993 and was completed in 1997. It was implemented as one of the largest infrastructure investments of its era to feed İzmir's rapidly growing population.\n- **1997:** Dam comes online; İzmir secures year-round safe water supply for the first time  \n- **2007–2008:** Severe drought; fill rate drops to a critical 20% level  \n- **2014:** Record rainfall; fill reaches **44%**, the project-era peak  \n- **2016–2018:** Normal fill range (34–36% band)  \n- **2020–2021:** Pressure on Tahtalı increases as Gördes Dam falls to critical levels  \n- **2022:** Fill rises to 40% thanks to a wet winter season  \n- **2023:** Fill drops to **29%** — the long-term effect of climate change becomes clear  ",
+    "tahtali_history": "Tahtalı Dam was constructed between 1993-1997. Key milestones:\n- **2007–2008:** Severe drought, fill drops to 20%  \n- **2014:** Record rainfall, fill reaches **44%** project peak  \n- **2020–2021:** Pressure on Tahtalı increases during Gördes crisis  \n- **2023:** Fill at **29%** — long-term drought impact apparent  ",
     "tahtali_h4": "🌡️ Impact of Climate Change",
-    "tahtali_climate": "When examining the last 14 years of data, Tahtalı Dam's average fill level shows a slow but steady downward trend. As the Mediterranean climate becomes increasingly arid, annual precipitation in the watershed remains below the long-term average. According to IPCC projections, precipitation in this region is expected to **decrease by another 20%** by 2050.",
+    "tahtali_climate": "Over the past 14 years, Tahtalı's average fill level shows a slow but steady downward trend. According to IPCC projections, precipitation in the Mediterranean basin is expected to **decrease 20% by 2050** — a serious warning for Tahtalı.",
     "tahtali_summary": "2023 Fill: 29%  |  Capacity: 309 M m³  |  Watershed: 432 km²",
 
     "balcova_meta": "📍 Balçova District, İzmir &nbsp;|&nbsp; 📅 Construction: 1991–1995 &nbsp;|&nbsp; 🏗️ Type: Concrete arch",
@@ -608,9 +608,9 @@ EN = {
     "balcova_h2": "📊 Technical Specifications",
     "balcova_specs": "- **Total Storage Capacity:** 57 million m³  \n- **Normal Water Level:** 103 meters  \n- **Watershed Area:** 47 km²  \n- **Body Type:** Concrete arch  \n- **Body Height:** 92 meters  \n- **Operating Authority:** İZSU General Directorate  ",
     "balcova_h3": "📅 Historical Process and Key Milestones",
-    "balcova_history": "Balçova Dam was planned two years before Tahtalı and entered service in 1995. Its proximity to İzmir's central neighborhoods makes it extremely valuable during emergencies.\n- **1995:** Dam comes online; water reliability increases in central districts  \n- **2002–2004:** Fill stays above 26% even during prolonged drought  \n- **2013:** Maintenance and repair work performed; capacity preserved  \n- **2016–2018:** Stable in the 30–34% band  \n- **2021:** Balçova's contribution becomes critical during the Gördes crisis  \n- **2021–2022:** Falling fill (26%) alerts system managers  \n- **2023:** Continues to contribute to the system at 32% fill  ",
+    "balcova_history": "Balçova Dam came online in 1995. Key periods:\n- **2002–2004:** Stays above 26% even during prolonged drought  \n- **2016–2018:** Stable in the 30–34% band  \n- **2021:** Critical role during Gördes crisis  \n- **2023:** Active contribution at 32% fill  ",
     "balcova_h4": "💡 Why Small But Indispensable?",
-    "balcova_why": "Although Balçova Dam's watershed is small, its distance to the city center is only about **12 km**. As a result, water transmission lines are shorter, pressure losses are lower, and response times are very fast. In the event of a major drought or system failure, it serves as **the only emergency reserve** capable of supplying the city center. Additionally, low evaporation losses due to climate conditions and the dam's shaded mountain environment provide relatively efficient storage.",
+    "balcova_why": "Although Balçova's watershed is small, it is only **12 km** from the city center. Short transmission lines mean low pressure losses and fast response. In a major drought or system failure, it serves as **the fastest emergency reserve** for the central districts.",
     "balcova_summary": "2023 Fill: 32%  |  Capacity: 57 M m³  |  Watershed: 47 km²",
 
     "gordes_meta": "📍 Gördes District, Manisa &nbsp;|&nbsp; 📅 Construction: 1976–1980 &nbsp;|&nbsp; 🏗️ Type: Earth fill",
@@ -619,9 +619,9 @@ EN = {
     "gordes_h2": "📊 Technical Specifications",
     "gordes_specs": "- **Total Storage Capacity:** 176 million m³  \n- **Normal Water Level:** 211 meters  \n- **Watershed Area:** 1,315 km²  \n- **Body Type:** Clay-core earth fill  \n- **Body Height:** 65 meters  \n- **Purpose:** Drinking water + irrigation + flood prevention  \n- **Administrative Boundary:** Manisa Province (Gördes district)  ",
     "gordes_h3": "📅 Historical Process and the 2019–2021 Crisis",
-    "gordes_history": "Gördes Dam represents the most sensitive and risky link in İzmir's water system. Its fill history reveals serious vulnerabilities:\n- **1980:** Dam comes online; provides irrigation and drinking water security in the region  \n- **2007–2009:** Fill drops to 15% during drought  \n- **2013:** Fill hits a historic low of 15%; restrictions implemented  \n- **2018:** Recovery trend; fill rises to 24%  \n- **2019:** Fill drops to 18% with rising consumption and falling rainfall  \n- **2020:** 🚨 **Critical crisis — fill drops to 2%!** Literally \"mud at the bottom of the dam\"  \n- **2021:** 🆘 **Historic low — fill at 1%!** Water restrictions discussed in İzmir  \n- **2022–2023:** Recovers to 4–5% with partially increased rainfall; risk continues  ",
+    "gordes_history": "Gördes Dam came online in 1980. It is the most fragile link in İzmir's water system:\n- **2013:** Fill drops to historic low of 15%  \n- **2019:** Fill at 18% with reduced rainfall and rising consumption  \n- **2020:** 🚨 **Critical crisis — fill at 2%!**  \n- **2021:** 🆘 **Historic low — 1%!** Water restrictions discussed in İzmir  \n- **2022–2023:** Partial recovery to 4–5%; risk persists  ",
     "gordes_h4": "🔬 Lessons from the 2019–2021 Gördes Crisis",
-    "gordes_lessons": "Gördes dropping to 1% fill is the most striking case in İzmir's water management history. This crisis exposed the following realities:\n- How a single dam can collapse under drought  \n- That systems integrating dams across different administrative boundaries require coordination  \n- The risk created by population growth in a system without emergency reserves  \n- The prioritization problem between agricultural irrigation and drinking water  \nFor these reasons, Gördes's fill level has become one of the primary indicators in İzmir's water security monitoring system.",
+    "gordes_lessons": "Gördes dropping to 1% fill is the most striking case in İzmir's water management history. Key lessons:\n- How a single dam can collapse under drought  \n- The risk of population growth in systems without emergency reserves  \n- Prioritization conflict between agricultural irrigation and drinking water  ",
     "gordes_summary": "2023 Fill: 5%  |  Capacity: 176 M m³  |  Watershed: 1,315 km²  |  ⚠️ Critical Watch",
 
     "eda_dam_fill_no": "02 · DAM FILL LEVEL",
@@ -1027,10 +1027,15 @@ hr { border-color: rgba(56,209,227,0.2) !important; }
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
 }
-.wave-container { position: relative; width: 100%; height: 4px; overflow: hidden; margin: 0.5rem 0; opacity: 0.5; }
+.wave-container { position: relative; width: 100%; height: 5px; overflow: hidden; margin: 0.5rem 0; opacity: 0.85; }
 .wave { position: absolute; width: 200%; height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(56,209,227,0.5) 50%, transparent 100%);
-    animation: wave 8s linear infinite; }
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(56,209,227,0.55) 25%,
+        rgba(77,184,240,0.65) 50%,
+        rgba(56,209,227,0.55) 75%,
+        transparent 100%);
+    animation: wave 7s linear infinite; }
 
 .risk-low { color: #2ca02c; font-weight: 600; }
 .risk-med { color: #ff7f0e; font-weight: 600; }
@@ -1225,23 +1230,23 @@ button[kind="primary"]:hover {
     100% { opacity: 1; transform: translateY(0)    scale(1);    filter: blur(0); }
 }
 
-/* Hero icon (water drop) — pulse glow + gentle float */
+/* Hero icon (water drop) — slow gentle breathing */
 .hero-icon {
     display: inline-block;
     font-size: 3.4rem;
     line-height: 1;
     filter: drop-shadow(0 0 16px rgba(56,209,227,0.6));
-    animation: dropPulse 2.8s ease-in-out infinite;
+    animation: dropPulse 6s ease-in-out infinite;
     transform-origin: center center;
 }
 @keyframes dropPulse {
     0%, 100% {
-        filter: drop-shadow(0 0 16px rgba(56,209,227,0.55));
+        filter: drop-shadow(0 0 14px rgba(56,209,227,0.45));
         transform: translateY(0) scale(1);
     }
     50% {
-        filter: drop-shadow(0 0 30px rgba(56,209,227,1));
-        transform: translateY(-6px) scale(1.06);
+        filter: drop-shadow(0 0 26px rgba(56,209,227,0.9));
+        transform: translateY(-4px) scale(1.04);
     }
 }
 
@@ -1262,17 +1267,17 @@ button[kind="primary"]:hover {
 .particle {
     position: absolute;
     bottom: -20px;
-    background: radial-gradient(circle at 30% 30%, rgba(56,209,227,0.25), rgba(56,209,227,0.02));
+    background: radial-gradient(circle at 30% 30%, rgba(56,209,227,0.55), rgba(77,184,240,0.15) 60%, transparent 100%);
     border-radius: 50%;
     animation: floatUp linear infinite;
-    box-shadow: 0 0 8px rgba(56,209,227,0.15);
+    box-shadow: 0 0 14px rgba(56,209,227,0.35), inset 0 0 4px rgba(255,255,255,0.2);
 }
 @keyframes floatUp {
     0%   { transform: translateY(0) translateX(0);     opacity: 0; }
-    15%  { opacity: 0.4; }
-    50%  { transform: translateY(-50vh) translateX(20px); opacity: 0.25; }
-    85%  { opacity: 0.2; }
-    100% { transform: translateY(-105vh) translateX(-15px); opacity: 0; }
+    8%   { opacity: 0.55; }
+    50%  { transform: translateY(-50vh) translateX(25px); opacity: 0.45; }
+    92%  { opacity: 0.3; }
+    100% { transform: translateY(-105vh) translateX(-18px); opacity: 0; }
 }
 
 /* — KPI Card hover — premium feel */
@@ -1297,15 +1302,15 @@ button[kind="primary"]:hover {
 </style>
 """, unsafe_allow_html=True)
 
-# — 1.1 PARTICLES BACKGROUND — Inject 10 floating water droplets (subtle)
+# — 1.1 PARTICLES BACKGROUND — Inject 14 floating water droplets (visible but not overwhelming)
 import random as _rnd
 _rnd.seed(42)
 _particles_html = '<div class="particles-container">'
-for _i in range(10):
-    _size = _rnd.randint(5, 11)
+for _i in range(14):
+    _size = _rnd.randint(5, 13)
     _left = _rnd.randint(0, 100)
-    _delay = _rnd.uniform(0, 22)
-    _duration = _rnd.uniform(20, 32)
+    _delay = _rnd.uniform(0, 18)
+    _duration = _rnd.uniform(16, 26)
     _particles_html += (
         f'<div class="particle" style="width:{_size}px;height:{_size}px;'
         f'left:{_left}%;animation-delay:{_delay:.1f}s;animation-duration:{_duration:.1f}s;"></div>'
@@ -2740,6 +2745,16 @@ if data_loaded:
         if "3D" in harita_modu:
             try:
                 import pydeck as pdk
+                # Kullanıcıya tema seçimi
+                _tema_label = "🗺️ Sokak (OSM)" if st.session_state.dil == "tr" else "🗺️ Street (OSM)"
+                _tema_label2 = "🌑 Karanlık" if st.session_state.dil == "tr" else "🌑 Dark"
+                _tema_label3 = "☀️ Açık" if st.session_state.dil == "tr" else "☀️ Light"
+                tema_3d = st.radio(
+                    "3D Harita Teması" if st.session_state.dil == "tr" else "3D Map Theme",
+                    [_tema_label, _tema_label2, _tema_label3],
+                    horizontal=True, key="tema_3d_radio"
+                )
+
                 ILCE_LAT_3D = {
                     "BORNOVA":38.470,"ÇİĞLİ":38.495,"BAYRAKLI":38.460,"BUCA":38.391,
                     "GAZİEMİR":38.310,"GÜZELBAHÇE":38.370,"KARŞIYAKA":38.460,"NARLIDERE":38.395,
@@ -2753,9 +2768,9 @@ if data_loaded:
                 # Renk: skor değerine göre [R, G, B, A]
                 def renk_3d(s):
                     if s is None: return [120, 120, 120, 200]
-                    if s >= 60: return [214, 39, 40, 220]   # kırmızı
-                    if s >= 46: return [255, 127, 14, 220]  # turuncu
-                    return [44, 160, 44, 220]               # yeşil
+                    if s >= 60: return [214, 39, 40, 230]   # kırmızı
+                    if s >= 46: return [255, 127, 14, 230]  # turuncu
+                    return [44, 160, 44, 230]               # yeşil
                 deck_data = []
                 for il in ilce_listesi:
                     sk = ilce_skor.get(il, 0)
@@ -2770,6 +2785,16 @@ if data_loaded:
                     })
                 deck_df = pd.DataFrame(deck_data)
 
+                # OSM Tile Layer — token-free, gerçek sokak haritası
+                osm_tile_layer = pdk.Layer(
+                    "TileLayer",
+                    data="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    min_zoom=0,
+                    max_zoom=19,
+                    tile_size=256,
+                    opacity=0.85,
+                )
+
                 column_layer = pdk.Layer(
                     "ColumnLayer",
                     data=deck_df,
@@ -2783,16 +2808,19 @@ if data_loaded:
                     extruded=True,
                     coverage=0.95,
                 )
-                # İlçe ismi etiketleri için TextLayer
+                # Etiket rengini temaya göre belirle (OSM ve light için koyu, dark için beyaz)
+                _label_color = [255, 255, 255, 255] if "Karanlık" in tema_3d or "Dark" in tema_3d else [20, 30, 60, 255]
                 text_layer = pdk.Layer(
                     "TextLayer",
                     data=deck_df,
                     get_position=["lon", "lat"],
                     get_text="ilce",
                     get_size=14,
-                    get_color=[255, 255, 255, 255],
+                    get_color=_label_color,
                     get_alignment_baseline="'bottom'",
-                    background=False,
+                    background=True,
+                    background_padding=[3, 2],
+                    get_background_color=[255, 255, 255, 200] if "Karanlık" not in tema_3d and "Dark" not in tema_3d else [10, 30, 60, 220],
                 )
 
                 view_state = pdk.ViewState(
@@ -2809,11 +2837,27 @@ if data_loaded:
                     "Risk Score: {skor}<br/>"
                     "{sinif}"
                 )
+
+                # Tema seçimine göre layer ve map_style ayarla
+                if "OSM" in tema_3d or "Sokak" in tema_3d or "Street" in tema_3d:
+                    # OSM tile layer + map_style None
+                    deck_layers = [osm_tile_layer, column_layer, text_layer]
+                    deck_map_style = None
+                    deck_map_provider = None
+                elif "Karanlık" in tema_3d or "Dark" in tema_3d:
+                    deck_layers = [column_layer, text_layer]
+                    deck_map_style = "dark"
+                    deck_map_provider = "carto"
+                else:  # Açık / Light
+                    deck_layers = [column_layer, text_layer]
+                    deck_map_style = "light"
+                    deck_map_provider = "carto"
+
                 deck = pdk.Deck(
-                    layers=[column_layer, text_layer],
+                    layers=deck_layers,
                     initial_view_state=view_state,
-                    map_style="dark",
-                    map_provider="carto",
+                    map_style=deck_map_style,
+                    map_provider=deck_map_provider,
                     tooltip={
                         "html": tooltip_text,
                         "style": {
