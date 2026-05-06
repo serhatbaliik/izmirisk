@@ -997,8 +997,131 @@ st.markdown("""
    ⚙️  ANİMASYON HIZ AYARLARI — Buradan değiştir, tek tek aramaya gerek yok
    ═══════════════════════════════════════════════════════════ */
 :root {
-    --wave-duration: 7s;       /* MAVİ ŞERİT akma hızı (1s=hızlı, 30s=çok yavaş) */
-    --pulse-duration: 6s;      /* 💧 DAMLA pulse hızı  (1s=hızlı, 30s=çok yavaş) */
+    --wave-duration: 7s;
+    --pulse-duration: 6s;
+
+    /* ─── DESIGN SYSTEM (C1) — 3 ana renk + risk paleti ─── */
+    --color-accent: #38d1e3;          /* Cyan - vurgu, link, aktif */
+    --color-accent-soft: rgba(56,209,227,0.15);
+    --color-text-primary: #ffffff;     /* Beyaz - ana metin */
+    --color-text-secondary: #a8d8f0;   /* Açık cyan - alt metin */
+    --color-text-muted: rgba(255,255,255,0.55);
+    --color-bg-card: rgba(255,255,255,0.04);
+    --color-border-subtle: rgba(56,209,227,0.18);
+    --color-border-strong: rgba(56,209,227,0.45);
+
+    /* Risk renkleri (sadece risk göstergelerinde) */
+    --color-risk-high:    #d62728;
+    --color-risk-medium:  #ff7f0e;
+    --color-risk-low:     #2ca02c;
+
+    /* ─── TİPOGRAFİ HİYERARŞİSİ (C2) ─── */
+    --fs-h1: 2.8rem;     /* 44px */
+    --fs-h2: 1.65rem;    /* 26px */
+    --fs-h3: 1.2rem;     /* 19px */
+    --fs-body: 0.95rem;  /* 15px */
+    --fs-small: 0.78rem; /* 12px */
+
+    /* ─── WHITESPACE (C3) ─── */
+    --space-section: 3rem;
+    --space-card-gap: 1.4rem;
+    --space-inner: 1.2rem;
+}
+
+/* — Smooth scroll — */
+html { scroll-behavior: smooth; }
+
+/* — Tipografi hiyerarşisi — */
+h1, .h1 {
+    font-size: var(--fs-h1) !important;
+    font-weight: 800 !important;
+    letter-spacing: -1px !important;
+    line-height: 1.15 !important;
+    margin: 0 0 0.6rem 0 !important;
+}
+h2, .h2 {
+    font-size: var(--fs-h2) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.3px !important;
+    line-height: 1.25 !important;
+    margin: 1.4rem 0 0.7rem 0 !important;
+}
+h3, .h3 {
+    font-size: var(--fs-h3) !important;
+    font-weight: 600 !important;
+    line-height: 1.35 !important;
+    margin: 1rem 0 0.5rem 0 !important;
+}
+.main p, .main li {
+    font-size: var(--fs-body);
+    line-height: 1.6;
+}
+
+/* — Section nefes alanı — */
+.main .block-container {
+    padding-top: 1rem !important;
+    padding-bottom: 4rem !important;
+    max-width: 1280px !important;
+}
+.element-container {
+    margin-bottom: 0.7rem;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   📱 MOBILE RESPONSIVE (B1) — Telefonda kullanılabilir hale getir
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    /* Streamlit columns — alt alta sıralansın */
+    [data-testid="stHorizontalBlock"] {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    [data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        min-width: 100% !important;
+    }
+    /* Tipografi mobil için küçült */
+    :root {
+        --fs-h1: 1.9rem;
+        --fs-h2: 1.3rem;
+        --fs-h3: 1.05rem;
+        --fs-body: 0.9rem;
+    }
+    /* Plotly grafikler için kontainer width */
+    .js-plotly-plot, .plot-container {
+        max-width: 100% !important;
+    }
+    /* Padding küçült */
+    .main .block-container {
+        padding-left: 0.8rem !important;
+        padding-right: 0.8rem !important;
+    }
+    /* Hero biraz daha kompakt */
+    .hero-icon { font-size: 2.4rem !important; }
+    /* Top nav — wrap */
+    [data-testid="stHorizontalBlock"]:has([data-testid="stButton"]) {
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+    }
+    /* KPI grid — tek sütun mobile'da */
+    div[style*="grid-template-columns:repeat(3,1fr)"],
+    div[style*="grid-template-columns: repeat(3,1fr)"],
+    div[style*="grid-template-columns:repeat(3, 1fr)"] {
+        grid-template-columns: 1fr !important;
+    }
+    div[style*="grid-template-columns:repeat(4,1fr)"],
+    div[style*="grid-template-columns: repeat(4,1fr)"] {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
+
+@media (max-width: 480px) {
+    div[style*="grid-template-columns:repeat(4,1fr)"],
+    div[style*="grid-template-columns: repeat(4,1fr)"] {
+        grid-template-columns: 1fr !important;
+    }
+    .hero-icon { font-size: 2rem !important; }
 }
 
 section[data-testid="stSidebar"] { width: 280px !important; min-width: 280px !important; }
@@ -1174,38 +1297,69 @@ button[kind="primary"],
     color: #ffffff !important;
     box-shadow: 0 0 18px rgba(56,209,227,0.50), 0 4px 14px rgba(0,0,0,0.4) !important;
 }
+/* — Loading state (B2) — top progress bar on page load */
+@keyframes pageLoadBar {
+    0%   { width: 0%;   opacity: 1; }
+    50%  { width: 70%; }
+    100% { width: 100%; opacity: 0; }
+}
+.main .block-container::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-accent), #4db8f0, var(--color-accent));
+    box-shadow: 0 0 10px rgba(56,209,227,0.6);
+    z-index: 9999;
+    animation: pageLoadBar 1.4s ease-out forwards;
+    pointer-events: none;
+}
+
 button[kind="primary"]:hover {
     background: linear-gradient(135deg,rgba(56,209,227,0.45),rgba(10,50,120,0.75)) !important;
     box-shadow: 0 0 22px rgba(56,209,227,0.65) !important;
+}
+
+/* — Plot/Chart skeleton during data fetch — */
+.stPlotlyChart > div:empty::before,
+[data-testid="stPlotlyChart"]:empty::before {
+    content: "";
+    display: block;
+    height: 320px;
+    background: linear-gradient(90deg,
+        rgba(255,255,255,0.02) 25%,
+        rgba(56,209,227,0.08) 50%,
+        rgba(255,255,255,0.02) 75%);
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.4s infinite;
+    border-radius: 12px;
+}
+@keyframes skeletonShimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Spinner override - daha şık */
+.stSpinner > div {
+    border-top-color: var(--color-accent) !important;
+    border-right-color: var(--color-accent-soft) !important;
+    border-bottom-color: var(--color-accent-soft) !important;
+    border-left-color: var(--color-accent-soft) !important;
 }
 
 /* ═══════════════════════════════════════════════════════════
    🌊 WOW FACTOR ANIMATIONS — Hero, Counters, Scroll, Particles
    ═══════════════════════════════════════════════════════════ */
 
-/* — 1.2 NUMBER COUNTERS — CSS @property + counter() trick */
+/* — 1.2 NUMBER COUNTERS — JS-driven, kesin çalışır */
+.counter, .counter-decimal {
+    display: inline-block;
+}
+/* CSS @property fallback (modern Chrome/Edge için ek görsel) */
 @property --num {
     syntax: "<integer>";
     initial-value: 0;
     inherits: false;
-}
-@keyframes countUp {
-    from { --num: 0; }
-    to   { --num: var(--target); }
-}
-.counter {
-    animation: countUp 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    counter-reset: num var(--num);
-    display: inline-block;
-}
-.counter::after { content: counter(num); }
-.counter-decimal {
-    animation: countUp 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    counter-reset: num var(--num);
-    display: inline-block;
-}
-.counter-decimal::after {
-    content: counter(num) "." attr(data-suffix);
 }
 
 /* — 1.3 SCROLL-TRIGGERED FADE-IN — Modern view-timeline (Chrome/Edge/Safari 17+) */
@@ -1295,15 +1449,53 @@ button[kind="primary"]:hover {
     100% { transform: translateY(-105vh) translateX(-18px); opacity: 0; }
 }
 
-/* — KPI Card hover — premium feel */
-[data-testid="metric-container"]:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 18px rgba(56,209,227,0.18) !important;
-    border-color: rgba(56,209,227,0.55) !important;
-    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-}
+/* — KPI Card premium feel (C4) — gradient border, soft shadow, lift on hover */
 [data-testid="metric-container"] {
-    transition: all 0.3s ease;
+    background: linear-gradient(145deg, rgba(56,209,227,0.06), rgba(10,30,60,0.25)) !important;
+    border: 1px solid var(--color-border-subtle) !important;
+    border-radius: 14px !important;
+    padding: 1.1rem 1.2rem !important;
+    box-shadow:
+        0 4px 14px rgba(0,0,0,0.25),
+        inset 0 1px 0 rgba(255,255,255,0.05) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+[data-testid="metric-container"]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(56,209,227,0.5), rgba(56,209,227,0) 40%, rgba(56,209,227,0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.4;
+    transition: opacity 0.35s ease;
+}
+[data-testid="metric-container"]:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 12px 28px rgba(0,0,0,0.4),
+        0 0 22px rgba(56,209,227,0.2) !important;
+    border-color: var(--color-border-strong) !important;
+}
+[data-testid="metric-container"]:hover::before {
+    opacity: 1;
+}
+[data-testid="stMetricValue"] {
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    color: var(--color-accent) !important;
+}
+[data-testid="stMetricLabel"] {
+    font-size: 0.75rem !important;
+    color: var(--color-text-secondary) !important;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
 }
 
 /* Reduce motion respect */
@@ -1803,7 +1995,7 @@ if data_loaded:
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(56,209,227,0.2);border-radius:12px;padding:1.2rem;text-align:center;">
                 <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">{t('kpi_total_consumption')}</div>
                 <div style="color:#38d1e3;font-size:2.4rem;font-weight:700;">
-                    <span class="counter" style="--target: {int(cnt1_val)};"></span>
+                    <span class="counter" data-final="{int(cnt1_val)}" data-decimals="0">{int(cnt1_val)}</span>
                 </div>
                 <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">{t('kpi_million_m3')}</div>
                 <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
@@ -1812,7 +2004,7 @@ if data_loaded:
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(214,39,40,0.3);border-radius:12px;padding:1.2rem;text-align:center;">
                 <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">{t('kpi_highest_risk')}</div>
                 <div style="color:#d62728;font-size:2.4rem;font-weight:700;">
-                    <span class="counter-decimal" data-suffix="{cnt2_dec}" style="--target: {cnt2_int};"></span>
+                    <span class="counter-decimal" data-final="{cnt2_val}" data-decimals="1">{cnt2_val}</span>
                 </div>
                 <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">BORNOVA · {get_risk_label(cnt2_val)}</div>
                 <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
@@ -1821,13 +2013,45 @@ if data_loaded:
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,127,14,0.3);border-radius:12px;padding:1.2rem;text-align:center;">
                 <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">{t('kpi_loss_rate')}</div>
                 <div style="color:#ff7f0e;font-size:2.4rem;font-weight:700;">
-                    <span class="counter-decimal" data-suffix="{cnt3_dec:02d}" style="--target: {cnt3_int};"></span>
+                    <span class="counter-decimal" data-final="{cnt3_val}" data-decimals="2">{cnt3_val}</span>
                 </div>
                 <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">{t('kpi_loss_subtext')}</div>
                 <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
                     <div style="height:100%;width:{bar3:.0f}%;background:#ff7f0e;border-radius:2px;"></div></div>
             </div>
-        </div>""", unsafe_allow_html=True)
+        </div>
+        <script>
+        (function() {{
+            function animateCounter(el) {{
+                if (el.dataset.animated === "true") return;
+                el.dataset.animated = "true";
+                const final = parseFloat(el.dataset.final);
+                const decimals = parseInt(el.dataset.decimals || "0");
+                if (isNaN(final)) return;
+                const duration = 1600;
+                const start = performance.now();
+                function tick(now) {{
+                    const elapsed = now - start;
+                    const t = Math.min(elapsed / duration, 1);
+                    const eased = 1 - Math.pow(1 - t, 3);
+                    const current = final * eased;
+                    el.textContent = current.toFixed(decimals);
+                    if (t < 1) requestAnimationFrame(tick);
+                    else el.textContent = final.toFixed(decimals);
+                }}
+                requestAnimationFrame(tick);
+            }}
+            const els = document.querySelectorAll('.counter, .counter-decimal');
+            if ('IntersectionObserver' in window) {{
+                const obs = new IntersectionObserver((entries) => {{
+                    entries.forEach(en => {{ if (en.isIntersecting) animateCounter(en.target); }});
+                }}, {{ threshold: 0.3 }});
+                els.forEach(el => obs.observe(el));
+            }} else {{
+                els.forEach(el => animateCounter(el));
+            }}
+        }})();
+        </script>""", unsafe_allow_html=True)
 
         # KPI kartlar
         k1, k2, k3, k4, k5 = st.columns(5)
@@ -2888,7 +3112,10 @@ if data_loaded:
                     st.caption("🖱️ **Drag:** rotate · **Ctrl + Drag:** tilt · **Wheel:** zoom — Column height = risk score")
                 _three_d_rendered = True
             except Exception as _e3d:
-                st.warning(f"3D harita yüklenemedi: {_e3d}. 2D moduna geçiliyor.")
+                if st.session_state.dil == "tr":
+                    st.info("🗺️ 3D harita şu an yüklenemedi. 2D haritaya geçiyoruz.")
+                else:
+                    st.info("🗺️ 3D map couldn't load right now. Switching to 2D view.")
                 _three_d_rendered = False
         else:
             _three_d_rendered = False
@@ -3043,23 +3270,31 @@ if data_loaded:
                 map_html = m.get_root().render()
                 components_v1.html(map_html, height=620, scrolling=False)
             except Exception as e:
-                st.error(f"Harita render hatası: {type(e).__name__}: {e}")
+                if st.session_state.dil == "tr":
+                    st.info("🗺️ Harita şu an gösterilemiyor. Sayfayı yenilemeyi deneyebilirsiniz.")
+                else:
+                    st.info("🗺️ Map can't be displayed right now. Try refreshing the page.")
 
             if eslesen_count == 0:
-                st.warning(f"⚠️ GeoJSON'daki ilçe adları sözlükle eşleşmedi (property: '{district_key}'). "
-                           "İlçe adlarının yapısını kontrol edin.")
+                if st.session_state.dil == "tr":
+                    st.info("ℹ️ Bazı ilçe verileri haritayla tam eşleşemedi.")
+                else:
+                    st.info("ℹ️ Some district data couldn't fully match the map.")
             elif eslesen_count < len(ilce_listesi):
                 eksik = [il for il in ilce_listesi if turkce_normalize(il) not in
                          {turkce_normalize(f["properties"].get(district_key, "")) for f in features}]
                 if eksik:
-                    st.caption("ℹ️ GeoJSON'da bulunamayan ilçeler: " + ", ".join(eksik))
+                    if st.session_state.dil == "tr":
+                        st.caption("ℹ️ Eşleşmeyen ilçeler: " + ", ".join(eksik))
+                    else:
+                        st.caption("ℹ️ Unmatched districts: " + ", ".join(eksik))
 
         elif not _three_d_rendered and not FOLIUM_OK:
             # ── Folium kurulu değil — Plotly fallback
-            st.error(f"📦 **Folium kurulu değil!** Hata: `{FOLIUM_ERR}`\n\n"
-                     "**Çözüm:** GitHub repo'nda `requirements.txt` dosyasını aç, içine şu iki satırı ekle:\n"
-                     "```\nstreamlit-folium>=0.20.0\nfolium>=0.17.0\n```\n"
-                     "Sonra Streamlit Cloud'da **⋮ → Reboot app** ile yeniden başlat.")
+            if st.session_state.dil == "tr":
+                st.info("🗺️ Detaylı harita yüklenirken bir aksaklık oldu. Aşağıda basitleştirilmiş bir görünüm sunuyoruz.")
+            else:
+                st.info("🗺️ The detailed map had an issue loading. Showing a simplified view below.")
             ILCE_LAT = {"BORNOVA":38.470,"ÇİĞLİ":38.495,"BAYRAKLI":38.460,"BUCA":38.391,
                         "GAZİEMİR":38.310,"GÜZELBAHÇE":38.370,"KARŞIYAKA":38.460,"NARLIDERE":38.395,
                         "KONAK":38.418,"KARABAĞLAR":38.395,"BALÇOVA":38.387}
@@ -3084,9 +3319,11 @@ if data_loaded:
             st.plotly_chart(fig_m, use_container_width=True, key="map_fallback_noflm",
                             config={"scrollZoom": True})
         elif not _three_d_rendered:
-            # geojson yok
-            st.warning("📍 GeoJSON dosyası bulunamadı (`izmir_ilceler.geojson`). "
-                       "İlçe sınırlarına göre boyalı harita için bu dosyayı repo'ya yükleyin.")
+            # geojson yok — alt sektör bir nokta haritası göster
+            if st.session_state.dil == "tr":
+                st.info("🗺️ Detaylı sınır verisi yüklenirken bir aksaklık oldu. Aşağıda noktasal görünüm sunuyoruz.")
+            else:
+                st.info("🗺️ The detailed boundary data had an issue loading. Showing a point-based view below.")
             ILCE_LAT = {"BORNOVA":38.470,"ÇİĞLİ":38.495,"BAYRAKLI":38.460,"BUCA":38.391,
                         "GAZİEMİR":38.310,"GÜZELBAHÇE":38.370,"KARŞIYAKA":38.460,"NARLIDERE":38.395,
                         "KONAK":38.418,"KARABAĞLAR":38.395,"BALÇOVA":38.387}
@@ -3521,3 +3758,50 @@ if data_loaded:
         for q, a in t("faq"):
             with st.expander(q, expanded=False):
                 st.markdown(a)
+
+
+# ═══════════════════════════════════════════════════════════
+# 🦶 GLOBAL FOOTER (B3) — All pages share this
+# ═══════════════════════════════════════════════════════════
+st.markdown("""
+<div style="height:3rem;"></div>
+<div style="margin:2.5rem -1rem -2rem -1rem;padding:1.8rem 2rem 1.6rem 2rem;
+            background:linear-gradient(180deg,rgba(3,12,35,0) 0%,rgba(3,12,35,0.6) 50%,rgba(3,12,35,0.85) 100%);
+            border-top:1px solid rgba(56,209,227,0.2);">
+  <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;
+              align-items:center;gap:1.2rem;font-family:Inter,sans-serif;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="font-size:1.5rem;filter:drop-shadow(0 0 8px rgba(56,209,227,0.5));">💧</span>
+      <div>
+        <div style="color:#ffffff;font-weight:700;font-size:0.95rem;letter-spacing:-0.2px;">İzmiRisk</div>
+        <div style="color:rgba(255,255,255,0.55);font-size:0.72rem;letter-spacing:1px;">Su Güvenliği Risk Endeksi · 2026</div>
+      </div>
+    </div>
+    <div style="color:rgba(255,255,255,0.7);font-size:0.82rem;text-align:center;">
+      Built with <span style="color:#ff6b9d;">♥</span> by
+      <a href="https://www.linkedin.com/in/serhatbalik/" target="_blank"
+         style="color:#38d1e3;text-decoration:none;font-weight:600;">Serhat Balık</a>
+      · İzmir Ekonomi Üniversitesi
+    </div>
+    <div style="display:flex;gap:0.9rem;align-items:center;">
+      <a href="https://github.com/serhatbaliik/izmirisk" target="_blank"
+         style="color:rgba(255,255,255,0.75);text-decoration:none;font-size:0.82rem;
+                padding:6px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;
+                transition:all 0.25s ease;display:inline-flex;align-items:center;gap:6px;">
+        <span>⚡</span> GitHub
+      </a>
+      <a href="https://www.linkedin.com/in/serhatbalik/" target="_blank"
+         style="color:rgba(255,255,255,0.75);text-decoration:none;font-size:0.82rem;
+                padding:6px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;
+                transition:all 0.25s ease;display:inline-flex;align-items:center;gap:6px;">
+        <span>🔗</span> LinkedIn
+      </a>
+    </div>
+  </div>
+  <div style="max-width:1200px;margin:1rem auto 0 auto;text-align:center;
+              color:rgba(255,255,255,0.4);font-size:0.7rem;letter-spacing:0.5px;
+              padding-top:1rem;border-top:1px solid rgba(255,255,255,0.06);">
+    Veri kaynağı: İZSU faaliyet raporları (2010-2023) · Bootstrap simülasyon (2010-2019) · Akademik araştırma amaçlıdır
+  </div>
+</div>
+""", unsafe_allow_html=True)
