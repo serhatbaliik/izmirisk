@@ -1638,7 +1638,7 @@ if data_loaded:
         st.markdown("<div style='height:2rem'></div>", unsafe_allow_html=True)
         sec_baslik(t("sec_01_title"), t("sec_01_h"))
 
-        gauge_data = [("BORNOVA",67.0,+2.3),("ÇİĞLİ",63.0,+1.8),("BAYRAKLI",60.0,-0.5)]
+        gauge_data = [("BORNOVA",67.0,+2.3),("ÇİĞLİ",62.5,+1.8),("BAYRAKLI",60.0,-0.5)]
         gauge_col1, gauge_col2, gauge_col3 = st.columns(3)
         for col, (ilce_adi, skor, delta_val) in zip([gauge_col1,gauge_col2,gauge_col3], gauge_data):
             fig_gauge = go.Figure(go.Indicator(
