@@ -2434,11 +2434,11 @@ if data_loaded:
 
         # ── Kütüphaneler
         import json, os, copy, unicodedata
+        import streamlit.components.v1 as components_v1
         FOLIUM_OK = True
         FOLIUM_ERR = ""
         try:
             import folium
-            from streamlit_folium import st_folium
         except ImportError as e:
             FOLIUM_OK = False
             FOLIUM_ERR = str(e)
@@ -2601,8 +2601,8 @@ if data_loaded:
             folium.LayerControl(position="topright", collapsed=True).add_to(m)
 
             try:
-                st_folium(m, width=None, height=600, returned_objects=[],
-                          key="folium_main_map")
+                map_html = m.get_root().render()
+                components_v1.html(map_html, height=620, scrolling=False)
             except Exception as e:
                 st.error(f"Harita render hatası: {type(e).__name__}: {e}")
 
@@ -2665,8 +2665,8 @@ if data_loaded:
                     tooltip=f"{il}: {ilce_skor[il]:.1f}",
                 ).add_to(m)
             try:
-                st_folium(m, width=None, height=560, returned_objects=[],
-                          key="folium_circle_fallback")
+                map_html = m.get_root().render()
+                components_v1.html(map_html, height=580, scrolling=False)
             except Exception as e:
                 st.error(f"Harita render hatası: {type(e).__name__}: {e}")
 
