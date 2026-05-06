@@ -1585,7 +1585,7 @@ if data_loaded:
         </div>""", unsafe_allow_html=True)
 
         cnt1_val = toplam_tuketim
-        cnt2_val = 67
+        cnt2_val = 67.4
         cnt3_val = round(kayip_oran, 2)
         bar1 = min(cnt1_val/300*100, 100)
         bar3 = min(cnt3_val*3, 100)
