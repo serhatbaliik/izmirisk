@@ -19,8 +19,8 @@ PRED_YEARS = list(range(END_YEAR + 1, 2031))
 # ═══════════════════════════════════════════════════════════
 # ⚙️  ANİMASYON HIZ AYARLARI — Saniye cinsinden, istediğin gibi değiştir
 # ═══════════════════════════════════════════════════════════
-HERO_PULSE_SECONDS = 15      # 💧 Damla pulse hızı (1=hızlı, 30=çok yavaş)
-WAVE_FLOW_SECONDS  = 20      # 🌊 Mavi şerit akış hızı (1=hızlı, 30=çok yavaş)
+HERO_PULSE_SECONDS = 15     # 💧 Damla pulse hızı (1=hızlı, 30=çok yavaş)
+WAVE_FLOW_SECONDS  = 20     # 🌊 Mavi şerit akış hızı (1=hızlı, 30=çok yavaş)
 # ═══════════════════════════════════════════════════════════
 
 # ═══════════════════════════════════════════════════════════════
@@ -128,7 +128,7 @@ TR = {
 
     "tahtali_meta": "📍 Menderes İlçesi, İzmir &nbsp;|&nbsp; 📅 İnşaat: 1993–1997 &nbsp;|&nbsp; 🏗️ Tip: Kaya-toprak dolgu",
     "tahtali_h1": "🏆 İzmir'in Ana Su Kaynağı",
-    "tahtali_p1": "Tahtalı Barajı, İzmir'in tartışmasız en büyük ve en stratejik su kaynağıdır. Şehrin yıllık içme suyu ihtiyacının yaklaşık **%60–70'ini** tek başına karşılar. Tahtalı Çayı üzerinde inşa edilen baraj, 432 km²'lik geniş bir havzadan beslenir. Gövde yüksekliği 75 metre olan bu yapı, kaya-toprak dolgu teknolojisiyle inşa edilmiş olup depreme dayanıklı tasarımıyla öne çıkar.",
+    "tahtali_p1": "Tahtalı, İzmir'in **en büyük su kaynağıdır** ve şehrin yıllık içme suyu ihtiyacının yaklaşık **%60–70'ini** tek başına karşılar.",
     "tahtali_h2": "📊 Teknik Özellikler",
     "tahtali_specs": "- **Toplam Depolama Kapasitesi:** 309 milyon m³  \n- **Normal Su Kotu:** 141 metre  \n- **Havza Alanı:** 432 km²  \n- **Gövde Tipi:** Kaya-toprak dolgu, merkezi çekirdekli  \n- **Yıllık Ortalama Akım:** ~210 milyon m³  \n- **İşleten Kurum:** İZSU Genel Müdürlüğü  ",
     "tahtali_h3": "📅 Tarihsel Süreç ve Önemli Dönüm Noktaları",
@@ -139,7 +139,7 @@ TR = {
 
     "balcova_meta": "📍 Balçova İlçesi, İzmir &nbsp;|&nbsp; 📅 İnşaat: 1991–1995 &nbsp;|&nbsp; 🏗️ Tip: Beton kemer",
     "balcova_h1": "🏙️ Şehir Merkezinin Stratejik Kalkanı",
-    "balcova_p1": "Balçova Barajı, görece küçük kapasitesine karşın şehir merkezine yakınlığı nedeniyle İzmir su sisteminde kritik bir rol üstlenmektedir. Meles Çayı üzerinde inşa edilen baraj, özellikle **Bornova, Bayraklı ve merkez ilçelerin** su ihtiyacını karşılamada önemli bir tampon işlevi görür. Beton kemer yapısı sayesinde dar bir vadide yüksek su tutma kapasitesi sağlanmıştır.",
+    "balcova_p1": "Balçova, küçük kapasitesine rağmen şehir merkezine yakınlığı sayesinde **Bornova, Bayraklı ve merkez ilçelerin** kritik yedek kaynağıdır.",
     "balcova_h2": "📊 Teknik Özellikler",
     "balcova_specs": "- **Toplam Depolama Kapasitesi:** 57 milyon m³  \n- **Normal Su Kotu:** 103 metre  \n- **Havza Alanı:** 47 km²  \n- **Gövde Tipi:** Beton kemer  \n- **Gövde Yüksekliği:** 92 metre  \n- **İşleten Kurum:** İZSU Genel Müdürlüğü  ",
     "balcova_h3": "📅 Tarihsel Süreç ve Önemli Dönüm Noktaları",
@@ -150,7 +150,7 @@ TR = {
 
     "gordes_meta": "📍 Gördes İlçesi, Manisa &nbsp;|&nbsp; 📅 İnşaat: 1976–1980 &nbsp;|&nbsp; 🏗️ Tip: Toprak dolgu",
     "gordes_h1": "⚠️ Kırılgan Ama Stratejik: Gördes'in İkili Rolü",
-    "gordes_p1": "Gördes Barajı, idari açıdan Manisa iline bağlı olmakla birlikte boru hatlarıyla İzmir'in su sistemine entegre edilmiştir. Bu durum barajı hem değerli hem de karmaşık bir varlık haline getirmektedir: İzmir'in su ihtiyacına katkıda bulunurken aynı zamanda Manisa'nın sulama gereksinimlerini ve bölgenin taşkın yönetimini de desteklemektedir. 1976–1980 yılları arasında inşa edilen baraj, **İzmir'in en eski büyük su altyapı yatırımlarından** biridir.",
+    "gordes_p1": "Gördes idari olarak Manisa'da olsa da boru hatlarıyla İzmir su sistemine bağlıdır. **Sistemin en kırılgan halkasıdır** — 2020-21'de doluluk %1'e indi.",
     "gordes_h2": "📊 Teknik Özellikler",
     "gordes_specs": "- **Toplam Depolama Kapasitesi:** 176 milyon m³  \n- **Normal Su Kotu:** 211 metre  \n- **Havza Alanı:** 1.315 km²  \n- **Gövde Tipi:** Kil çekirdekli toprak dolgu  \n- **Gövde Yüksekliği:** 65 metre  \n- **Amaç:** İçme suyu + sulama + taşkın önleme  \n- **İdari Sınır:** Manisa ili (Gördes ilçesi)  ",
     "gordes_h3": "📅 Tarihsel Süreç ve 2019–2021 Krizi",
@@ -600,7 +600,7 @@ EN = {
 
     "tahtali_meta": "📍 Menderes District, İzmir &nbsp;|&nbsp; 📅 Construction: 1993–1997 &nbsp;|&nbsp; 🏗️ Type: Rock-earth fill",
     "tahtali_h1": "🏆 İzmir's Main Water Source",
-    "tahtali_p1": "Tahtalı Dam is unquestionably İzmir's largest and most strategic water source. It alone supplies approximately **60–70%** of the city's annual drinking water needs. Built on the Tahtalı Stream, the dam draws from a wide watershed of 432 km². With a body height of 75 meters, this structure was built using rock-earth fill technology and stands out for its earthquake-resistant design.",
+    "tahtali_p1": "Tahtalı is **İzmir's largest water source**, alone supplying approximately **60–70%** of the city's annual drinking water needs.",
     "tahtali_h2": "📊 Technical Specifications",
     "tahtali_specs": "- **Total Storage Capacity:** 309 million m³  \n- **Normal Water Level:** 141 meters  \n- **Watershed Area:** 432 km²  \n- **Body Type:** Rock-earth fill, central core  \n- **Average Annual Flow:** ~210 million m³  \n- **Operating Authority:** İZSU General Directorate  ",
     "tahtali_h3": "📅 Historical Process and Key Milestones",
@@ -611,7 +611,7 @@ EN = {
 
     "balcova_meta": "📍 Balçova District, İzmir &nbsp;|&nbsp; 📅 Construction: 1991–1995 &nbsp;|&nbsp; 🏗️ Type: Concrete arch",
     "balcova_h1": "🏙️ Strategic Shield of the City Center",
-    "balcova_p1": "Despite its relatively small capacity, Balçova Dam plays a critical role in İzmir's water system due to its proximity to the city center. Built on the Meles Stream, the dam serves as an important buffer in meeting the water needs of **Bornova, Bayraklı, and central districts**. Its concrete arch structure provides high water-holding capacity in a narrow valley.",
+    "balcova_p1": "Despite its small capacity, Balçova serves as a **critical emergency reserve** for **Bornova, Bayraklı, and central districts** thanks to its proximity to the city.",
     "balcova_h2": "📊 Technical Specifications",
     "balcova_specs": "- **Total Storage Capacity:** 57 million m³  \n- **Normal Water Level:** 103 meters  \n- **Watershed Area:** 47 km²  \n- **Body Type:** Concrete arch  \n- **Body Height:** 92 meters  \n- **Operating Authority:** İZSU General Directorate  ",
     "balcova_h3": "📅 Historical Process and Key Milestones",
@@ -622,7 +622,7 @@ EN = {
 
     "gordes_meta": "📍 Gördes District, Manisa &nbsp;|&nbsp; 📅 Construction: 1976–1980 &nbsp;|&nbsp; 🏗️ Type: Earth fill",
     "gordes_h1": "⚠️ Fragile But Strategic: Gördes's Dual Role",
-    "gordes_p1": "While Gördes Dam is administratively part of Manisa Province, it is integrated into İzmir's water system via pipelines. This makes the dam both valuable and complex: it contributes to İzmir's water needs while also supporting Manisa's irrigation needs and regional flood management. Built between 1976 and 1980, the dam is one of **İzmir's oldest major water infrastructure investments**.",
+    "gordes_p1": "Although administratively in Manisa, Gördes is connected to İzmir's water system via pipelines. **It is the most fragile link** — fill dropped to 1% in 2020-21.",
     "gordes_h2": "📊 Technical Specifications",
     "gordes_specs": "- **Total Storage Capacity:** 176 million m³  \n- **Normal Water Level:** 211 meters  \n- **Watershed Area:** 1,315 km²  \n- **Body Type:** Clay-core earth fill  \n- **Body Height:** 65 meters  \n- **Purpose:** Drinking water + irrigation + flood prevention  \n- **Administrative Boundary:** Manisa Province (Gördes district)  ",
     "gordes_h3": "📅 Historical Process and the 2019–2021 Crisis",
@@ -1993,8 +1993,6 @@ if data_loaded:
                     st.markdown(f'<div style="color:#38d1e3;font-size:0.72rem;font-weight:600;margin:8px 0 6px 0;">{t("tahtali_meta")}</div>', unsafe_allow_html=True)
                     st.markdown(f"**{t('tahtali_h1')}**")
                     st.markdown(t("tahtali_p1"))
-                    st.markdown(f"**{t('tahtali_h2')}**")
-                    st.markdown(t("tahtali_specs"))
                     st.markdown(f"**{t('tahtali_h3')}**")
                     st.markdown(t("tahtali_history"))
                     st.markdown(f"**{t('tahtali_h4')}**")
@@ -2008,8 +2006,6 @@ if data_loaded:
                     st.markdown(f'<div style="color:#2ca02c;font-size:0.72rem;font-weight:600;margin:8px 0 6px 0;">{t("balcova_meta")}</div>', unsafe_allow_html=True)
                     st.markdown(f"**{t('balcova_h1')}**")
                     st.markdown(t("balcova_p1"))
-                    st.markdown(f"**{t('balcova_h2')}**")
-                    st.markdown(t("balcova_specs"))
                     st.markdown(f"**{t('balcova_h3')}**")
                     st.markdown(t("balcova_history"))
                     st.markdown(f"**{t('balcova_h4')}**")
@@ -2023,8 +2019,6 @@ if data_loaded:
                     st.markdown(f'<div style="color:#d62728;font-size:0.72rem;font-weight:600;margin:8px 0 6px 0;">{t("gordes_meta")}</div>', unsafe_allow_html=True)
                     st.markdown(f"**{t('gordes_h1')}**")
                     st.markdown(t("gordes_p1"))
-                    st.markdown(f"**{t('gordes_h2')}**")
-                    st.markdown(t("gordes_specs"))
                     st.markdown(f"**{t('gordes_h3')}**")
                     st.markdown(t("gordes_history"))
                     st.markdown(f"**{t('gordes_h4')}**")
