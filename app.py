@@ -3779,7 +3779,7 @@ st.markdown("""
     </div>
     <div style="color:rgba(255,255,255,0.7);font-size:0.82rem;text-align:center;">
       Built with <span style="color:#ff6b9d;"></span> by
-      <a href="https://www.linkedin.com/in/serhatbalik/" target="_blank"
+      <a href="https://www.linkedin.com/in/serhatbalık/" target="_blank"
          style="color:#38d1e3;text-decoration:none;font-weight:600;">Serhat Balık</a>
       · İzmir Ekonomi Üniversitesi
     </div>
@@ -3790,7 +3790,7 @@ st.markdown("""
                 transition:all 0.25s ease;display:inline-flex;align-items:center;gap:6px;">
         <span>⚡</span> GitHub
       </a>
-      <a href="https://www.linkedin.com/in/serhatbalik/" target="_blank"
+      <a href="https://www.linkedin.com/in/serhatbalık/" target="_blank"
          style="color:rgba(255,255,255,0.75);text-decoration:none;font-size:0.82rem;
                 padding:6px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;
                 transition:all 0.25s ease;display:inline-flex;align-items:center;gap:6px;">
