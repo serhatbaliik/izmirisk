@@ -19,8 +19,8 @@ PRED_YEARS = list(range(END_YEAR + 1, 2031))
 # ═══════════════════════════════════════════════════════════
 # ⚙️  ANİMASYON HIZ AYARLARI — Saniye cinsinden, istediğin gibi değiştir
 # ═══════════════════════════════════════════════════════════
-HERO_PULSE_SECONDS = 6      # 💧 Damla pulse hızı (1=hızlı, 30=çok yavaş)
-WAVE_FLOW_SECONDS  = 7      # 🌊 Mavi şerit akış hızı (1=hızlı, 30=çok yavaş)
+HERO_PULSE_SECONDS = 15      # 💧 Damla pulse hızı (1=hızlı, 30=çok yavaş)
+WAVE_FLOW_SECONDS  = 20      # 🌊 Mavi şerit akış hızı (1=hızlı, 30=çok yavaş)
 # ═══════════════════════════════════════════════════════════
 
 # ═══════════════════════════════════════════════════════════════
