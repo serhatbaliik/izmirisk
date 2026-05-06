@@ -90,7 +90,7 @@ TR = {
     "score_meaning_card3_v": "BM Su Stresi Endeksi'ne göre Türkiye **'orta-yüksek su stresi'** kategorisindedir (40-80% aralığı). Akdeniz havzasında **2050'ye kadar yağışların %20 azalması** bekleniyor (IPCC AR6).",
     "score_meaning_thresholds": "🎯 Bu Çalışmadaki Eşikler",
     "threshold_high": "**Yüksek Risk: ≥67**\nKentsel su sistemi üzerinde yapısal baskı. Acil müdahale gerektiren kayıp/talep dengesi.",
-    "threshold_med": "**Orta Risk: 46–60**\nDengeli ama izlenmesi gereken durum. Trend kötüleşirse hızlı dönüşüm gerekir.",
+    "threshold_med": "**Orta Risk: 46–67**\nDengeli ama izlenmesi gereken durum. Trend kötüleşirse hızlı dönüşüm gerekir.",
     "threshold_low": "**Düşük Risk: <46**\nGöreceli olarak güvenli. Ancak iklim değişikliği nedeniyle bu kategori 2050'de daralabilir.",
     "score_meaning_disclaimer": "⚠️ **Önemli:** Bu skorlar bir akademik çalışma çıktısıdır, resmi/yasal bir değerlendirme değildir. Mutlak risk seviyesi yerine **göreceli karşılaştırma + zaman içindeki trend** anlamlıdır.",
     "sec_02_title": "02 · RİSK ANALİZİ",
@@ -3849,7 +3849,7 @@ st.markdown("""
       </div>
     </div>
     <div style="color:rgba(255,255,255,0.7);font-size:0.82rem;text-align:center;">
-      Built with <span style="color:#ff6b9d;">♥</span> by
+      Built with <span style="color:#ff6b9d;"></span> by
       <a href="https://www.linkedin.com/in/serhatbalik/" target="_blank"
          style="color:#38d1e3;text-decoration:none;font-weight:600;">Serhat Balık</a>
       · İzmir Ekonomi Üniversitesi
