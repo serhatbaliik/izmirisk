@@ -1236,7 +1236,7 @@ button[kind="primary"]:hover {
     font-size: 3.4rem;
     line-height: 1;
     filter: drop-shadow(0 0 16px rgba(56,209,227,0.6));
-    animation: dropPulse 6s ease-in-out infinite;
+    animation: dropPulse 15s ease-in-out infinite;
     transform-origin: center center;
 }
 @keyframes dropPulse {
