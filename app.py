@@ -1158,8 +1158,155 @@ button[kind="primary"]:hover {
     background: linear-gradient(135deg,rgba(56,209,227,0.45),rgba(10,50,120,0.75)) !important;
     box-shadow: 0 0 22px rgba(56,209,227,0.65) !important;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   🌊 WOW FACTOR ANIMATIONS — Hero, Counters, Scroll, Particles
+   ═══════════════════════════════════════════════════════════ */
+
+/* — 1.2 NUMBER COUNTERS — CSS @property + counter() trick */
+@property --num {
+    syntax: "<integer>";
+    initial-value: 0;
+    inherits: false;
+}
+.counter {
+    transition: --num 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+    counter-reset: num var(--num);
+    animation: counterTrigger 0.01s 0.1s forwards;
+    display: inline-block;
+}
+.counter::after { content: counter(num); }
+@keyframes counterTrigger {
+    to { --num: var(--target, 0); }
+}
+.counter-decimal {
+    /* For values like 67.0 → just multiply by 10, divide visually with content */
+    transition: --num 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+    counter-reset: num var(--num);
+    animation: counterTrigger 0.01s 0.1s forwards;
+    display: inline-block;
+}
+.counter-decimal::after {
+    content: counter(num) "." attr(data-suffix);
+}
+
+/* — 1.3 SCROLL-TRIGGERED FADE-IN — Modern view-timeline (Chrome/Edge/Safari 17+) */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); filter: blur(4px); }
+    to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+@supports (animation-timeline: view()) {
+    [data-testid="stPlotlyChart"],
+    [data-testid="metric-container"],
+    [data-testid="column"] > div > div > div > [data-testid^="stVertical"],
+    .element-container:has(> .stMarkdown) {
+        animation: fadeInUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 30%;
+    }
+}
+/* Fallback: yine de hafif initial fade-in (modern browser olmasa da) */
+@keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.main .block-container > div {
+    animation: pageFadeIn 0.7s ease-out 0.1s both;
+}
+
+/* — 1.1 HERO ANIMATIONS — Letter-by-letter title reveal */
+.hero-title-letter {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px) scale(0.85);
+    animation: letterReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    text-shadow: 0 0 24px rgba(56,209,227,0.20);
+}
+@keyframes letterReveal {
+    0%   { opacity: 0; transform: translateY(20px) scale(0.85); filter: blur(8px); }
+    100% { opacity: 1; transform: translateY(0)    scale(1);    filter: blur(0); }
+}
+
+/* Hero icon (water drop) — pulse glow */
+.hero-icon {
+    display: inline-block;
+    font-size: 3.4rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 16px rgba(56,209,227,0.6));
+    animation: dropPulse 2.4s ease-in-out infinite;
+}
+@keyframes dropPulse {
+    0%, 100% { filter: drop-shadow(0 0 16px rgba(56,209,227,0.6)); transform: translateY(0); }
+    50%      { filter: drop-shadow(0 0 28px rgba(56,209,227,0.95)); transform: translateY(-3px); }
+}
+
+/* Subtitle fade-in delayed */
+.hero-subtitle {
+    opacity: 0;
+    animation: pageFadeIn 0.8s ease-out 0.9s forwards;
+}
+
+/* — 1.1 FLOATING WATER PARTICLES — Pure CSS background */
+.particles-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+.particle {
+    position: absolute;
+    bottom: -20px;
+    background: radial-gradient(circle at 30% 30%, rgba(56,209,227,0.45), rgba(56,209,227,0.05));
+    border-radius: 50%;
+    animation: floatUp linear infinite;
+    box-shadow: 0 0 12px rgba(56,209,227,0.3);
+}
+@keyframes floatUp {
+    0%   { transform: translateY(0) translateX(0);     opacity: 0; }
+    10%  { opacity: 0.6; }
+    50%  { transform: translateY(-50vh) translateX(20px); opacity: 0.4; }
+    90%  { opacity: 0.3; }
+    100% { transform: translateY(-105vh) translateX(-15px); opacity: 0; }
+}
+
+/* — KPI Card hover — premium feel */
+[data-testid="metric-container"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 18px rgba(56,209,227,0.18) !important;
+    border-color: rgba(56,209,227,0.55) !important;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-testid="metric-container"] {
+    transition: all 0.3s ease;
+}
+
+/* Reduce motion respect */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+    .particle { display: none; }
+}
 </style>
 """, unsafe_allow_html=True)
+
+# — 1.1 PARTICLES BACKGROUND — Inject 18 floating water droplets
+import random as _rnd
+_rnd.seed(42)
+_particles_html = '<div class="particles-container">'
+for _i in range(18):
+    _size = _rnd.randint(4, 14)
+    _left = _rnd.randint(0, 100)
+    _delay = _rnd.uniform(0, 14)
+    _duration = _rnd.uniform(12, 22)
+    _particles_html += (
+        f'<div class="particle" style="width:{_size}px;height:{_size}px;'
+        f'left:{_left}%;animation-delay:{_delay:.1f}s;animation-duration:{_duration:.1f}s;"></div>'
+    )
+_particles_html += '</div>'
+st.markdown(_particles_html, unsafe_allow_html=True)
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -1392,15 +1539,26 @@ if data_loaded:
         with _ssearch_col2:
             _ara_btn = st.button("🔍", key="arama_btn", use_container_width=True)
 
-    # Logo + başlık (negatif margin ile yukarı çekilmiş, butonlarla aynı hizada)
+    # Logo + başlık — Letter-by-letter animasyonlu hero
+    _title_letters = "İzmiRisk"
+    _letters_html = ""
+    for _i, _ch in enumerate(_title_letters):
+        _delay = 0.15 + _i * 0.07
+        _letters_html += (
+            f'<span class="hero-title-letter" '
+            f'style="animation-delay:{_delay:.2f}s;'
+            f'color:{"#38d1e3" if _i >= 4 else "#ffffff"};">{_ch}</span>'
+        )
+
     st.markdown(f"""
-    <div style="text-align:center;margin-top:-160px;margin-bottom:0.4rem;padding:0;pointer-events:none;">
+    <div style="text-align:center;margin-top:-160px;margin-bottom:0.4rem;padding:0;pointer-events:none;position:relative;z-index:5;">
         <div style="display:inline-flex;align-items:center;gap:18px;">
-            <span style="font-size:3.4rem;line-height:1;filter:drop-shadow(0 0 16px rgba(56,209,227,0.6));">💧</span>
+            <span class="hero-icon">💧</span>
             <div style="text-align:left;">
-                <div style="color:#ffffff;font-size:2.8rem;font-weight:900;letter-spacing:-1px;line-height:1;
-                            text-shadow:0 0 24px rgba(56,209,227,0.20);">İzmiRisk</div>
-                <div style="color:#38d1e3;font-size:0.78rem;letter-spacing:3px;
+                <div style="font-size:2.8rem;font-weight:900;letter-spacing:-1px;line-height:1;">
+                    {_letters_html}
+                </div>
+                <div class="hero-subtitle" style="color:#38d1e3;font-size:0.78rem;letter-spacing:3px;
                             text-transform:uppercase;margin-top:5px;font-weight:600;">
                     {t('app_subtitle')}
                 </div>
@@ -1609,25 +1767,37 @@ if data_loaded:
         bar1 = min(cnt1_val/300*100, 100)
         bar3 = min(cnt3_val*3, 100)
 
+        # Counter animation: cnt2_val ve cnt3_val ondalıklı, integer kısmını animate et
+        cnt2_int = int(cnt2_val)              # 67
+        cnt2_dec = int(round((cnt2_val - cnt2_int) * 10))  # 0
+        cnt3_int = int(cnt3_val)              # 27
+        cnt3_dec = int(round((cnt3_val - cnt3_int) * 100))  # 36
+
         st.markdown(f"""
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;">
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(56,209,227,0.2);border-radius:12px;padding:1.2rem;text-align:center;">
                 <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">{t('kpi_total_consumption')}</div>
-                <div style="color:#38d1e3;font-size:2.4rem;font-weight:700;">{cnt1_val}</div>
+                <div style="color:#38d1e3;font-size:2.4rem;font-weight:700;">
+                    <span class="counter" style="--target: {int(cnt1_val)};"></span>
+                </div>
                 <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">{t('kpi_million_m3')}</div>
                 <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
                     <div style="height:100%;width:{bar1:.0f}%;background:#38d1e3;border-radius:2px;"></div></div>
             </div>
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(214,39,40,0.3);border-radius:12px;padding:1.2rem;text-align:center;">
                 <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">{t('kpi_highest_risk')}</div>
-                <div style="color:#d62728;font-size:2.4rem;font-weight:700;">{cnt2_val}</div>
+                <div style="color:#d62728;font-size:2.4rem;font-weight:700;">
+                    <span class="counter-decimal" data-suffix="{cnt2_dec}" style="--target: {cnt2_int};"></span>
+                </div>
                 <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">BORNOVA · {get_risk_label(cnt2_val)}</div>
                 <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
                     <div style="height:100%;width:{cnt2_val:.0f}%;background:#d62728;border-radius:2px;"></div></div>
             </div>
             <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,127,14,0.3);border-radius:12px;padding:1.2rem;text-align:center;">
                 <div style="color:#a8d8f0;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">{t('kpi_loss_rate')}</div>
-                <div style="color:#ff7f0e;font-size:2.4rem;font-weight:700;">{cnt3_val}</div>
+                <div style="color:#ff7f0e;font-size:2.4rem;font-weight:700;">
+                    <span class="counter-decimal" data-suffix="{cnt3_dec:02d}" style="--target: {cnt3_int};"></span>
+                </div>
                 <div style="color:#a8d8f0;font-size:0.78rem;margin-bottom:10px;">{t('kpi_loss_subtext')}</div>
                 <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;">
                     <div style="height:100%;width:{bar3:.0f}%;background:#ff7f0e;border-radius:2px;"></div></div>
@@ -2526,10 +2696,18 @@ if data_loaded:
             s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode("ascii")
             return s.upper().strip()
 
-        # Yıl seçici
-        yil_options = list(range(START_YEAR, END_YEAR+1)) + [2030]
-        yil_map = st.select_slider(t("map_year_select"), options=yil_options, value=END_YEAR,
-                                    format_func=lambda y: f"{y} {t('map_2030_proj')}" if y==2030 else str(y))
+        # Yıl seçici + 2D/3D toggle
+        col_yr, col_mode = st.columns([4, 1])
+        with col_yr:
+            yil_options = list(range(START_YEAR, END_YEAR+1)) + [2030]
+            yil_map = st.select_slider(t("map_year_select"), options=yil_options, value=END_YEAR,
+                                        format_func=lambda y: f"{y} {t('map_2030_proj')}" if y==2030 else str(y))
+        with col_mode:
+            harita_modu = st.radio(
+                "Görünüm" if st.session_state.dil == "tr" else "View",
+                ["🗺️ 2D", "🏔️ 3D"],
+                horizontal=False, key="map_mode_toggle", label_visibility="collapsed"
+            )
 
         # Skor hesabı
         if yil_map == 2030:
@@ -2553,8 +2731,111 @@ if data_loaded:
             {("<div style='display:flex;align-items:center;gap:6px;'><span style='color:#c39bd3;font-size:0.78rem;'>" + t('map_2030_proj_short') + "</span></div>") if yil_map==2030 else ""}
         </div>""", unsafe_allow_html=True)
 
-        # ─── FOLIUM HARİTA ───
-        if FOLIUM_OK and geo_data is not None:
+        # ─── 3D PYDECK HARİTA (interactive column extrusion) ───
+        if "3D" in harita_modu:
+            try:
+                import pydeck as pdk
+                ILCE_LAT_3D = {
+                    "BORNOVA":38.470,"ÇİĞLİ":38.495,"BAYRAKLI":38.460,"BUCA":38.391,
+                    "GAZİEMİR":38.310,"GÜZELBAHÇE":38.370,"KARŞIYAKA":38.460,"NARLIDERE":38.395,
+                    "KONAK":38.418,"KARABAĞLAR":38.395,"BALÇOVA":38.387,
+                }
+                ILCE_LON_3D = {
+                    "BORNOVA":27.221,"ÇİĞLİ":27.060,"BAYRAKLI":27.165,"BUCA":27.180,
+                    "GAZİEMİR":27.140,"GÜZELBAHÇE":26.890,"KARŞIYAKA":27.110,"NARLIDERE":27.000,
+                    "KONAK":27.130,"KARABAĞLAR":27.100,"BALÇOVA":27.045,
+                }
+                # Renk: skor değerine göre [R, G, B, A]
+                def renk_3d(s):
+                    if s is None: return [120, 120, 120, 200]
+                    if s >= 60: return [214, 39, 40, 220]   # kırmızı
+                    if s >= 46: return [255, 127, 14, 220]  # turuncu
+                    return [44, 160, 44, 220]               # yeşil
+                deck_data = []
+                for il in ilce_listesi:
+                    sk = ilce_skor.get(il, 0)
+                    deck_data.append({
+                        "ilce": il,
+                        "lat": ILCE_LAT_3D.get(il, 38.42),
+                        "lon": ILCE_LON_3D.get(il, 27.13),
+                        "skor": float(sk),
+                        "sinif": sinif_str(sk),
+                        "color": renk_3d(sk),
+                        "elevation": float(sk) * 80,  # görsel için yükseklik
+                    })
+                deck_df = pd.DataFrame(deck_data)
+
+                column_layer = pdk.Layer(
+                    "ColumnLayer",
+                    data=deck_df,
+                    get_position=["lon", "lat"],
+                    get_elevation="elevation",
+                    elevation_scale=1,
+                    radius=1500,
+                    get_fill_color="color",
+                    pickable=True,
+                    auto_highlight=True,
+                    extruded=True,
+                    coverage=0.95,
+                )
+                # İlçe ismi etiketleri için TextLayer
+                text_layer = pdk.Layer(
+                    "TextLayer",
+                    data=deck_df,
+                    get_position=["lon", "lat"],
+                    get_text="ilce",
+                    get_size=14,
+                    get_color=[255, 255, 255, 255],
+                    get_alignment_baseline="'bottom'",
+                    background=False,
+                )
+
+                view_state = pdk.ViewState(
+                    latitude=38.42, longitude=27.13,
+                    zoom=9.6, pitch=50, bearing=-12,
+                )
+
+                tooltip_text = (
+                    "<b>{ilce}</b><br/>"
+                    "Risk Skoru: {skor}<br/>"
+                    "{sinif}"
+                    if st.session_state.dil == "tr" else
+                    "<b>{ilce}</b><br/>"
+                    "Risk Score: {skor}<br/>"
+                    "{sinif}"
+                )
+                deck = pdk.Deck(
+                    layers=[column_layer, text_layer],
+                    initial_view_state=view_state,
+                    map_style="mapbox://styles/mapbox/dark-v10",
+                    tooltip={
+                        "html": tooltip_text,
+                        "style": {
+                            "backgroundColor": "rgba(10,30,60,0.95)",
+                            "color": "white",
+                            "border": "1px solid #38d1e3",
+                            "borderRadius": "8px",
+                            "padding": "10px 14px",
+                            "fontFamily": "Arial",
+                            "fontSize": "13px",
+                        }
+                    },
+                )
+                st.pydeck_chart(deck, use_container_width=True)
+                # Bilgilendirme — kullanıcıya 3D modundayken nasıl gezeceğini söyle
+                if st.session_state.dil == "tr":
+                    st.caption("🖱️ **Sürükle:** döndür · **Ctrl + Sürükle:** eğim · **Tekerlek:** zoom — Sütun yüksekliği = risk skoru")
+                else:
+                    st.caption("🖱️ **Drag:** rotate · **Ctrl + Drag:** tilt · **Wheel:** zoom — Column height = risk score")
+                _three_d_rendered = True
+            except Exception as _e3d:
+                st.warning(f"3D harita yüklenemedi: {_e3d}. 2D moduna geçiliyor.")
+                _three_d_rendered = False
+        else:
+            _three_d_rendered = False
+
+        # ─── FOLIUM HARİTA (yalnızca 2D modunda) ───
+        if not _three_d_rendered and FOLIUM_OK and geo_data is not None:
             features = geo_data.get("features", [])
 
             # property anahtarı bul
@@ -2714,7 +2995,7 @@ if data_loaded:
                 if eksik:
                     st.caption("ℹ️ GeoJSON'da bulunamayan ilçeler: " + ", ".join(eksik))
 
-        elif not FOLIUM_OK:
+        elif not _three_d_rendered and not FOLIUM_OK:
             # ── Folium kurulu değil — Plotly fallback
             st.error(f"📦 **Folium kurulu değil!** Hata: `{FOLIUM_ERR}`\n\n"
                      "**Çözüm:** GitHub repo'nda `requirements.txt` dosyasını aç, içine şu iki satırı ekle:\n"
@@ -2743,7 +3024,7 @@ if data_loaded:
             )
             st.plotly_chart(fig_m, use_container_width=True, key="map_fallback_noflm",
                             config={"scrollZoom": True})
-        else:
+        elif not _three_d_rendered:
             # geojson yok
             st.warning("📍 GeoJSON dosyası bulunamadı (`izmir_ilceler.geojson`). "
                        "İlçe sınırlarına göre boyalı harita için bu dosyayı repo'ya yükleyin.")
