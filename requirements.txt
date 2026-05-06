@@ -3,11 +3,5 @@ pandas
 numpy
 plotly
 openpyxl
-pymannkendall
-scipy
-requests
-streamlit-folium
-folium
-streamlit-option-menu
 streamlit-folium>=0.20.0
 folium>=0.17.0
