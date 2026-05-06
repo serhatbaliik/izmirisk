@@ -2419,7 +2419,7 @@ if data_loaded:
         </div>""", unsafe_allow_html=True)
 
     # ════════════════════════════════════════════════
-    # HARİTA / MAP — CHOROPLETH (ilçe sınırlarına göre boyalı)
+    # HARİTA / MAP — FOLIUM CHOROPLETH (interaktif)
     # ════════════════════════════════════════════════
     elif sayfa == "map":
 
@@ -2432,8 +2432,14 @@ if data_loaded:
             <div style="color:#a8d8f0;font-size:0.9rem;">{t('map_lead')}</div>
         </div>""", unsafe_allow_html=True)
 
-        # ── GeoJSON dosyasını yükle (esnek arama)
-        import json, os, unicodedata
+        # ── Kütüphaneler
+        import json, os, copy, unicodedata
+        try:
+            import folium
+            from streamlit_folium import st_folium
+            FOLIUM_OK = True
+        except ImportError:
+            FOLIUM_OK = False
 
         @st.cache_data
         def load_geojson():
@@ -2450,7 +2456,6 @@ if data_loaded:
         geo_data, geo_filename = load_geojson()
 
         def turkce_normalize(s):
-            """Türkçe karakterleri ASCII'ye çevir + büyük harf yap."""
             if not isinstance(s, str):
                 return ""
             s = s.replace("İ", "I").replace("ı", "i").replace("ğ", "g").replace("Ğ", "G")
@@ -2459,12 +2464,12 @@ if data_loaded:
             s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode("ascii")
             return s.upper().strip()
 
-        # ── Yıl seçici (2030 dahil)
+        # Yıl seçici
         yil_options = list(range(START_YEAR, END_YEAR+1)) + [2030]
         yil_map = st.select_slider(t("map_year_select"), options=yil_options, value=END_YEAR,
                                     format_func=lambda y: f"{y} {t('map_2030_proj')}" if y==2030 else str(y))
 
-        # ── Skor hesabı
+        # Skor hesabı
         if yil_map == 2030:
             ilce_skor = {ilce: float(np.clip(manuel_skor_2023[ilce] * (1 + cagr_dict.get(ilce, 0.01)*1.0)**(2030-END_YEAR), 0, 100))
                          for ilce in manuel_skor_2023}
@@ -2478,13 +2483,23 @@ if data_loaded:
         skor_v = [ilce_skor[i] for i in ilce_listesi]
         sinif_v = [sinif_str(s) for s in skor_v]
 
-        # ─── CHOROPLETH ÇİZİMİ ───
-        if geo_data is not None:
+        # ── Renkli açıklama (her durumda)
+        st.markdown(f"""
+        <div style="display:flex;justify-content:center;gap:18px;margin-bottom:0.6rem;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;border-radius:3px;background:#d62728;border:1px solid white;"></div><span style="color:#d0e8f5;font-size:0.78rem;">{t('map_legend_high')}</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;border-radius:3px;background:#ff7f0e;border:1px solid white;"></div><span style="color:#d0e8f5;font-size:0.78rem;">{t('map_legend_med')}</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;border-radius:3px;background:#2ca02c;border:1px solid white;"></div><span style="color:#d0e8f5;font-size:0.78rem;">{t('map_legend_low')}</span></div>
+            {("<div style='display:flex;align-items:center;gap:6px;'><span style='color:#c39bd3;font-size:0.78rem;'>" + t('map_2030_proj_short') + "</span></div>") if yil_map==2030 else ""}
+        </div>""", unsafe_allow_html=True)
+
+        # ─── FOLIUM HARİTA ───
+        if FOLIUM_OK and geo_data is not None:
             features = geo_data.get("features", [])
 
-            # geojson içindeki ilçe adı property'sini bul
+            # property anahtarı bul
             possible_keys = ["ILCE_ADI", "ilce_adi", "ILCEADI", "ilceadi", "ILCE", "ilce",
-                             "NAME", "name", "ADI", "adi", "name_2", "NAME_2", "İLÇE", "İLCE"]
+                             "NAME", "name", "ADI", "adi", "name_2", "NAME_2",
+                             "İLÇE", "İLCE", "DISTRICT", "district"]
             district_key = None
             if features:
                 props = features[0].get("properties", {})
@@ -2492,7 +2507,6 @@ if data_loaded:
                     if k in props:
                         district_key = k
                         break
-                # fallback: ilk string property
                 if district_key is None:
                     for k, v in props.items():
                         if isinstance(v, str) and len(v) < 40:
@@ -2500,142 +2514,119 @@ if data_loaded:
                             break
 
             if district_key is None:
-                st.warning("GeoJSON içinde ilçe adı property'si bulunamadı.")
-                geo_data = None
+                FOLIUM_OK = False  # fallback
 
-        if geo_data is not None and features:
-            # GeoJSON'daki tüm feature isimlerini topla
-            geo_isimler = {}
-            for feat in features:
-                ad = feat.get("properties", {}).get(district_key, "")
-                geo_isimler[turkce_normalize(ad)] = ad
+        if FOLIUM_OK and geo_data is not None and district_key:
+            # Skor sözlüğünü normalize et
+            ilce_skor_norm = {turkce_normalize(k): v for k, v in ilce_skor.items()}
 
-            # Bizim ilçe → geojson ilçe eşleştirmesi
-            eslesme = {}
-            eslesmeyen = []
-            for il in ilce_listesi:
-                norm = turkce_normalize(il)
-                if norm in geo_isimler:
-                    eslesme[il] = geo_isimler[norm]
-                else:
-                    eslesmeyen.append(il)
+            def renk_seg(score):
+                if score is None: return "#6c757d"
+                if score >= 60: return "#d62728"
+                if score >= 46: return "#ff7f0e"
+                return "#2ca02c"
 
-            # Eşleşen ilçeler için listeler
-            locations_v = []
-            z_v = []
-            text_v = []
-            customdata = []
-            for il in ilce_listesi:
-                if il in eslesme:
-                    locations_v.append(eslesme[il])
-                    z_v.append(ilce_skor[il])
-                    text_v.append(il)
-                    customdata.append([il, ilce_skor[il], sinif_str(ilce_skor[il])])
+            # Geojson'a tooltip için ek property'ler ekle
+            geo_data_enriched = copy.deepcopy(geo_data)
+            eslesen_count = 0
+            for feat in geo_data_enriched["features"]:
+                ad = feat["properties"].get(district_key, "")
+                norm = turkce_normalize(ad)
+                skor = ilce_skor_norm.get(norm)
+                feat["properties"]["__display_name"] = (ad if ad else "—").upper()
+                feat["properties"]["__risk_score"] = f"{skor:.1f}" if skor is not None else "—"
+                feat["properties"]["__risk_class"] = sinif_str(skor) if skor is not None else "—"
+                feat["properties"]["__risk_color"] = renk_seg(skor)
+                if skor is not None:
+                    eslesen_count += 1
 
-            # Hover template metni (dile göre)
-            hover_lbl_score = t("risk_score")
-            hover_lbl_class = t("kpi_risk_class")
+            def style_function(feature):
+                skor_str = feature["properties"].get("__risk_score", "—")
+                if skor_str == "—":
+                    return {"fillColor": "#444", "color": "rgba(255,255,255,0.3)",
+                            "weight": 0.8, "fillOpacity": 0.15}
+                return {
+                    "fillColor": feature["properties"]["__risk_color"],
+                    "color": "#ffffff", "weight": 1.5, "fillOpacity": 0.78,
+                }
 
-            fig_m = go.Figure(go.Choroplethmapbox(
-                geojson=geo_data,
-                locations=locations_v,
-                z=z_v,
-                featureidkey=f"properties.{district_key}",
-                colorscale=[
-                    [0.0, "#2ca02c"],   # 0   yeşil
-                    [0.45, "#a8d040"],  # 45  yeşil-sarı geçiş
-                    [0.46, "#ff7f0e"],  # 46+ turuncu (orta risk eşiği)
-                    [0.59, "#ff5722"],
-                    [0.60, "#d62728"],  # 60+ kırmızı (yüksek risk eşiği)
-                    [1.0, "#8b0000"],
-                ],
-                zmin=30, zmax=75,
-                marker=dict(
-                    line=dict(color="white", width=1.8),
-                    opacity=0.85,
-                ),
-                customdata=customdata,
-                hovertemplate=("<b>%{customdata[0]}</b><br>" +
-                               hover_lbl_score + ": %{customdata[1]:.1f}<br>" +
-                               hover_lbl_class + ": %{customdata[2]}<extra></extra>"),
-                colorbar=dict(
-                    title=dict(text=hover_lbl_score, font=dict(color="white", size=11)),
-                    tickfont=dict(color="white", size=10),
-                    len=0.8, thickness=14,
-                    x=1.02
-                ),
-            ))
+            def highlight_function(feature):
+                return {"fillColor": "#38d1e3", "color": "#ffffff",
+                        "weight": 3, "fillOpacity": 0.55}
 
-            # İlçe adı etiketleri (centroid'lere)
-            ILCE_LAT = {
-                "BORNOVA":38.470,"ÇİĞLİ":38.495,"BAYRAKLI":38.460,"BUCA":38.391,
-                "GAZİEMİR":38.310,"GÜZELBAHÇE":38.370,"KARŞIYAKA":38.460,"NARLIDERE":38.395,
-                "KONAK":38.418,"KARABAĞLAR":38.395,"BALÇOVA":38.387,
-            }
-            ILCE_LON = {
-                "BORNOVA":27.221,"ÇİĞLİ":27.060,"BAYRAKLI":27.165,"BUCA":27.180,
-                "GAZİEMİR":27.140,"GÜZELBAHÇE":26.890,"KARŞIYAKA":27.110,"NARLIDERE":27.000,
-                "KONAK":27.130,"KARABAĞLAR":27.100,"BALÇOVA":27.045,
-            }
-            fig_m.add_trace(go.Scattermapbox(
-                lat=[ILCE_LAT.get(i, 38.42) for i in ilce_listesi],
-                lon=[ILCE_LON.get(i, 27.13) for i in ilce_listesi],
-                mode="text",
-                text=ilce_listesi,
-                textfont=dict(color="white", size=10, family="Arial Black"),
-                hoverinfo="skip",
-                showlegend=False,
-            ))
-
-            fig_m.update_layout(
-                mapbox=dict(
-                    style="carto-darkmatter",
-                    center=dict(lat=38.42, lon=27.13),
-                    zoom=9.5,
-                ),
-                height=580,
-                margin=dict(t=10, b=10, l=0, r=0),
-                paper_bgcolor="rgba(0,0,0,0)",
-                showlegend=False,
+            # Harita oluştur
+            m = folium.Map(
+                location=[38.42, 27.13],
+                zoom_start=10,
+                tiles="CartoDB dark_matter",
+                attributionControl=True,
+                control_scale=True,
+                zoom_control=True,
+                scrollWheelZoom=True,
+                dragging=True,
+                doubleClickZoom=True,
             )
 
-            # Renkli açıklama
-            st.markdown(f"""
-            <div style="display:flex;justify-content:center;gap:18px;margin-bottom:0.8rem;flex-wrap:wrap;">
-                <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;border-radius:3px;background:#d62728;"></div><span style="color:#d0e8f5;font-size:0.78rem;">{t('map_legend_high')}</span></div>
-                <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;border-radius:3px;background:#ff7f0e;"></div><span style="color:#d0e8f5;font-size:0.78rem;">{t('map_legend_med')}</span></div>
-                <div style="display:flex;align-items:center;gap:6px;"><div style="width:14px;height:14px;border-radius:3px;background:#2ca02c;"></div><span style="color:#d0e8f5;font-size:0.78rem;">{t('map_legend_low')}</span></div>
-                {("<div style='display:flex;align-items:center;gap:6px;'><span style='color:#c39bd3;font-size:0.78rem;'>" + t('map_2030_proj_short') + "</span></div>") if yil_map==2030 else ""}
-            </div>""", unsafe_allow_html=True)
+            # Alternatif tile katmanları (katman değiştirici)
+            folium.TileLayer("OpenStreetMap", name="OpenStreetMap").add_to(m)
+            folium.TileLayer("CartoDB positron", name="Açık Tema").add_to(m)
+            folium.TileLayer("CartoDB dark_matter", name="Koyu Tema (varsayılan)", show=True).add_to(m)
 
-            st.plotly_chart(fig_m, use_container_width=True, key="map_main")
+            # Choropleth katmanı
+            folium.GeoJson(
+                geo_data_enriched,
+                name="İzmir İlçeleri",
+                style_function=style_function,
+                highlight_function=highlight_function,
+                tooltip=folium.GeoJsonTooltip(
+                    fields=["__display_name", "__risk_score", "__risk_class"],
+                    aliases=[f"{t('tbl_district')}:", f"{t('risk_score')}:", f"{t('kpi_risk_class')}:"],
+                    sticky=True,
+                    labels=True,
+                    style="""
+                        background-color: rgba(10,30,60,0.95);
+                        border: 1.5px solid #38d1e3;
+                        border-radius: 8px;
+                        color: white;
+                        font-family: Arial, sans-serif;
+                        font-size: 12px;
+                        padding: 10px 14px;
+                        box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+                    """,
+                ),
+            ).add_to(m)
 
-            # Eşleşmeyen ilçeleri uyar (varsa)
-            if eslesmeyen:
-                st.caption("⚠️ GeoJSON'da bulunamayan ilçeler: " + ", ".join(eslesmeyen))
+            folium.LayerControl(position="topright", collapsed=True).add_to(m)
 
-        else:
-            # ── FALLBACK: GeoJSON yoksa eski yuvarlak harita
-            st.warning("📍 GeoJSON dosyası bulunamadı, yuvarlak işaretli haritaya geri dönüldü. İlçe sınırlarını gösterebilmek için repo'ya `izmir_ilceler.geojson` dosyasını yükleyin.")
-            ILCE_LAT = {
-                "BORNOVA":38.470,"ÇİĞLİ":38.495,"BAYRAKLI":38.460,"BUCA":38.391,
-                "GAZİEMİR":38.310,"GÜZELBAHÇE":38.370,"KARŞIYAKA":38.460,"NARLIDERE":38.395,
-                "KONAK":38.418,"KARABAĞLAR":38.395,"BALÇOVA":38.387,
-            }
-            ILCE_LON = {
-                "BORNOVA":27.221,"ÇİĞLİ":27.060,"BAYRAKLI":27.165,"BUCA":27.180,
-                "GAZİEMİR":27.140,"GÜZELBAHÇE":26.890,"KARŞIYAKA":27.110,"NARLIDERE":27.000,
-                "KONAK":27.130,"KARABAĞLAR":27.100,"BALÇOVA":27.045,
-            }
+            st_folium(m, width=None, height=600, returned_objects=[],
+                      use_container_width=True, key="folium_main_map")
+
+            if eslesen_count == 0:
+                st.warning(f"⚠️ GeoJSON'daki ilçe adları sözlükle eşleşmedi (property: '{district_key}'). "
+                           "İlçe adlarının yapısını kontrol edin.")
+            elif eslesen_count < len(ilce_listesi):
+                eksik = [il for il in ilce_listesi if turkce_normalize(il) not in
+                         {turkce_normalize(f["properties"].get(district_key, "")) for f in features}]
+                if eksik:
+                    st.caption("ℹ️ GeoJSON'da bulunamayan ilçeler: " + ", ".join(eksik))
+
+        elif not FOLIUM_OK:
+            # ── Folium kurulu değil — Plotly fallback
+            st.warning("📦 İnteraktif harita için `streamlit-folium` ve `folium` paketleri gerekiyor. "
+                       "`requirements.txt`'e ekleyin: `streamlit-folium`, `folium`")
+            ILCE_LAT = {"BORNOVA":38.470,"ÇİĞLİ":38.495,"BAYRAKLI":38.460,"BUCA":38.391,
+                        "GAZİEMİR":38.310,"GÜZELBAHÇE":38.370,"KARŞIYAKA":38.460,"NARLIDERE":38.395,
+                        "KONAK":38.418,"KARABAĞLAR":38.395,"BALÇOVA":38.387}
+            ILCE_LON = {"BORNOVA":27.221,"ÇİĞLİ":27.060,"BAYRAKLI":27.165,"BUCA":27.180,
+                        "GAZİEMİR":27.140,"GÜZELBAHÇE":26.890,"KARŞIYAKA":27.110,"NARLIDERE":27.000,
+                        "KONAK":27.130,"KARABAĞLAR":27.100,"BALÇOVA":27.045}
             renk_v = [sinif_renk(s) for s in skor_v]
             text_v = [f"<b>{i}</b><br>{t('risk_score')}: {s:.1f}<br>{c}" for i,s,c in zip(ilce_listesi, skor_v, sinif_v)]
             fig_m = go.Figure(go.Scattermapbox(
                 lat=[ILCE_LAT[i] for i in ilce_listesi],
                 lon=[ILCE_LON[i] for i in ilce_listesi],
-                mode="markers+text",
-                text=ilce_listesi,
-                textposition="top center",
-                textfont=dict(color="white", size=10),
+                mode="markers+text", text=ilce_listesi,
+                textposition="top center", textfont=dict(color="white", size=10),
                 marker=dict(size=[20+s*0.4 for s in skor_v], color=renk_v, opacity=0.85),
                 hovertext=text_v, hoverinfo="text",
             ))
@@ -2644,9 +2635,32 @@ if data_loaded:
                 height=560, margin=dict(t=10, b=10, l=0, r=0),
                 paper_bgcolor="rgba(0,0,0,0)", showlegend=False,
             )
-            st.plotly_chart(fig_m, use_container_width=True, key="map_fallback")
+            st.plotly_chart(fig_m, use_container_width=True, key="map_fallback_noflm",
+                            config={"scrollZoom": True})
+        else:
+            # geojson yok
+            st.warning("📍 GeoJSON dosyası bulunamadı (`izmir_ilceler.geojson`). "
+                       "İlçe sınırlarına göre boyalı harita için bu dosyayı repo'ya yükleyin.")
+            ILCE_LAT = {"BORNOVA":38.470,"ÇİĞLİ":38.495,"BAYRAKLI":38.460,"BUCA":38.391,
+                        "GAZİEMİR":38.310,"GÜZELBAHÇE":38.370,"KARŞIYAKA":38.460,"NARLIDERE":38.395,
+                        "KONAK":38.418,"KARABAĞLAR":38.395,"BALÇOVA":38.387}
+            ILCE_LON = {"BORNOVA":27.221,"ÇİĞLİ":27.060,"BAYRAKLI":27.165,"BUCA":27.180,
+                        "GAZİEMİR":27.140,"GÜZELBAHÇE":26.890,"KARŞIYAKA":27.110,"NARLIDERE":27.000,
+                        "KONAK":27.130,"KARABAĞLAR":27.100,"BALÇOVA":27.045}
+            renk_v = [sinif_renk(s) for s in skor_v]
+            m = folium.Map(location=[38.42, 27.13], zoom_start=10, tiles="CartoDB dark_matter")
+            for il in ilce_listesi:
+                folium.CircleMarker(
+                    location=[ILCE_LAT.get(il, 38.42), ILCE_LON.get(il, 27.13)],
+                    radius=12, color="white", weight=2,
+                    fill=True, fill_color=sinif_renk(ilce_skor[il]), fill_opacity=0.85,
+                    popup=f"<b>{il}</b><br>{t('risk_score')}: {ilce_skor[il]:.1f}<br>{sinif_str(ilce_skor[il])}",
+                    tooltip=f"{il}: {ilce_skor[il]:.1f}",
+                ).add_to(m)
+            st_folium(m, width=None, height=560, returned_objects=[],
+                      use_container_width=True, key="folium_circle_fallback")
 
-        # ── Sıralama tablosu (her durumda gösterilir)
+        # ── Sıralama tablosu
         sirali = sorted(zip(ilce_listesi, skor_v, sinif_v), key=lambda x: -x[1])
         rows = ""
         for ilce, sk, sn in sirali:
