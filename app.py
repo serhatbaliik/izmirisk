@@ -2746,6 +2746,7 @@ if data_loaded:
             try:
                 import pydeck as pdk
                 # Kullanıcıya tema seçimi
+                _tema_label = "🗺️ Sokak (OSM)" if st.session_state.dil == "tr" else "🗺️ Street (OSM)"
                 _tema_label2 = "🌑 Karanlık" if st.session_state.dil == "tr" else "🌑 Dark"
                 _tema_label3 = "☀️ Açık" if st.session_state.dil == "tr" else "☀️ Light"
                 tema_3d = st.radio(
