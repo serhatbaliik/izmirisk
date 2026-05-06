@@ -3778,7 +3778,7 @@ st.markdown("""
       </div>
     </div>
     <div style="color:rgba(255,255,255,0.7);font-size:0.82rem;text-align:center;">
-      Built with <span style="color:#ff6b9d;">♥</span> by
+      Built with <span style="color:#ff6b9d;"></span> by
       <a href="https://www.linkedin.com/in/serhatbalik/" target="_blank"
          style="color:#38d1e3;text-decoration:none;font-weight:600;">Serhat Balık</a>
       · İzmir Ekonomi Üniversitesi
