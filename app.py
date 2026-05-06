@@ -16,6 +16,13 @@ END_YEAR = 2023
 PRED_END_YEAR = 2030
 PRED_YEARS = list(range(END_YEAR + 1, 2031))
 
+# ═══════════════════════════════════════════════════════════
+# ⚙️  ANİMASYON HIZ AYARLARI — Saniye cinsinden, istediğin gibi değiştir
+# ═══════════════════════════════════════════════════════════
+HERO_PULSE_SECONDS = 6      # 💧 Damla pulse hızı (1=hızlı, 30=çok yavaş)
+WAVE_FLOW_SECONDS  = 7      # 🌊 Mavi şerit akış hızı (1=hızlı, 30=çok yavaş)
+# ═══════════════════════════════════════════════════════════
+
 # ═══════════════════════════════════════════════════════════════
 # DİL / LANGUAGE — i18n
 # ═══════════════════════════════════════════════════════════════
@@ -990,8 +997,8 @@ st.markdown("""
    ⚙️  ANİMASYON HIZ AYARLARI — Buradan değiştir, tek tek aramaya gerek yok
    ═══════════════════════════════════════════════════════════ */
 :root {
-    --wave-duration: 25s;       /* MAVİ ŞERİT akma hızı (1s=hızlı, 30s=çok yavaş) */
-    --pulse-duration: 20s;      /* 💧 DAMLA pulse hızı  (1s=hızlı, 30s=çok yavaş) */
+    --wave-duration: 7s;       /* MAVİ ŞERİT akma hızı (1s=hızlı, 30s=çok yavaş) */
+    --pulse-duration: 6s;      /* 💧 DAMLA pulse hızı  (1s=hızlı, 30s=çok yavaş) */
 }
 
 section[data-testid="stSidebar"] { width: 280px !important; min-width: 280px !important; }
@@ -1571,7 +1578,7 @@ if data_loaded:
     st.markdown(f"""
     <div style="text-align:center;margin-top:-160px;margin-bottom:0.4rem;padding:0;pointer-events:none;position:relative;z-index:5;">
         <div style="display:inline-flex;align-items:center;gap:18px;">
-            <span class="hero-icon">💧</span>
+            <span class="hero-icon" style="animation-duration: {HERO_PULSE_SECONDS}s !important;">💧</span>
             <div style="text-align:left;">
                 <div style="font-size:2.8rem;font-weight:900;letter-spacing:-1px;line-height:1;">
                     {_letters_html}
@@ -1769,14 +1776,14 @@ if data_loaded:
                     {t('home_badge')}
                 </span>
             </div>
-            <div class="wave-container"><div class="wave"></div></div>
+            <div class="wave-container"><div class="wave" style="animation-duration: {WAVE_FLOW_SECONDS}s !important;"></div></div>
             <h1 style="color:#ffffff;font-size:2.6rem;font-weight:800;margin:0.8rem 0 0.4rem 0;letter-spacing:-0.5px;line-height:1.2;">
                 {t('home_title_1')}<br><span style="color:#38d1e3;">{t('home_title_2')}</span>
             </h1>
             <p style="color:#a8d8f0;font-size:1rem;margin:0.6rem 0 0 0;max-width:600px;display:inline-block;line-height:1.6;">
                 {t('home_lead')}
             </p>
-            <div class="wave-container" style="margin-top:1.2rem;"><div class="wave"></div></div>
+            <div class="wave-container" style="margin-top:1.2rem;"><div class="wave" style="animation-duration: {WAVE_FLOW_SECONDS}s !important;"></div></div>
         </div>""", unsafe_allow_html=True)
 
         cnt1_val = toplam_tuketim
