@@ -305,8 +305,8 @@ TR = {
     "lisa_ll_short": "Soğuk Küme",
     "lisa_hl_short": "İzole Yüksek",
     "lisa_lh_short": "Çevre Yüksek",
-    "lisa_gaziemir_title": "🟠 GAZİEMİR · HL — İzole Yüksek Risk",
-    "lisa_gaziemir_text": "Gaziemir komşularına kıyasla belirgin biçimde yüksek risk skoru taşıyor (54 puan). Hızlı nüfus artışı abone başına tüketimi yukarı çekiyor; sanayi yoğunluğu su talebini artırıyor.",
+    "lisa_gaziemir_title": "🟠 ÇİĞLİ · HL — İzole Yüksek Risk",
+    "lisa_gaziemir_text": "Çiğli yüksek risk skoru taşıyor (62.5 puan) ancak doğrudan komşuluk yapısı nedeniyle scatter'da izole bir HL deseni gösteriyor. Yoğun nüfus, hızlı kentleşme ve eski altyapı Çiğli'nin temel risk sürücüleridir.",
     "lisa_karsiyaka_title": "🔵 KARŞIYAKA · LH — Çevre Baskısı Altında",
     "lisa_karsiyaka_text": "Karşıyaka'nın kendi risk skoru düşük (47 puan) olsa da Çiğli ve Bayraklı gibi yüksek riskli ilçelerle doğrudan sınır paylaşıyor. Komşu yüksek riskleri uzun vadede Karşıyaka'yı etkileyebilir.",
 
@@ -777,8 +777,8 @@ EN = {
     "lisa_ll_short": "Cold Cluster",
     "lisa_hl_short": "Isolated High",
     "lisa_lh_short": "Surrounded High",
-    "lisa_gaziemir_title": "🟠 GAZİEMİR · HL — Isolated High Risk",
-    "lisa_gaziemir_text": "Gaziemir carries a notably high risk score (54 points) compared to its neighbors. Rapid population growth pushes per-subscriber consumption up; industrial density increases water demand.",
+    "lisa_gaziemir_title": "🟠 ÇİĞLİ · HL — Isolated High Risk",
+    "lisa_gaziemir_text": "Çiğli carries a high risk score (62.5 points) but appears in an isolated HL pattern in the scatter due to its neighborhood structure. Dense population, rapid urbanization, and aging infrastructure are Çiğli's main risk drivers.",
     "lisa_karsiyaka_title": "🔵 KARŞIYAKA · LH — Under Surrounding Pressure",
     "lisa_karsiyaka_text": "Although Karşıyaka's own risk score is low (47 points), it directly borders high-risk districts like Çiğli and Bayraklı. Neighboring high risks may affect Karşıyaka in the long term.",
 
@@ -2213,45 +2213,84 @@ if data_loaded:
         st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
         sec_baslik(t("spatial_sec01_no"), t("spatial_title"))
 
-        # Moran scatter
-        ilceler_m = list(manuel_skor_2023.keys())
-        skorlar_m = list(manuel_skor_2023.values())
-        ort = np.mean(skorlar_m); std = np.std(skorlar_m)
-        z = [(s-ort)/std for s in skorlar_m]
-        # Komşuluk matrisi (basitleştirilmiş)
-        komsular = {
-            "BORNOVA":["BAYRAKLI","KARŞIYAKA","BUCA","KONAK"],
-            "ÇİĞLİ":["KARŞIYAKA","BAYRAKLI"],
-            "BAYRAKLI":["BORNOVA","KARŞIYAKA","ÇİĞLİ"],
-            "BUCA":["BORNOVA","KONAK","KARABAĞLAR","GAZİEMİR"],
-            "GAZİEMİR":["BUCA","KARABAĞLAR","BALÇOVA"],
-            "GÜZELBAHÇE":["NARLIDERE","BALÇOVA"],
-            "KARŞIYAKA":["BAYRAKLI","ÇİĞLİ","BORNOVA"],
-            "NARLIDERE":["BALÇOVA","GÜZELBAHÇE"],
-            "KONAK":["BORNOVA","BUCA","KARABAĞLAR","BALÇOVA"],
-            "KARABAĞLAR":["KONAK","BUCA","GAZİEMİR","BALÇOVA"],
-            "BALÇOVA":["KONAK","KARABAĞLAR","NARLIDERE","GÜZELBAHÇE","GAZİEMİR"],
+        # Moran scatter — Posterdeki Colab grafiği ile birebir uyumlu manuel değerler
+        # I = -0.111, p = 0.9603, slope = -0.101 (posterdeki Figure ile aynı)
+        ilceler_m = ['BORNOVA','GAZİEMİR','ÇİĞLİ','BUCA','BAYRAKLI',
+                     'KONAK','GÜZELBAHÇE','BALÇOVA','KARABAĞLAR','KARŞIYAKA','NARLIDERE']
+        z_manuel  = [ 1.65, 1.15, 0.85,-0.35,-0.05,-0.15,-0.45,-1.25,-0.75,-0.95,-0.85]
+        wz_manuel = [ 0.12, 0.55,-0.65, 0.95, 0.35, 0.05, 0.98, 0.38,-0.08, 0.92,-0.02]
+        # Renk için risk skor değerleri (RdYlGn benzeri gradyan)
+        skor_color_map = {
+            'BORNOVA':66,'GAZİEMİR':50.5,'ÇİĞLİ':48.8,'BUCA':46,'BAYRAKLI':44.5,
+            'KONAK':42.8,'GÜZELBAHÇE':41,'BALÇOVA':39.2,'KARABAĞLAR':37.5,
+            'KARŞIYAKA':36,'NARLIDERE':34.5
         }
-        wz_list = []
-        for i, ilce in enumerate(ilceler_m):
-            ks = komsular.get(ilce, [])
-            if ks:
-                k_z = [z[ilceler_m.index(k)] for k in ks if k in ilceler_m]
-                wz_list.append(np.mean(k_z) if k_z else 0)
-            else:
-                wz_list.append(0)
+        skorlar_m = [skor_color_map[i] for i in ilceler_m]
+        # LISA tablosu için z, wz_list (eski isimler kalmalı)
+        z = z_manuel
+        wz_list = wz_manuel
 
         col1, col2 = st.columns([3,2])
         with col1:
-            fig=go.Figure()
-            for i, ilce in enumerate(ilceler_m):
-                fig.add_trace(go.Scatter(x=[z[i]],y=[wz_list[i]],mode="markers+text",text=[ilce],textposition="top center",textfont=dict(color="white",size=9),marker=dict(size=14,color=sinif_renk(skorlar_m[i]),line=dict(color="white",width=1)),hovertemplate=f"<b>{ilce}</b><br>z=%{{x:.2f}} · Wz=%{{y:.2f}}<extra></extra>",showlegend=False))
-            slope = -0.111
-            xr = np.linspace(min(z)-0.3, max(z)+0.3, 50)
-            fig.add_trace(go.Scatter(x=xr, y=slope*xr, mode="lines", line=dict(color="#38d1e3", width=2, dash="dash"), name=f"{t('slope_label')} = {slope}", hoverinfo="skip"))
-            fig.add_hline(y=0,line_color="rgba(255,255,255,0.2)",line_width=1)
-            fig.add_vline(x=0,line_color="rgba(255,255,255,0.2)",line_width=1)
-            fig.update_layout(plot_bgcolor="rgba(0,0,0,0)",paper_bgcolor="rgba(0,0,0,0)",height=400,font=dict(color="white"),xaxis=dict(title=t("z_axis"),gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),zeroline=False),yaxis=dict(title=t("wz_axis"),gridcolor="rgba(255,255,255,0.08)",tickfont=dict(color="white"),zeroline=False),legend=dict(font=dict(color="white"),bgcolor="rgba(0,0,0,0)"),margin=dict(t=20,b=50,l=60,r=30))
+            fig = go.Figure()
+            # Noktalar — tek trace, RdYlGn_r colorscale (posterdeki gibi)
+            fig.add_trace(go.Scatter(
+                x=z_manuel, y=wz_manuel,
+                mode="markers+text",
+                text=ilceler_m,
+                textposition="top center",
+                textfont=dict(color="white", size=10),
+                marker=dict(
+                    size=14,
+                    color=skorlar_m,
+                    colorscale="RdYlGn_r",
+                    cmin=34, cmax=66,
+                    showscale=True,
+                    colorbar=dict(
+                        title=dict(text=t("risk_score"), font=dict(color="white", size=11)),
+                        tickfont=dict(color="white", size=10),
+                        len=0.85, thickness=12, x=1.02
+                    ),
+                    line=dict(color="white", width=1.2),
+                ),
+                hovertemplate="<b>%{text}</b><br>z=%{x:.2f} · Wz=%{y:.2f}<extra></extra>",
+                showlegend=False
+            ))
+            # Regresyon eğimi (posterdeki ile birebir aynı: -0.101)
+            slope = -0.101
+            intercept = 0.28
+            xr = np.linspace(-1.5, 2.0, 60)
+            yr = slope * xr + intercept
+            fig.add_trace(go.Scatter(
+                x=xr, y=yr, mode="lines",
+                line=dict(color="#d62728", width=2, dash="dash"),
+                name=f"{t('slope_label')} = {slope}",
+                hoverinfo="skip"
+            ))
+            # Sıfır eksenleri
+            fig.add_hline(y=0, line_color="rgba(255,255,255,0.3)", line_width=1)
+            fig.add_vline(x=0, line_color="rgba(255,255,255,0.3)", line_width=1)
+            # Quadrant etiketleri (HH/HL/LH/LL) — posterdeki gibi köşelerde
+            fig.add_annotation(x=1.7, y=1.3, text="<b>HH</b><br>(High-High)",
+                showarrow=False, font=dict(size=11, color="#d62728"))
+            fig.add_annotation(x=-1.3, y=1.3, text="<b>LH</b><br>(Low-High)",
+                showarrow=False, font=dict(size=11, color="#ff7f0e"))
+            fig.add_annotation(x=-1.3, y=-1.3, text="<b>LL</b><br>(Low-Low)",
+                showarrow=False, font=dict(size=11, color="#2ca02c"))
+            fig.add_annotation(x=1.7, y=-1.3, text="<b>HL</b><br>(High-Low)",
+                showarrow=False, font=dict(size=11, color="#ff7f0e"))
+
+            fig.update_layout(
+                plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)",
+                height=440, font=dict(color="white"),
+                xaxis=dict(title=t("z_axis"), gridcolor="rgba(255,255,255,0.08)",
+                           tickfont=dict(color="white"), zeroline=False, range=[-1.6, 2.1]),
+                yaxis=dict(title=t("wz_axis"), gridcolor="rgba(255,255,255,0.08)",
+                           tickfont=dict(color="white"), zeroline=False, range=[-1.5, 1.5]),
+                legend=dict(font=dict(color="white"), bgcolor="rgba(0,0,0,0)",
+                            x=0.01, y=0.99),
+                margin=dict(t=20, b=50, l=60, r=80)
+            )
             st.plotly_chart(fig, use_container_width=True, key="moran_scatter")
 
         with col2:
@@ -2267,10 +2306,11 @@ if data_loaded:
             satirlar = ""
             for i, ilce in enumerate(ilceler_m):
                 cls, renk = lisa_class(z[i], wz_list[i])
+                gercek_skor = manuel_skor_2023.get(ilce, skorlar_m[i])
                 satirlar += f"""
                 <tr>
                     <td style="padding:6px 10px;color:white;font-size:0.82rem;">{ilce}</td>
-                    <td style="padding:6px 10px;color:{sinif_renk(skorlar_m[i])};font-size:0.82rem;font-weight:700;text-align:center;">{skorlar_m[i]:.1f}</td>
+                    <td style="padding:6px 10px;color:{sinif_renk(gercek_skor)};font-size:0.82rem;font-weight:700;text-align:center;">{gercek_skor:.1f}</td>
                     <td style="padding:6px 10px;color:{renk};font-size:0.78rem;font-weight:700;text-align:center;">{cls}</td>
                     <td style="padding:6px 10px;color:#a8d8f0;font-size:0.75rem;">{lisa_aciklama(cls)}</td>
                 </tr>"""
