@@ -2545,22 +2545,22 @@ if data_loaded:
             def style_function(feature):
                 skor_str = feature["properties"].get("__risk_score", "—")
                 if skor_str == "—":
-                    return {"fillColor": "#444", "color": "rgba(255,255,255,0.3)",
+                    return {"fillColor": "#aaa", "color": "rgba(0,0,0,0.4)",
                             "weight": 0.8, "fillOpacity": 0.15}
                 return {
                     "fillColor": feature["properties"]["__risk_color"],
-                    "color": "#ffffff", "weight": 1.5, "fillOpacity": 0.78,
+                    "color": "#1a1a2e", "weight": 2, "fillOpacity": 0.55,
                 }
 
             def highlight_function(feature):
-                return {"fillColor": "#38d1e3", "color": "#ffffff",
-                        "weight": 3, "fillOpacity": 0.55}
+                return {"fillColor": "#38d1e3", "color": "#000000",
+                        "weight": 3.5, "fillOpacity": 0.65}
 
-            # Harita oluştur
+            # Harita oluştur (varsayılan: OpenStreetMap — doğal/gerçekçi görünüm)
             m = folium.Map(
                 location=[38.42, 27.13],
                 zoom_start=10,
-                tiles="CartoDB dark_matter",
+                tiles=None,  # Aşağıda manuel ekliyoruz
                 attributionControl=True,
                 control_scale=True,
                 zoom_control=True,
@@ -2569,10 +2569,11 @@ if data_loaded:
                 doubleClickZoom=True,
             )
 
-            # Alternatif tile katmanları (katman değiştirici)
-            folium.TileLayer("OpenStreetMap", name="OpenStreetMap").add_to(m)
+            # Varsayılan: OpenStreetMap (renkli, gerçekçi)
+            folium.TileLayer("OpenStreetMap", name="OpenStreetMap (varsayılan)",
+                             show=True).add_to(m)
             folium.TileLayer("CartoDB positron", name="Açık Tema").add_to(m)
-            folium.TileLayer("CartoDB dark_matter", name="Koyu Tema (varsayılan)", show=True).add_to(m)
+            folium.TileLayer("CartoDB dark_matter", name="Koyu Tema").add_to(m)
 
             # Choropleth katmanı
             folium.GeoJson(
@@ -2597,6 +2598,46 @@ if data_loaded:
                     """,
                 ),
             ).add_to(m)
+
+            # ── İLÇE İSİMLERİ — Her ilçenin merkezine kalıcı etiket
+            ILCE_LAT_LBL = {
+                "BORNOVA":38.470,"ÇİĞLİ":38.495,"BAYRAKLI":38.460,"BUCA":38.391,
+                "GAZİEMİR":38.310,"GÜZELBAHÇE":38.370,"KARŞIYAKA":38.460,"NARLIDERE":38.395,
+                "KONAK":38.418,"KARABAĞLAR":38.395,"BALÇOVA":38.387,
+            }
+            ILCE_LON_LBL = {
+                "BORNOVA":27.221,"ÇİĞLİ":27.060,"BAYRAKLI":27.165,"BUCA":27.180,
+                "GAZİEMİR":27.140,"GÜZELBAHÇE":26.890,"KARŞIYAKA":27.110,"NARLIDERE":27.000,
+                "KONAK":27.130,"KARABAĞLAR":27.100,"BALÇOVA":27.045,
+            }
+            for il in ilce_listesi:
+                if il in ILCE_LAT_LBL:
+                    sk = ilce_skor.get(il, 0)
+                    folium.map.Marker(
+                        location=[ILCE_LAT_LBL[il], ILCE_LON_LBL[il]],
+                        icon=folium.DivIcon(
+                            icon_size=(140, 30),
+                            icon_anchor=(70, 15),
+                            html=f"""
+                            <div style="
+                                font-family: Arial, sans-serif;
+                                font-size: 11px;
+                                font-weight: 800;
+                                color: #ffffff;
+                                text-align: center;
+                                white-space: nowrap;
+                                text-shadow:
+                                    -1.5px -1.5px 0 #000,
+                                     1.5px -1.5px 0 #000,
+                                    -1.5px  1.5px 0 #000,
+                                     1.5px  1.5px 0 #000,
+                                     0 0 4px #000;
+                                pointer-events: none;
+                                user-select: none;
+                            ">{il}<br><span style="font-size:9px;font-weight:700;">{sk:.1f}</span></div>
+                            """
+                        ),
+                    ).add_to(m)
 
             folium.LayerControl(position="topright", collapsed=True).add_to(m)
 
