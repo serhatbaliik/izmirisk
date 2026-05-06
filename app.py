@@ -1545,6 +1545,25 @@ if data_loaded:
         "GAZİEMİR":54.0,"GÜZELBAHÇE":49.0,"KARŞIYAKA":47.0,"NARLIDERE":47.0,
         "KONAK":45.5,"KARABAĞLAR":43.0,"BALÇOVA":42.0,
     }
+    # 2030 SENARYO DEĞERLERİ (manuel, kalibre edilmiş — gerçekçi iyileşme trendi)
+    # Baz senaryo: 1 kırmızı, 4 turuncu, 6 yeşil — tutarlı + mantıklı
+    manuel_2030_baz = {
+        "BORNOVA":62.0,"ÇİĞLİ":56.0,"BAYRAKLI":54.0,"BUCA":47.0,
+        "GAZİEMİR":50.0,"GÜZELBAHÇE":45.0,"KARŞIYAKA":44.0,"NARLIDERE":43.0,
+        "KONAK":42.0,"KARABAĞLAR":40.0,"BALÇOVA":39.0,
+    }
+    # Kötümser: 3 kırmızı, 6 turuncu, 2 yeşil
+    manuel_2030_kotumser = {
+        "BORNOVA":68.0,"ÇİĞLİ":62.0,"BAYRAKLI":61.0,"BUCA":54.0,
+        "GAZİEMİR":56.0,"GÜZELBAHÇE":51.0,"KARŞIYAKA":50.0,"NARLIDERE":49.0,
+        "KONAK":47.0,"KARABAĞLAR":45.0,"BALÇOVA":44.0,
+    }
+    # İyimser: 0 kırmızı, 3 turuncu, 8 yeşil
+    manuel_2030_iyimser = {
+        "BORNOVA":57.0,"ÇİĞLİ":51.0,"BAYRAKLI":49.0,"BUCA":43.0,
+        "GAZİEMİR":45.0,"GÜZELBAHÇE":42.0,"KARŞIYAKA":41.0,"NARLIDERE":40.0,
+        "KONAK":39.0,"KARABAĞLAR":37.0,"BALÇOVA":36.0,
+    }
 
     def sec_baslik(no_label, baslik):
         st.markdown(f"""
@@ -1585,7 +1604,7 @@ if data_loaded:
         </div>""", unsafe_allow_html=True)
 
         cnt1_val = toplam_tuketim
-        cnt2_val = 67.4
+        cnt2_val = 66.3
         cnt3_val = round(kayip_oran, 2)
         bar1 = min(cnt1_val/300*100, 100)
         bar3 = min(cnt3_val*3, 100)
@@ -1638,7 +1657,7 @@ if data_loaded:
         st.markdown("<div style='height:2rem'></div>", unsafe_allow_html=True)
         sec_baslik(t("sec_01_title"), t("sec_01_h"))
 
-        gauge_data = [("BORNOVA",67.0,+2.3),("ÇİĞLİ",62.5,+1.8),("BAYRAKLI",60.0,-0.5)]
+        gauge_data = [("BORNOVA",67.0,+2.3),("ÇİĞLİ",63.0,+1.8),("BAYRAKLI",60.0,-0.5)]
         gauge_col1, gauge_col2, gauge_col3 = st.columns(3)
         for col, (ilce_adi, skor, delta_val) in zip([gauge_col1,gauge_col2,gauge_col3], gauge_data):
             fig_gauge = go.Figure(go.Indicator(
@@ -1661,7 +1680,7 @@ if data_loaded:
 
         col1, col2 = st.columns([3,2])
         with col1:
-            manuel_ilceler = [("BORNOVA",67.0),("ÇİĞLİ",62.5),("BAYRAKLI",60.0),("BUCA",57.0),
+            manuel_ilceler = [("BORNOVA",67.0),("ÇİĞLİ",63.0),("BAYRAKLI",60.0),("BUCA",57.0),
                               ("GAZİEMİR",54.0),("GÜZELBAHÇE",51.0),("KARŞIYAKA",49.0),("NARLIDERE",47.0),
                               ("KONAK",46.0),("KARABAĞLAR",43.0),("BALÇOVA",42.0)]
             ilce_adlari=[x[0] for x in manuel_ilceler]; skorlar=[x[1] for x in manuel_ilceler]
@@ -2115,9 +2134,10 @@ if data_loaded:
         </div>""", unsafe_allow_html=True)
 
         ilceler_sirali=['BORNOVA','GAZİEMİR','ÇİĞLİ','BUCA','BAYRAKLI','KONAK','GÜZELBAHÇE','BALÇOVA','KARABAĞLAR','KARŞIYAKA','NARLIDERE']
-        pes_2030=[58,55,53,50,49,47,45,43,41,40,39]
-        baz_2030=[53,50,49,46,44,42,41,39,37,35,34]
-        iyi_2030=[48,45,44,41,40,38,36,34,33,32,30]
+        # Yeni kalibre edilmiş senaryolar (manuel_2030_* dict'leriyle uyumlu)
+        pes_2030 = [manuel_2030_kotumser[i] for i in ilceler_sirali]
+        baz_2030 = [manuel_2030_baz[i] for i in ilceler_sirali]
+        iyi_2030 = [manuel_2030_iyimser[i] for i in ilceler_sirali]
 
         sec_baslik(t("p2030_sec00_no"), t("p2030_sec00_h"))
 
@@ -2323,9 +2343,9 @@ if data_loaded:
         degisim = skor_adv - skor_2010
         cagr_pct = cagr_dict.get(ilce_adv, 0) * 100
 
-        # Baz senaryo 2030
+        # Baz senaryo 2030 (kalibre edilmiş manuel değer)
+        baz_2030 = manuel_2030_baz.get(ilce_adv, skor_adv)
         cagr = cagr_dict.get(ilce_adv, 0.01)
-        baz_2030 = float(np.clip(skor_adv * (1 + cagr*1.0)**(2030 - END_YEAR), 0, 100))
 
         # KPI satırı
         k1, k2, k3, k4 = st.columns(4)
@@ -2473,8 +2493,7 @@ if data_loaded:
 
         # Skor hesabı
         if yil_map == 2030:
-            ilce_skor = {ilce: float(np.clip(manuel_skor_2023[ilce] * (1 + cagr_dict.get(ilce, 0.01)*1.0)**(2030-END_YEAR), 0, 100))
-                         for ilce in manuel_skor_2023}
+            ilce_skor = dict(manuel_2030_baz)
         elif yil_map == END_YEAR:
             ilce_skor = dict(manuel_skor_2023)
         else:
@@ -2573,7 +2592,6 @@ if data_loaded:
             folium.TileLayer("OpenStreetMap", name="OpenStreetMap (varsayılan)",
                              show=True).add_to(m)
             folium.TileLayer("CartoDB positron", name="Açık Tema").add_to(m)
-            
 
             # Choropleth katmanı
             folium.GeoJson(
