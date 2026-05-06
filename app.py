@@ -1604,7 +1604,7 @@ if data_loaded:
         </div>""", unsafe_allow_html=True)
 
         cnt1_val = toplam_tuketim
-        cnt2_val = 66.3
+        cnt2_val = 67.0
         cnt3_val = round(kayip_oran, 2)
         bar1 = min(cnt1_val/300*100, 100)
         bar3 = min(cnt3_val*3, 100)
@@ -1641,7 +1641,7 @@ if data_loaded:
             (k2,"🟡","#ff7f0e",t("kpi_med_risk_districts"),["Buca","Gaziemir","Güzelbahçe","Karşıyaka","Narlıdere"]),
             (k3,"🟢","#2ca02c",t("kpi_low_risk_districts"),["Konak","Karabağlar","Balçova"]),
             (k4,"💧","#38d1e3",t("kpi_tahtali_fill"),[f"%{tahtali:.1f}",t("kpi_tahtali_year")]),
-            (k5,"✅","#2ca02c",t("kpi_least_risky"),["Balçova",f"{t('kpi_score_label')}: 42.7"]),
+            (k5,"✅","#2ca02c",t("kpi_least_risky"),["Balçova",f"{t('kpi_score_label')}: 42.0"]),
         ]
         for col, ikon, renk, baslik, satirlar in kpi_data:
             with col:
@@ -1657,7 +1657,7 @@ if data_loaded:
         st.markdown("<div style='height:2rem'></div>", unsafe_allow_html=True)
         sec_baslik(t("sec_01_title"), t("sec_01_h"))
 
-        gauge_data = [("BORNOVA",67.0,+2.3),("ÇİĞLİ",63.0,+1.8),("BAYRAKLI",60.0,-0.5)]
+        gauge_data = [("BORNOVA",67.0,-1.0),("ÇİĞLİ",62.5,-1.0),("BAYRAKLI",60.0,-2.0)]
         gauge_col1, gauge_col2, gauge_col3 = st.columns(3)
         for col, (ilce_adi, skor, delta_val) in zip([gauge_col1,gauge_col2,gauge_col3], gauge_data):
             fig_gauge = go.Figure(go.Indicator(
@@ -1680,9 +1680,9 @@ if data_loaded:
 
         col1, col2 = st.columns([3,2])
         with col1:
-            manuel_ilceler = [("BORNOVA",67.0),("ÇİĞLİ",63.0),("BAYRAKLI",60.0),("BUCA",57.0),
-                              ("GAZİEMİR",54.0),("GÜZELBAHÇE",51.0),("KARŞIYAKA",49.0),("NARLIDERE",47.0),
-                              ("KONAK",46.0),("KARABAĞLAR",43.0),("BALÇOVA",42.0)]
+            manuel_ilceler = [("BORNOVA",67.0),("ÇİĞLİ",62.5),("BAYRAKLI",60.0),("BUCA",51.0),
+                              ("GAZİEMİR",54.0),("GÜZELBAHÇE",49.0),("KARŞIYAKA",47.0),("NARLIDERE",47.0),
+                              ("KONAK",45.5),("KARABAĞLAR",43.0),("BALÇOVA",42.0)]
             ilce_adlari=[x[0] for x in manuel_ilceler]; skorlar=[x[1] for x in manuel_ilceler]
             renkler=[sinif_renk(s) for s in skorlar]
             fig=go.Figure(go.Bar(x=skorlar,y=ilce_adlari,orientation="h",
