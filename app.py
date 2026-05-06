@@ -1103,11 +1103,31 @@ div[data-testid="stButton"] > button p,
 header[data-testid="stHeader"],
 .stApp > header,
 [data-testid="stToolbar"],
+[data-testid="stToolbarActions"],
 [data-testid="stDecoration"],
 [data-testid="stStatusWidget"],
-#MainMenu, footer, [data-testid="stMainMenu"] { display: none !important; height: 0 !important; visibility: hidden !important; }
+[data-testid="stAppDeployButton"],
+[data-testid="stAppViewBlockContainer"] > div:first-child:has(> iframe),
+.stDeployButton,
+#MainMenu, footer, [data-testid="stMainMenu"],
+/* Streamlit Cloud "Fork on GitHub" sağ üst badge */
+.viewerBadge_container__r5tak,
+.viewerBadge_link__1S137,
+.viewerBadge_text__1JaDK,
+.styles_viewerBadge__CvC9N,
+.styles_terminalButton__JBj5T,
+[class*="viewerBadge"],
+[class*="profileContainer"],
+[class*="terminalButton"],
+a[href*="github.com"][class*="badge"],
+a[href*="streamlit.io"][class*="badge"],
+iframe[title*="streamlit"]
+{ display: none !important; height: 0 !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+
 .stApp { margin-top: 0 !important; }
-.block-container { padding-top: 0.5rem !important; }
+.block-container { padding-top: 3.5rem !important; }
+/* Üstteki olası iframe'i de gizle */
+body > iframe:first-child { display: none !important; }
 
 .veri-rozet {
     display:inline-block; background:rgba(155,89,182,0.15);
