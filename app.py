@@ -2434,12 +2434,14 @@ if data_loaded:
 
         # ── Kütüphaneler
         import json, os, copy, unicodedata
+        FOLIUM_OK = True
+        FOLIUM_ERR = ""
         try:
             import folium
             from streamlit_folium import st_folium
-            FOLIUM_OK = True
-        except ImportError:
+        except ImportError as e:
             FOLIUM_OK = False
+            FOLIUM_ERR = str(e)
 
         @st.cache_data
         def load_geojson():
@@ -2598,8 +2600,11 @@ if data_loaded:
 
             folium.LayerControl(position="topright", collapsed=True).add_to(m)
 
-            st_folium(m, width=None, height=600, returned_objects=[],
-                      use_container_width=True, key="folium_main_map")
+            try:
+                st_folium(m, width=None, height=600, returned_objects=[],
+                          key="folium_main_map")
+            except Exception as e:
+                st.error(f"Harita render hatası: {type(e).__name__}: {e}")
 
             if eslesen_count == 0:
                 st.warning(f"⚠️ GeoJSON'daki ilçe adları sözlükle eşleşmedi (property: '{district_key}'). "
@@ -2612,8 +2617,10 @@ if data_loaded:
 
         elif not FOLIUM_OK:
             # ── Folium kurulu değil — Plotly fallback
-            st.warning("📦 İnteraktif harita için `streamlit-folium` ve `folium` paketleri gerekiyor. "
-                       "`requirements.txt`'e ekleyin: `streamlit-folium`, `folium`")
+            st.error(f"📦 **Folium kurulu değil!** Hata: `{FOLIUM_ERR}`\n\n"
+                     "**Çözüm:** GitHub repo'nda `requirements.txt` dosyasını aç, içine şu iki satırı ekle:\n"
+                     "```\nstreamlit-folium>=0.20.0\nfolium>=0.17.0\n```\n"
+                     "Sonra Streamlit Cloud'da **⋮ → Reboot app** ile yeniden başlat.")
             ILCE_LAT = {"BORNOVA":38.470,"ÇİĞLİ":38.495,"BAYRAKLI":38.460,"BUCA":38.391,
                         "GAZİEMİR":38.310,"GÜZELBAHÇE":38.370,"KARŞIYAKA":38.460,"NARLIDERE":38.395,
                         "KONAK":38.418,"KARABAĞLAR":38.395,"BALÇOVA":38.387}
@@ -2657,8 +2664,11 @@ if data_loaded:
                     popup=f"<b>{il}</b><br>{t('risk_score')}: {ilce_skor[il]:.1f}<br>{sinif_str(ilce_skor[il])}",
                     tooltip=f"{il}: {ilce_skor[il]:.1f}",
                 ).add_to(m)
-            st_folium(m, width=None, height=560, returned_objects=[],
-                      use_container_width=True, key="folium_circle_fallback")
+            try:
+                st_folium(m, width=None, height=560, returned_objects=[],
+                          key="folium_circle_fallback")
+            except Exception as e:
+                st.error(f"Harita render hatası: {type(e).__name__}: {e}")
 
         # ── Sıralama tablosu
         sirali = sorted(zip(ilce_listesi, skor_v, sinif_v), key=lambda x: -x[1])
