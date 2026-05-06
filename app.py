@@ -1661,7 +1661,7 @@ if data_loaded:
 
         col1, col2 = st.columns([3,2])
         with col1:
-            manuel_ilceler = [("BORNOVA",67.0),("ÇİĞLİ",63.0),("BAYRAKLI",60.0),("BUCA",57.0),
+            manuel_ilceler = [("BORNOVA",67.0),("ÇİĞLİ",62.5),("BAYRAKLI",60.0),("BUCA",57.0),
                               ("GAZİEMİR",54.0),("GÜZELBAHÇE",51.0),("KARŞIYAKA",49.0),("NARLIDERE",47.0),
                               ("KONAK",46.0),("KARABAĞLAR",43.0),("BALÇOVA",42.0)]
             ilce_adlari=[x[0] for x in manuel_ilceler]; skorlar=[x[1] for x in manuel_ilceler]
