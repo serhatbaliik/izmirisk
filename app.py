@@ -2573,7 +2573,7 @@ if data_loaded:
             folium.TileLayer("OpenStreetMap", name="OpenStreetMap (varsayılan)",
                              show=True).add_to(m)
             folium.TileLayer("CartoDB positron", name="Açık Tema").add_to(m)
-            folium.TileLayer("CartoDB dark_matter", name="Koyu Tema").add_to(m)
+            
 
             # Choropleth katmanı
             folium.GeoJson(
