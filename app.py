@@ -990,8 +990,8 @@ st.markdown("""
    ⚙️  ANİMASYON HIZ AYARLARI — Buradan değiştir, tek tek aramaya gerek yok
    ═══════════════════════════════════════════════════════════ */
 :root {
-    --wave-duration: 7s;       /* MAVİ ŞERİT akma hızı (1s=hızlı, 30s=çok yavaş) */
-    --pulse-duration: 6s;      /* 💧 DAMLA pulse hızı  (1s=hızlı, 30s=çok yavaş) */
+    --wave-duration: 25s;       /* MAVİ ŞERİT akma hızı (1s=hızlı, 30s=çok yavaş) */
+    --pulse-duration: 20s;      /* 💧 DAMLA pulse hızı  (1s=hızlı, 30s=çok yavaş) */
 }
 
 section[data-testid="stSidebar"] { width: 280px !important; min-width: 280px !important; }
