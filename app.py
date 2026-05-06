@@ -1027,10 +1027,10 @@ hr { border-color: rgba(56,209,227,0.2) !important; }
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
 }
-.wave-container { position: relative; width: 100%; height: 6px; overflow: hidden; margin: 0.5rem 0; }
+.wave-container { position: relative; width: 100%; height: 4px; overflow: hidden; margin: 0.5rem 0; opacity: 0.5; }
 .wave { position: absolute; width: 200%; height: 100%;
-    background: linear-gradient(90deg, transparent 0%, #38d1e3 20%, #4db8f0 40%, transparent 50%, #38d1e3 70%, #4db8f0 90%, transparent 100%);
-    animation: wave 3s linear infinite; }
+    background: linear-gradient(90deg, transparent 0%, rgba(56,209,227,0.5) 50%, transparent 100%);
+    animation: wave 8s linear infinite; }
 
 .risk-low { color: #2ca02c; font-weight: 600; }
 .risk-med { color: #ff7f0e; font-weight: 600; }
@@ -1169,21 +1169,19 @@ button[kind="primary"]:hover {
     initial-value: 0;
     inherits: false;
 }
+@keyframes countUp {
+    from { --num: 0; }
+    to   { --num: var(--target); }
+}
 .counter {
-    transition: --num 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: countUp 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     counter-reset: num var(--num);
-    animation: counterTrigger 0.01s 0.1s forwards;
     display: inline-block;
 }
 .counter::after { content: counter(num); }
-@keyframes counterTrigger {
-    to { --num: var(--target, 0); }
-}
 .counter-decimal {
-    /* For values like 67.0 → just multiply by 10, divide visually with content */
-    transition: --num 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: countUp 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     counter-reset: num var(--num);
-    animation: counterTrigger 0.01s 0.1s forwards;
     display: inline-block;
 }
 .counter-decimal::after {
@@ -1227,17 +1225,24 @@ button[kind="primary"]:hover {
     100% { opacity: 1; transform: translateY(0)    scale(1);    filter: blur(0); }
 }
 
-/* Hero icon (water drop) — pulse glow */
+/* Hero icon (water drop) — pulse glow + gentle float */
 .hero-icon {
     display: inline-block;
     font-size: 3.4rem;
     line-height: 1;
     filter: drop-shadow(0 0 16px rgba(56,209,227,0.6));
-    animation: dropPulse 2.4s ease-in-out infinite;
+    animation: dropPulse 2.8s ease-in-out infinite;
+    transform-origin: center center;
 }
 @keyframes dropPulse {
-    0%, 100% { filter: drop-shadow(0 0 16px rgba(56,209,227,0.6)); transform: translateY(0); }
-    50%      { filter: drop-shadow(0 0 28px rgba(56,209,227,0.95)); transform: translateY(-3px); }
+    0%, 100% {
+        filter: drop-shadow(0 0 16px rgba(56,209,227,0.55));
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        filter: drop-shadow(0 0 30px rgba(56,209,227,1));
+        transform: translateY(-6px) scale(1.06);
+    }
 }
 
 /* Subtitle fade-in delayed */
@@ -1257,16 +1262,16 @@ button[kind="primary"]:hover {
 .particle {
     position: absolute;
     bottom: -20px;
-    background: radial-gradient(circle at 30% 30%, rgba(56,209,227,0.45), rgba(56,209,227,0.05));
+    background: radial-gradient(circle at 30% 30%, rgba(56,209,227,0.25), rgba(56,209,227,0.02));
     border-radius: 50%;
     animation: floatUp linear infinite;
-    box-shadow: 0 0 12px rgba(56,209,227,0.3);
+    box-shadow: 0 0 8px rgba(56,209,227,0.15);
 }
 @keyframes floatUp {
     0%   { transform: translateY(0) translateX(0);     opacity: 0; }
-    10%  { opacity: 0.6; }
-    50%  { transform: translateY(-50vh) translateX(20px); opacity: 0.4; }
-    90%  { opacity: 0.3; }
+    15%  { opacity: 0.4; }
+    50%  { transform: translateY(-50vh) translateX(20px); opacity: 0.25; }
+    85%  { opacity: 0.2; }
     100% { transform: translateY(-105vh) translateX(-15px); opacity: 0; }
 }
 
@@ -1292,15 +1297,15 @@ button[kind="primary"]:hover {
 </style>
 """, unsafe_allow_html=True)
 
-# — 1.1 PARTICLES BACKGROUND — Inject 18 floating water droplets
+# — 1.1 PARTICLES BACKGROUND — Inject 10 floating water droplets (subtle)
 import random as _rnd
 _rnd.seed(42)
 _particles_html = '<div class="particles-container">'
-for _i in range(18):
-    _size = _rnd.randint(4, 14)
+for _i in range(10):
+    _size = _rnd.randint(5, 11)
     _left = _rnd.randint(0, 100)
-    _delay = _rnd.uniform(0, 14)
-    _duration = _rnd.uniform(12, 22)
+    _delay = _rnd.uniform(0, 22)
+    _duration = _rnd.uniform(20, 32)
     _particles_html += (
         f'<div class="particle" style="width:{_size}px;height:{_size}px;'
         f'left:{_left}%;animation-delay:{_delay:.1f}s;animation-duration:{_duration:.1f}s;"></div>'
@@ -2807,7 +2812,8 @@ if data_loaded:
                 deck = pdk.Deck(
                     layers=[column_layer, text_layer],
                     initial_view_state=view_state,
-                    map_style="mapbox://styles/mapbox/dark-v10",
+                    map_style="dark",
+                    map_provider="carto",
                     tooltip={
                         "html": tooltip_text,
                         "style": {
@@ -2835,6 +2841,7 @@ if data_loaded:
             _three_d_rendered = False
 
         # ─── FOLIUM HARİTA (yalnızca 2D modunda) ───
+        district_key = None  # Initialize early so 3D mode skip doesn't break later check
         if not _three_d_rendered and FOLIUM_OK and geo_data is not None:
             features = geo_data.get("features", [])
 
@@ -2842,7 +2849,6 @@ if data_loaded:
             possible_keys = ["ILCE_ADI", "ilce_adi", "ILCEADI", "ilceadi", "ILCE", "ilce",
                              "NAME", "name", "ADI", "adi", "name_2", "NAME_2",
                              "İLÇE", "İLCE", "DISTRICT", "district"]
-            district_key = None
             if features:
                 props = features[0].get("properties", {})
                 for k in possible_keys:
@@ -2858,7 +2864,7 @@ if data_loaded:
             if district_key is None:
                 FOLIUM_OK = False  # fallback
 
-        if FOLIUM_OK and geo_data is not None and district_key:
+        if not _three_d_rendered and FOLIUM_OK and geo_data is not None and district_key:
             # Skor sözlüğünü normalize et
             ilce_skor_norm = {turkce_normalize(k): v for k, v in ilce_skor.items()}
 
