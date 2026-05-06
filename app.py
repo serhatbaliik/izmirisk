@@ -986,6 +986,14 @@ def t(key, **kwargs):
 # ═══════════════════════════════════════════════════════════════
 st.markdown("""
 <style>
+/* ═══════════════════════════════════════════════════════════
+   ⚙️  ANİMASYON HIZ AYARLARI — Buradan değiştir, tek tek aramaya gerek yok
+   ═══════════════════════════════════════════════════════════ */
+:root {
+    --wave-duration: 7s;       /* MAVİ ŞERİT akma hızı (1s=hızlı, 30s=çok yavaş) */
+    --pulse-duration: 6s;      /* 💧 DAMLA pulse hızı  (1s=hızlı, 30s=çok yavaş) */
+}
+
 section[data-testid="stSidebar"] { width: 280px !important; min-width: 280px !important; }
 
 .stApp {
@@ -1035,7 +1043,7 @@ hr { border-color: rgba(56,209,227,0.2) !important; }
         rgba(77,184,240,0.65) 50%,
         rgba(56,209,227,0.55) 75%,
         transparent 100%);
-    animation: wave 15s linear infinite; }
+    animation: wave var(--wave-duration) linear infinite; }
 
 .risk-low { color: #2ca02c; font-weight: 600; }
 .risk-med { color: #ff7f0e; font-weight: 600; }
@@ -1236,7 +1244,7 @@ button[kind="primary"]:hover {
     font-size: 3.4rem;
     line-height: 1;
     filter: drop-shadow(0 0 16px rgba(56,209,227,0.6));
-    animation: dropPulse 15s ease-in-out infinite;
+    animation: dropPulse var(--pulse-duration) ease-in-out infinite;
     transform-origin: center center;
 }
 @keyframes dropPulse {
