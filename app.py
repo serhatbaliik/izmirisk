@@ -286,7 +286,7 @@ TR = {
     "moran_global_exp_t": "ℹ️ Global Moran's I nedir?",
     "p_value_exp_t": "ℹ️ p-değeri ne anlama geliyor?",
     "interp_exp_t": "ℹ️ Negatif kümelenme ne demek?",
-    "interp_exp_text": "**Negatif Moran's I → Mekânsal Dağınıklık**\n\nYüksek riskli bir ilçenin komşuları düşük riskli olma eğiliminde — satranç tahtası deseni.\n\n**Gaziemir istisnası:** HL kategorisinde — izole sıcak nokta.",
+    "interp_exp_text": "**Zayıf Negatif Moran's I + Yüksek p-value → Mekânsal Rastgelelik**\n\nI = −0.111 değeri sıfıra yakın ve p = 0.960 olduğu için risk skorlarının mekânsal dağılımı **rastgele** kabul edilir.\n\nNe kümelenme ne de düzenli dağılım deseni var; istatistiksel olarak ilçeler birbirinden bağımsız.",
     "hh_exp_t": "ℹ️ HH küme neden yok?",
     "hh_exp_text": "**HH Küme = 0 ilçe**\n\nHiçbir ilçe hem kendisi yüksek riskli hem de yüksek riskli komşularla çevrili değil.\n\nİzmir'de birbirine bitişik riskli bir bölge yok — risk yönetimi ilçe bazında uygulanabilir.",
     "spatial_sec01_no": "01 · MEKÂNSAL ANALİZ",
@@ -441,7 +441,7 @@ TR = {
     "method_sec05_no": "05 · MEKÂNSAL ANALİZ",
     "method_sec05_h": "Moran's I & LISA",
     "method_moran_t": "📐 Global Moran's I",
-    "method_moran_text": "**Ne yapar?** Risk değerlerinin mekânsal olarak kümelenip kümelenmediğini ölçer.\n\n**Formül:** I = (n/S₀) × [Σᵢ Σⱼ wᵢⱼ(xᵢ−x̄)(xⱼ−x̄)] / Σᵢ(xᵢ−x̄)²\n\n**Verimizdeki uygulaması:** I = −0.2817 (negatif). Riskli ilçeler düşük riskli komşularla çevrili — merkezi bir \"kötü bölge\" yok.",
+    "method_moran_text": "**Ne yapar?** Risk değerlerinin mekânsal olarak kümelenip kümelenmediğini ölçer.\n\n**Formül:** I = (n/S₀) × [Σᵢ Σⱼ wᵢⱼ(xᵢ−x̄)(xⱼ−x̄)] / Σᵢ(xᵢ−x̄)²\n\n**Verimizdeki uygulaması:** I = −0.111 (p = 0.960, anlamlı değil). Risk skorları mekânsal olarak rastgele dağılmış — istatistiksel olarak kümelenme veya dağılım deseni yok.",
     "method_moran_caption": "I > 0 kümelenme · I < 0 dağınık",
     "method_lisa_t": "📐 Local Moran's I — LISA",
     "method_lisa_text": "**Ne yapar?** Her ilçe için ayrı mekânsal skor üretir. Global Moran \"genel tablo\" verirken LISA her ilçenin HH/LL/HL/LH sınıfını belirler.\n\n**Formül:** Iᵢ = zᵢ × Σⱼ wᵢⱼ × zⱼ\n\n**Verimizdeki uygulaması:** Gaziemir → HL (izole sıcak nokta). Karşıyaka → LH (çevre baskısı). 999 permütasyon testi uygulandı.",
@@ -758,7 +758,7 @@ EN = {
     "moran_global_exp_t": "ℹ️ What is Global Moran's I?",
     "p_value_exp_t": "ℹ️ What does the p-value mean?",
     "interp_exp_t": "ℹ️ What does negative clustering mean?",
-    "interp_exp_text": "**Negative Moran's I → Spatial Dispersion**\n\nA high-risk district tends to have low-risk neighbors — a checkerboard pattern.\n\n**Gaziemir exception:** In the HL category — isolated hotspot.",
+    "interp_exp_text": "**Weak Negative Moran's I + High p-value → Spatial Randomness**\n\nWith I = −0.111 close to zero and p = 0.960, the spatial distribution of risk scores is considered **random**.\n\nNeither clustering nor a regular dispersion pattern; districts are statistically independent of each other.",
     "hh_exp_t": "ℹ️ Why no HH cluster?",
     "hh_exp_text": "**HH Cluster = 0 districts**\n\nNo district is both high-risk itself and surrounded by high-risk neighbors.\n\nThere is no contiguous risky region in İzmir — risk management can be applied at the district level.",
     "spatial_sec01_no": "01 · SPATIAL ANALYSIS",
@@ -913,7 +913,7 @@ EN = {
     "method_sec05_no": "05 · SPATIAL ANALYSIS",
     "method_sec05_h": "Moran's I & LISA",
     "method_moran_t": "📐 Global Moran's I",
-    "method_moran_text": "**What does it do?** Measures whether risk values cluster spatially.\n\n**Formula:** I = (n/S₀) × [Σᵢ Σⱼ wᵢⱼ(xᵢ−x̄)(xⱼ−x̄)] / Σᵢ(xᵢ−x̄)²\n\n**Application in our data:** I = −0.2817 (negative). Risky districts are surrounded by low-risk neighbors — there is no central \"bad zone\".",
+    "method_moran_text": "**What does it do?** Measures whether risk values cluster spatially.\n\n**Formula:** I = (n/S₀) × [Σᵢ Σⱼ wᵢⱼ(xᵢ−x̄)(xⱼ−x̄)] / Σᵢ(xᵢ−x̄)²\n\n**Application in our data:** I = −0.111 (p = 0.960, not significant). Risk scores are randomly distributed across space — no statistically significant clustering or dispersion pattern.",
     "method_moran_caption": "I > 0 clustering · I < 0 dispersed",
     "method_lisa_t": "📐 Local Moran's I — LISA",
     "method_lisa_text": "**What does it do?** Produces a separate spatial score for each district. While Global Moran gives a \"general picture\", LISA determines each district's HH/LL/HL/LH class.\n\n**Formula:** Iᵢ = zᵢ × Σⱼ wᵢⱼ × zⱼ\n\n**Application in our data:** Gaziemir → HL (isolated hotspot). Karşıyaka → LH (surrounding pressure). 999 permutation test was applied.",
@@ -2190,12 +2190,12 @@ if data_loaded:
         # KPI satırı
         c1, c2, c3, c4 = st.columns(4)
         kpi_rows = [
-            (c1, t("moran_global_label"), "−0.2817", t("moran_global_alt"), "#38d1e3", t("moran_global_exp_t"),
-             "**Moran's I = −0.2817 (Negative)**\n\n• Negative value → spatial dispersion (random/scattered)\n• High-risk districts are not surrounded by similarly risky neighbors\n• In İzmir, risk does not cluster in a contiguous geographic block — it shows a checkerboard pattern" if st.session_state.dil=="en" else
-             "**Moran's I = −0.2817 (Negatif)**\n\n• Negatif değer → mekânsal dağılım (rastgele/dağınık)\n• Yüksek riskli ilçeler, benzer riskli komşularla çevrili değil\n• İzmir'de risk coğrafi olarak küme oluşturmuyor — satranç tahtası benzeri dağılım"),
-            (c2, t("p_value_label"), "0.0890", t("p_value_alt"), "#ff7f0e", t("p_value_exp_t"),
-             "**p = 0.089 (10% level marginal)**\n\n• 999 random permutations were performed\n• At α = 0.05 the result is **not significant**\n• Moran's I value falls within the random distribution; statistical evidence is weak" if st.session_state.dil=="en" else
-             "**p = 0.089 (%10 düzeyinde marjinal)**\n\n• 999 rastgele permütasyon yapıldı\n• α = 0.05 düzeyinde **anlamlı değil**\n• Moran's I değeri, rastgele dağılım içinde kalıyor; istatistiksel kanıt zayıf"),
+            (c1, t("moran_global_label"), "−0.111", t("moran_global_alt"), "#38d1e3", t("moran_global_exp_t"),
+             "**Moran's I = −0.111 (Weak Negative, Not Significant)**\n\n• Value close to zero → no meaningful clustering pattern\n• Risk scores are spatially random across districts\n• No central 'bad zone' or 'good zone' — risk distribution is independent of geography" if st.session_state.dil=="en" else
+             "**Moran's I = −0.111 (Zayıf Negatif, Anlamlı Değil)**\n\n• Sıfıra yakın değer → anlamlı kümelenme deseni yok\n• Risk skorları ilçeler arasında rastgele dağılmış\n• Merkezi bir 'kötü bölge' veya 'iyi bölge' yok — risk dağılımı coğrafyadan bağımsız"),
+            (c2, t("p_value_label"), "0.960", t("p_value_alt"), "#ff7f0e", t("p_value_exp_t"),
+             "**p = 0.960 (Not Significant)**\n\n• 999 random permutations were performed\n• At α = 0.05 the result is **clearly not significant**\n• The observed Moran's I sits well within the random distribution; no spatial pattern can be claimed" if st.session_state.dil=="en" else
+             "**p = 0.960 (Anlamlı Değil)**\n\n• 999 rastgele permütasyon yapıldı\n• α = 0.05 düzeyinde **net biçimde anlamlı değil**\n• Gözlenen Moran's I değeri rastgele dağılımın tam içinde kalıyor; mekânsal bir desen iddia edilemez"),
             (c3, t("moran_interpretation"), t("moran_interpretation_val"), t("moran_interpretation_alt"), "#9467bd", t("interp_exp_t"), t("interp_exp_text")),
             (c4, t("hh_cluster"), t("hh_cluster_val"), t("hh_cluster_alt"), "#2ca02c", t("hh_exp_t"), t("hh_exp_text")),
         ]
@@ -2246,7 +2246,7 @@ if data_loaded:
             fig=go.Figure()
             for i, ilce in enumerate(ilceler_m):
                 fig.add_trace(go.Scatter(x=[z[i]],y=[wz_list[i]],mode="markers+text",text=[ilce],textposition="top center",textfont=dict(color="white",size=9),marker=dict(size=14,color=sinif_renk(skorlar_m[i]),line=dict(color="white",width=1)),hovertemplate=f"<b>{ilce}</b><br>z=%{{x:.2f}} · Wz=%{{y:.2f}}<extra></extra>",showlegend=False))
-            slope = -0.2817
+            slope = -0.111
             xr = np.linspace(min(z)-0.3, max(z)+0.3, 50)
             fig.add_trace(go.Scatter(x=xr, y=slope*xr, mode="lines", line=dict(color="#38d1e3", width=2, dash="dash"), name=f"{t('slope_label')} = {slope}", hoverinfo="skip"))
             fig.add_hline(y=0,line_color="rgba(255,255,255,0.2)",line_width=1)
