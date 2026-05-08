@@ -80,7 +80,7 @@ TR = {
     "sec_01_title": "01 · RİSK GÖSTERGESİ",
     "sec_01_h": f"En Riskli 3 İlçe — {END_YEAR} Risk İbresi",
     # ── Risk skoru yorumlama (A1) ──
-    "score_meaning_h": "📐 67 Sayısı Ne Anlama Geliyor? Skor Nasıl Yorumlanır?",
+    "score_meaning_h": "🧭  WSRI Skorları Ne Söylüyor?",
     "score_meaning_intro": "**WSRI (Su Güvenliği Risk Endeksi)** İzmir'in 11 merkez ilçesini **kendi içlerinde** karşılaştıran göreceli bir skordur. 0-100 arası standardize edilmiş entropi-ağırlıklı bileşik bir indekstir. **Mutlak bir uluslararası karşılaştırma değildir** — ulusal/küresel benchmark'lar için aşağıdaki referanslara bakın.",
     "score_meaning_card1_t": "🇹🇷 Türkiye Karşılaştırması",
     "score_meaning_card1_v": "DSİ 2023 raporlarına göre Türkiye ortalama su kayıp oranı **%37**. İzmir 2023'te **%27.4** ile ulusal ortalamanın altındadır. Yani İzmir genel olarak Türkiye'ye göre **daha iyi durumdadır** — ama şehir içi eşitsizlik mevcuttur.",
